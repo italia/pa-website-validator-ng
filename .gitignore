@@ -30,3 +30,6 @@ dist/
 
 # Debug
 .vscode/
+
+# MAC
+.DS_Store 

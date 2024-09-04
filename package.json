@@ -2,6 +2,7 @@
   "name": "dtd_crawler",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "build:main": "tsc",
     "lint:check": "eslint --max-warnings 0 .",
