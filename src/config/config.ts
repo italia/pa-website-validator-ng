@@ -2,7 +2,8 @@ const config: any = {
     "school": {
         "homepage": {
             "gatherers": [
-                "first-level-pages"
+                "first-level-pages",
+                "services-page"
             ],
             "audits": [
                 "lighthouse",
@@ -16,7 +17,8 @@ const config: any = {
             "audits": [
                 "school-font-audits"
             ]
-        }, "second-level": {
+        }, 
+        "second-level": {
             "gatherers": [
                 "second-level-pages"
             ],
@@ -24,6 +26,22 @@ const config: any = {
                 "school-font-audits"
             ]
         },
+        "service":{
+            "gatherers": [
+                "booking-appointment"
+            ],
+            "audits":[
+
+            ]
+        },
+        "services-page":{
+            "gatherers": [
+                "booking-appointment"
+            ],
+            "audits":[
+
+            ]
+        }
     },
     "municipality": {
         "homepage": {
