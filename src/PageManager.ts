@@ -21,7 +21,7 @@ class PageManager {
   
     async addPage(page:PageData): Promise<void> {
       if (!this.pagesArray.find(pageEl=>pageEl.url == page.url)) {
-        this.pagesArray.push({...page, scanned:false});
+        this.pagesArray.push({...page, audited:false});
         this.emitter.emit('pagesAdded', page);
       }
     }
@@ -42,13 +42,18 @@ class PageManager {
       return [...this.pagesArray];
     }
 
-    setScanned(url:string){
+    setAudited(url:string){
       let page = this.pagesArray.find(page => page.url === url)
-      if (page) page.scanned = true
+      if (page) page.audited = true
+    }
+
+    setErrors(url:string, errors:Error[]){
+      let page = this.pagesArray.find(page => page.url === url)
+      if (page) page.errors = errors
     }
 
     hasRemainingPages(){
-      const remainingPages = this.pagesArray.find(el=> el.scanned === false)
+      const remainingPages = this.pagesArray.find(el=> el.audited === false)
       return remainingPages != undefined
     }
   }

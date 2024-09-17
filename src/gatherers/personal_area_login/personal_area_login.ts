@@ -1,24 +1,17 @@
-import { Gatherer } from '../Gatherer.js';
-import crawlerTypes from "../../types/crawler-types.js";
-import PageData = crawlerTypes.PageData
+import {pageGatherer} from '../page/page.js'
 
-class secondLevelPagesGatherer extends Gatherer {
+class personalAreaPageGatherer extends pageGatherer {
 
-  static pageType = 'second-level'
-  static dataElements = [
-    'school-submenu',
-    'teaching-submenu',
-    'news-submenu',
-    'services-submenu'
-  ]
+  static dataElements:string[] = ['personal-area-login']
+  static pageType:string = 'personal-area-login'
 
-  static getInstance(): Promise<secondLevelPagesGatherer> {
-    if (!secondLevelPagesGatherer.instance) {
-      secondLevelPagesGatherer.instance = new secondLevelPagesGatherer('',3000);
+  static getInstance(): Promise<personalAreaPageGatherer> {
+    if (!personalAreaPageGatherer.instance) {
+      personalAreaPageGatherer.instance = new personalAreaPageGatherer('',3000);
     }
-    return secondLevelPagesGatherer.instance;
+    return personalAreaPageGatherer.instance;
   }
 }
 
-export { secondLevelPagesGatherer };
-export default secondLevelPagesGatherer.getInstance;
+export { personalAreaPageGatherer };
+export default personalAreaPageGatherer.getInstance;

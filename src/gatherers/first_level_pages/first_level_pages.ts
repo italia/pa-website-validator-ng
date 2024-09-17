@@ -32,7 +32,6 @@ export class firstLevelPagesGatherer extends Gatherer {
         id: 'primo-livello' + Date.now(),
         type: 'first-level',
         'audited':false,
-        'scanned':false,
         internal: true,
         redirectUrl:''
       }

@@ -5,43 +5,61 @@ import PageData = crawlerTypes.PageData
 
 class eventsGatherer extends Gatherer {
 
-  async navigateAndFetchPages(url: string, numberOfPages=5): Promise<PageData[]> {
-    if (this.gatheredPages.length >0) return this.gatheredPages
+  static dataElements = ["event-link"]
+  static dataElement: string = 'event-link'
+  static pageType: string = 'event'
 
-    const bookingAppointmentPage = await this.getPrimaryPageUrl(
-      url,
-      eventsGatherer.bookingAppointmentDataElement
-    );
+  async navigateAndFetchPages(url: string, numberOfPages = 5): Promise<PageData[]> {
 
+    /** load events page */
+    const page = await this.loadPage(url)
 
-    if (bookingAppointmentPage === "") {
-      throw new Error("appointment-booking");
+    let maxCountPages = 0;
+    let clickButton = true;
+    while (clickButton) {
+      try {
+        clickButton = await page.$('[data-element="load-other-cards"]') 
+        console.log('BUTTON FOUND', clickButton)
+        if (!clickButton) {
+          continue;
+        }
+
+        await page.click('[data-element="load-other-cards"]');
+        await page.waitForTimeout(1000);
+ 
+        console.log(`GATHERER events : load other events`)
+        const currentCountPages = (await page.$$(`[data-element="${eventsGatherer.dataElement}"`).length);
+
+        console.log(currentCountPages)
+        if (!currentCountPages || currentCountPages === maxCountPages) {
+          clickButton = false;
+          continue;
+        }
+
+        maxCountPages = currentCountPages;
+
+      } catch (e) {
+        console.log("CATCH???");
+        clickButton = false;
+      }
     }
 
-    const requestedPages = [bookingAppointmentPage];
-    console.log(requestedPages)
+    if (!maxCountPages || maxCountPages == 0) {
+      await page.close()
+      throw new Error(`Cannot find elements with data-element "${eventsGatherer.dataElement}"`)
+    }
 
-    this.gatheredPages = requestedPages.map((url: any) => {
-      return {
-        url: url,
-        id: 'booking-appointment' + Date.now(),
-        type: 'booking-appointment',
-        'audited':false,
-        'scanned':false,
-        internal: false,
-        redirectUrl:''
-      }
-    })
-
-    return this.gatheredPages
+    await page.close()
+    return this.gatheredPages ?? []
   }
 
   static getInstance(): Promise<eventsGatherer> {
     if (!eventsGatherer.instance) {
-      eventsGatherer.instance = new eventsGatherer('',3000);
+      eventsGatherer.instance = new eventsGatherer('', 3000);
     }
     return eventsGatherer.instance;
   }
+
 }
 
 export { eventsGatherer };

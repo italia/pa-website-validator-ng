@@ -1,13 +1,14 @@
 
 declare namespace crawlerTypes {
+
   interface PageData {
     id: string;
     url: string;
     type: string;
     redirectUrl: string | undefined
     internal: boolean | undefined
-    scanned: boolean
     audited: boolean
+    errors?:any[]
   }
 
   interface requestPages {

@@ -14,7 +14,7 @@ abstract class Gatherer {
     static pageType: string
     static dataElements: string[]
 
-    protected constructor(id: string, timeout = 3000) {
+    protected constructor( id: string, timeout = 30000) {
         this.id = id;
         this.timeout = timeout
         this.gatheredPages = []
@@ -24,21 +24,19 @@ abstract class Gatherer {
         return this.constructor(id, gathererPageType, auditsIds);
     }
 
-    async navigateAndFetchPages(url: string, numberOfPages = 5): Promise<PageData[]> {
+    async navigateAndFetchPages(url: string, numberOfPages = 5, website: string): Promise<PageData[]> {
         if (this.gatheredPages.length > 0) {
             return this.gatheredPages
         }
 
         const randomPagesUrl = await this.getRandomPagesUrl(url, numberOfPages)
 
-        // console.log(randomPagesUrl)
         const currentClass = this.constructor as typeof Gatherer
         this.gatheredPages = randomPagesUrl.map(url => {
             return {
                 url: url,
                 id: currentClass.pageType + Date.now(),
                 type: currentClass.pageType,
-                scanned: false,
                 audited: false,
                 redirectUrl: '',
                 internal: true
@@ -199,23 +197,21 @@ abstract class Gatherer {
             return page
         } catch (ex) {
             console.error(`ERROR ${url}: ${ex}`);
-            await browser.close();
             throw new Error(
                 `SCAN $this.name il test è stato interrotto perché nella prima pagina analizzata ${url} si è verificato l'errore "${ex}". Verificarne la causa e rifare il test.`
             );
         }
     };
 
-    async getHREFValuesDataAttribute(page: Page, elementDataAttribute: string): Promise<any[]> {
-        const serviceUrls = [];
-
+    async getHREFValuesDataAttribute(page: Page, elementDataAttribute: string, property: string = 'href'): Promise<any[]> {
+        const urls = [];
         const element = await page.$(elementDataAttribute);
 
         if (element) {
-            const href = await element.getProperty('href');
+            const href = await element.getProperty(property);
             if (href) {
                 const hrefValue = await href.jsonValue();
-                serviceUrls.push(hrefValue)
+                urls.push(hrefValue)
             } else {
                 console.log('The element does not have an href attribute');
             }
@@ -223,7 +219,7 @@ abstract class Gatherer {
             console.log('No element found with the data-element attribute');
         }
 
-        return serviceUrls;
+        return urls;
     };
 
     async getChildrenFromJSHandle(jsHandle: JSHandle) {
@@ -287,6 +283,78 @@ abstract class Gatherer {
         return pageUrl;
     };
 
+
+    async getDataElementUrls(page: Page, dataElement: string) {
+        const pageElements = await this.getHREFValuesDataAttribute(
+            page,
+            `[data-element="${dataElement}"]`
+        );
+
+        if (pageElements.length <= 0) {
+            return [];
+        }
+
+        let pagesUrls = []
+        for (let pageUrl of pageElements) {
+            pagesUrls.push(await this.buildUrl(page.url(), pageUrl));
+        }
+
+        return pagesUrls;
+    };
+
+
+    async getButtonUrl(page: Page, dataElement: string) {
+        const pageElements = await this.getButtonValuesDataAttribute(
+            page,
+            `[data-element="${dataElement}"]`,
+        );
+
+        if (pageElements.length <= 0) {
+            return [];
+        }
+
+        let pagesUrls = []
+        for (let pageUrl of pageElements) {
+            pagesUrls.push(await this.buildUrl(page.url(), pageUrl));
+        }
+
+        return pagesUrls;
+    };
+
+    async getButtonValuesDataAttribute(page: Page, elementDataAttribute: string): Promise<any[]> {
+        const urls = [];
+        const elements: any = await page.$$(elementDataAttribute);
+
+        if (!elements || elements.length === 0) {
+            throw new Error(`Cannot find element with attribute ${elementDataAttribute}`)
+        }
+
+        let buttonUrls = []
+        for (let element of elements) {
+
+            let buttonOnclick = await element.evaluate((el: HTMLElement) => {
+                const onclickAttribute = el.getAttribute('onclick');
+                return onclickAttribute || '';
+            });
+
+            if (!buttonOnclick) {
+                throw new Error(`Cannot access onclick property of button ${elementDataAttribute}`)
+            }
+
+            let buttonHref = buttonOnclick.substring(
+                buttonOnclick.indexOf("'") + 1,
+                buttonOnclick.lastIndexOf("'")
+            );
+            
+            if (this.isInternalUrl(buttonHref)) {
+                buttonHref = await this.buildUrl( page.url(),buttonHref)
+            }
+
+            buttonUrls.push(buttonHref)
+        }
+
+        return buttonUrls;
+    };
 }
 
 export { Gatherer };
