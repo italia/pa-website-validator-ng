@@ -1,8 +1,5 @@
 import puppeteer, { HTTPResponse, JSHandle, Page } from "puppeteer";
 import { browser } from '../PuppeteerInstance.js'
-import PageManager from "../PageManager.js"
-import { GatherStepRunnerOptions } from "lighthouse/core/user-flow.js";
-import { secondLevelPagesGatherer } from "./second_level_pages/second_level_pages.js";
 import crawlerTypes from "../types/crawler-types.js";
 import PageData = crawlerTypes.PageData
 
@@ -46,7 +43,7 @@ abstract class Gatherer {
         return this.gatheredPages
     }
 
-    async getRandomPagesUrl(url: string, numberOfPages = 1,): Promise<string[]> {
+    async getRandomPagesUrl(url: string, numberOfPages = 1): Promise<string[]> {
         let pagesUrls: string[] = [];
         const page = await this.loadPage(url);
 
@@ -115,9 +112,9 @@ abstract class Gatherer {
             pagesUrls = [...pagesUrls, ...new Set(elementPagesUrls)]
 
         }
-        console.log(pagesUrls)
-        console.log(numberOfPages)
-        return this.getRandomNString(pagesUrls, numberOfPages);
+  
+        //return this.getRandomNString(pagesUrls, numberOfPages);
+        return pagesUrls
     };
 
     async gotoRetry(page: Page, url: string, retryCount: number): Promise<any | null> {
@@ -195,10 +192,11 @@ abstract class Gatherer {
             console.log(res?.url(), res?.status());
 
             return page
-        } catch (ex) {
+        } catch (ex:any
+        ) {
             console.error(`ERROR ${url}: ${ex}`);
             throw new Error(
-                `SCAN $this.name il test è stato interrotto perché nella prima pagina analizzata ${url} si è verificato l'errore "${ex}". Verificarne la causa e rifare il test.`
+                ex.message
             );
         }
     };
@@ -214,9 +212,11 @@ abstract class Gatherer {
                 urls.push(hrefValue)
             } else {
                 console.log('The element does not have an href attribute');
+                throw new Error('The element does not have an href attribute')
             }
         } else {
             console.log('No element found with the data-element attribute' + elementDataAttribute);
+            throw new Error('No element found with the data-element attribute' + elementDataAttribute)
         }
 
         return urls;
@@ -285,7 +285,7 @@ abstract class Gatherer {
 
 
 
-    async getMultipleDataElementUrls(page: Page, dataElement: string)  {
+    async getMultipleDataElementUrls(page: Page, dataElement: string) {
         const urls = [];
         const elements = await page.$$(`[data-element="${dataElement}"]`);
 

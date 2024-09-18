@@ -7,11 +7,9 @@ const config: any = {
                 "services_page",
                 "vivere_page",
                 "booking_appointment",
-                "personal_area_login",
-                //"second_level_pages"
+                "personal_area_login"
             ],
             "first-level": [
-               
             ],
             "second-level": [],
             "events-page": [
@@ -20,7 +18,7 @@ const config: any = {
             "vivere-page": [
                 "events_page"
             ],
-            "services-page":[
+            "services-page": [
                 "services"
             ]
         },
@@ -31,19 +29,17 @@ const config: any = {
     "school": {
         "gatherers": {
             "homepage": [
-                //"first_level_pages",
                 "locations_page",
-                "services_page"
+                "school_services",
+                "school_first_level_pages",
+                "school_second_level_pages"
             ],
-            "first-level": [
-              
-            ],
+            "first-level": [],
             "second-level": [],
             "locations-page": [
-               "locations"
+                "locations"
             ],
-            "services-page":[
-            ]
+            "services-page": []
         },
         "audits": {
 

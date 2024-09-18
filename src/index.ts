@@ -1,6 +1,6 @@
 "use strict";
 import ScanManager from "./trash/ScanManager.js"
-import { browser } from './PuppeteerInstance.js' //puppeteer browser being reused
+import { initializePuppeteer } from './PuppeteerInstance.js' //puppeteer browser being reused
 import PageManager from "./PageManager.js"       //array of pages to be analyzed
 import scan from "./Scan.js";
 import {gatherers} from "./GathererManager.js"
@@ -57,6 +57,7 @@ try {
 
 async function run(type: string, website: string, page_type:string) {
     try {
+      await initializePuppeteer()
       initializeConfig(type)
 
       //register method to the event 'page-added'
@@ -74,7 +75,7 @@ async function run(type: string, website: string, page_type:string) {
       })
 
     } catch (err) {
-      await browser.close()
+      //await browser.close()
       console.log('program exited with err => ' + err)
       process.exit()
     }

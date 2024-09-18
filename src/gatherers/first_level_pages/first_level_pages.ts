@@ -6,8 +6,10 @@ import {
   primaryMenuDataElement,
 } from "../../storage/school/menuItems.js";
 
-
 class firstLevelPagesGatherer extends Gatherer {
+
+  static dataElements:string[] = ['custom-submenu']
+  static pageType:string= 'first-level'
 
   static getInstance(): Promise<firstLevelPagesGatherer> {
     if (!firstLevelPagesGatherer.instance) {
@@ -18,7 +20,7 @@ class firstLevelPagesGatherer extends Gatherer {
 
   async navigateAndFetchPages(url: string, numberOfPages = 5): Promise<PageData[]> {
     if (this.gatheredPages.length > 0) return this.gatheredPages
-    
+
     const page = await this.loadPage(url)
     const currentClass = this.constructor as typeof Gatherer
 
@@ -33,7 +35,7 @@ class firstLevelPagesGatherer extends Gatherer {
         id: currentClass.pageType + Date.now(),
         type: currentClass.pageType,
         'audited':false,
-        internal: false,
+        internal: true,
         redirectUrl:''
       }
     })

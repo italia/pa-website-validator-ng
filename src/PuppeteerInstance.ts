@@ -21,4 +21,4 @@ async function initializePuppeteer(): Promise<void> {
   }
 }
 
-export { browser };
+export { browser, initializePuppeteer }

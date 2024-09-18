@@ -9,7 +9,7 @@ const scan = async (pageData: PageData) => {
     try {
         /** if no gathering or auditing for this page type skip*/
 
-        console.log(pageData)
+        //console.log(pageData)
         if (!config.gatherers[pageData.type]){
             PageManager.setAudited(pageData.url)
             if (!PageManager.hasRemainingPages()) {
@@ -26,7 +26,7 @@ const scan = async (pageData: PageData) => {
             //&& config.audits[pageData.type] && !(config.audits[pageData.type].length > 0 )
         ) {
             PageManager.setAudited(pageData.url)
-            console.log(PageManager.hasRemainingPages())
+            //console.log(PageManager.hasRemainingPages())
     
             if (!PageManager.hasRemainingPages()) {
                 console.error('closing puppeteer')
@@ -34,7 +34,7 @@ const scan = async (pageData: PageData) => {
                 'SCAN ENDED - navigated pages are:'
                 console.log( PageManager.getAllPages())
             }
-            console.log('scan ended')
+           
             return;
         }
 
@@ -47,7 +47,7 @@ const scan = async (pageData: PageData) => {
         //console.log(config[pageData.type].gatherers)
         for (let gathererId of config.gatherers[pageData.type]) {
             try {
-                console.log(gathererId,gatherers[gathererId])
+                //console.log(gathererId,gatherers[gathererId])
                 if (!gatherers[gathererId]) continue
 
                 //console.log(gathererId)
@@ -63,12 +63,13 @@ const scan = async (pageData: PageData) => {
                 gatheringErrors.push(e)
             }
         }
+        
         PageManager.setErrors(pageData.url,gatheringErrors )
-
         gathererPages.forEach((page: PageData) => {
             PageManager.addPage(page)
         });
 
+        console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Gathering end`)
     
         /** AUDITING */
         // for (let i = 0; i < 6; i++) {

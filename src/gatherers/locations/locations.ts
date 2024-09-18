@@ -1,9 +1,8 @@
-import {pageGatherer} from '../page/page.js'
 import {Gatherer} from '../Gatherer.js'
 import crawlerTypes from "../../types/crawler-types.js";
 import PageData = crawlerTypes.PageData
 
-class locationsGatherer extends pageGatherer {
+class locationsGatherer extends Gatherer {
 
   static dataElements:string[] = ['location-link']
   static pageType:string = 'location'
@@ -18,6 +17,8 @@ class locationsGatherer extends pageGatherer {
     for (let dataElement of currentClass.dataElements) {
       fetchedUrls = [...fetchedUrls,...await this.getMultipleDataElementUrls(page,dataElement) as any[]]
     }
+
+    await page.close()
 
     this.gatheredPages = fetchedUrls.map((url: any) => {
       return {
