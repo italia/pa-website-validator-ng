@@ -7,9 +7,9 @@ import {config} from "./config/config.js";
 
 const scan = async (pageData: PageData) => {
     try {
-
         /** if no gathering or auditing for this page type skip*/
 
+        console.log(pageData)
         if (!config.gatherers[pageData.type]){
             PageManager.setAudited(pageData.url)
             if (!PageManager.hasRemainingPages()) {
@@ -47,6 +47,7 @@ const scan = async (pageData: PageData) => {
         //console.log(config[pageData.type].gatherers)
         for (let gathererId of config.gatherers[pageData.type]) {
             try {
+                console.log(gathererId,gatherers[gathererId])
                 if (!gatherers[gathererId]) continue
 
                 //console.log(gathererId)

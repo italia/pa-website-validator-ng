@@ -1,10 +1,8 @@
 import { Gatherer } from '../Gatherer.js';
 import crawlerTypes from "../../types/crawler-types.js";
 import PageData = crawlerTypes.PageData
-import { Page } from 'puppeteer';
 import { setTimeout } from "timers/promises";
-import { delay } from 'rxjs';
-import { ChildProcessWithoutNullStreams } from 'child_process';
+
 
 class servicesGatherer extends Gatherer {
 

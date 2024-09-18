@@ -216,7 +216,7 @@ abstract class Gatherer {
                 console.log('The element does not have an href attribute');
             }
         } else {
-            console.log('No element found with the data-element attribute');
+            console.log('No element found with the data-element attribute' + elementDataAttribute);
         }
 
         return urls;
@@ -283,6 +283,26 @@ abstract class Gatherer {
         return pageUrl;
     };
 
+
+
+    async getMultipleDataElementUrls(page: Page, dataElement: string)  {
+        const urls = [];
+        const elements = await page.$$(`[data-element="${dataElement}"]`);
+
+        if (elements && elements.length > 0) {
+            for (let element of elements) {
+                const href = await element.getProperty('href');
+                if (href) {
+                    const hrefValue = await href.jsonValue();
+                    urls.push(hrefValue)
+                } else {
+                    console.log('The element does not have an href attribute');
+                }
+            }
+        }
+      
+        return urls;
+    }
 
     async getDataElementUrls(page: Page, dataElement: string) {
         const pageElements = await this.getHREFValuesDataAttribute(
