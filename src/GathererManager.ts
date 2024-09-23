@@ -3,6 +3,14 @@ let gatherers: any | null = null;
 
 await collectGatherers()
 
+function extractFolderName(path: string) {
+  const fileNameWithoutExtension = path.replace(/\.[^/.]+$/, '');
+  const pathSegments = fileNameWithoutExtension.split('/');
+  const folderName = pathSegments[pathSegments.length - 2];
+  
+  return folderName;
+}
+
 async function collectGatherers(): Promise<void> {
 
   try {
@@ -13,7 +21,7 @@ async function collectGatherers(): Promise<void> {
         const moduleName = file.replace('src', 'dist').replace('.ts', '.js')
         const module = await import('../' + moduleName)
 
-        const moduleId = file.split('/')?.pop()?.split('.')[0]
+        const moduleId = extractFolderName(moduleName)
 
         if (moduleId){
           console.log('GATHERER MANAGER registered gatherer: '+ moduleId)

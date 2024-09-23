@@ -2,10 +2,10 @@ import {Gatherer} from '../Gatherer.js'
 import crawlerTypes from "../../types/crawler-types.js";
 import PageData = crawlerTypes.PageData
 
-class eventsPageGatherer extends Gatherer {
+class locationsGatherer extends Gatherer {
 
-  static dataElements:string[] = ['live-button-events']
-  static pageType:string = 'events-page'
+  static dataElements:string[] = ['location-link']
+  static pageType:string = 'location'
 
   async navigateAndFetchPages(url: string, numberOfPages = 5): Promise<PageData[]> {
     if (this.gatheredPages.length >0) return this.gatheredPages
@@ -15,32 +15,33 @@ class eventsPageGatherer extends Gatherer {
 
     let fetchedUrls:string[] = []
     for (let dataElement of currentClass.dataElements) {
-      fetchedUrls = [...fetchedUrls,...await this.getButtonUrl(page,dataElement)]
+      fetchedUrls = [...fetchedUrls,...await this.getMultipleDataElementUrls(page,dataElement) as any[]]
     }
-  
+
+    await page.close()
+
     this.gatheredPages = fetchedUrls.map((url: any) => {
       return {
         url: url,
         id: currentClass.pageType + Date.now(),
         type: currentClass.pageType,
         'audited':false,
-        internal: false,
+        internal: true,
         redirectUrl:''
       }
     })
 
-
-    await page.close()
     return this.gatheredPages
   }
 
-  static getInstance(): Promise<eventsPageGatherer> {
-    if (!eventsPageGatherer.instance) {
-      eventsPageGatherer.instance = new eventsPageGatherer('',3000);
+
+  static getInstance(): Promise<locationsGatherer> {
+    if (!locationsGatherer.instance) {
+      locationsGatherer.instance = new locationsGatherer('');
     }
-    return eventsPageGatherer.instance;
+    return locationsGatherer.instance;
   }
 }
 
-export { eventsPageGatherer };
-export default eventsPageGatherer.getInstance;
+export { locationsGatherer };
+export default locationsGatherer.getInstance;

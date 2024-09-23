@@ -9,6 +9,6 @@
     "target": "ES2022",
     "declaration": true
   },
-  "exclude": ["src/audits", "dist", "__tests__"],
+  "exclude": [ "dist", "__tests__"],
   "include": ["src", "node_modules/lighthouse/types/**/*.d.ts"]
 }

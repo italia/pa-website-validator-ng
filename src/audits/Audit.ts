@@ -7,6 +7,7 @@ export abstract class Audit {
     gathererPageType: string[];
     auditsIds: string[];
     protected timeout: number = 30000;
+    protected static instance: any;
 
     constructor(id: string, gathererPageType: string[], auditsIds: string[]) {
         this.id = id;

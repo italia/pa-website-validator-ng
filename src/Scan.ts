@@ -1,6 +1,9 @@
 import PageManager from './PageManager.js';
 import { browser } from './PuppeteerInstance.js';
+
 import { gatherers } from './GathererManager.js';
+import { audits } from './AuditManager.js';
+
 import crawlerTypes from "./types/crawler-types.js";
 import PageData = crawlerTypes.PageData
 import {config} from "./config/config.js";
@@ -9,6 +12,8 @@ const scan = async (pageData: PageData) => {
     try {
         /** if no gathering or auditing for this page type skip*/
 
+
+        
         //console.log(pageData)
         if (!config.gatherers[pageData.type]){
             PageManager.setAudited(pageData.url)

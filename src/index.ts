@@ -1,9 +1,11 @@
 "use strict";
 import ScanManager from "./trash/ScanManager.js"
-import { initializePuppeteer } from './PuppeteerInstance.js' //puppeteer browser being reused
-import PageManager from "./PageManager.js"       //array of pages to be analyzed
+import { initializePuppeteer } from './PuppeteerInstance.js'
+import PageManager from "./PageManager.js"       
 import scan from "./Scan.js";
 import {gatherers} from "./GathererManager.js"
+import {audits} from "./AuditManager.js"
+
 import { initializeConfig } from "./config/config.js";
 // import crawlerTypes from "./types/crawler-types.js";
 // import siteType = crawlerTypes.siteType
@@ -59,6 +61,8 @@ async function run(type: string, website: string, page_type:string) {
     try {
       await initializePuppeteer()
       initializeConfig(type)
+
+      console.log(audits)
 
       //register method to the event 'page-added'
       PageManager.onPagesAdded((pageData) => {

@@ -1,4 +1,4 @@
-import {pageGatherer} from '../page/page.js'
+import {pageGatherer} from '../page/index.js'
 
 class bookingAppointmentGatherer extends pageGatherer {
 
