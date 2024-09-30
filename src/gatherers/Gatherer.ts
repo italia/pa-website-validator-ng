@@ -1,5 +1,4 @@
-import puppeteer, { HTTPResponse, JSHandle, Page } from "puppeteer";
-import { browser } from '../PuppeteerInstance.js'
+import { JSHandle, Page } from "puppeteer";
 import crawlerTypes from "../types/crawler-types.js";
 import PageData = crawlerTypes.PageData
 import {loadPage} from "../utils/utils.js";
@@ -119,7 +118,7 @@ abstract class Gatherer {
         return pagesUrls
     };
 
-    async gotoRetry(page: Page, url: string, retryCount: number): Promise<any | null> {
+    static async gotoRetry(page: Page, url: string, retryCount: number): Promise<any | null> {
         try {
 
             console.log(

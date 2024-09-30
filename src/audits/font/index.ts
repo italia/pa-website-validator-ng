@@ -29,9 +29,6 @@ class FontAudit extends Audit {
     private titleSubHeadings: any = [];
     private headings : any = [];
 
-    static auditId = "municipality-ux-ui-consistency-fonts-check";
-    static auditData = auditDictionary["municipality-ux-ui-consistency-fonts-check"];
-
     static allowedFonts = allowedFonts;
     static get meta() {
         return {

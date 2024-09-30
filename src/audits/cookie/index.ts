@@ -26,10 +26,6 @@ class CookieAudit extends Audit {
     public score = 1;
     private titleSubHeadings: any = [];
     private headings : any = [];
-
-    static auditId = "school-legislation-cookie-domain-check";
-    static auditData = auditDictionary["school-legislation-cookie-domain-check"];
-
     static get meta() {
         return {
             id: this.auditId,
