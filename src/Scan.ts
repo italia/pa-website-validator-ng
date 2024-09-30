@@ -85,13 +85,11 @@ const scan = async (pageData: PageData) => {
 
             await PageManager.setGathered(pageData.url);
             console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Gathering end`);
-
         }
 
         /** AUDITING */
         let auditedPages: any = []
         let auditingErrors = []
-
 
         if(!pageData.audited || (pageData.audited && pageData.temporary)){
 
@@ -107,6 +105,8 @@ const scan = async (pageData: PageData) => {
                         if(!pageData.temporary){
                             page = await loadPage(pageData.url);
                         }
+
+                        console.log(audit);
 
                         if (audit === undefined) throw new Error(` No audit found for id ${auditId}: check your configuration`);
 
@@ -144,10 +144,6 @@ const scan = async (pageData: PageData) => {
 
             }*/
         }
-
-
-
-
 
 
         //sconsole.log('scan ended')
