@@ -6,11 +6,11 @@ import {
 import {DataElementError} from "../../utils/DataElementError.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
-import {cssClasses} from "./cssClasses";
 
 const auditId = "school-ux-ui-consistency-bootstrap-italia-double-check";
 const auditData = auditDictionary[auditId];
 import { compareVersions } from "compare-versions";
+import { cssClasses } from "./cssClasses.js";
 
 class SchoolBootstrap extends Audit {
     public globalResults: any = {
