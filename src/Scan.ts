@@ -110,10 +110,9 @@ const scan = async (pageData: PageData) => {
 
                         if (audit === undefined) throw new Error(` No audit found for id ${auditId}: check your configuration`);
 
-                        await audit.auditPage(page, pageData.errors ? pageData.errors[0] : '');
+                        await audit.auditPage(page, pageData.errors && pageData.errors.length ? pageData.errors[0] : '');
                         const result = await audit.returnGlobal();
                         await PageManager.setGlobalResults({result: result, auditType: await audit.getType()});
-                        console.log(`AUDIT RESULT for Page ${pageData.type} ${pageData.url}:  ${JSON.stringify(result)}`);
 
                     } catch (e: any) {
                         console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: ERROR`)
@@ -135,7 +134,7 @@ const scan = async (pageData: PageData) => {
             PageManager.getAllPages();
             PageManager.getGlobalResults();
             console.log('SCAN ENDED - navigated pages:')
-            console.log(PageManager.getAllPages(), PageManager.getGlobalResults());
+            console.log(PageManager.getAllPages(), JSON.stringify(await PageManager.getGlobalResults()));
 
            /* await getGlobalResult(){
                 for(audit){
@@ -146,7 +145,7 @@ const scan = async (pageData: PageData) => {
         }
 
 
-        //sconsole.log('scan ended')
+        //console.log('scan ended')
 
     } catch (err) {
         console.log(`SCAN error: ${err}`)

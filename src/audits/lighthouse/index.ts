@@ -5,19 +5,17 @@ import PageData = crawlerTypes.PageData
 
 import lighthouse from 'lighthouse';
 
-
-
 class lighthouseAudit extends Audit {
 
-    async execute(page:PageData) {
+    async auditPage(page:PageData) {
         const runnerResult = await this.runLighthouse(page.url, {});
         console.log(runnerResult)
         //return runnerResult.report;
 
-        return page;
+        return runnerResult;
     }
 
-     async runLighthouse(url: string, options: any): Promise<any> {
+    async runLighthouse(url: string, options: any): Promise<any> {
         try {
           const runnerResult = await lighthouse(url, options);
           return runnerResult;
@@ -34,10 +32,7 @@ static getInstance(): Promise<lighthouseAudit> {
   }
   return lighthouseAudit.instance;
 }
-
-
 }
-
 
 export { lighthouseAudit };
 export default lighthouseAudit.getInstance;

@@ -270,7 +270,7 @@ class ServiceAudit extends Audit {
                 this.correctItems.push(item);
             }
 
-            console.log(`Results: ${JSON.stringify(this.globalResults)}`);
+            //console.log(`Results: ${JSON.stringify(this.globalResults)}`);
 
             return {
                 score: this.score,

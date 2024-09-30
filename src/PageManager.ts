@@ -7,8 +7,7 @@ class PageManager {
     private pagesArray: PageData[] = [];
     private globalResult : any = [];
     private emitter: EventEmitter;
-    private globalResults: any = {};
-  
+
     private constructor() {
       this.emitter = new EventEmitter();
       this.emitter.setMaxListeners(Infinity);
