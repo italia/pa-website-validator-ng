@@ -1,6 +1,20 @@
 
 declare namespace crawlerTypes {
 
+  interface AuditDictionary {
+    greenResult: string;
+    yellowResult:string;
+    redResult: string;
+    nonExecuted: string;
+    title: string;
+    failureTitle:string;
+    description: string;
+    subItem?: {
+      greenResult?: string;
+      yellowResult?: string;
+      redResult?: string;
+    },
+  }
   interface PageData {
     id: string;
     url: string;

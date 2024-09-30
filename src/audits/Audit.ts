@@ -13,7 +13,7 @@ export abstract class Audit {
     globalResults : any = {};
 
     static auditId = "audit";
-    static auditData = auditDictionary["audit"];
+    static auditData: crawlerTypes.AuditDictionary = auditDictionary["audit"];
 
     constructor(id: string, gathererPageType: string[], auditsIds: string[]) {
         this.id = id;

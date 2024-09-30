@@ -220,7 +220,7 @@ class CookieAudit extends Audit {
 
         if (this.wrongItems.length > 0) {
             results.push({
-                result: (this.constructor as typeof Audit).auditData.subItem.redResult,
+                result: (this.constructor as typeof Audit)?.auditData?.subItem?.redResult ?? '',
                 title_library_name: this.titleSubHeadings[0],
                 title_library_version: this.titleSubHeadings[1],
                 title_classes_found: this.titleSubHeadings[2],
@@ -240,7 +240,7 @@ class CookieAudit extends Audit {
 
         if (this.correctItems.length > 0) {
             results.push({
-                result: (this.constructor as typeof Audit).auditData.subItem.greenResult,
+                result: (this.constructor as typeof Audit)?.auditData?.subItem?.greenResult ?? '',
                 title_library_name: this.titleSubHeadings[0],
                 title_library_version: this.titleSubHeadings[1],
                 title_classes_found: this.titleSubHeadings[2],

@@ -264,7 +264,7 @@ class FontAudit extends Audit {
 
         if (this.wrongItems.length > 0) {
             results.push({
-                result: (this.constructor as typeof Audit).auditData.subItem.redResult,
+                result: (this.constructor as typeof Audit)?.auditData?.subItem?.redResult ?? '',
                 title_wrong_number_elements: this.titleSubHeadings[0],
                 title_wrong_fonts: this.titleSubHeadings[1],
             });
@@ -283,7 +283,7 @@ class FontAudit extends Audit {
 
         if (this.toleranceItems.length > 0) {
             results.push({
-                result: (this.constructor as typeof Audit).auditData.subItem.yellowResult,
+                result: (this.constructor as typeof Audit)?.auditData?.subItem?.yellowResult ?? '',
                 title_wrong_number_elements: this.titleSubHeadings[0],
                 title_wrong_fonts: this.titleSubHeadings[1],
             });
@@ -302,7 +302,7 @@ class FontAudit extends Audit {
 
         if (this.correctItems.length > 0) {
             results.push({
-                result: (this.constructor as typeof Audit).auditData.subItem.greenResult,
+                result: (this.constructor as typeof Audit)?.auditData?.subItem?.greenResult ?? '',
                 title_wrong_number_elements: this.titleSubHeadings[0],
                 title_wrong_fonts: this.titleSubHeadings[1],
             });
