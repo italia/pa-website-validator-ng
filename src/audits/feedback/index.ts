@@ -2,16 +2,16 @@
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { auditDictionary } from "../../storage/auditDictionary";
+import { auditDictionary } from "../../storage/auditDictionary.js";
 import {
   checkFeedbackComponent,
-} from "../../utils/municipality/utils";
-import { auditScanVariables } from "../../storage/municipality/auditScanVariables";
+} from "../../utils/municipality/utils.js";
+import { auditScanVariables } from "../../storage/municipality/auditScanVariables.js";
 import {
   errorHandling,
   notExecutedErrorMessage,
-} from "../../config/commonAuditsParts";
-import { DataElementError } from "../../utils/DataElementError";
+} from "../../config/commonAuditsParts.js";
+import { DataElementError } from "../../utils/DataElementError.js";
 import {Page} from "puppeteer";
 import {Audit} from "../Audit.js";
 
@@ -24,7 +24,16 @@ const accuracy = process.env["accuracy"] ?? "suggested";
 const auditVariables = auditScanVariables[accuracy][auditId];
 
 class FeedbackAudit extends Audit {
-  public globalResults: any = {};
+  public globalResults: any = {
+    score: 1,
+    details: {
+      items: [],
+      type: 'table',
+      headings: [],
+      summary: ''
+    },
+    errorMessage: ''
+  };
   private wrongItems: any = [];
   private toleranceItems: any = [];
   private correctItems: any = [];
@@ -265,9 +274,7 @@ class FeedbackAudit extends Audit {
     this.globalResults['score'] = this.score;
     this.globalResults['details']['items'].push(results);
     this.globalResults['errorMessage'] = this.pagesInError.length || this.wrongItems.length ? errorHandling.popupMessage : "";
-    this.globalResults['details']['type'] = 'table';
     this.globalResults['details']['headings'] = this.headings;
-    this.globalResults['details']['summary'] = '';
 
     return this.globalResults;
   }

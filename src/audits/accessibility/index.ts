@@ -5,19 +5,28 @@ import { CheerioAPI } from "cheerio";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 
-import { getAllPageHTML, loadPageData, urlExists } from "../../utils/utils";
-import { auditDictionary } from "../../storage/auditDictionary";
+import { getAllPageHTML, loadPageData, urlExists } from "../../utils/utils.js";
+import { auditDictionary } from "../../storage/auditDictionary.js";
 import {Page} from "puppeteer";
 
 import {Audit} from "../Audit.js";
-import {errorHandling, notExecutedErrorMessage} from "../../config/commonAuditsParts";
+import {errorHandling, notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
 import * as cheerio from "cheerio";
 
 const auditId = "municipality-legislation-accessibility-declaration-is-present";
 const auditData = auditDictionary[auditId];
 
 class AccAudit extends Audit {
-  public globalResults: any = {};
+  public globalResults: any = {
+    score: 0,
+    details: {
+      items: [],
+      type: 'table',
+      headings: [],
+      summary: ''
+    },
+    errorMessage: ''
+  };
   private wrongItems: any = [];
   private toleranceItems: any = [];
   private correctItems: any = [];

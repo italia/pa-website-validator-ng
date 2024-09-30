@@ -37,7 +37,16 @@ const accuracy = process.env["accuracy"] ?? "suggested";
 const auditVariables = auditScanVariables[accuracy][auditId];
 
 class ServiceAudit extends Audit {
-    public globalResults: any = {};
+    public globalResults: any = {
+        score: 1,
+        details: {
+            items: [],
+            type: 'table',
+            headings: [],
+            summary: ''
+        },
+        errorMessage: ''
+    };
     public wrongItems: any = [];
     public toleranceItems: any = [];
     public correctItems: any = [];
@@ -261,7 +270,7 @@ class ServiceAudit extends Audit {
                 this.correctItems.push(item);
             }
 
-            console.log(`Results: ${this.globalResults}`);
+            console.log(`Results: ${JSON.stringify(this.globalResults)}`);
 
             return {
                 score: this.score,
@@ -380,6 +389,10 @@ class ServiceAudit extends Audit {
 
             results.push({});
         }
+
+        this.globalResults.errorMessage =  this.pagesInError.length > 0 ? errorHandling.popupMessage : "";
+        this.globalResults.details.items = results;
+        this.globalResults.details.headings = this.headings;
 
         return this.globalResults;
     }
