@@ -185,8 +185,6 @@ class SchoolA11yAudit extends Audit {
         items[0].result = auditData.greenResult;
       }
 
-      console.log('passo');
-
       this.globalResults.score = 1;
       this.globalResults.details.items = items;
       this.globalResults.details.headings = this.headings;
