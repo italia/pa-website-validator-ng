@@ -287,7 +287,7 @@ class ServiceAudit extends Audit {
             this.globalResults['score'] = 0;
         }
 
-        switch (this.globalResults['score']) {
+        switch (this.score) {
             case 1:
                 this.globalResults['details']['items'].push({
                     result: auditData.greenResult,
@@ -393,6 +393,7 @@ class ServiceAudit extends Audit {
         this.globalResults.errorMessage =  this.pagesInError.length > 0 ? errorHandling.popupMessage : "";
         this.globalResults.details.items = results;
         this.globalResults.details.headings = this.headings;
+        this.globalResults.score = this.score;
 
         return this.globalResults;
     }

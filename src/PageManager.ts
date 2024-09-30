@@ -5,7 +5,7 @@ import PageData = crawlerTypes.PageData
 class PageManager {
     private static instance: PageManager;
     private pagesArray: PageData[] = [];
-    private globalResult : any = {};
+    private globalResult : any = [];
     private emitter: EventEmitter;
     private globalResults: any = {};
   
@@ -29,15 +29,15 @@ class PageManager {
     }
 
     async setGlobalResults(result: any) {
-        if (this.globalResult['results'] && this.globalResult['results'].find((el : any) => el.auditType === result.auditType)){
-            this.globalResult['results'][this.globalResult['results'].findIndex((el : any) => el.auditType === result.auditType)] = result;
+        if (this.globalResult && this.globalResult.find((el : any) => el.auditType === result.auditType)){
+            this.globalResult[this.globalResult.findIndex((el : any) => el.auditType === result.auditType)] = result;
         }else{
-            this.globalResult['results'].push(result);
+            this.globalResult.push(result);
         }
     }
 
     async getGlobalResults() {
-        return this.globalResult['results'].map((el : any) => {
+        return this.globalResult.map((el : any) => {
             return el.result
         });
     }
