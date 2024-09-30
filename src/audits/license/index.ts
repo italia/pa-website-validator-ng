@@ -174,7 +174,7 @@ class LicenceAudit extends Audit {
             this.globalResults.details.headings = this.headings;
 
             return {
-                score: 1,
+                score: score,
             };
         }
     }
