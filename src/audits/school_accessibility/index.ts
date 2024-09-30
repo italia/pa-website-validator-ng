@@ -24,12 +24,7 @@ class SchoolA11yAudit extends Audit {
     },
     errorMessage: ''
   };
-  private wrongItems: any = [];
-  private toleranceItems: any = [];
-  private correctItems: any = [];
-  private pagesInError : any = [];
-  private score = 0;
-  private titleSubHeadings: any = [];
+
   private headings : any = [];
 
   static get meta() {
@@ -43,28 +38,25 @@ class SchoolA11yAudit extends Audit {
     };
   }
 
-  async audit(
+  async auditPage(
       page: Page | null,
       error?: string,
   ) {
+
     if(error && !page){
 
-      this.globalResults['score'] = 0;
-      this.globalResults['details']['items'].push([
+      this.globalResults.score = 0;
+      this.globalResults.details.items.push([
         {
           result: notExecutedErrorMessage.replace("<LIST>", error),
         },
       ]);
-      this.globalResults['details']['type'] = 'table';
-      this.globalResults['details']['headings'] = [{ key: "result", itemType: "text", text: "Risultato" }];
-      this.globalResults['details']['summary'] = '';
+      this.globalResults.details.headings= [{ key: "result", itemType: "text", text: "Risultato" }];
 
       return {
         score: 0,
       }
     }
-
-    console.log('here');
 
     if(page){
       const url = page.url();
@@ -113,8 +105,6 @@ class SchoolA11yAudit extends Audit {
         },
       ];
 
-      console.log('here');
-
       let data = await page.content();
       let $: CheerioAPI = await cheerio.load(data);
 
@@ -138,11 +128,9 @@ class SchoolA11yAudit extends Audit {
           throw new Error("Possibile errore del server AGID, verificare.");
 
         if (!checkUrl.result) {
-          this.globalResults['score'] = 0;
-          this.globalResults['details']['items'] = items;
-          this.globalResults['details']['type'] = 'table';
-          this.globalResults['details']['headings'] = this.headings;
-          this.globalResults['details']['summary'] = '';
+          this.globalResults.score = 0;
+          this.globalResults.details.items = items;
+          this.globalResults.details.headings = this.headings;
 
           return {
             score: 0,
@@ -154,11 +142,9 @@ class SchoolA11yAudit extends Audit {
         items[0].wcag = "No";
 
         if (!href.includes("https://form.agid.gov.it/view/")) {
-          this.globalResults['score'] = 0;
-          this.globalResults['details']['items'] = items;
-          this.globalResults['details']['type'] = 'table';
-          this.globalResults['details']['headings'] = this.headings;
-          this.globalResults['details']['summary'] = '';
+          this.globalResults.score = 0;
+          this.globalResults.details.items = items;
+          this.globalResults.details.headings = this.headings;
 
           return {
             score: 0,
@@ -170,11 +156,9 @@ class SchoolA11yAudit extends Audit {
         const privacyPageHTML: string = await getAllPageHTML(href);
         if (!privacyPageHTML.match(new RegExp(domain, "i"))) {
 
-          this.globalResults['score'] = 0;
-          this.globalResults['details']['items'] = items;
-          this.globalResults['details']['type'] = 'table';
-          this.globalResults['details']['headings'] = this.headings;
-          this.globalResults['details']['summary'] = '';
+          this.globalResults.score = 0;
+          this.globalResults.details.items = items;
+          this.globalResults.details.headings = this.headings;
 
           return {
             score: 0,
@@ -187,11 +171,9 @@ class SchoolA11yAudit extends Audit {
             !privacyPageHTML.match(/wcag 2.1/i) &&
             !privacyPageHTML.match(/wcag-21/i)
         ) {
-          this.globalResults['score'] = 0;
-          this.globalResults['details']['items'] = items;
-          this.globalResults['details']['type'] = 'table';
-          this.globalResults['details']['headings'] = this.headings;
-          this.globalResults['details']['summary'] = '';
+          this.globalResults.score = 0;
+          this.globalResults.details.items = items;
+          this.globalResults.details.headings = this.headings;
 
           return {
             score: 0,
@@ -201,19 +183,16 @@ class SchoolA11yAudit extends Audit {
         }
 
         items[0].result = auditData.greenResult;
-        this.score = 1;
       }
 
-      this.globalResults['score'] = 0;
-      this.globalResults['details']['items'] = items;
-      this.globalResults['details']['type'] = 'table';
-      this.globalResults['details']['headings'] = this.headings;
-      this.globalResults['details']['summary'] = '';
+      console.log('passo');
 
-      console.log( this.globalResults)
+      this.globalResults.score = 1;
+      this.globalResults.details.items = items;
+      this.globalResults.details.headings = this.headings;
 
       return {
-        score: this.score,
+        score: 1,
       };
     }
   }
