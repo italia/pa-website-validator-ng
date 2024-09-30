@@ -6,13 +6,14 @@ import {
 import {DataElementError} from "../../utils/DataElementError.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
+import crawlerTypes from "../../types/crawler-types";
+import cookie = crawlerTypes.cookie;
+import {CookieAudit} from "../../common_audit_logics/cookieAuditLogic.js";
 
-const auditId = "school-ux-ui-consistency-bootstrap-italia-double-check";
+const auditId = "school-legislation-cookie-domain-check";
 const auditData = auditDictionary[auditId];
-import { compareVersions } from "compare-versions";
-import { cssClasses } from "./cssClasses.js";
 
-class SchoolBootstrap extends Audit {
+class SchoolCookie extends Audit {
     public globalResults: any = {
         score: 1,
         details: {
@@ -24,6 +25,7 @@ class SchoolBootstrap extends Audit {
         errorMessage: ''
     };
     public wrongItems: any = [];
+    public toleranceItems: any = [];
     public correctItems: any = [];
     public pagesInError : any = [];
     public score = 1;
@@ -34,9 +36,9 @@ class SchoolBootstrap extends Audit {
         return {
             id: auditId,
             title: auditData.title,
-            failureTitle: auditData.failureTitle,
-            description: auditData.description,
+            failureTitle: auditData.title,
             scoreDisplayMode: Audit.SCORING_MODES.BINARY,
+            description: auditData.description,
             requiredArtifacts: ["origin"],
         };
     }
@@ -65,9 +67,9 @@ class SchoolBootstrap extends Audit {
 
         if (page) {
             this.titleSubHeadings = [
-                "La libreria Bootstrap Italia è presente",
-                "Versione in uso",
-                "Classi CSS trovate",
+                "Dominio del cookie",
+                "Nome del cookie",
+                "Valore del cookie",
             ];
 
             const subResults = ["Nessuna", "Almeno una"];
@@ -80,22 +82,22 @@ class SchoolBootstrap extends Audit {
                     subItemsHeading: { key: "inspected_page", itemType: "url" },
                 },
                 {
-                    key: "title_library_name",
+                    key: "title_cookie_domain",
                     itemType: "text",
                     text: "",
-                    subItemsHeading: { key: "library_name", itemType: "text" },
+                    subItemsHeading: { key: "cookie_domain", itemType: "text" },
                 },
                 {
-                    key: "title_library_version",
+                    key: "title_cookie_name",
                     itemType: "text",
                     text: "",
-                    subItemsHeading: { key: "library_version", itemType: "text" },
+                    subItemsHeading: { key: "cookie_name", itemType: "text" },
                 },
                 {
-                    key: "title_classes_found",
+                    key: "title_cookie_value",
                     itemType: "text",
                     text: "",
-                    subItemsHeading: { key: "classes_found", itemType: "text" },
+                    subItemsHeading: { key: "cookie_value", itemType: "text" },
                 },
             ];
 
@@ -125,103 +127,35 @@ class SchoolBootstrap extends Audit {
                 }
             }
 
-            let singleResult = 0;
-            const item = {
-                inspected_page: url,
-                library_name: "No",
-                library_version: "",
-                classes_found: "",
-            };
-
-            const foundClasses = [];
             try {
-                let bootstrapItaliaVariableVersion = await page.evaluate(
-                    async function () {
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        //@ts-ignore
-                        return window.BOOTSTRAP_ITALIA_VERSION || null;
-                    }
-                ) as string|null;
+                const pageResult = await CookieAudit(page);
 
-                if (bootstrapItaliaVariableVersion !== null)
-                    bootstrapItaliaVariableVersion = bootstrapItaliaVariableVersion
-                        .trim()
-                        .replaceAll('"', "");
-
-                let bootstrapItaliaSelectorVariableVersion = await page.evaluate(
-                    async function () {
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        //@ts-ignore
-                        return (
-                            getComputedStyle(document.body).getPropertyValue(
-                                "--bootstrap-italia-version"
-                            ) || null
-                        );
-                    }
-                ) as string|null;
-
-                if (bootstrapItaliaSelectorVariableVersion !== null)
-                    bootstrapItaliaSelectorVariableVersion =
-                        bootstrapItaliaSelectorVariableVersion.trim().replaceAll('"', "");
-
-                if (
-                    bootstrapItaliaVariableVersion !== null &&
-                    bootstrapItaliaVariableVersion
-                ) {
-                    item.library_version = bootstrapItaliaVariableVersion;
-                    item.library_name = "Sì";
-
-                    if (compareVersions(bootstrapItaliaVariableVersion, "1.6.0") >= 0) {
-                        singleResult = 1;
-                    }
-                } else if (
-                    bootstrapItaliaSelectorVariableVersion !== null &&
-                    bootstrapItaliaSelectorVariableVersion
-                ) {
-                    item.library_version = bootstrapItaliaSelectorVariableVersion;
-                    item.library_name = "Sì";
-
-                    if (
-                        compareVersions(bootstrapItaliaSelectorVariableVersion, "1.6.0") >= 0
-                    ) {
-                        singleResult = 1;
-                    }
+                if (pageResult.score < this.score) {
+                    this.score = pageResult.score;
                 }
 
-                for (const cssClass of cssClasses) {
-                    const elementCount = await page.evaluate(async (cssClass) => {
-                        const cssElements = document.querySelectorAll(`.${cssClass}`);
-                        return cssElements.length;
-                    }, cssClass);
-
-                    if (elementCount > 0) {
-                        foundClasses.push(cssClass);
+                for (const item of pageResult.items) {
+                    if (item.is_correct) {
+                        this.correctItems.push(item);
+                    } else {
+                        this.wrongItems.push(item);
                     }
                 }
             } catch (ex) {
-                console.error(`ERROR ${url}: ${ex}`);
                 if (!(ex instanceof Error)) {
                     throw ex;
                 }
 
+                let errorMessage = ex.message;
+                errorMessage = errorMessage.substring(
+                    errorMessage.indexOf('"') + 1,
+                    errorMessage.lastIndexOf('"')
+                );
+
                 this.pagesInError.push({
                     inspected_page: url,
-                    library_name: ex.message,
+                    cookie_domain: errorMessage,
                 });
-            }
-
-            if (foundClasses.length === 0) {
-                singleResult = 0;
-                item.classes_found = subResults[0];
-            } else {
-                item.classes_found = subResults[1];
-            }
-
-            if (singleResult === 1) {
-                this.correctItems.push(item);
-            } else {
-                this.score = 0;
-                this.wrongItems.push(item);
             }
 
             console.log(`Results: ${JSON.stringify(this.globalResults)}`);
@@ -326,14 +260,14 @@ class SchoolBootstrap extends Audit {
         return this.globalResults;
     }
 
-    static getInstance(): Promise<SchoolBootstrap> {
-        if (!SchoolBootstrap.instance) {
-            SchoolBootstrap.instance = new SchoolBootstrap('', [], []);
+    static getInstance(): Promise<SchoolCookie> {
+        if (!SchoolCookie.instance) {
+            SchoolCookie.instance = new SchoolCookie('', [], []);
         }
-        return SchoolBootstrap.instance;
+        return SchoolCookie.instance;
     }
 }
 
 
-export {SchoolBootstrap};
-export default SchoolBootstrap.getInstance;
+export {SchoolCookie};
+export default SchoolCookie.getInstance;

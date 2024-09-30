@@ -2,21 +2,15 @@
 
 import { CheerioAPI } from "cheerio";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 
-import { getAllPageHTML, loadPageData, urlExists } from "../../utils/utils.js";
-import { auditDictionary } from "../../storage/auditDictionary.js";
+import { getAllPageHTML, urlExists } from "../../utils/utils.js";
 import {Page} from "puppeteer";
 
 import {Audit} from "../Audit.js";
-import {errorHandling, notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
+import {notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
 import * as cheerio from "cheerio";
 
-const auditId = "municipality-legislation-accessibility-declaration-is-present";
-const auditData = auditDictionary[auditId];
-
-class AccAudit extends Audit {
+class A11yAudit extends Audit {
   public globalResults: any = {
     score: 0,
     details: {
@@ -32,10 +26,10 @@ class AccAudit extends Audit {
 
   static get meta() {
     return {
-      id: auditId,
-      title: auditData.title,
-      failureTitle: auditData.failureTitle,
-      description: auditData.description,
+      id: this.auditId,
+      title: this.auditData.title,
+      failureTitle: this.auditData.failureTitle,
+      description: this.auditData.description,
       scoreDisplayMode: this.SCORING_MODES.BINARY,
       requiredArtifacts: ["origin"],
     };
@@ -99,7 +93,7 @@ class AccAudit extends Audit {
 
       const items = [
         {
-          result: auditData.redResult,
+          result: (this.constructor as typeof Audit).auditData.redResult,
           link_name: "",
           link_destination: "",
           existing_page: "No",
@@ -185,7 +179,7 @@ class AccAudit extends Audit {
           items[0].wcag = "Sì";
         }
 
-        items[0].result = auditData.greenResult;
+        items[0].result = (this.constructor as typeof Audit).auditData.greenResult;
       }
 
       console.log('passo');
@@ -201,22 +195,22 @@ class AccAudit extends Audit {
   }
 
   async getType(){
-    return auditId;
+    return (this.constructor as typeof Audit).auditId;
   }
 
   async returnGlobal(){
     return this.globalResults;
   }
 
-  static getInstance(): Promise<AccAudit> {
-    if (!AccAudit.instance) {
-      AccAudit.instance = new AccAudit('',[],[]);
+  static getInstance(): Promise<A11yAudit> {
+    if (!A11yAudit.instance) {
+      A11yAudit.instance = new A11yAudit('',[],[]);
     }
-    return AccAudit.instance;
+    return A11yAudit.instance;
   }
 
 }
 
-export {AccAudit};
-export default AccAudit.getInstance;
+export {A11yAudit};
+export default A11yAudit.getInstance;
 

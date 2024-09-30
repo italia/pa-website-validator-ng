@@ -2,6 +2,7 @@
 import crawlerTypes from "../types/crawler-types";
 import PageData = crawlerTypes.PageData
 import {Page} from "puppeteer";
+import {auditDictionary} from "../storage/auditDictionary.js";
 
 export abstract class Audit {
     id: string;
@@ -10,6 +11,9 @@ export abstract class Audit {
     protected timeout: number = 30000;
     protected static instance: any;
     globalResults : any = {};
+
+    static auditId = "audit";
+    static auditData = auditDictionary["audit"];
 
     constructor(id: string, gathererPageType: string[], auditsIds: string[]) {
         this.id = id;

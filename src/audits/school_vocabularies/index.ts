@@ -5,7 +5,7 @@ import {Page} from "puppeteer";
 
 import {Audit} from "../Audit.js";
 import {notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
-import {areAllElementsInVocabulary} from "../../utils/utils";
+import {areAllElementsInVocabulary} from "../../utils/utils.js";
 import {schoolModelVocabulary} from "./controlledVocabulary.js";
 
 const auditId = "school-controlled-vocabularies";
@@ -31,7 +31,7 @@ class SchoolVocabularies extends Audit {
       title: auditData.title,
       failureTitle: auditData.failureTitle,
       description: auditData.description,
-      scoreDisplayMode: this.SCORING_MODES.BINARY,
+      scoreDisplayMode: Audit.SCORING_MODES.NUMERIC,
       requiredArtifacts: ["origin"],
     };
   }

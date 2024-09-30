@@ -1,4 +1,13 @@
 export const auditDictionary = {
+  "audit": {
+    greenResult: "",
+    yellowResult: "",
+    redResult: "",
+    nonExecuted: "",
+    title: "",
+    failureTitle: "",
+    description: "",
+  },
   "common-security-ip-location": {
     greenResult: "L'hosting è su territorio europeo.",
     yellowResult: "",
