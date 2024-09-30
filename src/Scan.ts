@@ -1,46 +1,40 @@
 import PageManager from './PageManager.js';
-import { browser } from './PuppeteerInstance.js';
+import {browser} from './PuppeteerInstance.js';
 
-import { gatherers } from './GathererManager.js';
-import { audits } from './AuditManager.js';
+import {gatherers} from './GathererManager.js';
+import {audits} from './AuditManager.js';
 
 import crawlerTypes from "./types/crawler-types.js";
 import PageData = crawlerTypes.PageData
 import {config} from "./config/config.js";
+import {loadPage} from "./utils/utils.js";
+import {Page} from "puppeteer";
 
 const scan = async (pageData: PageData) => {
     try {
         /** if no gathering or auditing for this page type skip*/
 
+        console.log(PageManager.getAllPages());
 
-        
         //console.log(pageData)
-        if (!config.gatherers[pageData.type]){
+        if (!config.gatherers[pageData.type] && !config.audits[pageData.type]) {
+            PageManager.setGathered(pageData.url)
             PageManager.setAudited(pageData.url)
+
             if (!PageManager.hasRemainingPages()) {
                 console.error('closing puppeteer')
                 await browser.close()
                 console.log('SCAN ENDED - navigated pages:')
-                console.log( PageManager.getAllPages())
-           
+                console.log(PageManager.getAllPages())
+
             }
             return
-        }
-
-        if (config.gatherers[pageData.type] && !(config.gatherers[pageData.type].length > 0) 
-            //&& config.audits[pageData.type] && !(config.audits[pageData.type].length > 0 )
-        ) {
-            PageManager.setAudited(pageData.url)
-            //console.log(PageManager.hasRemainingPages())
-    
-            if (!PageManager.hasRemainingPages()) {
-                console.error('closing puppeteer')
-                console.log(await browser.close())
-                'SCAN ENDED - navigated pages are:'
-                console.log( PageManager.getAllPages())
-            }
-           
-            return;
+        }else if(!config.audits[pageData.type]){
+            PageManager.setAudited(pageData.url);
+            pageData = PageManager.getPageByUrl(pageData.url);
+        }else if(!config.gatherers[pageData.type]){
+            PageManager.setGathered(pageData.url);
+            pageData = PageManager.getPageByUrl(pageData.url);
         }
 
         console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Gathering start`)
@@ -49,54 +43,113 @@ const scan = async (pageData: PageData) => {
         let gathererPages: any = []
         let gatheringErrors = []
 
-        //console.log(config[pageData.type].gatherers)
-        for (let gathererId of config.gatherers[pageData.type]) {
-            try {
-                //console.log(gathererId,gatherers[gathererId])
+
+        if(!pageData.gathered){
+            for (let gathererId of config.gatherers[pageData.type]) {
+                const page : Page = await loadPage(pageData.url);
+                await page.waitForNetworkIdle();
                 if (!gatherers[gathererId]) continue
 
                 //console.log(gathererId)
                 const gatherer = await gatherers[gathererId]()
-               
-                if (gatherer === undefined) throw new Error(` No gatherer found for id ${gathererId}: check your configuration` )
-    
-                const fetchedPages = await gatherer.navigateAndFetchPages(pageData.url, 5)
-                gathererPages = [...gathererPages,...fetchedPages]
-            } catch(e:any) {
-                console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: ERROR`)
-                console.log(e.message)
-                gatheringErrors.push(e)
+                try {
+                    //console.log(gathererId,gatherers[gathererId])
+
+                    if (gatherer === undefined) throw new Error(` No gatherer found for id ${gathererId}: check your configuration`)
+
+                    const fetchedPages = await gatherer.navigateAndFetchPages(pageData.url, 5, '', page);
+                    gathererPages = [...gathererPages, ...fetchedPages]
+                } catch (e: any) {
+                    console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: ERROR`)
+                    console.log(e.message)
+                    await PageManager.addPage({
+                        id: '',
+                        url: '/temp' + gatherer.getPageType(),
+                        type: gatherer.getPageType(),
+                        redirectUrl: '',
+                        internal: false,
+                        gathered: true,
+                        audited: true,
+                        errors: [e.message],
+                        temporary: true,
+                    })
+                    gatheringErrors.push(e)
+                }
             }
+
+            pageData = await PageManager.setErrors(pageData.url, gatheringErrors, true)
+            gathererPages.forEach((page: PageData) => {
+                PageManager.addPage(page)
+            });
+
+
+            await PageManager.setGathered(pageData.url);
+            console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Gathering end`);
+
         }
-        
-        PageManager.setErrors(pageData.url,gatheringErrors )
-        gathererPages.forEach((page: PageData) => {
-            PageManager.addPage(page)
-        });
 
-        console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Gathering end`)
-    
         /** AUDITING */
-        // for (let i = 0; i < 6; i++) {
-        //     console.log(`SCAN \x1b[32m ${pageData.type}\x1b[0m ${pageData.url} Auditing: C.SC.1.${i} on page ${pageData.url}`);
+        let auditedPages: any = []
+        let auditingErrors = []
 
-        //     await new Promise((resolve) => {
-        //         setTimeout(() => {
-        //             console.log(`SCAN \x1b[32m ${pageData.type}\x1b[0m ${pageData.url} Auditing: C.SC.1.${i}  on page ${pageData.url} \x1b[32m DONE\x1b[0m `);
-        //             resolve('')
-        //         }, Math.random() * 2000);
-        //     });
-        // }
 
-        PageManager.setAudited(pageData.url)
-    
+        if(!pageData.audited || (pageData.audited && pageData.temporary)){
+
+            console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Audit start`)
+
+            if(config.audits[pageData.type]){
+                for (let auditId of config.audits[pageData.type]) {
+                    if (!audits[auditId]) continue
+                    const audit = await audits[auditId]()
+                    try {
+
+                        let page : Page | null = null;
+                        if(!pageData.temporary){
+                            page = await loadPage(pageData.url);
+                        }
+
+                        if (audit === undefined) throw new Error(` No audit found for id ${auditId}: check your configuration`);
+
+                        await audit.auditPage(page, pageData.errors ? pageData.errors[0] : '');
+                        const result = await audit.returnGlobal();
+                        await PageManager.setGlobalResults({result: result, auditType: await audit.getType()});
+                        console.log(`AUDIT RESULT for Page ${pageData.type} ${pageData.url}:  ${JSON.stringify(result)}`);
+
+                    } catch (e: any) {
+                        console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: ERROR`)
+                        console.log(e.message)
+
+                        auditingErrors.push(e)
+                    }
+                }
+            }
+
+            PageManager.setErrors(pageData.url, auditingErrors)
+            PageManager.setAudited(pageData.url);
+            console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Auditing end`);
+        }
+
         if (!PageManager.hasRemainingPages()) {
             console.error('closing puppeteer...')
             await browser.close()
-            PageManager.getAllPages()
-            console.log('SCAN ENDED - navigated pages:' )
-            console.log(PageManager.getAllPages())
+            PageManager.getAllPages();
+            PageManager.getGlobalResults();
+            console.log('SCAN ENDED - navigated pages:')
+            console.log(PageManager.getAllPages(), PageManager.getGlobalResults());
+
+           /* await getGlobalResult(){
+                for(audit){
+                    audit.returnResult()
+                }
+
+            }*/
         }
+
+
+
+
+
+
         //sconsole.log('scan ended')
 
     } catch (err) {

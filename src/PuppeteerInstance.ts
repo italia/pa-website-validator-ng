@@ -12,7 +12,6 @@ async function initializePuppeteer(): Promise<void> {
 
     browser = await puppeteer.launch({
       headless: true,
-      protocolTimeout: 30000,
       args: ["--no-zygote", "--no-sandbox", "--accept-lang=it"],
     }).catch((err) => {
       console.error('Failed to launch Puppeteer:', err);

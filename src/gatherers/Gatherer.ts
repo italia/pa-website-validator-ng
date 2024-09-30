@@ -2,6 +2,7 @@ import puppeteer, { HTTPResponse, JSHandle, Page } from "puppeteer";
 import { browser } from '../PuppeteerInstance.js'
 import crawlerTypes from "../types/crawler-types.js";
 import PageData = crawlerTypes.PageData
+import {loadPage} from "../utils/utils.js";
 
 abstract class Gatherer {
     id: string;
@@ -21,7 +22,7 @@ abstract class Gatherer {
         return this.constructor(id, gathererPageType, auditsIds);
     }
 
-    async navigateAndFetchPages(url: string, numberOfPages = 5, website: string): Promise<PageData[]> {
+    async navigateAndFetchPages(url: string, numberOfPages = 5, website: string = '', page: Page): Promise<PageData[]> {
         if (this.gatheredPages.length > 0) {
             return this.gatheredPages
         }
@@ -34,6 +35,7 @@ abstract class Gatherer {
                 url: url,
                 id: currentClass.pageType + Date.now(),
                 type: currentClass.pageType,
+                gathered: false,
                 audited: false,
                 redirectUrl: '',
                 internal: true
@@ -45,7 +47,7 @@ abstract class Gatherer {
 
     async getRandomPagesUrl(url: string, numberOfPages = 1): Promise<string[]> {
         let pagesUrls: string[] = [];
-        const page = await this.loadPage(url);
+        const page = await loadPage(url);
 
 
         const currentClass = this.constructor as typeof Gatherer
@@ -119,9 +121,14 @@ abstract class Gatherer {
 
     async gotoRetry(page: Page, url: string, retryCount: number): Promise<any | null> {
         try {
+
+            console.log(
+                `${url} goto tentative:  ${retryCount} inizio`
+            );
+
             let response = await page.goto(url, {
                 waitUntil: ["load", "networkidle0"],
-                timeout: this.timeout,
+                timeout: 0,
             });
 
             try {
@@ -134,12 +141,12 @@ abstract class Gatherer {
                 try {
                     response = await page.goto(url, {
                         waitUntil: ["load", "networkidle0"],
-                        timeout: this.timeout,
+                        timeout: 0,
                     });
 
                     await page.reload({
                         waitUntil: ["load", "networkidle0"],
-                        timeout: this.timeout,
+                        timeout: 0,
                     });
 
                     await page.evaluate(async () => {
@@ -149,12 +156,12 @@ abstract class Gatherer {
                     console.log('context destroyed 2')
                     await page.goto(url, {
                         waitUntil: ["load", "networkidle0"],
-                        timeout: this.timeout,
+                        timeout: 0,
                     });
 
                     response = await page.waitForNavigation({
                         waitUntil: ["load", "networkidle0"],
-                        timeout: this.timeout,
+                        timeout: 0,
                     });
                 }
             }
@@ -169,35 +176,6 @@ abstract class Gatherer {
                 `${url} goto tentative:  ${retryCount}`
             );
             return await this.gotoRetry(page, url, retryCount - 1);
-        }
-    };
-
-    async loadPage(url: string): Promise<any> {
-        try {
-            const page = await browser.newPage();
-
-            await page.setRequestInterception(true);
-            await page.on("request", (request: any) => {
-                if (
-                    ["image", "imageset", "media"].indexOf(request.resourceType()) !== -1 ||
-                    new URL(request.url()).pathname.endsWith(".pdf")
-                ) {
-                    request.abort();
-                } else {
-                    request.continue();
-                }
-            });
-
-            const res = await this.gotoRetry(page, url, 3);
-            console.log(res?.url(), res?.status());
-
-            return page
-        } catch (ex:any
-        ) {
-            console.error(`ERROR ${url}: ${ex}`);
-            throw new Error(
-                ex.message
-            );
         }
     };
 
@@ -265,7 +243,7 @@ abstract class Gatherer {
     };
 
     async getPrimaryPageUrl(url: string, dataElement: string) {
-        const $ = await this.loadPage(url);
+        const $ = await loadPage(url);
         const pageElements = await this.getHREFValuesDataAttribute(
             $,
             `[data-element="${dataElement}"]`
@@ -282,8 +260,6 @@ abstract class Gatherer {
 
         return pageUrl;
     };
-
-
 
     async getMultipleDataElementUrls(page: Page, dataElement: string) {
         const urls = [];
@@ -321,7 +297,6 @@ abstract class Gatherer {
 
         return pagesUrls;
     };
-
 
     async getButtonUrl(page: Page, dataElement: string) {
         const pageElements = await this.getButtonValuesDataAttribute(
@@ -375,6 +350,11 @@ abstract class Gatherer {
 
         return buttonUrls;
     };
+
+    getPageType(){
+        const currentClass = this.constructor as typeof Gatherer
+        return currentClass.pageType;
+    }
 }
 
 export { Gatherer };

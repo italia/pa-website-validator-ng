@@ -7,8 +7,10 @@ declare namespace crawlerTypes {
     type: string;
     redirectUrl: string | undefined
     internal: boolean | undefined
+    gathered: boolean
     audited: boolean
     errors?:any[]
+    temporary?: boolean
   }
 
   interface requestPages {

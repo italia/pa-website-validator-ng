@@ -32,7 +32,7 @@ async function collectAudits(): Promise<void> {
     }
 
   } catch (error) {
-    console.error('Error gathering modules:', error);
+    console.error('Error auditing modules:', error);
     throw error;
   }
 }

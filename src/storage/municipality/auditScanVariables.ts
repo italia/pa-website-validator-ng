@@ -26,7 +26,7 @@ export const auditScanVariables = {
     "municipality-contacts-assistency": {
       numberOfServicesToBeScanned: 1,
     },
-    "municipality-servizi-structure-match-model": {
+    "service": {
       numberOfServicesToBeScanned: 1,
     },
     "municipality-metatag": {

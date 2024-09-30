@@ -9,9 +9,6 @@ const config: any = {
                 "booking_appointment",
                 "personal_area_login"
             ],
-            "first-level": [
-            ],
-            "second-level": [],
             "events-page": [
                 "events"
             ],
@@ -20,10 +17,22 @@ const config: any = {
             ],
             "services-page": [
                 "services"
-            ]
+            ],
+
         },
         "audits": {
-
+            "homepage": [
+                "services_page",
+                "vivere_page",
+                "booking_appointment",
+                "personal_area_login"
+            ],
+            "services-page": [
+                "service"
+            ],
+            "service": [
+                "service"
+            ]
         }
     },
     "school": {

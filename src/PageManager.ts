@@ -5,7 +5,9 @@ import PageData = crawlerTypes.PageData
 class PageManager {
     private static instance: PageManager;
     private pagesArray: PageData[] = [];
+    private globalResult : any = {};
     private emitter: EventEmitter;
+    private globalResults: any = {};
   
     private constructor() {
       this.emitter = new EventEmitter();
@@ -21,9 +23,23 @@ class PageManager {
   
     async addPage(page:PageData): Promise<void> {
       if (!this.pagesArray.find(pageEl=>pageEl.url == page.url)) {
-        this.pagesArray.push({...page, audited:false});
+        this.pagesArray.push({...page});
         this.emitter.emit('pagesAdded', page);
       }
+    }
+
+    async setGlobalResults(result: any) {
+        if (this.globalResult['results'] && this.globalResult['results'].find((el : any) => el.auditType === result.auditType)){
+            this.globalResult['results'][this.globalResult['results'].findIndex((el : any) => el.auditType === result.auditType)] = result;
+        }else{
+            this.globalResult['results'].push(result);
+        }
+    }
+
+    async getGlobalResults() {
+        return this.globalResult['results'].map((el : any) => {
+            return el.result
+        });
     }
   
     removePage(id:string) {
@@ -37,6 +53,13 @@ class PageManager {
     getPageById(id: string): PageData | undefined {
       return this.pagesArray.find(page => page.id === id);
     }
+
+    getPageByUrl(url: string): PageData | any {
+        if(this.pagesArray && this.pagesArray.length){
+            return this.pagesArray.find(page => page.url === url);
+        }
+        return
+    }
   
     getAllPages(): PageData[] {
       return [...this.pagesArray];
@@ -47,13 +70,22 @@ class PageManager {
       if (page) page.audited = true
     }
 
-    setErrors(url:string, errors:Error[]){
+    setGathered(url:string){
+        let page = this.pagesArray.find(page => page.url === url)
+        if (page) page.gathered = true
+    }
+
+    setErrors(url:string, errors:Error[], returnPage?: boolean) : PageData | any{
       let page = this.pagesArray.find(page => page.url === url)
-      if (page) page.errors = errors
+      if (page) page.errors = errors;
+
+      if(returnPage){
+          return page;
+      }
     }
 
     hasRemainingPages(){
-      const remainingPages = this.pagesArray.find(el=> el.audited === false)
+      const remainingPages = this.pagesArray.find(el=> !el.audited || !el.gathered)
       return remainingPages != undefined
     }
   }

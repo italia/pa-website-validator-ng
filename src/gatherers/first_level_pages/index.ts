@@ -5,6 +5,7 @@ import PageData = crawlerTypes.PageData
 import {
   primaryMenuDataElement,
 } from "../../storage/school/menuItems.js";
+import {Page} from "puppeteer";
 
 class firstLevelPagesGatherer extends Gatherer {
 
@@ -18,10 +19,9 @@ class firstLevelPagesGatherer extends Gatherer {
     return firstLevelPagesGatherer.instance;
   }
 
-  async navigateAndFetchPages(url: string, numberOfPages = 5): Promise<PageData[]> {
+  async navigateAndFetchPages(url: string, numberOfPages = 5,  website: '', page : Page): Promise<PageData[]> {
     if (this.gatheredPages.length > 0) return this.gatheredPages
 
-    const page = await this.loadPage(url)
     const currentClass = this.constructor as typeof Gatherer
 
     let fetchedUrls:string[] = []
@@ -34,7 +34,8 @@ class firstLevelPagesGatherer extends Gatherer {
         url: url,
         id: currentClass.pageType + Date.now(),
         type: currentClass.pageType,
-        'audited':false,
+        gathered: false,
+        audited:false,
         internal: true,
         redirectUrl:''
       }
@@ -62,9 +63,10 @@ class firstLevelPagesGatherer extends Gatherer {
   async getRandomFirstLevelPagesUrl(
     url: string,
     numberOfPages = 1,
-    id: string
+    id: string,
+    page: Page
   ): Promise<string[]> {
-    const page = await this.loadPage(url);
+
     const pagesUrls = [
       ...new Set(
         await this.getHREFValuesDataAttribute(

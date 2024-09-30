@@ -1,6 +1,7 @@
 import { Gatherer } from '../Gatherer.js';
 import crawlerTypes from "../../types/crawler-types.js";
 import PageData = crawlerTypes.PageData
+import {Page} from "puppeteer";
 
 
 class eventsGatherer extends Gatherer {
@@ -9,13 +10,10 @@ class eventsGatherer extends Gatherer {
   static dataElement: string = 'event-link'
   static pageType: string = 'event'
 
-  async navigateAndFetchPages(url: string, numberOfPages = 5): Promise<PageData[]> {
-
-    /** load events page */
-    const page = await this.loadPage(url)
+  async navigateAndFetchPages(url: string, numberOfPages = 5, website = '', page: Page): Promise<PageData[]> {
 
     let maxCountPages = 0;
-    let clickButton = true;
+    let clickButton : any = true;
     while (clickButton) {
       try {
         clickButton = await page.$('[data-element="load-other-cards"]') 
@@ -25,10 +23,9 @@ class eventsGatherer extends Gatherer {
         }
 
         await page.click('[data-element="load-other-cards"]');
-        await page.waitForTimeout(1000);
  
         console.log(`GATHERER events : load other events`)
-        const currentCountPages = (await page.$$(`[data-element="${eventsGatherer.dataElement}"`).length);
+        const currentCountPages = ((await page.$$(`[data-element="${eventsGatherer.dataElement}"`)).length);
 
         console.log(currentCountPages)
         if (!currentCountPages || currentCountPages === maxCountPages) {

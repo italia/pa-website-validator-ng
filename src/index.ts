@@ -75,6 +75,7 @@ async function run(type: string, website: string, page_type:string) {
         type: page_type ?? 'homepage',
         redirectUrl: '',
         internal: true,
+          gathered: false,
         audited: false
       })
 

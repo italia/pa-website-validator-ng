@@ -2,6 +2,7 @@ import { Gatherer } from '../Gatherer.js';
 import crawlerTypes from "../../types/crawler-types.js";
 import PageData = crawlerTypes.PageData
 import { setTimeout } from "timers/promises";
+import {Page} from "puppeteer";
 
 
 class servicesGatherer extends Gatherer {
@@ -9,16 +10,15 @@ class servicesGatherer extends Gatherer {
   static dataElement: string = 'service-link'
   static pageType: string = 'service'
 
-  async navigateAndFetchPages(url: string, numberOfPages = 5): Promise<PageData[]> {
-    /** load events page */
-    const page = await this.loadPage(url)
+  async navigateAndFetchPages(url: string, numberOfPages = 5, website: '', page : Page ): Promise<PageData[]> {
 
     let maxCountPages = 0;
     let clickButton = true;
-    let foundElements:any = []
+    let foundElements:any = [];
+    let error = '';
     while (clickButton) {
       try {
-        let clickButton = await page.$$('[data-element="load-other-cards"]')
+        let clickButton : any = await page.$$('[data-element="load-other-cards"]');
   
         if (!clickButton) {
           continue;
@@ -31,6 +31,8 @@ class servicesGatherer extends Gatherer {
             idleTime: 1000,
           }),
         ]);
+
+        await page.waitForNetworkIdle();
 
         foundElements = await page.$$(`[data-element="${servicesGatherer.dataElement}"`)
         const foundElementsHrefs:PageData[] | any =await  Promise.all( foundElements.map(async(el:any) => {
@@ -55,7 +57,7 @@ class servicesGatherer extends Gatherer {
 
     if (!maxCountPages || maxCountPages == 0) {
       await page.close()
-      throw new Error(`Cannot find elements with data-element "${servicesGatherer.dataElement}"`)
+      throw new Error(`Cannot find elements with data-element "${servicesGatherer.dataElement} ${maxCountPages} ${error}"`);
     }
 
     //console.log(this.gatheredPages)
@@ -64,11 +66,15 @@ class servicesGatherer extends Gatherer {
           url: url,
           id: 'service' + Date.now(),
           type: 'service',
-          'audited':false,
+          gathered: false,
+          audited:false,
           internal: true,
           redirectUrl:''
         } as PageData
     })
+
+
+
 
 
     //console.log('HREF', this.gatheredPages[0])

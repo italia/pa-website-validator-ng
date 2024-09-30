@@ -1,18 +1,17 @@
 import {Gatherer} from '../Gatherer.js'
 import crawlerTypes from "../../types/crawler-types.js";
 import PageData = crawlerTypes.PageData
+import {Page} from "puppeteer";
 
 class firstLevelPageGatherer extends Gatherer {
 
   static dataElements:string[] = ['overview']
   static pageType:string= 'first-level'
 
-  async navigateAndFetchPages(url: string, numberOfPages = 5, website: string): Promise<PageData[]> {
+  async navigateAndFetchPages(url: string, numberOfPages = 5, website = '', page : Page): Promise<PageData[]> {
     if (this.gatheredPages.length > 0) {
         return this.gatheredPages
     }
-
-    const page = await this.loadPage(url)
     const currentClass = this.constructor as typeof Gatherer
     let fetchedUrls:string[] = []
     for (let dataElement of currentClass.dataElements) {
@@ -26,6 +25,7 @@ class firstLevelPageGatherer extends Gatherer {
             url: url,
             id: currentClass.pageType + Date.now(),
             type: currentClass.pageType,
+            gathered: false,
             audited: false,
             redirectUrl: '',
             internal: true

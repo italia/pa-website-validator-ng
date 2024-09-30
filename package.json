@@ -28,10 +28,12 @@
   },
   "dependencies": {
     "axios": "^1.7.4",
+    "cheerio": "^1.0.0-rc.12",
     "compare-versions": "^6.1.1",
     "glob": "^11.0.0",
     "inquirer": "^10.1.8",
     "lighthouse": "^12.2.0",
+    "lru-cache": "^11.0.1",
     "puppeteer": "^23.1.1",
     "yargs": "^17.7.2"
   }

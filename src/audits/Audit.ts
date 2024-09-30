@@ -1,6 +1,7 @@
 
 import crawlerTypes from "../types/crawler-types";
 import PageData = crawlerTypes.PageData
+import {Page} from "puppeteer";
 
 export abstract class Audit {
     id: string;
@@ -8,11 +9,17 @@ export abstract class Audit {
     auditsIds: string[];
     protected timeout: number = 30000;
     protected static instance: any;
+    globalResults : any = {};
 
     constructor(id: string, gathererPageType: string[], auditsIds: string[]) {
         this.id = id;
         this.gathererPageType = gathererPageType;
         this.auditsIds = auditsIds;
+    }
+
+    async auditPage( page: Page | null,
+                     error?: string) : Promise<any> {
+        return {}
     }
 
     async addError() {
@@ -26,6 +33,17 @@ export abstract class Audit {
 
     async generateTotalResult(){
 
+    }
+
+    static get SCORING_MODES() {
+        return {
+            NUMERIC: 'numeric',
+            BINARY: 'binary',
+            MANUAL: 'manual',
+            INFORMATIVE: 'informative',
+            NOT_APPLICABLE: 'notApplicable',
+            ERROR: 'error',
+        };
     }
 
 }

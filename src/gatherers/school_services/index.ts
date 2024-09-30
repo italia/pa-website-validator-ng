@@ -1,6 +1,8 @@
 import {Gatherer} from '../Gatherer.js'
 import crawlerTypes from "../../types/crawler-types.js";
 import PageData = crawlerTypes.PageData
+import {Page} from "puppeteer";
+import {loadPage} from "../../utils/utils.js";
 
 class servicesPageGatherer extends Gatherer {
 
@@ -8,12 +10,11 @@ class servicesPageGatherer extends Gatherer {
   static pageType:string= 'service'
   static serviceDataElement = 'service-link'
 
-  async navigateAndFetchPages(url: string, numberOfPages = 5, website: string): Promise<PageData[]> {
+  async navigateAndFetchPages(url: string, numberOfPages = 5, website= '', page : Page): Promise<PageData[]> {
     if (this.gatheredPages.length > 0) {
         return this.gatheredPages
     }
 
-    const page = await this.loadPage(url)
     const currentClass = this.constructor as typeof Gatherer
     let fetchedUrls:string[] = []
     for (let dataElement of currentClass.dataElements) {
@@ -22,7 +23,7 @@ class servicesPageGatherer extends Gatherer {
 
     let servicesUrls:string[] = []
     for (let fetchedUrl of fetchedUrls){
-      const servicePage = await this.loadPage(fetchedUrl) 
+      const servicePage = await loadPage(fetchedUrl)
 
       servicesUrls = [...servicesUrls,...await this.getMultipleDataElementUrls(servicePage, servicesPageGatherer.serviceDataElement) as string[]]
       await servicePage.close()
@@ -35,6 +36,7 @@ class servicesPageGatherer extends Gatherer {
             url: url,
             id: currentClass.pageType + Date.now(),
             type: currentClass.pageType,
+            gathered: false,
             audited: false,
             redirectUrl: '',
             internal: true
