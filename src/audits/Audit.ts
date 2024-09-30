@@ -39,6 +39,14 @@ export abstract class Audit {
 
     }
 
+    static async getType(){
+        return this.auditId;
+    }
+
+    async returnGlobal(){
+        return this.globalResults;
+    }
+
     static get SCORING_MODES() {
         return {
             NUMERIC: 'numeric',
