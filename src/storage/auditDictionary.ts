@@ -7,6 +7,11 @@ export const auditDictionary = {
     title: "",
     failureTitle: "",
     description: "",
+    subItem: {
+      greenResult: "",
+      yellowResult: "",
+      redResult: "",
+    },
   },
   "common-security-ip-location": {
     greenResult: "L'hosting è su territorio europeo.",
