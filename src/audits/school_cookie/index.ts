@@ -5,8 +5,9 @@ import {
 } from "../../config/commonAuditsParts.js";
 import {DataElementError} from "../../utils/DataElementError.js";
 import {Audit} from "../Audit.js";
-import {Page} from "puppeteer";
-import {CookieAudit} from "../../common_audit_logics/cookieAuditLogic.js";
+import {Cookie, Page} from "puppeteer";
+import crawlerTypes from "../../types/crawler-types";
+import cookie = crawlerTypes.cookie;
 
 const auditId = "school-legislation-cookie-domain-check";
 const auditData = auditDictionary[auditId];
@@ -126,13 +127,25 @@ class SchoolCookie extends Audit {
             }
 
             try {
-                const pageResult = await CookieAudit(page);
+                const items = [];
+                let score = 1;
 
-                if (pageResult.score < this.score) {
-                    this.score = pageResult.score;
+                let cookies: Cookie[] = await page.cookies();
+                const resultCookies = await checkCookieDomain(page.url(), cookies);
+
+                for (const resultCookie of resultCookies) {
+                    if (!resultCookie.is_correct) {
+                        score = 0;
+                    }
+
+                    items.push(resultCookie);
                 }
 
-                for (const item of pageResult.items) {
+                if (score < this.score) {
+                    this.score = score;
+                }
+
+                for (const item of items) {
                     if (item.is_correct) {
                         this.correctItems.push(item);
                     } else {
@@ -269,3 +282,33 @@ class SchoolCookie extends Audit {
 
 export {SchoolCookie};
 export default SchoolCookie.getInstance;
+
+async function checkCookieDomain(
+    url: string,
+    cookies: Cookie[]
+): Promise<cookie[]> {
+    const returnValue = [];
+
+    for (const cookie of cookies) {
+        const cookieValues = {
+            inspected_page: url,
+            cookie_name: cookie.name,
+            cookie_value: cookie.value,
+            cookie_domain: cookie.domain,
+            is_correct: false,
+        };
+
+        const pageUrl = new URL(url).hostname.replaceAll("www.", "");
+
+        if (
+            pageUrl === cookie.domain.replaceAll("www.", "") ||
+            cookie.domain.endsWith("." + pageUrl)
+        ) {
+            cookieValues.is_correct = true;
+        }
+
+        returnValue.push(cookieValues);
+    }
+
+    return returnValue;
+}
