@@ -41,7 +41,14 @@ const parser = yargs(hideBin(process.argv))
     type: "number",
     demandOption: false,
     default: 30000,
-   });
+   })
+    .option("accuracy", {
+      describe:
+          "Type of accuracy to create report",
+      type: "string",
+      demandOption: false,
+      default: "all",
+    });
 
 try {
   const args = await parser.argv;
