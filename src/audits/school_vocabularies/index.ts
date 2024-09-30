@@ -2,7 +2,7 @@
 
 import { auditDictionary } from "../../storage/auditDictionary.js";
 import {Page} from "puppeteer";
-
+import { browser } from './../../PuppeteerInstance.js'
 import {Audit} from "../Audit.js";
 import {notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
 import {areAllElementsInVocabulary} from "../../utils/utils.js";

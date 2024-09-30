@@ -6,8 +6,6 @@ import {
 import {DataElementError} from "../../utils/DataElementError.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
-import crawlerTypes from "../../types/crawler-types";
-import cookie = crawlerTypes.cookie;
 import {CookieAudit} from "../../common_audit_logics/cookieAuditLogic.js";
 
 const auditId = "school-legislation-cookie-domain-check";
