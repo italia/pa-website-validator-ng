@@ -15,24 +15,17 @@ const cache = new LRUCache<string, CheerioAPI>({ max: 1000 });
 const redirectUrlCache = new LRUCache<string, string>({ max: 1000 });
 const requestTimeout = parseInt(process.env["requestTimeout"] ?? "30000");
 
-const loadPageData = async (url: string, wait: boolean = false): Promise<CheerioAPI> => {
+const loadPageData = async (url: string, wait: boolean = false, newBrowser = true): Promise<CheerioAPI> => {
   const data_from_cache = cache.get(url);
   if (data_from_cache !== undefined) {
     return data_from_cache;
   }
   let data = "";
-  const browser = await puppeteer.launch({
-    headless: true,
-    protocolTimeout: requestTimeout,
-    args: ["--no-zygote", "--no-sandbox", "--accept-lang=it"],
-  });
-  const browserWSEndpoint = browser.wsEndpoint();
   try {
-    const browser2 = await puppeteer.connect({ browserWSEndpoint });
-    const page = await browser2.newPage();
+    const page = await browser.newPage();
 
     await page.setRequestInterception(true);
-    page.on("request", (request) => {
+    page.on("request", (request : any) => {
       if (
         ["image", "imageset", "media"].indexOf(request.resourceType()) !== -1 ||
         new URL(request.url()).pathname.endsWith(".pdf")
@@ -63,9 +56,7 @@ const loadPageData = async (url: string, wait: boolean = false): Promise<Cheerio
 
     await page.goto("about:blank");
     await page.close();
-    browser2.disconnect();
 
-    await browser.close();
     const c = cheerio.load(data);
     cache.set(url, c);
     cache.set(redirectedUrl, c);

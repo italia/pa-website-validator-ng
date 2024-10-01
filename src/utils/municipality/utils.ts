@@ -29,6 +29,7 @@ import requestPages = crawlerTypes.requestPages;
 import pageLink = crawlerTypes.pageLink;
 import municipalitySecondLevelPages = crawlerTypes.municipalitySecondLevelPages;
 import {LRUCache} from "lru-cache";
+import {browser} from "../../PuppeteerInstance.js";
 
 
 const cacheResults = new LRUCache<string, string[]>({ max: 100 });
@@ -472,18 +473,11 @@ const checkFeedbackComponent = async (url: string) => {
     score: score,
     errors: errors,
   };
-  const browser = await puppeteer.launch({
-    headless: true,
-    protocolTimeout: requestTimeout,
-    args: ["--no-zygote", "--no-sandbox", "--accept-lang=it"],
-  });
-  const browserWSEndpoint = browser.wsEndpoint();
 
   try {
-    const browser2 = await puppeteer.connect({ browserWSEndpoint });
-    const page = await browser2.newPage();
+    const page = await browser.newPage();
     await page.setRequestInterception(true);
-    page.on("request", (request) => {
+    page.on("request", (request : any) => {
       if (
         ["image", "imageset", "media"].indexOf(request.resourceType()) !== -1 ||
         new URL(request.url()).pathname.endsWith(".pdf")
@@ -496,7 +490,7 @@ const checkFeedbackComponent = async (url: string) => {
     const res = await gotoRetry(page, url, errorHandling.gotoRetryTentative);
     console.log(res?.url(), res?.status());
 
-    returnValues = await page.evaluate(async (feedbackComponentStructure) => {
+    returnValues = await page.evaluate(async (feedbackComponentStructure : any) => {
       let score = 1;
       const errors: string[] = [];
 
@@ -570,7 +564,7 @@ const checkFeedbackComponent = async (url: string) => {
       }
 
       const feedbackReturnValue = await page.evaluate(
-        async (feedbackComponentStructure, i) => {
+        async (feedbackComponentStructure : any, i : any) => {
           let score = 1;
           const errors: string[] = [];
 
@@ -759,7 +753,7 @@ const checkFeedbackComponent = async (url: string) => {
 
                 const lowerCasedVocabulary =
                   feedbackComponentStructure.negative_rating.answers.texts.map(
-                    (vocabularyElements) => vocabularyElements.toLowerCase()
+                    (vocabularyElements : string) => vocabularyElements.toLowerCase()
                   );
 
                 let allCorrectAnswers = true;
@@ -845,7 +839,7 @@ const checkFeedbackComponent = async (url: string) => {
 
                 const lowerCasedVocabulary =
                   feedbackComponentStructure.positive_rating.answers.texts.map(
-                    (vocabularyElements) => vocabularyElements.toLowerCase()
+                    (vocabularyElements : string) => vocabularyElements.toLowerCase()
                   );
 
                 let allCorrectAnswers = true;
@@ -919,10 +913,8 @@ const checkFeedbackComponent = async (url: string) => {
 
     await page.goto("about:blank");
     await page.close();
-    browser2.disconnect();
   } catch (ex) {
     console.error(`ERROR ${url}: ${ex}`);
-    await browser.close();
     throw new Error(
       `Il test è stato interrotto perché nella prima pagina analizzata ${url} si è verificato l'errore "${ex}". Verificarne la causa e rifare il test.`
     );
