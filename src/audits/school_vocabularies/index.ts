@@ -83,25 +83,19 @@ class SchoolVocabularies extends Audit {
 
       let argumentsElements: string[] = [];
       try {
-        //argumentsElements = await getArgumentsElements(url);  TODO
+        //argumentsElements = await getArgumentsElements(url);  TODO: la funzione è definita alla fine del file ma utilizza una nuova istanza di puppeteer
       } catch (e) {
-        // return {  TODO
-        //   score: 0,
-        //   details: Audit.makeTableDetails(
-        //       [{ key: "result", itemType: "text", text: "Risultato" }],
-        //       [{ result: notExecutedErrorMessage.replace("<LIST>", "all-topics") }]
-        //   ),
-        // };
+        return {
+          score: 0,
+          details: {  items: [{ result: notExecutedErrorMessage.replace("<LIST>", "all-topics") }],  type: 'table',  headings: [{ key: "result", itemType: "text", text: "Risultato" }],  summary: ''},
+        };
       }
 
       if (argumentsElements.length <= 0) {
-        // return {  TODO
-        //   score: 0,
-        //   details: Audit.makeTableDetails(
-        //       [{ key: "result", itemType: "text", text: "Risultato" }],
-        //       [{ result: notExecutedErrorMessage.replace("<LIST>", "all-topics") }]
-        //   ),
-        // };
+        return {
+          score: 0,
+          details: {  items: [{ result: notExecutedErrorMessage.replace("<LIST>", "all-topics") }],  type: 'table',  headings: [{ key: "result", itemType: "text", text: "Risultato" }],  summary: ''},
+        };
       }
 
       const schoolModelCheck = await areAllElementsInVocabulary(

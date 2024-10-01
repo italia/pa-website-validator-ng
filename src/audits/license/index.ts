@@ -127,7 +127,7 @@ class LicenceAudit extends Audit {
                 items[0].page_section = "No";
                 items[0].page_contains_correct_text = "No";
 
-                const legalNotesPage = await browser.newPage();
+                const legalNotesPage = await browser.newPage(); //TODO: da verificare se fatto in questo modo è corretto, secondo me dovremmo creare un gatherer dedicato a questa tipologia di pagina
                 await Gatherer.gotoRetry(legalNotesPage, pageUrl, 3)
 
                 let data = await legalNotesPage.content();

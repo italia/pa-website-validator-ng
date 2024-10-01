@@ -38,6 +38,7 @@ class PrivacyAudit extends Audit {
         page: Page | null,
         error?: string,
     ) {
+        //TODO: secondo me dovremmo creare un gatherer per questa tipologia di pagina e qui fare solo il controllo sulla pagina
 
         if(error && !page){
 
