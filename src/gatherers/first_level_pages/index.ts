@@ -10,7 +10,7 @@ import {Page} from "puppeteer";
 class firstLevelPagesGatherer extends Gatherer {
 
   static dataElements:string[] = ['custom-submenu']
-  static pageType:string= 'first-level'
+  static pageType:string= 'x'
 
   static getInstance(): Promise<firstLevelPagesGatherer> {
     if (!firstLevelPagesGatherer.instance) {
