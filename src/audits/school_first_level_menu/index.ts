@@ -178,7 +178,7 @@ class SchoolFirstLevelMenuAudit extends Audit {
                 results[0].result = (this.constructor as typeof Audit).auditData.yellowResult;
             }
 
-            const firstLevelPages = await getFirstLevelPages(url);
+            const firstLevelPages = await getFirstLevelPages(url); //TODO: questa funzione utilizza una nuova instanza di puppeteer
 
             results.push({});
 

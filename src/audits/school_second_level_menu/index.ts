@@ -241,7 +241,7 @@ class SchoolSecondLevelMenuAudit extends Audit {
                 presentVoicesPercentage.toString() + "%";
             results[0].wrong_voices = wrongTitleFound;
 
-            const secondLevelPages = await getSecondLevelPages(url);
+            const secondLevelPages = await getSecondLevelPages(url); //TODO: questo metodo utilizza una nuova istanza di puppeteer
 
             results.push({});
 
