@@ -3,7 +3,7 @@
 // @ts-ignore
 import { domains } from "../../storage/municipality/allowedDomains.js";
 import { auditDictionary } from "../../storage/auditDictionary.js";
-import { urlExists } from "../../utils/utils";
+import { urlExists } from "../../utils/utils.js";
 import {  getSecondLevelPages } from "../../utils/municipality/utils.js";
 import { auditScanVariables } from "../../storage/municipality/auditScanVariables.js";
 import { DataElementError } from "../../utils/DataElementError.js";

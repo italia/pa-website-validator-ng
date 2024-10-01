@@ -8,7 +8,7 @@ import {
   urlExists,
 } from "../../utils/utils.js";
 import { auditDictionary } from "../../storage/auditDictionary.js";
-import isEmail from "validator/lib/isEmail";
+import isEmail from "validator/lib/isEmail.js";
 import {Page} from "puppeteer";
 import {Audit} from "../Audit.js";
 import * as cheerio from "cheerio";
