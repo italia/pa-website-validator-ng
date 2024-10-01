@@ -200,8 +200,9 @@ class CookieAudit extends Audit {
 
             results.push({
                 result: errorHandling.errorColumnTitles[0],
-                title_missing_elements: errorHandling.errorColumnTitles[1],
-                title_wrong_order_elements: "",
+                title_cookie_domain: errorHandling.errorColumnTitles[1],
+                title_cookie_name: "",
+                title_cookie_value: "",
             });
 
 
@@ -220,9 +221,9 @@ class CookieAudit extends Audit {
         if (this.wrongItems.length > 0) {
             results.push({
                 result: (this.constructor as typeof Audit)?.auditData?.subItem?.redResult ?? '',
-                title_library_name: this.titleSubHeadings[0],
-                title_library_version: this.titleSubHeadings[1],
-                title_classes_found: this.titleSubHeadings[2],
+                title_cookie_domain: this.titleSubHeadings[0],
+                title_cookie_name: this.titleSubHeadings[1],
+                title_cookie_value: this.titleSubHeadings[2],
             });
 
             for (const item of this.wrongItems) {
@@ -240,9 +241,9 @@ class CookieAudit extends Audit {
         if (this.correctItems.length > 0) {
             results.push({
                 result: (this.constructor as typeof Audit)?.auditData?.subItem?.greenResult ?? '',
-                title_library_name: this.titleSubHeadings[0],
-                title_library_version: this.titleSubHeadings[1],
-                title_classes_found: this.titleSubHeadings[2],
+                title_cookie_domain: this.titleSubHeadings[0],
+                title_cookie_name: this.titleSubHeadings[1],
+                title_cookie_value: this.titleSubHeadings[2],
             });
 
             for (const item of this.correctItems) {
@@ -261,6 +262,7 @@ class CookieAudit extends Audit {
         this.globalResults.details.items = results;
         this.globalResults.details.headings = this.headings;
         this.globalResults.score = this.score;
+        this.globalResults.id = (this.constructor as typeof Audit).auditId;
 
         return this.globalResults;
     }

@@ -322,6 +322,7 @@ class SchoolBootstrap extends Audit {
         this.globalResults.details.items = results;
         this.globalResults.details.headings = this.headings;
         this.globalResults.score = this.score;
+        this.globalResults.id = (this.constructor as typeof Audit).auditId;
 
         return this.globalResults;
     }

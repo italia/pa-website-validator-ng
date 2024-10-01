@@ -467,7 +467,7 @@ const getRedirectedUrl = async (url: string): Promise<string> => {
     const page = await browser.newPage();
 
     await page.setRequestInterception(true);
-    page.on("request", (request) => {
+    page.on("request", (request: any) => {
       if (
         ["image", "imageset", "media"].indexOf(request.resourceType()) !== -1 ||
         new URL(request.url()).pathname.endsWith(".pdf")

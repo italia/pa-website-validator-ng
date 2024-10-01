@@ -172,6 +172,7 @@ class LicenceAudit extends Audit {
             this.globalResults.score = score;
             this.globalResults.details.items = items;
             this.globalResults.details.headings = this.headings;
+            this.globalResults.id = (this.constructor as typeof Audit).auditId;
 
             return {
                 score: score,
