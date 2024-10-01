@@ -21,7 +21,7 @@ import {
     contentTypeItemsHeaders,
     contentTypeItemsIndex,
     contentTypeItemsIndexDataElements, contentTypeItemsLocation, contentTypeItemsMetadata
-} from "./contentTypeItems";
+} from "./contentTypeItems.js";
 
 const auditId = "service";
 const auditData = auditDictionary[auditId];

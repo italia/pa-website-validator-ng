@@ -1,7 +1,7 @@
 "use strict";
 
 import {ThemeAudit} from "../theme/index.js";
-import {auditDictionary} from "../../storage/auditDictionary";
+import {auditDictionary} from "../../storage/auditDictionary.js";
 
 class SchoolThemeAudit extends ThemeAudit {
     static auditId = "school-ux-ui-consistency-theme-version-check";

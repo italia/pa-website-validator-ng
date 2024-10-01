@@ -1,6 +1,6 @@
 "use strict";
 
-import {auditDictionary} from "../../storage/auditDictionary";
+import {auditDictionary} from "../../storage/auditDictionary.js";
 import {PrivacyAudit} from "../privacy/index.js";
 
 class MunicipalityPrivacyAudit extends PrivacyAudit {

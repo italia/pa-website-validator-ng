@@ -10,7 +10,7 @@ import {Audit} from "../Audit.js";
 import {notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
 import {legalNotes} from "./legalNotes.js";
 import * as cheerio from "cheerio";
-import {Gatherer} from "../../gatherers/Gatherer";
+import {Gatherer} from "../../gatherers/Gatherer.js";
 
 class LicenceAudit extends Audit {
 

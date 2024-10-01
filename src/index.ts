@@ -1,14 +1,10 @@
 "use strict";
-import ScanManager from "./trash/ScanManager.js"
 import { initializePuppeteer } from './PuppeteerInstance.js'
 import PageManager from "./PageManager.js"       
 import scan from "./Scan.js";
-import {gatherers} from "./GathererManager.js"
 import {audits} from "./AuditManager.js"
 
 import { initializeConfig } from "./config/config.js";
-// import crawlerTypes from "./types/crawler-types.js";
-// import siteType = crawlerTypes.siteType
 
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";

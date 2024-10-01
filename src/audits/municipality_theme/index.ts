@@ -1,7 +1,7 @@
 "use strict";
 
 import {ThemeAudit} from "../theme/index.js";
-import {auditDictionary} from "../../storage/auditDictionary";
+import {auditDictionary} from "../../storage/auditDictionary.js";
 
 class MunicipalityThemeAudit extends ThemeAudit {
     static auditId = "municipality-ux-ui-consistency-theme-version-check";

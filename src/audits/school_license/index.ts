@@ -1,6 +1,6 @@
 "use strict";
 
-import {auditDictionary} from "../../storage/auditDictionary";
+import {auditDictionary} from "../../storage/auditDictionary.js";
 import {LicenceAudit} from "../license/index.js";
 
 class SchoolLicenceAudit extends LicenceAudit {
