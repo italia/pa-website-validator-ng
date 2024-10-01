@@ -15,7 +15,7 @@ const cache = new LRUCache<string, CheerioAPI>({ max: 1000 });
 const redirectUrlCache = new LRUCache<string, string>({ max: 1000 });
 const requestTimeout = parseInt(process.env["requestTimeout"] ?? "30000");
 
-const loadPageData = async (url: string, wait: boolean = false, newBrowser = true): Promise<CheerioAPI> => {
+const loadPageData = async (url: string, wait: boolean = false ): Promise<CheerioAPI> => {
   const data_from_cache = cache.get(url);
   if (data_from_cache !== undefined) {
     return data_from_cache;
@@ -63,7 +63,6 @@ const loadPageData = async (url: string, wait: boolean = false, newBrowser = tru
     return c;
   } catch (ex) {
     console.error(`ERROR ${url}: ${ex}`);
-    await browser.close();
     throw new Error(
       `Il test è stato interrotto perché nella prima pagina analizzata ${url} si è verificato l'errore "${ex}". Verificarne la causa e rifare il test.`
     );
@@ -463,15 +462,9 @@ const getRedirectedUrl = async (url: string): Promise<string> => {
   }
 
   let redirectedUrl = "";
-  const browser = await puppeteer.launch({
-    headless: true,
-    protocolTimeout: requestTimeout,
-    args: ["--no-zygote", "--no-sandbox", "--accept-lang=it"],
-  });
-  const browserWSEndpoint = browser.wsEndpoint();
+
   try {
-    const browser2 = await puppeteer.connect({ browserWSEndpoint });
-    const page = await browser2.newPage();
+    const page = await browser.newPage();
 
     await page.setRequestInterception(true);
     page.on("request", (request) => {
@@ -505,12 +498,8 @@ const getRedirectedUrl = async (url: string): Promise<string> => {
 
     await page.goto("about:blank");
     await page.close();
-
-    browser2.disconnect();
-    await browser.close();
   } catch (ex) {
     console.error(`ERROR ${url}: ${ex}`);
-    await browser.close();
     throw new Error(
       `Il test è stato interrotto perché nella prima pagina analizzata ${url} si è verificato l'errore "${ex}". Verificarne la causa e rifare il test.`
     );
