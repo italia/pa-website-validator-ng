@@ -1,5 +1,5 @@
 "use strict";
-import crawlerTypes from "../types/crawler-types";
+import crawlerTypes from "../types/crawler-types.js";
 import orderType = crawlerTypes.orderResult;
 import * as cheerio from "cheerio";
 import puppeteer, { HTTPResponse, Page } from "puppeteer";
@@ -7,7 +7,7 @@ import { CheerioAPI } from "cheerio";
 import axios from "axios";
 import vocabularyResult = crawlerTypes.vocabularyResult;
 import { LRUCache } from "lru-cache";
-import { MenuItem } from "../types/menuItem";
+import { MenuItem } from "../types/menuItem.js";
 import { errorHandling } from "../config/commonAuditsParts.js";
 import {browser} from "../PuppeteerInstance.js";
 
@@ -467,7 +467,7 @@ const getRedirectedUrl = async (url: string): Promise<string> => {
     const page = await browser.newPage();
 
     await page.setRequestInterception(true);
-    page.on("request", (request) => {
+    page.on("request", (request : any) => {
       if (
         ["image", "imageset", "media"].indexOf(request.resourceType()) !== -1 ||
         new URL(request.url()).pathname.endsWith(".pdf")
@@ -508,6 +508,24 @@ const getRedirectedUrl = async (url: string): Promise<string> => {
   return redirectedUrl;
 };
 
+const createArraySubset = (array : Array<any>, newLength : number) => {
+
+  if(array.length <= newLength){
+    return array;
+  }
+
+  let newArr = [];
+  for (let i = 0; i < newLength; i++) {
+    let item = array.splice(
+        Math.floor(
+            Math.random() * array.length), 1
+    );
+    newArr.push(item)
+  }
+
+  return newArr.flat();
+}
+
 export {
   toMenuItem,
   checkOrder,
@@ -528,4 +546,5 @@ export {
   getAllPageHTML,
   requestTimeout,
   getRedirectedUrl,
+  createArraySubset
 };

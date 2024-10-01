@@ -3,6 +3,16 @@ import crawlerTypes from "../../types/crawler-types.js";
 import PageData = crawlerTypes.PageData
 import { setTimeout } from "timers/promises";
 import {Page} from "puppeteer";
+import {config} from "../../config/config.js";
+import {createArraySubset} from "../../utils/utils.js";
+
+const accuracy = process.env["accuracy"] ?? "suggested";
+
+const auditVariables = config['accuracy'][accuracy];
+
+const numberOfServicesToBeScanned = process.env["numberOfServicePages"]
+    ? JSON.parse(process.env["numberOfServicePages"])
+    : auditVariables.numberOfServicesToBeScanned;
 
 
 class servicesGatherer extends Gatherer {
@@ -60,7 +70,8 @@ class servicesGatherer extends Gatherer {
       throw new Error(`Cannot find elements with data-element "${servicesGatherer.dataElement} ${maxCountPages} ${error}"`);
     }
 
-    //console.log(this.gatheredPages)
+    this.gatheredPages = createArraySubset(this.gatheredPages, numberOfServicesToBeScanned);
+
     this.gatheredPages = this.gatheredPages.map((url:any)=>{
         return {
           url: url,

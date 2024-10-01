@@ -4,7 +4,7 @@ import {
   menuItems,
   primaryMenuDataElement,
   primaryMenuItems,
-} from "../../storage/school/menuItems";
+} from "../../storage/school/menuItems.js";
 import {
   buildUrl,
   getHREFValuesDataAttribute,
@@ -12,9 +12,9 @@ import {
   getRedirectedUrl,
   isInternalUrl,
   loadPageData,
-} from "../utils";
-import { DataElementError } from "../DataElementError";
-import crawlerTypes from "../../types/crawler-types";
+} from "../utils.js";
+import { DataElementError } from "../DataElementError.js";
+import crawlerTypes from "../../types/crawler-types.js";
 import requestPages = crawlerTypes.requestPages;
 import pageLink = crawlerTypes.pageLink;
 import { LRUCache } from "lru-cache";
