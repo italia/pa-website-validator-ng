@@ -99,7 +99,7 @@ class MenuAudit extends Audit {
         wrong_order_menu_voices: "",
       });
 
-      const firstLevelPages = await getFirstLevelPages(url, false);
+      const firstLevelPages = await getFirstLevelPages(url, false, page);
 
       const foundMenuElements = firstLevelPages.map((page) => {
         return page.linkName;

@@ -3,17 +3,8 @@ import crawlerTypes from "../../types/crawler-types.js";
 import PageData = crawlerTypes.PageData
 import { setTimeout } from "timers/promises";
 import {Page} from "puppeteer";
+import { getRandomNString} from "../../utils/utils.js";
 import {config} from "../../config/config.js";
-import {createArraySubset} from "../../utils/utils.js";
-
-const accuracy = process.env["accuracy"] ?? "suggested";
-
-const auditVariables = config['accuracy'][accuracy];
-
-const numberOfServicesToBeScanned = process.env["numberOfServicePages"]
-    ? JSON.parse(process.env["numberOfServicePages"])
-    : auditVariables.numberOfServicesToBeScanned;
-
 
 class servicesGatherer extends Gatherer {
 
@@ -25,6 +16,7 @@ class servicesGatherer extends Gatherer {
     let maxCountPages = 0;
     let clickButton = true;
     let foundElements:any = [];
+    let pages : string[] = [];
     let error = '';
     while (clickButton) {
       try {
@@ -51,7 +43,7 @@ class servicesGatherer extends Gatherer {
               return hrefValue
         }))
 
-        this.gatheredPages = foundElementsHrefs
+        pages = foundElementsHrefs
    
         let currentCountPages = foundElements.length
         if (!currentCountPages || currentCountPages.length === maxCountPages) {
@@ -67,12 +59,12 @@ class servicesGatherer extends Gatherer {
 
     if (!maxCountPages || maxCountPages == 0) {
       await page.close()
-      throw new Error(`Cannot find elements with data-element "${servicesGatherer.dataElement} ${maxCountPages} ${error}"`);
+      throw new Error(`Cannot find elements with data-element "${servicesGatherer.dataElement} ${maxCountPages}"`);
     }
 
-    this.gatheredPages = createArraySubset(this.gatheredPages, numberOfServicesToBeScanned);
+    pages = await getRandomNString(pages, numberOfPages);
 
-    this.gatheredPages = this.gatheredPages.map((url:any)=>{
+    this.gatheredPages = pages.map((url:any)=>{
         return {
           url: url,
           id: 'service' + Date.now(),

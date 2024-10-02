@@ -21,7 +21,7 @@ class PageManager {
     }
   
     async addPage(page:PageData): Promise<void> {
-      if (!this.pagesArray.find(pageEl=>pageEl.url == page.url)) {
+      if (!this.pagesArray.find(pageEl=>(pageEl.url == page.url && page.type == pageEl.type))) {
         this.pagesArray.push({...page});
         this.emitter.emit('pagesAdded', page);
       }

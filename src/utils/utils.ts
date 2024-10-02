@@ -510,7 +510,7 @@ const getRedirectedUrl = async (url: string): Promise<string> => {
 
 const createArraySubset = (array : Array<any>, newLength : number) => {
 
-  if(array.length <= newLength){
+  if(array.length <= newLength || newLength === -1){
     return array;
   }
 

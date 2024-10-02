@@ -117,7 +117,10 @@ async function run(
                    accuracy = "suggested",
                    requestTimeout = 30000,
                    numberOfServicePages?: number) {
+
+
     try {
+
       await initializePuppeteer();
       await initializeConfig(type, scope);
 

@@ -1,7 +1,7 @@
 "use strict";
 import * as cheerio from "cheerio";
 import { CheerioAPI } from "cheerio";
-import puppeteer from "puppeteer";
+import puppeteer, {Page} from "puppeteer";
 import { setTimeout } from "timers/promises";
 
 import {
@@ -36,9 +36,10 @@ const cacheResults = new LRUCache<string, string[]>({ max: 100 });
 
 const getRandomFirstLevelPagesUrl = async (
   url: string,
-  numberOfPages = 1
+  numberOfPages = 1,
+  page: Page
 ): Promise<string[]> => {
-  const pages = await getFirstLevelPages(url, true);
+  const pages = await getFirstLevelPages(url, true, page);
 
   const pagesUrls = pages.map((page) => {
     return page.linkUrl;
@@ -49,9 +50,11 @@ const getRandomFirstLevelPagesUrl = async (
 
 const getFirstLevelPages = async (
   url: string,
-  custom: boolean
+  custom: boolean,
+  page: Page
 ): Promise<pageLink[]> => {
-  const $ = await loadPageData(url);
+  let data = await page.content();
+  let $: CheerioAPI = await cheerio.load(data);
   let pagesUrls: pageLink[] = [];
 
   const menuDataElements = [];
@@ -105,9 +108,13 @@ const getFirstLevelPages = async (
 
 const getRandomSecondLevelPagesUrl = async (
   url: string,
-  numberOfPages = 1
+  numberOfPages = 1,
+  page: Page
 ): Promise<string[]> => {
-  const $ = await loadPageData(url);
+
+  let data = await page.content();
+  let $: CheerioAPI = await cheerio.load(data);
+
   let pagesUrls: string[] = [];
 
   const customMenuElement = {
@@ -1001,7 +1008,8 @@ const isDrupal = async (url: string): Promise<boolean> => {
 const getPages = async (
   url: string,
   requests: requestPages[],
-  removeExternal = true
+  removeExternal = true,
+  page: Page
 ): Promise<string[]> => {
   let pagesUrl: string[] = [];
   const missingDataElements: string[] = [];
@@ -1016,14 +1024,16 @@ const getPages = async (
           case "first_level_pages": {
             requestedPages = await getRandomFirstLevelPagesUrl(
               url,
-              request.numberOfPages
+              request.numberOfPages,
+                page
             );
             break;
           }
           case "second_level_pages": {
             requestedPages = await getRandomSecondLevelPagesUrl(
               url,
-              request.numberOfPages
+              request.numberOfPages,
+                page
             );
             break;
           }

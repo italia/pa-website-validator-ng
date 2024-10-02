@@ -2,18 +2,18 @@ import { Gatherer } from '../Gatherer.js';
 import crawlerTypes from "../../types/crawler-types.js";
 import PageData = crawlerTypes.PageData
 import {Page} from "puppeteer";
-import {getRandomFirstLevelPagesUrl} from "../../utils/municipality/utils.js";
+import {getRandomSecondLevelPagesUrl} from "../../utils/municipality/utils.js";
 
-class firstLevelPagesGatherer extends Gatherer {
+class SecondLevelPagesGatherer extends Gatherer {
 
   static dataElements:string[] = ['custom-submenu']
-  static pageType:string= 'first-level-page'
+  static pageType:string= 'second-level-page'
 
-  static getInstance(): Promise<firstLevelPagesGatherer> {
-    if (!firstLevelPagesGatherer.instance) {
-      firstLevelPagesGatherer.instance = new firstLevelPagesGatherer('');
+  static getInstance(): Promise<SecondLevelPagesGatherer> {
+    if (!SecondLevelPagesGatherer.instance) {
+      SecondLevelPagesGatherer.instance = new SecondLevelPagesGatherer('');
     }
-    return firstLevelPagesGatherer.instance;
+    return SecondLevelPagesGatherer.instance;
   }
 
   async navigateAndFetchPages(url: string, numberOfPages = 5,  website: '', page : Page): Promise<PageData[]> {
@@ -21,7 +21,7 @@ class firstLevelPagesGatherer extends Gatherer {
 
     const currentClass = this.constructor as typeof Gatherer;
 
-    let fetchedUrls:string[] = await getRandomFirstLevelPagesUrl(url, numberOfPages, page)
+    let fetchedUrls:string[] = await getRandomSecondLevelPagesUrl(url, numberOfPages, page)
 
     this.gatheredPages = fetchedUrls.map((url: any) => {
       return {
@@ -57,8 +57,8 @@ class firstLevelPagesGatherer extends Gatherer {
 
 }
 
-export { firstLevelPagesGatherer };
-export default firstLevelPagesGatherer.getInstance;
+export { SecondLevelPagesGatherer };
+export default SecondLevelPagesGatherer.getInstance;
 
 
 

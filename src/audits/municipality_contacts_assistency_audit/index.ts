@@ -2,7 +2,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { getPageElementDataAttribute, loadPageData } from "../../utils/utils.js";
-import { getPages } from "../../utils/municipality/utils.js";
 import { CheerioAPI } from "cheerio";
 import { auditDictionary } from "../../storage/auditDictionary.js";
 import { auditScanVariables } from "../../storage/municipality/auditScanVariables.js";

@@ -57,7 +57,10 @@ const scan = async (pageData: PageData) => {
 
                     if (gatherer === undefined) throw new Error(` No gatherer found for id ${gathererId}: check your configuration`)
 
-                    const fetchedPages = await gatherer.navigateAndFetchPages(pageData.url, 5, '', page);
+                    const accuracy = process.env["accuracy"] ?? "suggested";
+                    const configAccuracy = config.accuracy[accuracy];
+
+                    const fetchedPages = await gatherer.navigateAndFetchPages(pageData.url, configAccuracy, '', page);
                     gathererPages = [...gathererPages, ...fetchedPages]
                 } catch (e: any) {
                     console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: ERROR`)

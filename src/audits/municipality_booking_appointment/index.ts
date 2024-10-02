@@ -113,7 +113,8 @@ class BookingAppointment extends Audit {
                 numberOfPages: 1,
               },
             ],
-            false
+            false,
+            page
         );
 
         if (bookingAppointmentPage.length === 0) {
