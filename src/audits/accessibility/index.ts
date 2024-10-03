@@ -187,6 +187,7 @@ class A11yAudit extends Audit {
             this.globalResults.score = 1;
             this.globalResults.details.items = items;
             this.globalResults.details.headings = this.headings;
+            this.globalResults.id = (this.constructor as typeof Audit).auditId;
 
             return {
                 score: 1,

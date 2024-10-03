@@ -508,24 +508,6 @@ const getRedirectedUrl = async (url: string): Promise<string> => {
   return redirectedUrl;
 };
 
-const createArraySubset = (array : Array<any>, newLength : number) => {
-
-  if(array.length <= newLength || newLength === -1){
-    return array;
-  }
-
-  let newArr = [];
-  for (let i = 0; i < newLength; i++) {
-    let item = array.splice(
-        Math.floor(
-            Math.random() * array.length), 1
-    );
-    newArr.push(item)
-  }
-
-  return newArr.flat();
-}
-
 export {
   toMenuItem,
   checkOrder,
@@ -546,5 +528,4 @@ export {
   getAllPageHTML,
   requestTimeout,
   getRedirectedUrl,
-  createArraySubset
 };

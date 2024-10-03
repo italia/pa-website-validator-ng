@@ -1,0 +1,1509 @@
+[
+  {
+    "score": 1,
+    "details": {
+      "items": [
+        {}
+      ],
+      "type": "table",
+      "headings": [
+        {
+          "key": "result",
+          "itemType": "text",
+          "text": "Risultato totale",
+          "subItemsHeading": {
+            "key": "inspected_page",
+            "itemType": "url"
+          }
+        },
+        {
+          "key": "title_cookie_domain",
+          "itemType": "text",
+          "text": "",
+          "subItemsHeading": {
+            "key": "cookie_domain",
+            "itemType": "text"
+          }
+        },
+        {
+          "key": "title_cookie_name",
+          "itemType": "text",
+          "text": "",
+          "subItemsHeading": {
+            "key": "cookie_name",
+            "itemType": "text"
+          }
+        },
+        {
+          "key": "title_cookie_value",
+          "itemType": "text",
+          "text": "",
+          "subItemsHeading": {
+            "key": "cookie_value",
+            "itemType": "text"
+          }
+        }
+      ],
+      "summary": ""
+    },
+    "errorMessage": "",
+    "id": "school-legislation-cookie-domain-check"
+  },
+  {
+    "score": 1,
+    "details": {
+      "items": [
+        {
+          "result": "Il link è nel footer e invia alla pagina corretta.",
+          "link_name": "Dichiarazione di accessibilità",
+          "link_destination": "https://form.agid.gov.it/view/932d9180-8aa8-11ee-bd0e-d7c850150a8c",
+          "existing_page": "Sì",
+          "page_contains_correct_url": "Sì",
+          "wcag": "Sì"
+        }
+      ],
+      "type": "table",
+      "headings": [
+        {
+          "key": "result",
+          "itemType": "text",
+          "text": "Risultato"
+        },
+        {
+          "key": "link_name",
+          "itemType": "text",
+          "text": "Testo del link"
+        },
+        {
+          "key": "link_destination",
+          "itemType": "url",
+          "text": "Pagina di destinazione del link"
+        },
+        {
+          "key": "existing_page",
+          "itemType": "text",
+          "text": "Pagina esistente"
+        },
+        {
+          "key": "page_contains_correct_url",
+          "itemType": "text",
+          "text": "La pagina contiene l'url del sito di origine"
+        },
+        {
+          "key": "wcag",
+          "itemType": "text",
+          "text": "È dichiarata la conformità alle specifiche WCAG 2.1"
+        }
+      ],
+      "summary": ""
+    },
+    "errorMessage": "",
+    "id": "school-legislation-accessibility-declaration-is-present"
+  },
+  {
+    "score": 1,
+    "details": {
+      "items": [
+        {},
+        {
+          "result": "Pagine analizzate nelle quali vengono utilizzati i font come richiesto:",
+          "title_wrong_number_elements": "Numero di <h> o <p> con font errati",
+          "title_wrong_fonts": "Font errati individuati"
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/la-scuola/persone/",
+                "wrong_fonts": "",
+                "wrong_number_elements": 0
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/la-scuola/la-storia/",
+                "wrong_fonts": "",
+                "wrong_number_elements": 0
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/didattica/",
+                "wrong_fonts": "",
+                "wrong_number_elements": 0
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/didattica/offerta-formativa/",
+                "wrong_fonts": "",
+                "wrong_number_elements": 0
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/documento/",
+                "wrong_fonts": "",
+                "wrong_number_elements": 0
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/struttura/",
+                "wrong_fonts": "",
+                "wrong_number_elements": 0
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/novita/le-notizie/",
+                "wrong_fonts": "",
+                "wrong_number_elements": 0
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/la-scuola/i-numeri-della-scuola/",
+                "wrong_fonts": "",
+                "wrong_number_elements": 0
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/evento/",
+                "wrong_fonts": "",
+                "wrong_number_elements": 0
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/circolare/",
+                "wrong_fonts": "",
+                "wrong_number_elements": 0
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/scheda-didattica/",
+                "wrong_fonts": "",
+                "wrong_number_elements": 0
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/novita/",
+                "wrong_fonts": "",
+                "wrong_number_elements": 0
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/tipologia-servizio/personale-scolastico/",
+                "wrong_fonts": "",
+                "wrong_number_elements": 0
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/novita/albo-online/",
+                "wrong_fonts": "",
+                "wrong_number_elements": 0
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/la-scuola/",
+                "wrong_fonts": "",
+                "wrong_number_elements": 0
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/scheda-progetto/",
+                "wrong_fonts": "",
+                "wrong_number_elements": 0
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/servizi/",
+                "wrong_fonts": "",
+                "wrong_number_elements": 0
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/la-scuola/presentazione/",
+                "wrong_fonts": "",
+                "wrong_number_elements": 0
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/tipologia-servizio/famiglie-e-studenti/",
+                "wrong_fonts": "",
+                "wrong_number_elements": 0
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/indirizzo-di-studio/",
+                "wrong_fonts": "",
+                "wrong_number_elements": 0
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/",
+                "wrong_fonts": "",
+                "wrong_number_elements": 0
+              }
+            ]
+          }
+        },
+        {}
+      ],
+      "type": "table",
+      "headings": [
+        {
+          "key": "result",
+          "itemType": "text",
+          "text": "Risultato",
+          "subItemsHeading": {
+            "key": "inspected_page",
+            "itemType": "url"
+          }
+        },
+        {
+          "key": "title_wrong_number_elements",
+          "itemType": "text",
+          "text": "",
+          "subItemsHeading": {
+            "key": "wrong_number_elements",
+            "itemType": "text"
+          }
+        },
+        {
+          "key": "title_wrong_fonts",
+          "itemType": "text",
+          "text": "",
+          "subItemsHeading": {
+            "key": "wrong_fonts",
+            "itemType": "text"
+          }
+        }
+      ],
+      "summary": ""
+    },
+    "errorMessage": "",
+    "id": "school-ux-ui-consistency-fonts-check"
+  },
+  {
+    "score": 1,
+    "details": {
+      "items": [
+        {},
+        {
+          "result": "Pagine che utilizzano la libreria Bootstrap Italia in una versione idonea e utilizzano almeno una delle classi CSS indicate: ",
+          "title_library_name": "La libreria Bootstrap Italia è presente",
+          "title_library_version": "Versione in uso",
+          "title_classes_found": "Classi CSS trovate"
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/la-scuola/la-storia/",
+                "library_name": "Sì",
+                "library_version": "1.6.2",
+                "classes_found": "Almeno una"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/didattica/offerta-formativa/",
+                "library_name": "Sì",
+                "library_version": "1.6.2",
+                "classes_found": "Almeno una"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/didattica/",
+                "library_name": "Sì",
+                "library_version": "1.6.2",
+                "classes_found": "Almeno una"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/documento/",
+                "library_name": "Sì",
+                "library_version": "1.6.2",
+                "classes_found": "Almeno una"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/novita/",
+                "library_name": "Sì",
+                "library_version": "1.6.2",
+                "classes_found": "Almeno una"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/circolare/",
+                "library_name": "Sì",
+                "library_version": "1.6.2",
+                "classes_found": "Almeno una"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/la-scuola/i-numeri-della-scuola/",
+                "library_name": "Sì",
+                "library_version": "1.6.2",
+                "classes_found": "Almeno una"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/novita/le-notizie/",
+                "library_name": "Sì",
+                "library_version": "1.6.2",
+                "classes_found": "Almeno una"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/scheda-didattica/",
+                "library_name": "Sì",
+                "library_version": "1.6.2",
+                "classes_found": "Almeno una"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/evento/",
+                "library_name": "Sì",
+                "library_version": "1.6.2",
+                "classes_found": "Almeno una"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/tipologia-servizio/personale-scolastico/",
+                "library_name": "Sì",
+                "library_version": "1.6.2",
+                "classes_found": "Almeno una"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/",
+                "library_name": "Sì",
+                "library_version": "1.6.2",
+                "classes_found": "Almeno una"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/novita/albo-online/",
+                "library_name": "Sì",
+                "library_version": "1.6.2",
+                "classes_found": "Almeno una"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/la-scuola/",
+                "library_name": "Sì",
+                "library_version": "1.6.2",
+                "classes_found": "Almeno una"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/struttura/",
+                "library_name": "Sì",
+                "library_version": "1.6.2",
+                "classes_found": "Almeno una"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/la-scuola/persone/",
+                "library_name": "Sì",
+                "library_version": "1.6.2",
+                "classes_found": "Almeno una"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/tipologia-servizio/famiglie-e-studenti/",
+                "library_name": "Sì",
+                "library_version": "1.6.2",
+                "classes_found": "Almeno una"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/la-scuola/presentazione/",
+                "library_name": "Sì",
+                "library_version": "1.6.2",
+                "classes_found": "Almeno una"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/scheda-progetto/",
+                "library_name": "Sì",
+                "library_version": "1.6.2",
+                "classes_found": "Almeno una"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/servizi/",
+                "library_name": "Sì",
+                "library_version": "1.6.2",
+                "classes_found": "Almeno una"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "inspected_page": "https://www.scuolapoidomani.edu.it/indirizzo-di-studio/",
+                "library_name": "Sì",
+                "library_version": "1.6.2",
+                "classes_found": "Almeno una"
+              }
+            ]
+          }
+        },
+        {}
+      ],
+      "type": "table",
+      "headings": [
+        {
+          "key": "result",
+          "itemType": "text",
+          "text": "Risultato totale",
+          "subItemsHeading": {
+            "key": "inspected_page",
+            "itemType": "url"
+          }
+        },
+        {
+          "key": "title_library_name",
+          "itemType": "text",
+          "text": "",
+          "subItemsHeading": {
+            "key": "library_name",
+            "itemType": "text"
+          }
+        },
+        {
+          "key": "title_library_version",
+          "itemType": "text",
+          "text": "",
+          "subItemsHeading": {
+            "key": "library_version",
+            "itemType": "text"
+          }
+        },
+        {
+          "key": "title_classes_found",
+          "itemType": "text",
+          "text": "",
+          "subItemsHeading": {
+            "key": "classes_found",
+            "itemType": "text"
+          }
+        }
+      ],
+      "summary": ""
+    },
+    "errorMessage": "",
+    "id": "audit"
+  },
+  {
+    "score": 1,
+    "details": {
+      "items": [
+        {
+          "result": "Tutti gli argomenti appartengono all’elenco di voci del modello e l'elenco degli argomenti è presente nella pagina dei risultati di ricerca.",
+          "element_in_school_model_percentage": "100%",
+          "element_not_in_school_model": ""
+        }
+      ],
+      "type": "table",
+      "headings": [
+        {
+          "key": "result",
+          "itemType": "text",
+          "text": "Risultato"
+        },
+        {
+          "key": "element_in_school_model_percentage",
+          "itemType": "text",
+          "text": "% di argomenti presenti nell'elenco del modello"
+        },
+        {
+          "key": "element_not_in_school_model",
+          "itemType": "text",
+          "text": "Argomenti non presenti nell'elenco del modello"
+        }
+      ],
+      "summary": ""
+    },
+    "errorMessage": "",
+    "id": "school-controlled-vocabularies"
+  },
+  {
+    "score": 1,
+    "details": {
+      "items": [
+        {
+          "result": "La dicitura sulla licenza dei contenuti è presente nella pagina delle note legali raggiungibile dal footer.",
+          "link_name": "Note legali",
+          "link_destination": "https://www.scuolapoidomani.edu.it/note-legali/",
+          "page_section": "Sì",
+          "page_contains_correct_text": "Sì"
+        }
+      ],
+      "type": "table",
+      "headings": [
+        {
+          "key": "result",
+          "itemType": "text",
+          "text": "Risultato"
+        },
+        {
+          "key": "link_name",
+          "itemType": "text",
+          "text": "Testo del link"
+        },
+        {
+          "key": "link_destination",
+          "itemType": "url",
+          "text": "Pagina di destinazione del link"
+        },
+        {
+          "key": "page_section",
+          "itemType": "text",
+          "text": "Il titolo della sezione è corretto"
+        },
+        {
+          "key": "page_contains_correct_text",
+          "itemType": "text",
+          "text": "La dicitura è corretta"
+        }
+      ],
+      "summary": ""
+    },
+    "errorMessage": "",
+    "id": "school-license-and-attribution"
+  },
+  {
+    "score": 1,
+    "details": {
+      "items": [
+        {
+          "result": "Le voci del menù sono corrett, nell'ordine giusto e inviano a pagine interne al dominio della scuola.",
+          "found_menu_voices": "Scuola, Servizi, Novità, Didattica",
+          "missing_menu_voices": "",
+          "wrong_order_menu_voices": ""
+        },
+        {},
+        {
+          "result": "Voce di menù",
+          "found_menu_voices": "Link trovato",
+          "missing_menu_voices": "Pagina interna al dominio"
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "SCUOLA",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/la-scuola/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "SERVIZI",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/servizi/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "NOVITÀ",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/novita/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "DIDATTICA",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/didattica/",
+                "external": "Sì"
+              }
+            ]
+          }
+        }
+      ],
+      "type": "table",
+      "headings": [
+        {
+          "key": "result",
+          "itemType": "text",
+          "text": "Risultato",
+          "subItemsHeading": {
+            "key": "menu_voice",
+            "itemType": "text"
+          }
+        },
+        {
+          "key": "found_menu_voices",
+          "itemType": "text",
+          "text": "Voci del menù identificate",
+          "subItemsHeading": {
+            "key": "inspected_page",
+            "itemType": "url"
+          }
+        },
+        {
+          "key": "missing_menu_voices",
+          "itemType": "text",
+          "text": "Voci obbligatorie del menù mancanti",
+          "subItemsHeading": {
+            "key": "external",
+            "itemType": "text"
+          }
+        },
+        {
+          "key": "wrong_order_menu_voices",
+          "itemType": "text",
+          "text": "Voci del menù nell'ordine errato"
+        }
+      ],
+      "summary": ""
+    },
+    "errorMessage": "",
+    "id": "school-menu-structure-match-model"
+  },
+  {
+    "score": 1,
+    "details": {
+      "items": [
+        {
+          "result": "Tutte le voci usate sono corrette e inviano a pagine interne al dominio della scuola.",
+          "correct_voices_percentage": "100%",
+          "correct_voices": "SCUOLA: Presentazione, I luoghi, Le persone, I numeri della scuola, Le carte della scuola, Organizzazione, La storia; SERVIZI: Personale scolastico, Famiglie e studenti, Percorsi di studio; NOVITÀ: Le notizie, Le circolari, Calendario eventi, Albo online; DIDATTICA: Offerta formativa, Le schede didattiche, I progetti delle classi; ",
+          "wrong_voices": ""
+        },
+        {},
+        {
+          "result": "Voce di menù",
+          "correct_voices": "Pagina interna al dominio",
+          "correct_voices_percentage": "Link trovato"
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "Presentazione",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/la-scuola/presentazione/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "I luoghi",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/luogo/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "Le persone",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/la-scuola/persone/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "I numeri della scuola",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/la-scuola/i-numeri-della-scuola/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "Le carte della scuola",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/documento/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "Organizzazione",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/struttura/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "La storia",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/la-scuola/la-storia/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "Presentazione",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/la-scuola/presentazione/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "I luoghi",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/luogo/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "Le persone",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/la-scuola/persone/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "I numeri della scuola",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/la-scuola/i-numeri-della-scuola/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "Le carte della scuola",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/documento/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "Organizzazione",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/struttura/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "La storia",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/la-scuola/la-storia/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "Personale scolastico",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/tipologia-servizio/personale-scolastico/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "Famiglie e studenti",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/tipologia-servizio/famiglie-e-studenti/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "Percorsi di studio",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/indirizzo-di-studio/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "Personale scolastico",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/tipologia-servizio/personale-scolastico/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "Famiglie e studenti",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/tipologia-servizio/famiglie-e-studenti/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "Percorsi di studio",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/indirizzo-di-studio/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "Le notizie",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/novita/le-notizie/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "Le circolari",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/circolare/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "Calendario eventi",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/evento/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "Albo online",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/novita/albo-online/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "Le notizie",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/novita/le-notizie/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "Le circolari",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/circolare/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "Calendario eventi",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/evento/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "Albo online",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/novita/albo-online/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "Offerta formativa",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/didattica/offerta-formativa/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "Le schede didattiche",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/scheda-didattica/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "I progetti delle classi",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/scheda-progetto/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "Offerta formativa",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/didattica/offerta-formativa/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "Le schede didattiche",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/scheda-didattica/",
+                "external": "Sì"
+              }
+            ]
+          }
+        },
+        {
+          "subItems": {
+            "type": "subitems",
+            "items": [
+              {
+                "menu_voice": "I progetti delle classi",
+                "inspected_page": "https://www.scuolapoidomani.edu.it/scheda-progetto/",
+                "external": "Sì"
+              }
+            ]
+          }
+        }
+      ],
+      "type": "table",
+      "headings": [
+        {
+          "key": "result",
+          "itemType": "text",
+          "text": "Risultato",
+          "subItemsHeading": {
+            "key": "menu_voice",
+            "itemType": "text"
+          }
+        },
+        {
+          "key": "correct_voices_percentage",
+          "itemType": "text",
+          "text": "% di voci corrette tra quelle usate",
+          "subItemsHeading": {
+            "key": "inspected_page",
+            "itemType": "url"
+          }
+        },
+        {
+          "key": "correct_voices",
+          "itemType": "text",
+          "text": "Voci corrette identificate",
+          "subItemsHeading": {
+            "key": "external",
+            "itemType": "text"
+          }
+        },
+        {
+          "key": "wrong_voices",
+          "itemType": "text",
+          "text": "Voci aggiuntive trovate"
+        }
+      ],
+      "summary": ""
+    },
+    "errorMessage": "",
+    "id": "school-menu-scuola-second-level-structure-match-model"
+  },
+  {
+    "score": 1,
+    "details": {
+      "items": [
+        {
+          "result": "Il link è nel footer e invia a una pagina esistente e sicura.",
+          "link_name": "Privacy Policy",
+          "link_destination": "https://www.scuolapoidomani.edu.it/privacy-policy/",
+          "existing_page": "Sì",
+          "secure_page": "Sì"
+        }
+      ],
+      "type": "table",
+      "headings": [
+        {
+          "key": "result",
+          "itemType": "text",
+          "text": "Risultato"
+        },
+        {
+          "key": "link_name",
+          "itemType": "text",
+          "text": "Testo del link"
+        },
+        {
+          "key": "link_destination",
+          "itemType": "url",
+          "text": "Pagina di destinazione del link"
+        },
+        {
+          "key": "existing_page",
+          "itemType": "text",
+          "text": "Pagina esistente"
+        },
+        {
+          "key": "secure_page",
+          "itemType": "text",
+          "text": "Pagina sicura"
+        }
+      ],
+      "summary": ""
+    },
+    "errorMessage": "",
+    "id": "school-legislation-privacy-is-present"
+  },
+  {
+    "score": 1,
+    "details": {
+      "items": [
+        {
+          "result": "Il certificato del sito https://www.scuolapoidomani.edu.it/ è attivo e valido.",
+          "protocol": "https",
+          "certificate_validation": "Dal 15/8/2024 al 15/8/2024",
+          "tls_version": "1.3",
+          "cipher_suite": "TLS_AES_256_GCM_SHA384",
+          "redirect_to_https": "Sì"
+        }
+      ],
+      "type": "table",
+      "headings": [
+        {
+          "key": "result",
+          "itemType": "text",
+          "text": "Risultato"
+        },
+        {
+          "key": "protocol",
+          "itemType": "text",
+          "text": "Protocollo usato dal dominio"
+        },
+        {
+          "key": "certificate_validation",
+          "itemType": "text",
+          "text": "Validità del certificato"
+        },
+        {
+          "key": "tls_version",
+          "itemType": "text",
+          "text": "Versione TLS"
+        },
+        {
+          "key": "cipher_suite",
+          "itemType": "text",
+          "text": "Suite di cifratura"
+        },
+        {
+          "key": "redirect_to_https",
+          "itemType": "text",
+          "text": "La pagina effettua redirect da http a https"
+        }
+      ],
+      "summary": ""
+    },
+    "errorMessage": "",
+    "id": "school-security"
+  },
+  {
+    "score": 1,
+    "details": {
+      "items": [
+        {
+          "result": "Il sito utilizza una versione uguale o superiore alla 2.0 del tema CMS del modello.",
+          "cms_name": "WordPress",
+          "theme_version": "2.10.0"
+        }
+      ],
+      "type": "table",
+      "headings": [
+        {
+          "key": "result",
+          "itemType": "text",
+          "text": "Risultato"
+        },
+        {
+          "key": "cms_name",
+          "itemType": "text",
+          "text": "Tema CMS del modello in uso"
+        },
+        {
+          "key": "theme_version",
+          "itemType": "text",
+          "text": "Versione del tema CMS in uso"
+        }
+      ],
+      "summary": ""
+    },
+    "errorMessage": "",
+    "id": "school-ux-ui-consistency-theme-version-check"
+  }
+]
