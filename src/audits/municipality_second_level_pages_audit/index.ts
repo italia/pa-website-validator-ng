@@ -22,7 +22,6 @@ import { notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
 import * as cheerio from "cheerio";
-import {MetatagAudit} from "../municipality_metatag";
 
 const auditId = "municipality-second-level-pages";
 const auditData = auditDictionary[auditId];
