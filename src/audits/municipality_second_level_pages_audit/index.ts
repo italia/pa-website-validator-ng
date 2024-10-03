@@ -70,6 +70,41 @@ class SecondLevelAudit extends Audit {
    error: string,
   ) {
 
+    this.headings = [
+      {
+        key: "result",
+        itemType: "text",
+        text: "Risultato",
+        subItemsHeading: {
+          key: "menu_voice",
+          itemType: "text",
+        },
+      },
+      {
+        key: "correct_title_percentage",
+        itemType: "text",
+        text: "% di titoli corretti tra quelli usati",
+        subItemsHeading: {
+          key: "inspected_page",
+          itemType: "url",
+        },
+      },
+      {
+        key: "correct_title_found",
+        itemType: "text",
+        text: "Titoli corretti identificati",
+        subItemsHeading: {
+          key: "external",
+          itemType: "text",
+        },
+      },
+      {
+        key: "wrong_title_found",
+        itemType: "text",
+        text: "Titoli aggiuntivi trovati",
+      },
+    ];
+
     if (error && !page) {
 
       this.score = 0;
@@ -87,40 +122,6 @@ class SecondLevelAudit extends Audit {
 
     if(page){
       const url = page.url();
-      this.headings = [
-        {
-          key: "result",
-          itemType: "text",
-          text: "Risultato",
-          subItemsHeading: {
-            key: "menu_voice",
-            itemType: "text",
-          },
-        },
-        {
-          key: "correct_title_percentage",
-          itemType: "text",
-          text: "% di titoli corretti tra quelli usati",
-          subItemsHeading: {
-            key: "inspected_page",
-            itemType: "url",
-          },
-        },
-        {
-          key: "correct_title_found",
-          itemType: "text",
-          text: "Titoli corretti identificati",
-          subItemsHeading: {
-            key: "external",
-            itemType: "text",
-          },
-        },
-        {
-          key: "wrong_title_found",
-          itemType: "text",
-          text: "Titoli aggiuntivi trovati",
-        },
-      ];
 
       try {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment

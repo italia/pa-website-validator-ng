@@ -50,8 +50,6 @@ const loadPageData = async (url: string, wait: boolean = false ): Promise<Cheeri
       await page.waitForNetworkIdle();
     }
 
-    console.log(res?.url(), res?.status());
-
     data = await page.content();
 
     await page.goto("about:blank");
@@ -85,8 +83,7 @@ const loadPage = async(url: string): Promise<any>  => {
       }
     });
 
-    const res = await gotoRetry(page, url, 3);
-    console.log(res?.url(), res?.status());
+    await gotoRetry(page, url, 3);
 
     await page.waitForNetworkIdle();
 

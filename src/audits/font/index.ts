@@ -45,14 +45,39 @@ class FontAudit extends Audit {
         error?: string,
     ) {
 
+        this.titleSubHeadings = [
+            "Numero di <h> o <p> con font errati",
+            "Font errati individuati",
+        ];
+
+        this.headings = [
+            {
+                key: "result",
+                itemType: "text",
+                text: "Risultato",
+                subItemsHeading: { key: "inspected_page", itemType: "url" },
+            },
+            {
+                key: "title_wrong_number_elements",
+                itemType: "text",
+                text: "",
+                subItemsHeading: { key: "wrong_number_elements", itemType: "text" },
+            },
+            {
+                key: "title_wrong_fonts",
+                itemType: "text",
+                text: "",
+                subItemsHeading: { key: "wrong_fonts", itemType: "text" },
+            },
+        ];
+
         if (error && !page) {
 
             this.score = 0;
 
             this.pagesInError.push({
                 inspected_page: '',
-                wrong_order_elements: "",
-                missing_elements: error,
+                wrong_fonts: error,
             });
 
             return {
@@ -61,31 +86,6 @@ class FontAudit extends Audit {
         }
 
         if (page) {
-            this.titleSubHeadings = [
-                "Numero di <h> o <p> con font errati",
-                "Font errati individuati",
-            ];
-
-            this.headings = [
-                {
-                    key: "result",
-                    itemType: "text",
-                    text: "Risultato",
-                    subItemsHeading: { key: "inspected_page", itemType: "url" },
-                },
-                {
-                    key: "title_wrong_number_elements",
-                    itemType: "text",
-                    text: "",
-                    subItemsHeading: { key: "wrong_number_elements", itemType: "text" },
-                },
-                {
-                    key: "title_wrong_fonts",
-                    itemType: "text",
-                    text: "",
-                    subItemsHeading: { key: "wrong_fonts", itemType: "text" },
-                },
-            ];
 
             let url = page.url();
 

@@ -51,6 +51,36 @@ class BookingAppointment extends Audit {
     page: Page | null,
     error?: string
   ) {
+    this.titleSubHeadings = [
+      "Componente individuato",
+      'Nella sezione "Accedi al servizio" della scheda servizio è presente il pulsante di prenotazione appuntamento',
+    ];
+    this.headings = [
+      {
+        key: "result",
+        itemType: "text",
+        text: "Risultato",
+        subItemsHeading: { key: "inspected_page", itemType: "url" },
+      },
+      {
+        key: "title_component_exist",
+        itemType: "text",
+        text: "",
+        subItemsHeading: {
+          key: "component_exist",
+          itemType: "text",
+        },
+      },
+      {
+        key: "title_in_page_url",
+        itemType: "text",
+        text: "",
+        subItemsHeading: {
+          key: "in_page_url",
+          itemType: "text",
+        },
+      },
+    ];
 
     if(error && !page){
 
@@ -58,8 +88,7 @@ class BookingAppointment extends Audit {
 
       this.pagesInError.push({
         inspected_page: '',
-        wrong_order_elements: "",
-        missing_elements: error,
+        component_exist: error,
       });
 
       return {
@@ -68,36 +97,6 @@ class BookingAppointment extends Audit {
     }
     
     if(page){
-      this.titleSubHeadings = [
-        "Componente individuato",
-        'Nella sezione "Accedi al servizio" della scheda servizio è presente il pulsante di prenotazione appuntamento',
-      ];
-      this.headings = [
-        {
-          key: "result",
-          itemType: "text",
-          text: "Risultato",
-          subItemsHeading: { key: "inspected_page", itemType: "url" },
-        },
-        {
-          key: "title_component_exist",
-          itemType: "text",
-          text: "",
-          subItemsHeading: {
-            key: "component_exist",
-            itemType: "text",
-          },
-        },
-        {
-          key: "title_in_page_url",
-          itemType: "text",
-          text: "",
-          subItemsHeading: {
-            key: "in_page_url",
-            itemType: "text",
-          },
-        },
-      ];
 
       let url = page.url()
 

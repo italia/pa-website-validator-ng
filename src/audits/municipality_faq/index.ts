@@ -55,11 +55,11 @@ class FaqAudit extends Audit {
     if(error && !page){
 
       this.globalResults.score = 0;
-      this.globalResults.details.items.push([
+      this.globalResults.details.items.push(
         {
           result: notExecutedErrorMessage.replace("<LIST>", error),
         },
-      ]);
+      );
       this.globalResults.details.headings= [{ key: "result", itemType: "text", text: "Risultato" }];
 
       return {

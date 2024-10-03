@@ -41,14 +41,46 @@ class CookieAudit extends Audit {
         error?: string,
     ) {
 
+        this.titleSubHeadings = [
+            "Dominio del cookie",
+            "Nome del cookie",
+            "Valore del cookie",
+        ];
+
+        this.headings = [
+            {
+                key: "result",
+                itemType: "text",
+                text: "Risultato totale",
+                subItemsHeading: { key: "inspected_page", itemType: "url" },
+            },
+            {
+                key: "title_cookie_domain",
+                itemType: "text",
+                text: "",
+                subItemsHeading: { key: "cookie_domain", itemType: "text" },
+            },
+            {
+                key: "title_cookie_name",
+                itemType: "text",
+                text: "",
+                subItemsHeading: { key: "cookie_name", itemType: "text" },
+            },
+            {
+                key: "title_cookie_value",
+                itemType: "text",
+                text: "",
+                subItemsHeading: { key: "cookie_value", itemType: "text" },
+            },
+        ];
+
         if (error && !page) {
 
             this.score = 0;
 
             this.pagesInError.push({
-                inspected_page: '',
-                wrong_order_elements: "",
-                missing_elements: error,
+                inspected_page: 'url',
+                cookie_domain: error,
             });
 
             return {
@@ -57,40 +89,6 @@ class CookieAudit extends Audit {
         }
 
         if (page) {
-            this.titleSubHeadings = [
-                "Dominio del cookie",
-                "Nome del cookie",
-                "Valore del cookie",
-            ];
-
-            const subResults = ["Nessuna", "Almeno una"];
-
-            this.headings = [
-                {
-                    key: "result",
-                    itemType: "text",
-                    text: "Risultato totale",
-                    subItemsHeading: { key: "inspected_page", itemType: "url" },
-                },
-                {
-                    key: "title_cookie_domain",
-                    itemType: "text",
-                    text: "",
-                    subItemsHeading: { key: "cookie_domain", itemType: "text" },
-                },
-                {
-                    key: "title_cookie_name",
-                    itemType: "text",
-                    text: "",
-                    subItemsHeading: { key: "cookie_name", itemType: "text" },
-                },
-                {
-                    key: "title_cookie_value",
-                    itemType: "text",
-                    text: "",
-                    subItemsHeading: { key: "cookie_value", itemType: "text" },
-                },
-            ];
 
             let url = page.url();
 

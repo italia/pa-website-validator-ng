@@ -53,14 +53,29 @@ class UserExperienceEvaluationAudit extends Audit {
    error?: string
   ) {
 
+    this.titleSubHeadings = ["Elementi errati o non trovati"];
+    this.headings = [
+      {
+        key: "result",
+        itemType: "text",
+        text: "Risultato totale",
+        subItemsHeading: { key: "inspected_page", itemType: "url" },
+      },
+      {
+        key: "title_errors_found",
+        itemType: "text",
+        text: "",
+        subItemsHeading: { key: "errors_found", itemType: "text" },
+      },
+    ];
+
     if (error && !page) {
 
       this.score = 0;
 
       this.pagesInError.push({
         inspected_page: '',
-        wrong_order_elements: "",
-        missing_elements: error,
+        errors_found: error,
       });
 
       return {
@@ -70,22 +85,6 @@ class UserExperienceEvaluationAudit extends Audit {
 
     if(page){
       let url = page.url();
-
-      this.titleSubHeadings = ["Elementi errati o non trovati"];
-      this.headings = [
-        {
-          key: "result",
-          itemType: "text",
-          text: "Risultato totale",
-          subItemsHeading: { key: "inspected_page", itemType: "url" },
-        },
-        {
-          key: "title_errors_found",
-          itemType: "text",
-          text: "",
-          subItemsHeading: { key: "errors_found", itemType: "text" },
-        },
-      ];
 
       const item = {
         inspected_page: url,

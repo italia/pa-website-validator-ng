@@ -90,8 +90,7 @@ class ContactAssistencyAudit extends Audit {
 
       this.pagesInError.push({
         inspected_page: '',
-        wrong_order_elements: "",
-        missing_elements: error,
+        in_index: error,
       });
 
       return {

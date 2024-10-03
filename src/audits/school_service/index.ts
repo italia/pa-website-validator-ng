@@ -62,6 +62,37 @@ class SchoolServiceAudit extends Audit {
         error?: string,
     ) {
 
+        this.titleSubHeadings = [
+            "Voci mancanti o senza contenuto",
+            "Voci che non rispettano l'ordine richiesto",
+        ];
+        this.headings = [
+            {
+                key: "result",
+                itemType: "text",
+                text: "Risultato",
+                subItemsHeading: {key: "inspected_page", itemType: "url"},
+            },
+            {
+                key: "title_missing_elements",
+                itemType: "text",
+                text: "",
+                subItemsHeading: {
+                    key: "missing_elements",
+                    itemType: "text",
+                },
+            },
+            {
+                key: "title_wrong_order_elements",
+                itemType: "text",
+                text: "",
+                subItemsHeading: {
+                    key: "wrong_order_elements",
+                    itemType: "text",
+                },
+            },
+        ];
+
         if (error && !page) {
 
             this.score = 0;
@@ -81,62 +112,7 @@ class SchoolServiceAudit extends Audit {
 
             this.totalServices++;
 
-            this.titleSubHeadings = [
-                "Voci mancanti o senza contenuto",
-                "Voci che non rispettano l'ordine richiesto",
-            ];
-            this.headings = [
-                {
-                    key: "result",
-                    itemType: "text",
-                    text: "Risultato",
-                    subItemsHeading: {key: "inspected_page", itemType: "url"},
-                },
-                {
-                    key: "title_missing_elements",
-                    itemType: "text",
-                    text: "",
-                    subItemsHeading: {
-                        key: "missing_elements",
-                        itemType: "text",
-                    },
-                },
-                {
-                    key: "title_wrong_order_elements",
-                    itemType: "text",
-                    text: "",
-                    subItemsHeading: {
-                        key: "wrong_order_elements",
-                        itemType: "text",
-                    },
-                },
-            ];
-
-            let url = '';
-
-            try {
-                url = page.url();
-            } catch (ex) {
-                if (!(ex instanceof DataElementError)) {
-                    throw ex;
-                }
-
-                let errorMessage = ex.message;
-                errorMessage = errorMessage.substring(
-                    errorMessage.indexOf('"') + 1,
-                    errorMessage.lastIndexOf('"')
-                );
-
-                this.pagesInError.push({
-                    inspected_page: url,
-                    wrong_order_elements: "",
-                    missing_elements: errorMessage,
-                });
-
-                return {
-                    score: 0,
-                }
-            }
+            let url = page.url();
 
             let data = await page.content();
             let $: CheerioAPI = await cheerio.load(data);

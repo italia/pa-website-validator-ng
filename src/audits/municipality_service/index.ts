@@ -71,6 +71,37 @@ class ServiceAudit extends Audit {
         error?: string,
     ) {
 
+        this.titleSubHeadings = [
+            "Voci mancanti o senza contenuto",
+            "Voci che non rispettano l'ordine richiesto",
+        ];
+        this.headings = [
+            {
+                key: "result",
+                itemType: "text",
+                text: "Risultato",
+                subItemsHeading: {key: "inspected_page", itemType: "url"},
+            },
+            {
+                key: "title_missing_elements",
+                itemType: "text",
+                text: "",
+                subItemsHeading: {
+                    key: "missing_elements",
+                    itemType: "text",
+                },
+            },
+            {
+                key: "title_wrong_order_elements",
+                itemType: "text",
+                text: "",
+                subItemsHeading: {
+                    key: "wrong_order_elements",
+                    itemType: "text",
+                },
+            },
+        ];
+
         if (error && !page) {
 
             this.score = 0;
@@ -89,37 +120,6 @@ class ServiceAudit extends Audit {
         if (page) {
 
             this.totalServices++;
-
-            this.titleSubHeadings = [
-                "Voci mancanti o senza contenuto",
-                "Voci che non rispettano l'ordine richiesto",
-            ];
-            this.headings = [
-                {
-                    key: "result",
-                    itemType: "text",
-                    text: "Risultato",
-                    subItemsHeading: {key: "inspected_page", itemType: "url"},
-                },
-                {
-                    key: "title_missing_elements",
-                    itemType: "text",
-                    text: "",
-                    subItemsHeading: {
-                        key: "missing_elements",
-                        itemType: "text",
-                    },
-                },
-                {
-                    key: "title_wrong_order_elements",
-                    itemType: "text",
-                    text: "",
-                    subItemsHeading: {
-                        key: "wrong_order_elements",
-                        itemType: "text",
-                    },
-                },
-            ];
 
             const mandatoryIndexVoices = contentTypeItemsIndex;
             const mandatoryVoicesDataElements = contentTypeItemsIndexDataElement;

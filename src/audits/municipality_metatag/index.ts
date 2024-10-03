@@ -58,6 +58,34 @@ class MetatagAudit extends Audit {
     page: Page | null,
     error?: string
   ) {
+    this.titleSubHeadings = ["JSON valido", "Metatag non presenti o errati"];
+    this.headings = [
+      {
+        key: "result",
+        itemType: "text",
+        text: "Risultato",
+        subItemsHeading: {key: "inspected_page", itemType: "url"},
+      },
+      {
+        key: "title_valid_json",
+        itemType: "text",
+        text: "",
+        subItemsHeading: {
+          key: "valid_json",
+          itemType: "text",
+        },
+      },
+      {
+        key: "title_missing_keys",
+        itemType: "text",
+        text: "",
+        subItemsHeading: {
+          key: "missing_keys",
+          itemType: "text",
+        },
+      },
+    ];
+
     if (error && !page) {
 
       this.score = 0;
@@ -75,34 +103,6 @@ class MetatagAudit extends Audit {
 
     if (page) {
       let url = page.url();
-
-      this.titleSubHeadings = ["JSON valido", "Metatag non presenti o errati"];
-      this.headings = [
-        {
-          key: "result",
-          itemType: "text",
-          text: "Risultato",
-          subItemsHeading: {key: "inspected_page", itemType: "url"},
-        },
-        {
-          key: "title_valid_json",
-          itemType: "text",
-          text: "",
-          subItemsHeading: {
-            key: "valid_json",
-            itemType: "text",
-          },
-        },
-        {
-          key: "title_missing_keys",
-          itemType: "text",
-          text: "",
-          subItemsHeading: {
-            key: "missing_keys",
-            itemType: "text",
-          },
-        },
-      ];
 
       let $: CheerioAPI | any = null;
 

@@ -4,7 +4,7 @@
 import { domains } from "../../storage/municipality/allowedDomains.js";
 import { auditDictionary } from "../../storage/auditDictionary.js";
 import { urlExists } from "../../utils/utils.js";
-import { notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
+
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
 
@@ -47,13 +47,55 @@ class DomainAudit extends Audit {
     error?: string
   ){
 
+    this.titleSubHeadings = [
+      "Dominio utilizzato",
+      'Viene usato il sottodominio "comune." seguito da un dominio istituzionale riservato',
+      'Sito raggiungibile senza "www."',
+    ];
+    this.headings = [
+      {
+        key: "result",
+        itemType: "text",
+        text: "Risultato",
+        subItemsHeading: { key: "inspected_page", itemType: "url" },
+      },
+      {
+        key: "title_domain",
+        itemType: "text",
+        text: "",
+        subItemsHeading: {
+          key: "domain",
+          itemType: "text",
+        },
+      },
+      {
+        key: "title_correct_domain",
+        itemType: "text",
+        text: "",
+        subItemsHeading: {
+          key: "correct_domain",
+          itemType: "text",
+        },
+      },
+      {
+        key: "title_www_access",
+        itemType: "text",
+        text: "",
+        subItemsHeading: {
+          key: "www_access",
+          itemType: "text",
+        },
+      },
+    ];
+
     if (error && !page) {
       this.score = 0;
 
-      this.pagesInError.push({
+      this.wrongItems.push({
         inspected_page: '',
-        wrong_order_elements: "",
-        missing_elements: error,
+        domain: '',
+        correct_domain: "No",
+        www_access: ""
       });
 
       return {
@@ -62,47 +104,6 @@ class DomainAudit extends Audit {
     }
 
     if(page){
-
-      this.titleSubHeadings = [
-        "Dominio utilizzato",
-        'Viene usato il sottodominio "comune." seguito da un dominio istituzionale riservato',
-        'Sito raggiungibile senza "www."',
-      ];
-      this.headings = [
-        {
-          key: "result",
-          itemType: "text",
-          text: "Risultato",
-          subItemsHeading: { key: "inspected_page", itemType: "url" },
-        },
-        {
-          key: "title_domain",
-          itemType: "text",
-          text: "",
-          subItemsHeading: {
-            key: "domain",
-            itemType: "text",
-          },
-        },
-        {
-          key: "title_correct_domain",
-          itemType: "text",
-          text: "",
-          subItemsHeading: {
-            key: "correct_domain",
-            itemType: "text",
-          },
-        },
-        {
-          key: "title_www_access",
-          itemType: "text",
-          text: "",
-          subItemsHeading: {
-            key: "www_access",
-            itemType: "text",
-          },
-        },
-      ];
 
       let url = page.url();
 

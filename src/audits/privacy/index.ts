@@ -40,6 +40,34 @@ class PrivacyAudit extends Audit {
     ) {
         //TODO: secondo me dovremmo creare un gatherer per questa tipologia di pagina e qui fare solo il controllo sulla pagina
 
+        this.headings = [
+            {
+                key: "result",
+                itemType: "text",
+                text: "Risultato",
+            },
+            {
+                key: "link_name",
+                itemType: "text",
+                text: "Testo del link",
+            },
+            {
+                key: "link_destination",
+                itemType: "url",
+                text: "Pagina di destinazione del link",
+            },
+            {
+                key: "existing_page",
+                itemType: "text",
+                text: "Pagina esistente",
+            },
+            {
+                key: "secure_page",
+                itemType: "text",
+                text: "Pagina sicura",
+            },
+        ];
+
         if(error && !page){
 
             this.globalResults.score = 0;
@@ -57,34 +85,6 @@ class PrivacyAudit extends Audit {
 
         if(page){
             const url = page.url();
-
-            this.headings = [
-                {
-                    key: "result",
-                    itemType: "text",
-                    text: "Risultato",
-                },
-                {
-                    key: "link_name",
-                    itemType: "text",
-                    text: "Testo del link",
-                },
-                {
-                    key: "link_destination",
-                    itemType: "url",
-                    text: "Pagina di destinazione del link",
-                },
-                {
-                    key: "existing_page",
-                    itemType: "text",
-                    text: "Pagina esistente",
-                },
-                {
-                    key: "secure_page",
-                    itemType: "text",
-                    text: "Pagina sicura",
-                },
-            ];
 
             let score = 0;
 

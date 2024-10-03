@@ -43,11 +43,11 @@ class A11yAudit extends Audit {
         if(error && !page){
 
             this.globalResults.score = 0;
-            this.globalResults.details.items.push([
+            this.globalResults.details.items.push(
                 {
                     result: notExecutedErrorMessage.replace("<LIST>", error),
                 },
-            ]);
+            );
             this.globalResults.details.headings= [{ key: "result", itemType: "text", text: "Risultato" }];
 
             return {
@@ -181,8 +181,6 @@ class A11yAudit extends Audit {
 
                 items[0].result = (this.constructor as typeof Audit).auditData.greenResult;
             }
-
-            console.log('passo');
 
             this.globalResults.score = 1;
             this.globalResults.details.items = items;
