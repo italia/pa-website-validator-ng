@@ -342,17 +342,19 @@ abstract class Gatherer {
                 buttonOnclick &&
                 buttonOnclick.includes("location.href")
             ){
-                let secondPageLink = buttonOnclick.substring(
+
+                finalUrl = buttonOnclick.substring(
                     buttonOnclick.indexOf("'") + 1,
                     buttonOnclick.lastIndexOf("'")
                 );
-                if (!secondPageLink.includes(url)) {
-                    finalUrl = await this.buildUrl(url, secondPageLink);
+
+                if (!finalUrl.includes(url)) {
+                    finalUrl = await this.buildUrl(url, finalUrl);
                 }
             }else if(buttonHrefAttr){
-                let secondPageLink = buttonHrefAttr;
-                if (!secondPageLink.includes(url)) {
-                    finalUrl = await this.buildUrl(url, secondPageLink);
+                finalUrl = buttonHrefAttr;
+                if (!finalUrl.includes(url)) {
+                    finalUrl = await this.buildUrl(url, finalUrl);
                 }
             }
 

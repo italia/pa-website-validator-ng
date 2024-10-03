@@ -34,6 +34,7 @@ class BookingAppointment extends Audit {
   public score = 1;
   private titleSubHeadings: any = [];
   private headings : any = [];
+  private pageHasError = false;
 
   static get meta() {
     return {
@@ -53,13 +54,13 @@ class BookingAppointment extends Audit {
 
     if(error && !page){
 
-      this.globalResults.score = 0;
-      this.globalResults.details.items.push([
-        {
-          result: notExecutedErrorMessage.replace("<LIST>", error),
-        },
-      ]);
-      this.globalResults.details.headings= [{ key: "result", itemType: "text", text: "Risultato" }];
+      this.score = 0;
+
+      this.pagesInError.push({
+        inspected_page: '',
+        wrong_order_elements: "",
+        missing_elements: error,
+      });
 
       return {
         score: 0,
@@ -197,12 +198,7 @@ class BookingAppointment extends Audit {
   }
 
   async returnGlobal(){
-    if(this.globalResults.details.items.length){
-      this.globalResults.details.items.unshift({
-        result: (this.constructor as typeof Audit).auditData.redResult,
-      })
-      return this.globalResults;
-    }
+
     const results = [];
     if (this.pagesInError.length > 0) {
       results.push({

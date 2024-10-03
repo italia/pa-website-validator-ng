@@ -6,7 +6,6 @@ import { auditDictionary } from "../../storage/auditDictionary.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
 import * as cheerio from "cheerio";
-import {DomainAudit} from "../municipality_domain_audit";
 import {notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
 
 

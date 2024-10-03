@@ -124,6 +124,7 @@ const scan = async (pageData: PageData) => {
                 }
             }
 
+            PageManager.setNotTemporary(pageData.url, pageData.type);
             PageManager.setErrors(pageData.url, auditingErrors)
             PageManager.setAudited(pageData.url);
             console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Auditing end`);
@@ -136,17 +137,6 @@ const scan = async (pageData: PageData) => {
             PageManager.getGlobalResults();
             console.log('SCAN ENDED - navigated pages:')
             console.log(PageManager.getAllPages(), JSON.stringify(await PageManager.getGlobalResults()));
-
-           /* await getGlobalResult(){
-                for(audit){
-                    audit.returnResult()
-                }
-
-            }*/
-        }
-
-
-        //console.log('scan ended')
 
     } catch (err) {
         console.log(`SCAN error: ${err}`)

@@ -18,9 +18,9 @@ class eventsPageGatherer extends Gatherer {
       fetchedUrls = [...fetchedUrls,...await this.getButtonUrl(page,dataElement)]
     }
   
-    this.gatheredPages = fetchedUrls.map((url: any) => {
+    this.gatheredPages = fetchedUrls.map((urlItem: any) => {
       return {
-        url: url,
+        url: urlItem,
         id: currentClass.pageType + Date.now(),
         type: currentClass.pageType,
         gathered: false,

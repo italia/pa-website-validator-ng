@@ -70,7 +70,7 @@ class servicesGatherer extends Gatherer {
 
     if (!maxCountPages || maxCountPages == 0) {
       await page.close()
-      throw new Error(`Cannot find elements with data-element "${servicesGatherer.dataElement} ${maxCountPages} ${error}"`);
+      throw new Error(`Cannot find elements with data-element "${servicesGatherer.dataElement}"`);
     }
 
     pages = await getRandomNString(pages, numberOfPages);
@@ -86,12 +86,6 @@ class servicesGatherer extends Gatherer {
           redirectUrl:''
         } as PageData
     })
-
-
-
-
-
-    //console.log('HREF', this.gatheredPages[0])
     
     await page.close()
     return this.gatheredPages

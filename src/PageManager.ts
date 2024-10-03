@@ -74,6 +74,11 @@ class PageManager {
         if (page) page.gathered = true
     }
 
+    setNotTemporary(url:string, pageType: string){
+        let page = this.pagesArray.find(page => (page.url === url || page.type === pageType))
+        if (page) page.temporary = false
+    }
+
     setErrors(url:string, errors:Error[], returnPage?: boolean) : PageData | any{
       let page = this.pagesArray.find(page => page.url === url)
       if (page) page.errors = errors;
@@ -84,7 +89,7 @@ class PageManager {
     }
 
     hasRemainingPages(){
-      const remainingPages = this.pagesArray.find(el=> !el.audited || !el.gathered)
+      const remainingPages = this.pagesArray.find(el=> !el.audited || !el.gathered || el.temporary)
       return remainingPages != undefined
     }
   }

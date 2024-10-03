@@ -53,15 +53,13 @@ class FeedbackAudit extends Audit {
       error?: string,
   ) {
     if(error && !page){
-      this.globalResults['score'] = 0;
-      this.globalResults['details']['items'].push([
-        {
-          result: notExecutedErrorMessage.replace("<LIST>", error),
-        },
-      ]);
-      this.globalResults['details']['type'] = 'table';
-      this.globalResults['details']['headings'] = [{ key: "result", itemType: "text", text: "Risultato" }];
-      this.globalResults['details']['summary'] = '';
+      this.score = 0;
+
+      this.pagesInError.push({
+        inspected_page: '',
+        wrong_order_elements: "",
+        missing_elements: error,
+      });
 
       return {
         score: 0,
@@ -143,12 +141,6 @@ class FeedbackAudit extends Audit {
   }
 
   async returnGlobal(){
-    if(this.globalResults.details.items.length){
-      this.globalResults.details.items.unshift({
-        result: (this.constructor as typeof Audit).auditData.redResult,
-      })
-      return this.globalResults;
-    }
     if(this.globalResults['score'] > 0){
       this.globalResults['score'] = 1;
     }
