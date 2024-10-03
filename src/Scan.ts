@@ -138,6 +138,7 @@ const scan = async (pageData: PageData) => {
             console.log('SCAN ENDED - navigated pages:')
             console.log(PageManager.getAllPages(), JSON.stringify(await PageManager.getGlobalResults()));
 
+        }
     } catch (err) {
         console.log(`SCAN error: ${err}`)
         await browser.close()
