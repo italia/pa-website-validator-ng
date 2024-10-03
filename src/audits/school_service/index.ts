@@ -291,6 +291,12 @@ class SchoolServiceAudit extends Audit {
     }
 
     async returnGlobal() {
+        if(this.globalResults.details.items.length){
+            this.globalResults.details.items.unshift({
+                result: (this.constructor as typeof Audit).auditData.redResult,
+            })
+            return this.globalResults;
+        }
         if (this.totalServices < minNumberOfServices) {
             this.globalResults['score'] = 0;
         }

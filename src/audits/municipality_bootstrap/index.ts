@@ -15,10 +15,8 @@ import {
   errorHandling,
   notExecutedErrorMessage,
 } from "../../config/commonAuditsParts.js";
-import { DataElementError } from "../../utils/DataElementError.js";
 import {Audit} from "../Audit.js";
 import {browser} from "../../PuppeteerInstance.js";
-import {bookingAppointmentGatherer} from "../../gatherers/booking_appointment";
 
 const auditId = "municipality-ux-ui-consistency-bootstrap-italia-double-check";
 const auditData = auditDictionary[auditId];
@@ -94,29 +92,23 @@ class BootstrapMunAudit extends Audit {
       },
     ];
 
-    if(page){
-      let url = '';
+    if(error && !page){
 
-      try {
-        url = page.url();
-      } catch (ex) {
-        if (!(ex instanceof DataElementError)) {
-          throw ex;
-        }
+      this.globalResults.score = 0;
+      this.globalResults.details.items.push([
+        {
+          result: notExecutedErrorMessage.replace("<LIST>", error),
+        },
+      ]);
+      this.globalResults.details.headings= [{ key: "result", itemType: "text", text: "Risultato" }];
 
-        this.score = 0;
-        this.globalResults.score = 0;
-        this.globalResults.details.items = [
-          {
-            result: notExecutedErrorMessage.replace("<LIST>", ex.message),
-          },
-        ];
-        this.globalResults.details.headings = [{ key: "result", itemType: "text", text: "Risultato" }];
-
-        return {
-          score: 0,
-        };
+      return {
+        score: 0,
       }
+    }
+
+    if(page){
+      let url = page.url();
 
       const drupalClassesCheck = await isDrupal(url);
 
@@ -277,6 +269,12 @@ class BootstrapMunAudit extends Audit {
 
 
   async returnGlobal(){
+    if(this.globalResults.details.items.length){
+      this.globalResults.details.items.unshift({
+        result: (this.constructor as typeof Audit).auditData.redResult,
+      })
+      return this.globalResults;
+    }
     const results = [];
     if (this.pagesInError.length > 0) {
       results.push({

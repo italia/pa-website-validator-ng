@@ -183,10 +183,6 @@ class LicenceAudit extends Audit {
         return (this.constructor as typeof Audit).auditId;
     }
 
-    async returnGlobal(){
-        return this.globalResults;
-    }
-
     static getInstance(): Promise<LicenceAudit> {
         if (!LicenceAudit.instance) {
             LicenceAudit.instance = new LicenceAudit('',[],[]);

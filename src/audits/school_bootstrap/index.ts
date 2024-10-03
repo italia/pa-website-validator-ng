@@ -237,6 +237,12 @@ class SchoolBootstrap extends Audit {
     }
 
     async returnGlobal() {
+        if(this.globalResults.details.items.length){
+            this.globalResults.details.items.unshift({
+                result: (this.constructor as typeof Audit).auditData.redResult,
+            })
+            return this.globalResults;
+        }
         switch (this.score) {
             case 1:
                 this.globalResults['details']['items'].push({

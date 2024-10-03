@@ -10,10 +10,8 @@ import {
   errorHandling,
   notExecutedErrorMessage,
 } from "../../config/commonAuditsParts.js";
-import { DataElementError } from "../../utils/DataElementError.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
-import {SecondLevelAudit} from "../municipality_second_level_pages_audit";
 
 const auditId = "municipality-user-experience-evaluation";
 const auditData = auditDictionary[auditId];
@@ -51,11 +49,29 @@ class UserExperienceEvaluationAudit extends Audit {
   }
 
   async auditPage(
-   page: Page | null
+   page: Page | null,
+   error?: string
   ) {
 
+    if (error && !page) {
+
+      this.globalResults['score'] = 0;
+      this.globalResults['details']['items'] =  [
+        {
+          result: notExecutedErrorMessage.replace("<LIST>", error),
+        },
+      ];
+      this.globalResults['details']['type'] = 'table';
+      this.globalResults['details']['headings'] = [{key: "result", itemType: "text", text: "Risultato"}];
+      this.globalResults['details']['summary'] = '';
+
+      return {
+        score: 0,
+      }
+    }
+
     if(page){
-      let url = '';
+      let url = page.url();
 
       this.titleSubHeadings = ["Elementi errati o non trovati"];
       this.headings = [
@@ -72,28 +88,6 @@ class UserExperienceEvaluationAudit extends Audit {
           subItemsHeading: { key: "errors_found", itemType: "text" },
         },
       ];
-
-
-      try {
-        url = page.url();
-      } catch (ex) {
-        if (!(ex instanceof DataElementError)) {
-          throw ex;
-        }
-
-        this.score = 0;
-        this.globalResults.score = 0;
-        this.globalResults.details.items =  [{ key: "result", itemType: "text", text: "Risultato" }];
-        this.globalResults.details.items = [
-          {
-            result: notExecutedErrorMessage.replace("<LIST>", ex.message),
-          },
-        ];
-
-        return {
-          score: 0,
-        };
-      }
 
       const item = {
         inspected_page: url,
@@ -146,6 +140,13 @@ class UserExperienceEvaluationAudit extends Audit {
   }
 
   async returnGlobal() {
+
+    if(this.globalResults.details.items.length){
+      this.globalResults.details.items.unshift({
+        result: (this.constructor as typeof Audit).auditData.redResult,
+      })
+      return this.globalResults;
+    }
 
     const results = [];
     if (this.pagesInError.length > 0) {

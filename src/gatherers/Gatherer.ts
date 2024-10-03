@@ -316,6 +316,7 @@ abstract class Gatherer {
     };
 
     async getButtonValuesDataAttribute(page: Page, elementDataAttribute: string): Promise<any[]> {
+        const url = page.url();
         const urls = [];
         const elements: any = await page.$$(elementDataAttribute);
 
@@ -331,20 +332,35 @@ abstract class Gatherer {
                 return onclickAttribute || '';
             });
 
-            if (!buttonOnclick) {
-                throw new Error(`Cannot access onclick property of button ${elementDataAttribute}`)
+            let buttonHrefAttr = await element.evaluate((el: HTMLElement) => {
+                const hrefAttribute = el.getAttribute('href');
+                return hrefAttribute || '';
+            });
+            let finalUrl = '';
+
+            if (
+                buttonOnclick &&
+                buttonOnclick.includes("location.href")
+            ){
+                let secondPageLink = buttonOnclick.substring(
+                    buttonOnclick.indexOf("'") + 1,
+                    buttonOnclick.lastIndexOf("'")
+                );
+                if (!secondPageLink.includes(url)) {
+                    finalUrl = await this.buildUrl(url, secondPageLink);
+                }
+            }else if(buttonHrefAttr){
+                let secondPageLink = buttonHrefAttr;
+                if (!secondPageLink.includes(url)) {
+                    finalUrl = await this.buildUrl(url, secondPageLink);
+                }
             }
 
-            let buttonHref = buttonOnclick.substring(
-                buttonOnclick.indexOf("'") + 1,
-                buttonOnclick.lastIndexOf("'")
-            );
-            
-            if (this.isInternalUrl(buttonHref)) {
-                buttonHref = await this.buildUrl( page.url(),buttonHref)
+            if (!buttonOnclick && !buttonHrefAttr) {
+                throw new Error(`Cannot access on properties href/onclick of button ${elementDataAttribute}`)
             }
 
-            buttonUrls.push(buttonHref)
+            buttonUrls.push(finalUrl)
         }
 
         return buttonUrls;

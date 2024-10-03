@@ -22,7 +22,6 @@ import {
     minNumberOfServices,
     notExecutedErrorMessage,
 } from "../../config/commonAuditsParts.js";
-import {DataElementError} from "../../utils/DataElementError.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
 import * as cheerio from "cheerio";
@@ -259,6 +258,13 @@ class ServiceAudit extends Audit {
     }
 
     async returnGlobal() {
+        if(this.globalResults.details.items.length){
+            this.globalResults.details.items.unshift({
+                result: (this.constructor as typeof Audit).auditData.redResult,
+            })
+            return this.globalResults;
+        }
+
         if (this.totalServices < minNumberOfServices) {
             this.globalResults['score'] = 0;
         }

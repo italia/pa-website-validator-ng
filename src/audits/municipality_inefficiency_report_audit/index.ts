@@ -12,6 +12,7 @@ import isEmail from "validator/lib/isEmail.js";
 import {Page} from "puppeteer";
 import {Audit} from "../Audit.js";
 import * as cheerio from "cheerio";
+import {notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
 
 const auditId = "municipality-inefficiency-report";
 const auditData = auditDictionary[auditId];
@@ -46,8 +47,26 @@ class InefficiencyAudit extends Audit {
   }
 
   async auditPage(
-    page: Page | null
+    page: Page | null,
+    error?: string
   ) {
+
+    if (error && !page) {
+
+      this.globalResults['score'] = 0;
+      this.globalResults['details']['items'] =  [
+        {
+          result: notExecutedErrorMessage.replace("<LIST>", error),
+        },
+      ];
+      this.globalResults['details']['type'] = 'table';
+      this.globalResults['details']['headings'] = [{key: "result", itemType: "text", text: "Risultato"}];
+      this.globalResults['details']['summary'] = '';
+
+      return {
+        score: 0,
+      }
+    }
 
     if(page){
       const url = page.url();
@@ -168,14 +187,11 @@ class InefficiencyAudit extends Audit {
       };
     }
 
-    return;
-
   }
 
   async getType(){
     return auditId;
   }
-
 
   static getInstance(): Promise<InefficiencyAudit> {
     if (!InefficiencyAudit.instance) {

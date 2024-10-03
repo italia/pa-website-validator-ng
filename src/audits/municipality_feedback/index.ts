@@ -18,11 +18,6 @@ import {Audit} from "../Audit.js";
 const auditId = "municipality-feedback-element";
 const auditData = auditDictionary[auditId];
 
-const accuracy = process.env["accuracy"] ?? "suggested";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const auditVariables = auditScanVariables[accuracy][auditId];
-
 class FeedbackAudit extends Audit {
   public globalResults: any = {
     score: 1,
@@ -74,8 +69,6 @@ class FeedbackAudit extends Audit {
     }
 
     if(page){
-      let url = '';
-
       this.titleSubHeadings = ["Elementi errati o non trovati"];
       this.headings = [
         {
@@ -91,28 +84,7 @@ class FeedbackAudit extends Audit {
           subItemsHeading: { key: "errors_found", itemType: "text" },
         },
       ];
-
-      try {
-        url = page.url();
-      } catch (ex) {
-        if (!(ex instanceof DataElementError)) {
-          throw ex;
-        }
-
-        this.globalResults['score'] = 0;
-        this.globalResults['details']['items'].push([
-          {
-            result: notExecutedErrorMessage.replace("<LIST>", ex.message),
-          },
-        ]);
-        this.globalResults['details']['type'] = 'table';
-        this.globalResults['details']['headings'] = [{ key: "result", itemType: "text", text: "Risultato" }];
-        this.globalResults['details']['summary'] = '';
-
-        return {
-          score: 0,
-        };
-      }
+      let url = page.url();
 
         const item = {
           inspected_page: url,
@@ -171,6 +143,12 @@ class FeedbackAudit extends Audit {
   }
 
   async returnGlobal(){
+    if(this.globalResults.details.items.length){
+      this.globalResults.details.items.unshift({
+        result: (this.constructor as typeof Audit).auditData.redResult,
+      })
+      return this.globalResults;
+    }
     if(this.globalResults['score'] > 0){
       this.globalResults['score'] = 1;
     }
@@ -272,7 +250,7 @@ class FeedbackAudit extends Audit {
     }
 
     this.globalResults['score'] = this.score;
-    this.globalResults['details']['items'].push(results);
+    this.globalResults['ils']['items'].push(results);
     this.globalResults['errorMessage'] = this.pagesInError.length || this.wrongItems.length ? errorHandling.popupMessage : "";
     this.globalResults['details']['headings'] = this.headings;
 

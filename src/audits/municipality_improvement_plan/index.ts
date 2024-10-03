@@ -3,6 +3,7 @@ import {Page} from "puppeteer";
 import {CheerioAPI} from "cheerio";
 import * as cheerio from "cheerio";
 import {BootstrapMunAudit} from "../municipality_bootstrap";
+import {notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
 
 const auditId = "municipality-performance-improvement-plan";
 
@@ -25,8 +26,26 @@ class ImprovementPlanAudit extends Audit {
   }
 
   async auditPage(
-      page: Page | null
+      page: Page | null,
+      error?: string
   ) {
+
+    if (error && !page) {
+
+      this.globalResults['score'] = 0;
+      this.globalResults['details']['items'] =  [
+        {
+          result: notExecutedErrorMessage.replace("<LIST>", error),
+        },
+      ];
+      this.globalResults['details']['type'] = 'table';
+      this.globalResults['details']['headings'] = [{key: "result", itemType: "text", text: "Risultato"}];
+      this.globalResults['details']['summary'] = '';
+
+      return {
+        score: 0,
+      }
+    }
 
     if (page) {
       let data = await page.content();

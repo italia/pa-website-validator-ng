@@ -7,6 +7,7 @@ import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
 import * as cheerio from "cheerio";
 import {DomainAudit} from "../municipality_domain_audit";
+import {notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
 
 
 const auditId = "municipality-faq-is-present";
@@ -49,8 +50,24 @@ class FaqAudit extends Audit {
   }
 
   async auditPage(
-    page: Page | null
+    page: Page | null,
+    error?: string
   ) {
+    if(error && !page){
+
+      this.globalResults.score = 0;
+      this.globalResults.details.items.push([
+        {
+          result: notExecutedErrorMessage.replace("<LIST>", error),
+        },
+      ]);
+      this.globalResults.details.headings= [{ key: "result", itemType: "text", text: "Risultato" }];
+
+      return {
+        score: 0,
+      }
+    }
+
     if(page){
       const url = page.url();
 

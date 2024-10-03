@@ -88,31 +88,7 @@ class FontAudit extends Audit {
                 },
             ];
 
-            let url = '';
-
-            try {
-                url = page.url();
-            } catch (ex) {
-                if (!(ex instanceof DataElementError)) {
-                    throw ex;
-                }
-
-                let errorMessage = ex.message;
-                errorMessage = errorMessage.substring(
-                    errorMessage.indexOf('"') + 1,
-                    errorMessage.lastIndexOf('"')
-                );
-
-                this.pagesInError.push({
-                    inspected_page: url,
-                    wrong_order_elements: "",
-                    missing_elements: errorMessage,
-                });
-
-                return {
-                    score: 0,
-                }
-            }
+            let url = page.url();
 
             const item = {
                 inspected_page: url,
@@ -215,6 +191,12 @@ class FontAudit extends Audit {
     }
 
     async returnGlobal() {
+        if(this.globalResults.details.items.length){
+            this.globalResults.details.items.unshift({
+                result: (this.constructor as typeof Audit).auditData.redResult,
+            })
+            return this.globalResults;
+        }
         switch (this.score) {
             case 1:
                 this.globalResults['details']['items'].push({

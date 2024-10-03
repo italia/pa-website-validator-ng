@@ -1,6 +1,5 @@
 "use strict";
 
-import lighthouse from "lighthouse";
 import { primaryMenuItems } from "../../storage/municipality/menuItems.js";
 import {
   checkOrder,
@@ -12,7 +11,7 @@ import { MenuItem } from "../../types/menuItem.js";
 import { getFirstLevelPages } from "../../utils/municipality/utils.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
-import {ImprovementPlanAudit} from "../municipality_improvement_plan";
+import {notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
 
 const auditId = "municipality-menu-structure-match-model";
 const auditData = auditDictionary[auditId];
@@ -51,8 +50,25 @@ class MenuAudit extends Audit {
   }
 
   async auditPage(
-    page: Page | null
+    page: Page | null,
+    error?: string
   ) {
+    if (error && !page) {
+
+      this.globalResults['score'] = 0;
+      this.globalResults['details']['items'] =  [
+        {
+          result: notExecutedErrorMessage.replace("<LIST>", error),
+        },
+      ];
+      this.globalResults['details']['type'] = 'table';
+      this.globalResults['details']['headings'] = [{key: "result", itemType: "text", text: "Risultato"}];
+      this.globalResults['details']['summary'] = '';
+
+      return {
+        score: 0,
+      }
+    }
 
     if(page){
       const url = page.url();

@@ -55,7 +55,7 @@ class servicesGatherer extends Gatherer {
         pages = foundElementsHrefs
 
         let currentCountPages = foundElementsHrefs.length;
-        console.log(maxCountPages, foundElementsHrefs.length);
+
         if (!currentCountPages || currentCountPages === maxCountPages) {
           clickButton = false;
           continue;
@@ -64,7 +64,6 @@ class servicesGatherer extends Gatherer {
         maxCountPages = currentCountPages;
 
       } catch (e) {
-        console.log(e, 'erroreee');
         clickButton = false;
       }
     }

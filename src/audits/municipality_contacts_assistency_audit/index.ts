@@ -4,28 +4,16 @@
 import { getPageElementDataAttribute, loadPageData } from "../../utils/utils.js";
 import { CheerioAPI } from "cheerio";
 import { auditDictionary } from "../../storage/auditDictionary.js";
-import { auditScanVariables } from "../../storage/municipality/auditScanVariables.js";
 import {
   errorHandling,
   notExecutedErrorMessage,
 } from "../../config/commonAuditsParts.js";
-import { DataElementError } from "../../utils/DataElementError.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
 import * as cheerio from "cheerio";
-import {BootstrapMunAudit} from "../municipality_bootstrap";
 
 const auditId = "municipality-contacts-assistency";
 const auditData = auditDictionary[auditId];
-
-const accuracy = process.env["accuracy"] ?? "suggested";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const auditVariables = auditScanVariables[accuracy][auditId];
-
-const numberOfServicesToBeScanned = process.env["numberOfServicePages"]
-  ? JSON.parse(process.env["numberOfServicePages"])
-  : auditVariables.numberOfServicesToBeScanned;
 
 class ContactAssistencyAudit extends Audit {
   public globalResults: any = {
@@ -58,7 +46,8 @@ class ContactAssistencyAudit extends Audit {
   }
 
   async auditPage(
-    page: Page | null
+    page: Page | null,
+    error?: string
   ) {
 
     this.titleSubHeadings = [
@@ -95,27 +84,24 @@ class ContactAssistencyAudit extends Audit {
       },
     ];
 
-    let url = '';
-    if(page){
-      try {
-        url = page.url();
-      } catch (ex) {
-        if (!(ex instanceof DataElementError)) {
-          throw ex;
-        }
+    if(error && !page){
 
-        this.globalResults.details.items = [{ key: "result", itemType: "text", text: "Risultato" }];
-        this.globalResults.details.headings = [
-          {
-            result: notExecutedErrorMessage.replace("<LIST>", ex.message),
-          },
-        ];
-        this.score = 0;
+      this.globalResults.score = 0;
+      this.globalResults.details.items.push([
+        {
+          result: notExecutedErrorMessage.replace("<LIST>", error),
+        },
+      ]);
+      this.globalResults.details.headings= [{ key: "result", itemType: "text", text: "Risultato" }];
 
-        return {
-          score: 0,
-        };
+      return {
+        score: 0,
       }
+    }
+
+    if(page){
+
+      let url = page.url();
 
       let $: CheerioAPI | any = null;
 
@@ -179,6 +165,12 @@ class ContactAssistencyAudit extends Audit {
   }
 
   async returnGlobal(){
+    if(this.globalResults.details.items.length){
+      this.globalResults.details.items.unshift({
+        result: (this.constructor as typeof Audit).auditData.redResult,
+      })
+      return this.globalResults;
+    }
     const results = [];
     if (this.pagesInError.length > 0) {
       results.push({

@@ -198,10 +198,6 @@ class A11yAudit extends Audit {
         return (this.constructor as typeof Audit).auditId;
     }
 
-    async returnGlobal(){
-        return this.globalResults;
-    }
-
     static getInstance(): Promise<A11yAudit> {
         if (!A11yAudit.instance) {
             A11yAudit.instance = new A11yAudit('',[],[]);

@@ -4,13 +4,9 @@
 import { domains } from "../../storage/municipality/allowedDomains.js";
 import { auditDictionary } from "../../storage/auditDictionary.js";
 import { urlExists } from "../../utils/utils.js";
-import {  getSecondLevelPages } from "../../utils/municipality/utils.js";
-import { DataElementError } from "../../utils/DataElementError.js";
 import { notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
-import { primaryMenuItems } from "../../storage/municipality/menuItems.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
-import {ContactAssistencyAudit} from "../municipality_contacts_assistency_audit";
 
 const auditId = "municipality-domain";
 const auditData = auditDictionary[auditId];
@@ -47,8 +43,26 @@ class DomainAudit extends Audit {
   }
 
   async auditPage(
-    page: Page | null
+    page: Page | null,
+    error?: string
   ){
+
+    if (error && !page) {
+
+      this.globalResults['score'] = 0;
+      this.globalResults['details']['items'] =  [
+        {
+          result: notExecutedErrorMessage.replace("<LIST>", error),
+        },
+      ];
+      this.globalResults['details']['type'] = 'table';
+      this.globalResults['details']['headings'] = [{key: "result", itemType: "text", text: "Risultato"}];
+      this.globalResults['details']['summary'] = '';
+
+      return {
+        score: 0,
+      }
+    }
 
     if(page){
 
@@ -93,67 +107,26 @@ class DomainAudit extends Audit {
         },
       ];
 
-      let pagesToBeAnalyzed = [];
-      let url = '';
-      try {
-        url = page.url();
+      let url = page.url();
 
-        const secondLevelPages = await getSecondLevelPages(url, false);
-        for (const [key, primaryMenuItem] of Object.entries(primaryMenuItems)) {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          const secondLevelPagesSection = secondLevelPages[key];
-          for (const page of secondLevelPagesSection) {
-            if (
-                primaryMenuItem.dictionary.includes(page.linkName.toLowerCase())
-            ) {
-              pagesToBeAnalyzed.push(page.linkUrl);
-            }
-          }
-        }
-      } catch (ex) {
-        if (!(ex instanceof DataElementError)) {
-          throw ex;
-        }
-
-        this.globalResults.details.items = [{ key: "result", itemType: "text", text: "Risultato" }];
-        this.globalResults.details.headings = [
-          {
-            result: notExecutedErrorMessage.replace("<LIST>", ex.message),
-          },
-        ];
-        this.score = 0;
-
-        return {
-          score: 0,
-        }
-      }
-
-      pagesToBeAnalyzed = [...new Set(pagesToBeAnalyzed)];
-
-      const originHostname = new URL(url).hostname.replace("www.", "");
-      for (const pageToBeAnalyzed of pagesToBeAnalyzed) {
-        const hostname = new URL(pageToBeAnalyzed).hostname.replace("www.", "");
-        const item = {
-          inspected_page: pageToBeAnalyzed,
-          domain: hostname,
-          correct_domain: "No",
-          www_access: "",
-        };
+      const hostname = new URL(url).hostname.replace("www.", "");
+      const item = {
+        inspected_page: url,
+        domain: hostname,
+        correct_domain: "No",
+        www_access: "",
+      };
 
         let correctDomain = false;
         for (const domain of domains) {
-          if (
-              hostname === "comune." + domain ||
-              (hostname != originHostname && hostname.endsWith(".comune." + domain))
-          ) {
+          if (hostname === "comune." + domain) {
             correctDomain = true;
             item.correct_domain = "Sì";
             break;
           }
         }
 
-        const pageWithoutWww = new URL(pageToBeAnalyzed);
+        const pageWithoutWww = new URL(url);
         pageWithoutWww.hostname = pageWithoutWww.hostname.replace(/^www\./i, "");
         const wwwAccess = (await urlExists(url, pageWithoutWww.href)).result;
 
@@ -161,11 +134,9 @@ class DomainAudit extends Audit {
 
         if (correctDomain && wwwAccess) {
           this.correctItems.push(item);
-          continue;
         }
         this.wrongItems.push(item);
         this.score = 0;
-      }
     }
 
     return {
@@ -178,6 +149,12 @@ class DomainAudit extends Audit {
   }
 
   async returnGlobal(){
+    if(this.globalResults.details.items.length){
+      this.globalResults.details.items.unshift({
+        result: (this.constructor as typeof Audit).auditData.redResult,
+      })
+      return this.globalResults;
+    }
     const results = [];
     switch (this.score) {
       case 1:

@@ -66,8 +66,26 @@ class SecondLevelAudit extends Audit {
   }
 
   async auditPage(
-   page: Page | null
+   page: Page | null,
+   error: string,
   ) {
+
+    if (error && !page) {
+
+      this.globalResults['score'] = 0;
+      this.globalResults['details']['items'] =  [
+        {
+          result: notExecutedErrorMessage.replace("<LIST>", error),
+        },
+      ];
+      this.globalResults['details']['type'] = 'table';
+      this.globalResults['details']['headings'] = [{key: "result", itemType: "text", text: "Risultato"}];
+      this.globalResults['details']['summary'] = '';
+
+      return {
+        score: 0,
+      }
+    }
 
     if(page){
       const url = page.url();
@@ -115,14 +133,18 @@ class SecondLevelAudit extends Audit {
           throw ex;
         }
 
+        let errorMessage = ex.message;
+        errorMessage = errorMessage.substring(
+            errorMessage.indexOf('"') + 1,
+            errorMessage.lastIndexOf('"')
+        );
+
+        this.pagesInError.push({
+          inspected_page: url,
+          errors_found: errorMessage,
+        });
+
         this.score = 0;
-        this.globalResults.score = 0;
-        this.globalResults.details.headings = [{ key: "result", itemType: "text", text: "Risultato" }];
-        this.globalResults.details.items = [
-          {
-            result: notExecutedErrorMessage.replace("<LIST>", ex.message),
-          },
-        ];
 
         return {
           score: 0,
@@ -138,7 +160,7 @@ class SecondLevelAudit extends Audit {
 
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        const secondLevelPagesSection = secondLevelPages[key];
+        const secondLevelPagesSection = this.secondLevelPages[key];
         for (const page of secondLevelPagesSection) {
           if (primaryMenuItem.dictionary.includes(page.linkName.toLowerCase())) {
             item.pagesInVocabulary.push(page.linkName);
@@ -190,6 +212,13 @@ class SecondLevelAudit extends Audit {
   }
 
   async returnGlobal() {
+
+    if(this.globalResults.details.items.length){
+      this.globalResults.details.items.unshift({
+        result: (this.constructor as typeof Audit).auditData.redResult,
+      })
+      return this.globalResults;
+    }
 
     const results = [];
     results.push({

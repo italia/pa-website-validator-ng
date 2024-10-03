@@ -3,7 +3,6 @@
 // @ts-ignore
 import { getPrimaryPageUrl, getPages } from "../../utils/municipality/utils.js";
 import { auditDictionary } from "../../storage/auditDictionary.js";
-import { auditScanVariables } from "../../storage/municipality/auditScanVariables.js";
 import {
   errorHandling,
   notExecutedErrorMessage,
@@ -16,15 +15,6 @@ import * as cheerio from "cheerio";
 
 const auditId = "municipality-booking-appointment-check";
 const auditData = auditDictionary[auditId];
-
-const accuracy = process.env["accuracy"] ?? "suggested";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const auditVariables = auditScanVariables[accuracy][auditId];
-
-const numberOfServicesToBeScanned = process.env["numberOfServicePages"]
-  ? JSON.parse(process.env["numberOfServicePages"])
-  : auditVariables.numberOfServicesToBeScanned;
 
 class BookingAppointment extends Audit {
   public globalResults: any = {
@@ -60,7 +50,21 @@ class BookingAppointment extends Audit {
     page: Page | null,
     error?: string
   ) {
-    
+
+    if(error && !page){
+
+      this.globalResults.score = 0;
+      this.globalResults.details.items.push([
+        {
+          result: notExecutedErrorMessage.replace("<LIST>", error),
+        },
+      ]);
+      this.globalResults.details.headings= [{ key: "result", itemType: "text", text: "Risultato" }];
+
+      return {
+        score: 0,
+      }
+    }
     
     if(page){
       this.titleSubHeadings = [
@@ -193,6 +197,12 @@ class BookingAppointment extends Audit {
   }
 
   async returnGlobal(){
+    if(this.globalResults.details.items.length){
+      this.globalResults.details.items.unshift({
+        result: (this.constructor as typeof Audit).auditData.redResult,
+      })
+      return this.globalResults;
+    }
     const results = [];
     if (this.pagesInError.length > 0) {
       results.push({
