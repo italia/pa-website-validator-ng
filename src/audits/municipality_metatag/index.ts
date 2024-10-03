@@ -14,6 +14,7 @@ import { DataElementError } from "../../utils/DataElementError.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
 import * as cheerio from "cheerio";
+import {MenuAudit} from "../municipality_menu";
 
 const auditId = "municipality-metatag";
 const auditData = auditDictionary[auditId];
@@ -315,6 +316,10 @@ class MetatagAudit extends Audit {
     return MetatagAudit.instance;
   }
 
+  async getType(){
+    return auditId;
+  }
+
 }
 
 const metatadaJSONStructure = {
@@ -431,3 +436,6 @@ const getMissingVoices = async (result: ValidatorResult) => {
     return x.replace("instance.", "").replace(/[0-9]/g, "");
   });
 };
+
+export { MetatagAudit };
+export default MetatagAudit.getInstance;

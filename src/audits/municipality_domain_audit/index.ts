@@ -5,24 +5,15 @@ import { domains } from "../../storage/municipality/allowedDomains.js";
 import { auditDictionary } from "../../storage/auditDictionary.js";
 import { urlExists } from "../../utils/utils.js";
 import {  getSecondLevelPages } from "../../utils/municipality/utils.js";
-import { auditScanVariables } from "../../storage/municipality/auditScanVariables.js";
 import { DataElementError } from "../../utils/DataElementError.js";
 import { notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
 import { primaryMenuItems } from "../../storage/municipality/menuItems.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
+import {ContactAssistencyAudit} from "../municipality_contacts_assistency_audit";
 
 const auditId = "municipality-domain";
 const auditData = auditDictionary[auditId];
-
-const accuracy = process.env["accuracy"] ?? "suggested";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const auditVariables = auditScanVariables[accuracy][auditId];
-
-const numberOfServicesToBeScanned = process.env["numberOfServicePages"]
-  ? JSON.parse(process.env["numberOfServicePages"])
-  : auditVariables.numberOfServicesToBeScanned;
 
 class DomainAudit extends Audit {
 
@@ -182,6 +173,10 @@ class DomainAudit extends Audit {
     };
   }
 
+  async getType(){
+    return auditId;
+  }
+
   async returnGlobal(){
     const results = [];
     switch (this.score) {
@@ -242,6 +237,8 @@ class DomainAudit extends Audit {
     this.globalResults.details.items = results;
     this.globalResults.details.headings = this.headings;
     this.globalResults.score = this.score;
+
+    return this.globalResults;
   }
 
   static getInstance(): Promise<DomainAudit> {
@@ -252,3 +249,6 @@ class DomainAudit extends Audit {
   }
 
 }
+
+export { DomainAudit };
+export default DomainAudit.getInstance;

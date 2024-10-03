@@ -83,6 +83,9 @@ const config: any = {
                 "services-page": [
                     "municipality_booking_appointment"
                 ],
+                "service": [
+                    "municipality_bootstrap"
+                ]
             },
             "accuracy": {
                 min: 1,

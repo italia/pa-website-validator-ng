@@ -22,6 +22,7 @@ import { notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
 import * as cheerio from "cheerio";
+import {MetatagAudit} from "../municipality_metatag";
 
 const auditId = "municipality-second-level-pages";
 const auditData = auditDictionary[auditId];
@@ -257,6 +258,10 @@ class SecondLevelAudit extends Audit {
     return this.globalResults
   }
 
+  async getType(){
+    return auditId;
+  }
+
   static getInstance(): Promise<SecondLevelAudit> {
     if (!SecondLevelAudit.instance) {
       SecondLevelAudit.instance = new SecondLevelAudit('',[],[]);
@@ -265,3 +270,6 @@ class SecondLevelAudit extends Audit {
   }
 
 }
+
+export { SecondLevelAudit };
+export default SecondLevelAudit.getInstance;

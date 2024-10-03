@@ -13,6 +13,7 @@ import { DataElementError } from "../../utils/DataElementError.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
 import * as cheerio from "cheerio";
+import {BootstrapMunAudit} from "../municipality_bootstrap";
 
 const auditId = "municipality-contacts-assistency";
 const auditData = auditDictionary[auditId];
@@ -263,6 +264,10 @@ class ContactAssistencyAudit extends Audit {
     return this.globalResults;
   }
 
+  async getType(){
+    return auditId;
+  }
+
   static getInstance(): Promise<ContactAssistencyAudit> {
     if (!ContactAssistencyAudit.instance) {
       ContactAssistencyAudit.instance = new ContactAssistencyAudit('',[],[]);
@@ -271,3 +276,6 @@ class ContactAssistencyAudit extends Audit {
   }
 
 }
+
+export { ContactAssistencyAudit };
+export default ContactAssistencyAudit.getInstance;

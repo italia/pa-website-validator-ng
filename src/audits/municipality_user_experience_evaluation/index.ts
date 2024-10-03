@@ -13,6 +13,7 @@ import {
 import { DataElementError } from "../../utils/DataElementError.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
+import {SecondLevelAudit} from "../municipality_second_level_pages_audit";
 
 const auditId = "municipality-user-experience-evaluation";
 const auditData = auditDictionary[auditId];
@@ -254,4 +255,11 @@ class UserExperienceEvaluationAudit extends Audit {
     return UserExperienceEvaluationAudit.instance;
   }
 
+  async getType(){
+    return auditId;
+  }
+
 }
+
+export { UserExperienceEvaluationAudit };
+export default UserExperienceEvaluationAudit.getInstance;

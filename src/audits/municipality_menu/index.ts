@@ -12,6 +12,7 @@ import { MenuItem } from "../../types/menuItem.js";
 import { getFirstLevelPages } from "../../utils/municipality/utils.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
+import {ImprovementPlanAudit} from "../municipality_improvement_plan";
 
 const auditId = "municipality-menu-structure-match-model";
 const auditData = auditDictionary[auditId];
@@ -188,6 +189,9 @@ class MenuAudit extends Audit {
     };
   }
 
+  async getType(){
+    return auditId;
+  }
 
   static getInstance(): Promise<MenuAudit> {
     if (!MenuAudit.instance) {
@@ -196,3 +200,6 @@ class MenuAudit extends Audit {
     return MenuAudit.instance;
   }
 }
+
+export { MenuAudit };
+export default MenuAudit.getInstance;

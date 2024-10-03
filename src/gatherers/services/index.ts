@@ -4,7 +4,6 @@ import PageData = crawlerTypes.PageData
 import { setTimeout } from "timers/promises";
 import {Page} from "puppeteer";
 import { getRandomNString} from "../../utils/utils.js";
-import {config} from "../../config/config.js";
 
 class servicesGatherer extends Gatherer {
 
@@ -20,46 +19,59 @@ class servicesGatherer extends Gatherer {
     let error = '';
     while (clickButton) {
       try {
-        let clickButton : any = await page.$$('[data-element="load-other-cards"]');
-  
+
+        clickButton = await page.evaluate(() => {
+          const button = document.querySelector(
+              '[data-element="load-other-cards"]'
+          ) as HTMLElement;
+          if (!button) {
+            return false;
+          }
+          button.click();
+          return true;
+        });
+
         if (!clickButton) {
           continue;
         }
 
-        await page.click('[data-element="load-other-cards"]', {delay:1000});
         await Promise.race([
-          setTimeout(1000),
+          setTimeout(10000),
           page.waitForNetworkIdle({
-            idleTime: 1000,
+            idleTime: 2000,
           }),
         ]);
 
         await page.waitForNetworkIdle();
 
-        foundElements = await page.$$(`[data-element="${servicesGatherer.dataElement}"`)
+        foundElements = await page.$$(`[data-element="${servicesGatherer.dataElement}"]`);
+
         const foundElementsHrefs:PageData[] | any =await  Promise.all( foundElements.map(async(el:any) => {
               const href = await el.getProperty('href');
-              const hrefValue = await href.jsonValue() 
+              const hrefValue = await href.jsonValue()
               return hrefValue
         }))
 
         pages = foundElementsHrefs
-   
-        let currentCountPages = foundElements.length
-        if (!currentCountPages || currentCountPages.length === maxCountPages) {
+
+        let currentCountPages = foundElementsHrefs.length;
+        console.log(maxCountPages, foundElementsHrefs.length);
+        if (!currentCountPages || currentCountPages === maxCountPages) {
           clickButton = false;
           continue;
         }
 
-        maxCountPages = currentCountPages
+        maxCountPages = currentCountPages;
+
       } catch (e) {
+        console.log(e, 'erroreee');
         clickButton = false;
       }
     }
 
     if (!maxCountPages || maxCountPages == 0) {
       await page.close()
-      throw new Error(`Cannot find elements with data-element "${servicesGatherer.dataElement} ${maxCountPages}"`);
+      throw new Error(`Cannot find elements with data-element "${servicesGatherer.dataElement} ${maxCountPages} ${error}"`);
     }
 
     pages = await getRandomNString(pages, numberOfPages);

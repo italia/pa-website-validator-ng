@@ -2,6 +2,7 @@ import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
 import {CheerioAPI} from "cheerio";
 import * as cheerio from "cheerio";
+import {BootstrapMunAudit} from "../municipality_bootstrap";
 
 const auditId = "municipality-performance-improvement-plan";
 
@@ -44,6 +45,10 @@ class ImprovementPlanAudit extends Audit {
 
   }
 
+  async getType(){
+    return auditId;
+  }
+
   async returnGlobal() {
     return this.score;
   }
@@ -55,3 +60,6 @@ class ImprovementPlanAudit extends Audit {
     return ImprovementPlanAudit.instance;
   }
 }
+
+export { ImprovementPlanAudit };
+export default ImprovementPlanAudit.getInstance;

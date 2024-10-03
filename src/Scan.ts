@@ -96,7 +96,7 @@ const scan = async (pageData: PageData) => {
 
         if(!pageData.audited || (pageData.audited && pageData.temporary)){
 
-            console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Audit start`)
+            console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Audit start`);
 
             if(config.audits[pageData.type]){
                 for (let auditId of config.audits[pageData.type]) {
@@ -105,11 +105,9 @@ const scan = async (pageData: PageData) => {
                     try {
 
                         let page : Page | null = null;
-                        if(!pageData.temporary){
+                        if(!pageData.temporary) {
                             page = await loadPage(pageData.url);
                         }
-
-                        console.log(audit);
 
                         if (audit === undefined) throw new Error(` No audit found for id ${auditId}: check your configuration`);
 

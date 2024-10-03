@@ -6,6 +6,7 @@ import { auditDictionary } from "../../storage/auditDictionary.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
 import * as cheerio from "cheerio";
+import {DomainAudit} from "../municipality_domain_audit";
 
 
 const auditId = "municipality-faq-is-present";
@@ -41,6 +42,10 @@ class FaqAudit extends Audit {
       scoreDisplayMode: Audit.SCORING_MODES.BINARY,
       requiredArtifacts: ["origin"],
     };
+  }
+
+  async getType(){
+    return auditId;
   }
 
   async auditPage(
@@ -145,3 +150,6 @@ class FaqAudit extends Audit {
   }
 
 }
+
+export { FaqAudit };
+export default FaqAudit.getInstance;

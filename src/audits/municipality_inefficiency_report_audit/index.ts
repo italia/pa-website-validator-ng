@@ -172,6 +172,10 @@ class InefficiencyAudit extends Audit {
 
   }
 
+  async getType(){
+    return auditId;
+  }
+
 
   static getInstance(): Promise<InefficiencyAudit> {
     if (!InefficiencyAudit.instance) {
