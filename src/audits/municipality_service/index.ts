@@ -55,7 +55,7 @@ class ServiceAudit extends Audit {
     private headings : any = [];
     totalServices = 0;
 
-    static get meta() {
+    async meta() {
         return {
             id: auditId,
             title: auditData.title,

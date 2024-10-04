@@ -3,8 +3,8 @@ import { allowedFonts } from './allowedFonts.js'
 import { FontAudit } from "../font/index.js";
 
 class MunicipalityFontAudit extends FontAudit {
-    static auditId = "municipality-ux-ui-consistency-fonts-check";
-    static auditData = auditDictionary["municipality-ux-ui-consistency-fonts-check"];
+    auditId = "municipality-ux-ui-consistency-fonts-check";
+    auditData = auditDictionary["municipality-ux-ui-consistency-fonts-check"];
 
     static allowedFonts = allowedFonts;
 

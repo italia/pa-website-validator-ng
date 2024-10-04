@@ -125,6 +125,8 @@ async function run(
       await initializeConfig(type, scope);
 
         process.env["accuracy"] = accuracy;
+        process.env["logsLevel"] = logLevel;
+
         if (numberOfServicePages) {
             process.env["numberOfServicePages"] = JSON.stringify(numberOfServicePages);
         }
@@ -134,7 +136,7 @@ async function run(
 
       //register method to the event 'page-added'
       PageManager.onPagesAdded((pageData) => {
-        scan(pageData)
+        scan(pageData, saveFile, destination, reportName, view)
       });
 
       await PageManager.addPage({

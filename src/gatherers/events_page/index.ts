@@ -30,8 +30,6 @@ class eventsPageGatherer extends Gatherer {
       }
     })
 
-
-    await page.close()
     return this.gatheredPages
   }
 

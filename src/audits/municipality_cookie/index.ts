@@ -2,8 +2,8 @@ import {auditDictionary} from "../../storage/auditDictionary.js";
 import {CookieAudit} from "../cookie/index.js";
 
 class MunicipalityCookie extends CookieAudit {
-    static auditId = "school-legislation-cookie-domain-check";
-    static auditData = auditDictionary["school-legislation-cookie-domain-check"];
+    auditId = "school-legislation-cookie-domain-check";
+    auditData = auditDictionary["school-legislation-cookie-domain-check"];
 
     static getInstance(): Promise<MunicipalityCookie> {
         if (!MunicipalityCookie.instance) {

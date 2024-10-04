@@ -69,7 +69,6 @@ class servicesGatherer extends Gatherer {
     }
 
     if (!maxCountPages || maxCountPages == 0) {
-      await page.close()
       throw new Error(`Cannot find elements with data-element "${servicesGatherer.dataElement}"`);
     }
 
@@ -87,7 +86,6 @@ class servicesGatherer extends Gatherer {
         } as PageData
     })
     
-    await page.close()
     return this.gatheredPages
   }
 

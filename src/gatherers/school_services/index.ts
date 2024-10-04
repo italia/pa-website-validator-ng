@@ -29,8 +29,6 @@ class servicesPageGatherer extends Gatherer {
       await servicePage.close()
     }
 
-    await page.close()
-
     this.gatheredPages = servicesUrls.map(url => {
         return {
             url: url,

@@ -37,7 +37,7 @@ class FeedbackAudit extends Audit {
   private titleSubHeadings: any = [];
   private headings : any = [];
 
-  static get meta() {
+  async meta() {
     return {
       id: auditId,
       title: auditData.title,

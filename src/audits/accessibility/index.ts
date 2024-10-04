@@ -24,7 +24,7 @@ class A11yAudit extends Audit {
 
     private headings : any = [];
 
-    static get meta() {
+    async meta() {
         return {
             id: this.auditId,
             title: this.auditData.title,
@@ -93,7 +93,7 @@ class A11yAudit extends Audit {
 
             const items = [
                 {
-                    result: (this.constructor as typeof Audit).auditData.redResult,
+                    result: this.auditData.redResult,
                     link_name: "",
                     link_destination: "",
                     existing_page: "No",
@@ -179,13 +179,13 @@ class A11yAudit extends Audit {
                     items[0].wcag = "Sì";
                 }
 
-                items[0].result = (this.constructor as typeof Audit).auditData.greenResult;
+                items[0].result = this.auditData.greenResult;
             }
 
             this.globalResults.score = 1;
             this.globalResults.details.items = items;
             this.globalResults.details.headings = this.headings;
-            this.globalResults.id = (this.constructor as typeof Audit).auditId;
+            this.globalResults.id = this.auditId;
 
             return {
                 score: 1,
@@ -194,7 +194,7 @@ class A11yAudit extends Audit {
     }
 
     async getType(){
-        return (this.constructor as typeof Audit).auditId;
+        return this.auditId;
     }
 
     static getInstance(): Promise<A11yAudit> {

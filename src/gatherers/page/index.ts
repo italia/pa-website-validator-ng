@@ -18,7 +18,6 @@ class pageGatherer extends Gatherer {
       fetchedUrls = [...fetchedUrls,...await this.getDataElementUrls(page,dataElement)]
     }
 
-    await page.close()    
     this.gatheredPages = fetchedUrls.map((url: any) => {
       return {
         url: url,

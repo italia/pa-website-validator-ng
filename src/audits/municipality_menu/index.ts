@@ -38,13 +38,13 @@ class MenuAudit extends Audit {
   public pagesInError : any = [];
   public score = 0;
   private headings : any = [];
-  static get meta() {
+  async meta() {
     return {
       id: auditId,
       title: auditData.title,
       failureTitle: auditData.failureTitle,
       description: auditData.description,
-      scoreDisplayMode: Audit.SCORING_MODES.NUMERIC,
+      scoreDisplayMode: this.SCORING_MODES.NUMERIC,
       requiredArtifacts: ["origin"],
     };
   }

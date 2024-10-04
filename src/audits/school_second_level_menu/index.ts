@@ -36,7 +36,7 @@ class SchoolSecondLevelMenuAudit extends Audit {
     static auditId = "school-menu-scuola-second-level-structure-match-model";
     static auditData = auditDictionary["school-menu-scuola-second-level-structure-match-model"];
 
-    static get meta() {
+    async meta() {
         return {
             id: this.auditId,
             title: this.auditData.title,
@@ -107,7 +107,7 @@ class SchoolSecondLevelMenuAudit extends Audit {
 
             const results = [];
             results.push({
-                result: (this.constructor as typeof Audit).auditData.redResult,
+                result: this.auditData.redResult,
                 correct_voices_percentage: "",
                 correct_voices: "",
                 wrong_voices: "",
@@ -155,7 +155,7 @@ class SchoolSecondLevelMenuAudit extends Audit {
                         score: 0,
                         details: {  items:  [
                                 {
-                                    result: (this.constructor as typeof Audit).auditData.nonExecuted,
+                                    result: this.auditData.nonExecuted,
                                 },
                             ],  type: 'table',  headings: [{ key: "result", itemType: "text", text: "Risultato" }],  summary: ''},
                     };
@@ -230,10 +230,10 @@ class SchoolSecondLevelMenuAudit extends Audit {
             let score = 0;
             if (presentVoicesPercentage >= 30 && presentVoicesPercentage < 100) {
                 score = 0.5;
-                results[0].result = (this.constructor as typeof Audit).auditData.yellowResult;
+                results[0].result = this.auditData.yellowResult;
             } else if (presentVoicesPercentage === 100) {
                 score = 1;
-                results[0].result = (this.constructor as typeof Audit).auditData.greenResult;
+                results[0].result = this.auditData.greenResult;
             }
 
             results[0].correct_voices = correctTitleFound;
@@ -278,7 +278,7 @@ class SchoolSecondLevelMenuAudit extends Audit {
             this.globalResults.score = score;
             this.globalResults.details.items = results;
             this.globalResults.details.headings = this.headings;
-            this.globalResults.id = (this.constructor as typeof Audit).auditId;
+            this.globalResults.id = this.auditId;
 
             return {
                 score: score,
@@ -287,7 +287,7 @@ class SchoolSecondLevelMenuAudit extends Audit {
     }
 
     async getType(){
-        return (this.constructor as typeof Audit).auditId;
+        return this.auditId;
     }
 
     async returnGlobal(){

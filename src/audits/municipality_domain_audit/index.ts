@@ -31,13 +31,13 @@ class DomainAudit extends Audit {
   private titleSubHeadings: any = [];
   private headings : any = [];
 
-  static get meta() {
+  async meta() {
     return {
       id: auditId,
       title: auditData.title,
       failureTitle: auditData.failureTitle,
       description: auditData.description,
-      scoreDisplayMode: Audit.SCORING_MODES.BINARY,
+      scoreDisplayMode: this.SCORING_MODES.BINARY,
       requiredArtifacts: ["origin"],
     };
   }

@@ -25,12 +25,13 @@ class CookieAudit extends Audit {
     public score = 1;
     private titleSubHeadings: any = [];
     private headings : any = [];
-    static get meta() {
+
+    async meta() {
         return {
             id: this.auditId,
             title: this.auditData.title,
             failureTitle: this.auditData.title,
-            scoreDisplayMode: Audit.SCORING_MODES.BINARY,
+            scoreDisplayMode: this.SCORING_MODES.BINARY,
             description: this.auditData.description,
             requiredArtifacts: ["origin"],
         };
@@ -144,19 +145,19 @@ class CookieAudit extends Audit {
     }
 
     async getType(){
-        return (this.constructor as typeof Audit).auditId;
+        return this.auditId;
     }
 
     async returnGlobal() {
         switch (this.score) {
             case 1:
                 this.globalResults['details']['items'].push({
-                    result: (this.constructor as typeof Audit).auditData.greenResult,
+                    result: this.auditData.greenResult,
                 });
                 break;
             case 0:
                 this.globalResults['details']['items'].push({
-                    result: (this.constructor as typeof Audit).auditData.redResult,
+                    result: this.auditData.redResult,
                 });
                 break;
         }
@@ -192,7 +193,7 @@ class CookieAudit extends Audit {
 
         if (this.wrongItems.length > 0) {
             results.push({
-                result: (this.constructor as typeof Audit)?.auditData?.subItem?.redResult ?? '',
+                result: this.auditData?.subItem?.redResult ?? '',
                 title_cookie_domain: this.titleSubHeadings[0],
                 title_cookie_name: this.titleSubHeadings[1],
                 title_cookie_value: this.titleSubHeadings[2],
@@ -212,7 +213,7 @@ class CookieAudit extends Audit {
 
         if (this.correctItems.length > 0) {
             results.push({
-                result: (this.constructor as typeof Audit)?.auditData?.subItem?.greenResult ?? '',
+                result: this.auditData?.subItem?.greenResult ?? '',
                 title_cookie_domain: this.titleSubHeadings[0],
                 title_cookie_name: this.titleSubHeadings[1],
                 title_cookie_value: this.titleSubHeadings[2],
@@ -234,7 +235,7 @@ class CookieAudit extends Audit {
         this.globalResults.details.items = results;
         this.globalResults.details.headings = this.headings;
         this.globalResults.score = this.score;
-        this.globalResults.id = (this.constructor as typeof Audit).auditId;
+        this.globalResults.id = this.auditId;
 
         return this.globalResults;
     }
