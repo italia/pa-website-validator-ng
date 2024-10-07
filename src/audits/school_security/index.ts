@@ -4,8 +4,8 @@ import {SecurityAudit} from "../security/index.js";
 import {auditDictionary} from "../../storage/auditDictionary.js";
 
 class SchoolSecurityAudit extends SecurityAudit {
-    static auditId = "school-security";
-    static auditData = auditDictionary["school-security"];
+    auditId = "school-security";
+    auditData = auditDictionary["school-security"];
     static getInstance(): Promise<SchoolSecurityAudit> {
         if (!SchoolSecurityAudit.instance) {
             SchoolSecurityAudit.instance = new SchoolSecurityAudit('',[],[]);

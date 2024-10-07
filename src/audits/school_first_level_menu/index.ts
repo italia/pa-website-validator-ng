@@ -29,7 +29,7 @@ class SchoolFirstLevelMenuAudit extends Audit {
     static auditId = "school-menu-structure-match-model";
     static auditData = auditDictionary["school-menu-structure-match-model"];
 
-    static get meta() {
+    async meta() {
         return {
             id: this.auditId,
             title: this.auditData.title,
@@ -102,7 +102,7 @@ class SchoolFirstLevelMenuAudit extends Audit {
 
             const results = [];
             results.push({
-                result: (this.constructor as typeof Audit).auditData.redResult,
+                result: this.auditData.redResult,
                 found_menu_voices: "",
                 missing_menu_voices: "",
                 wrong_order_menu_voices: "",
@@ -118,7 +118,7 @@ class SchoolFirstLevelMenuAudit extends Audit {
                     score: 0,
                     details: {  items:  [
                             {
-                                result: (this.constructor as typeof Audit).auditData.nonExecuted,
+                                result: this.auditData.nonExecuted,
                             },
                         ],  type: 'table',  headings: [{ key: "result", itemType: "text", text: "Risultato" }],  summary: ''},
                 };
@@ -167,7 +167,7 @@ class SchoolFirstLevelMenuAudit extends Audit {
                 mandatoryElementsCorrectOrder
             ) {
                 score = 1;
-                results[0].result = (this.constructor as typeof Audit).auditData.greenResult;
+                results[0].result = this.auditData.greenResult;
             } else if (
                 foundMenuElements.length > 4 &&
                 foundMenuElements.length < 8 &&
@@ -175,10 +175,10 @@ class SchoolFirstLevelMenuAudit extends Audit {
                 mandatoryElementsCorrectOrder
             ) {
                 score = 0.5;
-                results[0].result = (this.constructor as typeof Audit).auditData.yellowResult;
+                results[0].result = this.auditData.yellowResult;
             }
 
-            const firstLevelPages = await getFirstLevelPages(url); //TODO: questa funzione utilizza una nuova instanza di puppeteer
+            const firstLevelPages = await getFirstLevelPages(url);
 
             results.push({});
 
@@ -215,7 +215,7 @@ class SchoolFirstLevelMenuAudit extends Audit {
             this.globalResults.score = score;
             this.globalResults.details.items = results;
             this.globalResults.details.headings = this.headings;
-            this.globalResults.id = (this.constructor as typeof Audit).auditId;
+            this.globalResults.id = this.auditId;
 
             return {
                 score: score,
@@ -224,7 +224,7 @@ class SchoolFirstLevelMenuAudit extends Audit {
     }
 
     async getType(){
-        return (this.constructor as typeof Audit).auditId;
+        return this.auditId;
     }
 
     async returnGlobal(){

@@ -12,8 +12,8 @@ export abstract class Audit {
     protected static instance: any;
     globalResults : any = {};
 
-    static auditId = "audit";
-    static auditData: crawlerTypes.AuditDictionary = auditDictionary["audit"];
+    protected auditId = "audit";
+    protected auditData: crawlerTypes.AuditDictionary = auditDictionary["audit"];
 
     constructor(id: string, gathererPageType: string[], auditsIds: string[]) {
         this.id = id;
@@ -23,6 +23,10 @@ export abstract class Audit {
 
     async auditPage( page: Page | null,
                      error?: string) : Promise<any> {
+        return {}
+    }
+
+    static async meta(){
         return {}
     }
 
@@ -40,22 +44,20 @@ export abstract class Audit {
     }
 
     static async getType(){
-        return this.auditId;
+        return '';
     }
 
     async returnGlobal(){
         return this.globalResults;
     }
 
-    static get SCORING_MODES() {
-        return {
-            NUMERIC: 'numeric',
-            BINARY: 'binary',
-            MANUAL: 'manual',
-            INFORMATIVE: 'informative',
-            NOT_APPLICABLE: 'notApplicable',
-            ERROR: 'error',
-        };
+    SCORING_MODES = {
+        NUMERIC: 'numeric',
+        BINARY: 'binary',
+        MANUAL: 'manual',
+        INFORMATIVE: 'informative',
+        NOT_APPLICABLE: 'notApplicable',
+        ERROR: 'error',
     }
 
 }

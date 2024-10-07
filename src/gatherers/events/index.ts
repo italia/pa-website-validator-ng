@@ -70,11 +70,8 @@ class eventsGatherer extends Gatherer {
     }
 
     if (!maxCountPages || maxCountPages == 0) {
-      await page.close()
       throw new Error(`Cannot find elements with data-element "${eventsGatherer.dataElement}"`)
     }
-
-    await page.close();
 
     eventsPageUrls = await getRandomNString(eventsPageUrls, numberOfPages);
 

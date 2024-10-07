@@ -1,22 +1,17 @@
 "use strict";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { auditDictionary } from "../../storage/auditDictionary.js";
 import {
   checkFeedbackComponent,
 } from "../../utils/municipality/utils.js";
 import {
   errorHandling,
-  notExecutedErrorMessage,
 } from "../../config/commonAuditsParts.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
 
 const auditId = "municipality-user-experience-evaluation";
 const auditData = auditDictionary[auditId];
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 
 class UserExperienceEvaluationAudit extends Audit {
   public globalResults: any = {
@@ -37,13 +32,13 @@ class UserExperienceEvaluationAudit extends Audit {
   private titleSubHeadings: any = [];
   private headings : any = [];
 
-  static get meta() {
+  async meta() {
     return {
       id: auditId,
       title: auditData.title,
       failureTitle: auditData.failureTitle,
       description: auditData.description,
-      scoreDisplayMode: Audit.SCORING_MODES.BINARY,
+      scoreDisplayMode: this.SCORING_MODES.BINARY,
       requiredArtifacts: ["origin"],
     };
   }

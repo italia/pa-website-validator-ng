@@ -29,13 +29,14 @@ class FontAudit extends Audit {
     private headings : any = [];
 
     static allowedFonts = allowedFonts;
-    static get meta() {
+
+    async meta() {
         return {
             id: this.auditId,
             title: this.auditData.title,
             failureTitle: this.auditData.failureTitle,
             description: this.auditData.description,
-            scoreDisplayMode: Audit.SCORING_MODES.NUMERIC,
+            scoreDisplayMode: this.SCORING_MODES.NUMERIC,
             requiredArtifacts: ["origin"],
         };
     }
@@ -186,24 +187,24 @@ class FontAudit extends Audit {
     }
 
     async getType(){
-        return (this.constructor as typeof Audit).auditId;
+        return this.auditId;
     }
 
     async returnGlobal() {
         switch (this.score) {
             case 1:
                 this.globalResults['details']['items'].push({
-                    result: (this.constructor as typeof Audit).auditData.greenResult,
+                    result: this.auditData.greenResult,
                 });
                 break;
             case 0.5:
                 this.globalResults['details']['items'].push({
-                    result: (this.constructor as typeof Audit).auditData.yellowResult,
+                    result: this.auditData.yellowResult,
                 });
                 break;
             case 0:
                 this.globalResults['details']['items'].push({
-                    result: (this.constructor as typeof Audit).auditData.redResult,
+                    result: this.auditData.redResult,
                 });
                 break;
         }
@@ -238,7 +239,7 @@ class FontAudit extends Audit {
 
         if (this.wrongItems.length > 0) {
             results.push({
-                result: (this.constructor as typeof Audit)?.auditData?.subItem?.redResult ?? '',
+                result: this.auditData?.subItem?.redResult ?? '',
                 title_wrong_number_elements: this.titleSubHeadings[0],
                 title_wrong_fonts: this.titleSubHeadings[1],
             });
@@ -257,7 +258,7 @@ class FontAudit extends Audit {
 
         if (this.toleranceItems.length > 0) {
             results.push({
-                result: (this.constructor as typeof Audit)?.auditData?.subItem?.yellowResult ?? '',
+                result: this.auditData?.subItem?.yellowResult ?? '',
                 title_wrong_number_elements: this.titleSubHeadings[0],
                 title_wrong_fonts: this.titleSubHeadings[1],
             });
@@ -276,7 +277,7 @@ class FontAudit extends Audit {
 
         if (this.correctItems.length > 0) {
             results.push({
-                result: (this.constructor as typeof Audit)?.auditData?.subItem?.greenResult ?? '',
+                result: this.auditData?.subItem?.greenResult ?? '',
                 title_wrong_number_elements: this.titleSubHeadings[0],
                 title_wrong_fonts: this.titleSubHeadings[1],
             });
@@ -297,7 +298,7 @@ class FontAudit extends Audit {
         this.globalResults.details.items = results;
         this.globalResults.details.headings = this.headings;
         this.globalResults.score = this.score;
-        this.globalResults.id = (this.constructor as typeof Audit).auditId;
+        this.globalResults.id = this.auditId;
 
         return this.globalResults;
     }

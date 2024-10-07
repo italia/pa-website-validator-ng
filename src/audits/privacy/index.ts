@@ -23,7 +23,7 @@ class PrivacyAudit extends Audit {
 
     private headings : any = [];
 
-    static get meta() {
+    async meta() {
         return {
             id: this.auditId,
             title: this.auditData.title,
@@ -90,7 +90,7 @@ class PrivacyAudit extends Audit {
 
             const items = [
                 {
-                    result: (this.constructor as typeof Audit).auditData.redResult,
+                    result: this.auditData.redResult,
                     link_name: "",
                     link_destination: "",
                     existing_page: "No",
@@ -119,7 +119,7 @@ class PrivacyAudit extends Audit {
                 items[0].link_destination = checkUrlHttps.inspectedUrl;
 
                 if (checkUrlHttps.result) {
-                    items[0].result = (this.constructor as typeof Audit).auditData.greenResult;
+                    items[0].result = this.auditData.greenResult;
                     items[0].existing_page = "Sì";
                     items[0].secure_page = "Sì";
                     score = 1;
@@ -131,7 +131,7 @@ class PrivacyAudit extends Audit {
             this.globalResults.score = score;
             this.globalResults.details.items = items;
             this.globalResults.details.headings = this.headings;
-            this.globalResults.id = (this.constructor as typeof Audit).auditId;
+            this.globalResults.id = this.auditId;
 
             return {
                 score: score,
@@ -140,7 +140,7 @@ class PrivacyAudit extends Audit {
     }
 
     async getType(){
-        return (this.constructor as typeof Audit).auditId;
+        return this.auditId;
     }
 
     async returnGlobal(){

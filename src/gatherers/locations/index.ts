@@ -18,8 +18,6 @@ class locationsGatherer extends Gatherer {
       fetchedUrls = [...fetchedUrls,...await this.getMultipleDataElementUrls(page,dataElement) as any[]]
     }
 
-    await page.close()
-
     this.gatheredPages = fetchedUrls.map((url: any) => {
       return {
         url: url,

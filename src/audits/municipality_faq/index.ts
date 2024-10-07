@@ -8,7 +8,6 @@ import {Page} from "puppeteer";
 import * as cheerio from "cheerio";
 import {notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
 
-
 const auditId = "municipality-faq-is-present";
 const auditData = auditDictionary[auditId];
 const greenResult = auditData.greenResult;
@@ -33,13 +32,13 @@ class FaqAudit extends Audit {
   public score = 0;
   private headings : any = [];
 
-  static get meta() {
+  async meta() {
     return {
       id: auditId,
       title: auditData.title,
       failureTitle: auditData.failureTitle,
       description: auditData.description,
-      scoreDisplayMode: Audit.SCORING_MODES.BINARY,
+      scoreDisplayMode: this.SCORING_MODES.BINARY,
       requiredArtifacts: ["origin"],
     };
   }

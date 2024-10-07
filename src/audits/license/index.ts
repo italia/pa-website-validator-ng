@@ -27,7 +27,7 @@ class LicenceAudit extends Audit {
 
     private headings : any = [];
 
-    static get meta() {
+    async meta() {
         return {
             id: this.auditId,
             title: this.auditData.title,
@@ -93,7 +93,7 @@ class LicenceAudit extends Audit {
 
             const items = [
                 {
-                    result: (this.constructor as typeof Audit).auditData.redResult,
+                    result: this.auditData.redResult,
                     link_name: "",
                     link_destination: "",
                     page_section: "",
@@ -164,7 +164,7 @@ class LicenceAudit extends Audit {
                     items[0].page_section === "Sì" &&
                     items[0].page_contains_correct_text === "Sì"
                 ) {
-                    items[0].result = (this.constructor as typeof Audit).auditData.greenResult;
+                    items[0].result = this.auditData.greenResult;
                     score = 1;
                 }
             }
@@ -172,7 +172,7 @@ class LicenceAudit extends Audit {
             this.globalResults.score = score;
             this.globalResults.details.items = items;
             this.globalResults.details.headings = this.headings;
-            this.globalResults.id = (this.constructor as typeof Audit).auditId;
+            this.globalResults.id = this.auditId;
 
             return {
                 score: score,
@@ -181,7 +181,7 @@ class LicenceAudit extends Audit {
     }
 
     async getType(){
-        return (this.constructor as typeof Audit).auditId;
+        return this.auditId;
     }
 
     static getInstance(): Promise<LicenceAudit> {

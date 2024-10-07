@@ -26,9 +26,9 @@ class ThemeAudit extends Audit {
     };
 
     private headings : any = [];
-    static minVersion = '1.0.0';
+    protected minVersion = '1.0.0';
 
-    static get meta() {
+     async meta() {
         return {
             id: this.auditId,
             title: this.auditData.title,
@@ -83,7 +83,7 @@ class ThemeAudit extends Audit {
             let score = 0.5;
             const items = [
                 {
-                    result: (this.constructor as typeof Audit).auditData.yellowResult,
+                    result: this.auditData.yellowResult,
                     cms_name: "Nessuno",
                     theme_version: "N/A",
                 },
@@ -124,11 +124,11 @@ class ThemeAudit extends Audit {
                     items[0].theme_version = version;
 
                     score = 0;
-                    items[0].result = (this.constructor as typeof Audit).auditData.redResult;
+                    items[0].result = this.auditData.redResult;
 
-                    if (compareVersions(version, (this.constructor as typeof ThemeAudit).minVersion) >= 0) {
+                    if (compareVersions(version, this.minVersion) >= 0) {
                         score = 1;
-                        items[0].result = (this.constructor as typeof Audit).auditData.greenResult;
+                        items[0].result = this.auditData.greenResult;
                     }
                     break;
                 }
@@ -137,7 +137,7 @@ class ThemeAudit extends Audit {
             this.globalResults.score = score;
             this.globalResults.details.items = items;
             this.globalResults.details.headings = this.headings;
-            this.globalResults.id = (this.constructor as typeof Audit).auditId;
+            this.globalResults.id = this.auditId;
 
             return {
                 score: score,
@@ -146,7 +146,7 @@ class ThemeAudit extends Audit {
     }
 
     async getType(){
-        return (this.constructor as typeof Audit).auditId;
+        return this.auditId;
     }
 
     async returnGlobal(){

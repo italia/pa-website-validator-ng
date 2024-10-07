@@ -13,7 +13,7 @@ import {browser} from "../PuppeteerInstance.js";
 
 const cache = new LRUCache<string, CheerioAPI>({ max: 1000 });
 const redirectUrlCache = new LRUCache<string, string>({ max: 1000 });
-const requestTimeout = parseInt(process.env["requestTimeout"] ?? "30000");
+const requestTimeout = parseInt(process.env["requestTimeout"] ?? "60000");
 
 const loadPageData = async (url: string, wait: boolean = false ): Promise<CheerioAPI> => {
   const data_from_cache = cache.get(url);
@@ -105,7 +105,7 @@ const gotoRetry = async (
   try {
     let response = await page.goto(url, {
       waitUntil: ["load", "networkidle0"],
-      timeout: 0,
+      timeout: requestTimeout,
     });
 
     try {
@@ -116,12 +116,12 @@ const gotoRetry = async (
       try {
         response = await page.goto(url, {
           waitUntil: ["load", "networkidle0"],
-          timeout: 0,
+          timeout: requestTimeout,
         });
 
         await page.reload({
           waitUntil: ["load", "networkidle0"],
-          timeout: 0,
+          timeout: requestTimeout,
         });
 
         await page.evaluate(async () => {
@@ -130,12 +130,12 @@ const gotoRetry = async (
       } catch (e) {
         await page.goto(url, {
           waitUntil: ["load", "networkidle0"],
-          timeout: 0,
+          timeout: requestTimeout,
         });
 
         response = await page.waitForNavigation({
           waitUntil: ["load", "networkidle0"],
-          timeout: 0,
+          timeout: requestTimeout,
         });
       }
     }
@@ -145,6 +145,7 @@ const gotoRetry = async (
     if (retryCount <= 0) {
       throw error;
     }
+
     console.log(
       `${url} goto tentative: ${errorHandling.gotoRetryTentative - retryCount}`
     );

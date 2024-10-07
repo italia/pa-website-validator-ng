@@ -4,8 +4,8 @@ import {auditDictionary} from "../../storage/auditDictionary.js";
 import {LicenceAudit} from "../license/index.js";
 
 class MunicipalityLicenceAudit extends LicenceAudit {
-    static auditId = "municipality-license-and-attribution";
-    static auditData = auditDictionary["municipality-license-and-attribution"];
+    auditId = "municipality-license-and-attribution";
+    auditData = auditDictionary["municipality-license-and-attribution"];
 
     static getInstance(): Promise<MunicipalityLicenceAudit> {
         if (!MunicipalityLicenceAudit.instance) {

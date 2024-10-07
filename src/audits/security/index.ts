@@ -39,7 +39,7 @@ class SecurityAudit extends Audit {
 
     private headings : any = [];
 
-    static get meta() {
+    async meta() {
         return {
             id: this.auditId,
             title: this.auditData.title,
@@ -73,8 +73,8 @@ class SecurityAudit extends Audit {
         if(page){
             const url = page.url();
 
-            const greenResult = (this.constructor as typeof Audit).auditData.greenResult.replace("[url]", url);
-            const redResult = (this.constructor as typeof Audit).auditData.redResult.replace("[url]", url);
+            const greenResult = this.auditData.greenResult.replace("[url]", url);
+            const redResult = this.auditData.redResult.replace("[url]", url);
 
             this.headings = [
                 { key: "result", itemType: "text", text: "Risultato" },
@@ -211,7 +211,7 @@ class SecurityAudit extends Audit {
             this.globalResults.score = score;
             this.globalResults.details.items = item;
             this.globalResults.details.headings = this.headings;
-            this.globalResults.id = (this.constructor as typeof Audit).auditId;
+            this.globalResults.id = this.auditId;
 
             return {
                 score: score,
@@ -220,7 +220,7 @@ class SecurityAudit extends Audit {
     }
 
     async getType(){
-        return (this.constructor as typeof Audit).auditId;
+        return this.auditId;
     }
 
     async returnGlobal(){

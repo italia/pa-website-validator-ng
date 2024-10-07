@@ -10,9 +10,7 @@ import {auditDictionary} from "../../storage/auditDictionary.js";
 import {
     errorHandling,
     minNumberOfServices,
-    notExecutedErrorMessage,
 } from "../../config/commonAuditsParts.js";
-import {DataElementError} from "../../utils/DataElementError.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
 import * as cheerio from "cheerio";
@@ -46,7 +44,7 @@ class SchoolServiceAudit extends Audit {
     private headings : any = [];
     totalServices = 0;
 
-    static get meta() {
+    async meta() {
         return {
             id: auditId,
             title: auditData.title,
@@ -376,7 +374,7 @@ class SchoolServiceAudit extends Audit {
         this.globalResults.details.items = results;
         this.globalResults.details.headings = this.headings;
         this.globalResults.score = this.score;
-        this.globalResults.id = (this.constructor as typeof Audit).auditId;
+        this.globalResults.id = this.auditId;
 
         return this.globalResults;
     }

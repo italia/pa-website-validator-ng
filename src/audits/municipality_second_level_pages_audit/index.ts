@@ -1,7 +1,5 @@
 "use strict";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import {
   buildUrl,
   getHREFValuesDataAttribute,
@@ -16,9 +14,8 @@ import {
   customPrimaryMenuItemsDataElement,
   customSecondaryMenuItemsDataElement,
   primaryMenuItems,
-} from "../../storage/municipality/menuItems.js";
+} from "./menuItems.js";
 import { DataElementError } from "../../utils/DataElementError.js";
-import { notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
 import * as cheerio from "cheerio";
@@ -54,13 +51,13 @@ class SecondLevelAudit extends Audit {
   private errorVoices: string[] = [];
   private totalNumberOfTitleFound = 0;
 
-  static get meta() {
+  async meta() {
     return {
       id: auditId,
       title: auditData.title,
       failureTitle: auditData.failureTitle,
       description: auditData.description,
-      scoreDisplayMode: Audit.SCORING_MODES.NUMERIC,
+      scoreDisplayMode: this.SCORING_MODES.NUMERIC,
       requiredArtifacts: ["origin"],
     };
   }

@@ -25,13 +25,13 @@ class SchoolVocabularies extends Audit {
   static auditId = "school-controlled-vocabularies";
   static auditData = auditDictionary["school-controlled-vocabularies"];
 
-  static get meta() {
+  async meta() {
     return {
       id: this.auditId,
       title: this.auditData.title,
       failureTitle: this.auditData.failureTitle,
       description: this.auditData.description,
-      scoreDisplayMode: Audit.SCORING_MODES.NUMERIC,
+      scoreDisplayMode: this.SCORING_MODES.NUMERIC,
       requiredArtifacts: ["origin"],
     };
   }
@@ -75,7 +75,7 @@ class SchoolVocabularies extends Audit {
 
       const item = [
         {
-          result: (this.constructor as typeof Audit).auditData.redResult,
+          result: this.auditData.redResult,
           element_in_school_model_percentage: "",
           element_not_in_school_model: "",
         },
@@ -114,10 +114,10 @@ class SchoolVocabularies extends Audit {
 
       let score = 0;
       if (schoolModelCheck.allArgumentsInVocabulary) {
-        item[0].result = (this.constructor as typeof Audit).auditData.greenResult;
+        item[0].result = this.auditData.greenResult;
         score = 1;
       } else if (numberOfElementsNotInScuoleModelPercentage <= 50) {
-        item[0].result = (this.constructor as typeof Audit).auditData.yellowResult;
+        item[0].result = this.auditData.yellowResult;
         score = 0.5;
       }
 
@@ -130,7 +130,7 @@ class SchoolVocabularies extends Audit {
       this.globalResults.score = score;
       this.globalResults.details.items = item;
       this.globalResults.details.headings = this.headings;
-      this.globalResults.id = (this.constructor as typeof Audit).auditId;
+      this.globalResults.id = this.auditId;
 
       return {
         score: score,
@@ -139,7 +139,7 @@ class SchoolVocabularies extends Audit {
   }
 
   async getType(){
-    return (this.constructor as typeof Audit).auditId;
+    return this.auditId;
   }
 
   async returnGlobal(){

@@ -9,9 +9,11 @@ import PageData = crawlerTypes.PageData
 import {config} from "./config/config.js";
 import {loadPage} from "./utils/utils.js";
 import {Page} from "puppeteer";
-import render from './report/Renderer.js';
+import {mkdir, writeFile} from "fs/promises";
+import {format} from "path";
+import open from "open";
 
-const scan = async (pageData: PageData) => {
+const scan = async (pageData: PageData, saveFile = true, destination = '', reportName = '', view = false) => {
     try {
         /** if no gathering or auditing for this page type skip*/
 
@@ -21,18 +23,18 @@ const scan = async (pageData: PageData) => {
         if (!config.gatherers[pageData.type] && !config.audits[pageData.type]) {
             PageManager.setGathered(pageData.url)
             PageManager.setAudited(pageData.url)
+            PageManager.setNotTemporary(pageData.url, pageData.type);
 
             if (!PageManager.hasRemainingPages()) {
                 console.error('closing puppeteer')
                 await browser.close()
                 console.log('SCAN ENDED - navigated pages:')
-                console.log(PageManager.getAllPages())
-
             }
             return
         }else if(!config.audits[pageData.type]){
             PageManager.setAudited(pageData.url);
             pageData = PageManager.getPageByUrl(pageData.url);
+            PageManager.setNotTemporary(pageData.url, pageData.type);
         }else if(!config.gatherers[pageData.type]){
             PageManager.setGathered(pageData.url);
             pageData = PageManager.getPageByUrl(pageData.url);
@@ -45,10 +47,17 @@ const scan = async (pageData: PageData) => {
         let gatheringErrors = []
 
 
-        if(!pageData.gathered){
+        if(!pageData.gathered || (pageData.gathered && pageData.temporary)){
+            let page : Page | null = null;
+            if(!pageData.temporary){
+                page = await loadPage(pageData.url);
+                if(page){
+                    await page.waitForNetworkIdle();
+                }
+            }
+
             for (let gathererId of config.gatherers[pageData.type]) {
-                const page : Page = await loadPage(pageData.url);
-                await page.waitForNetworkIdle();
+
                 if (!gatherers[gathererId]) continue
 
                 //console.log(gathererId)
@@ -60,6 +69,10 @@ const scan = async (pageData: PageData) => {
 
                     const accuracy = process.env["accuracy"] ?? "suggested";
                     const configAccuracy = config.accuracy[accuracy];
+
+                    if(!page){
+                        throw new Error(pageData && pageData.errors && pageData.errors.length ? pageData.errors[0] : `Page not available for page ${pageData.type}`);
+                    }
 
                     const fetchedPages = await gatherer.navigateAndFetchPages(pageData.url, configAccuracy, '', page);
                     gathererPages = [...gathererPages, ...fetchedPages]
@@ -89,6 +102,9 @@ const scan = async (pageData: PageData) => {
 
             await PageManager.setGathered(pageData.url);
             console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Gathering end`);
+            if(page){
+                await page.close();
+            }
         }
 
         /** AUDITING */
@@ -96,6 +112,14 @@ const scan = async (pageData: PageData) => {
         let auditingErrors = []
 
         if(!pageData.audited || (pageData.audited && pageData.temporary)){
+
+            let page : Page | null = null;
+            if(!pageData.temporary){
+                page = await loadPage(pageData.url);
+                if(page){
+                    await page.waitForNetworkIdle();
+                }
+            }
 
             console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Audit start`);
 
@@ -105,16 +129,13 @@ const scan = async (pageData: PageData) => {
                     const audit = await audits[auditId]()
                     try {
 
-                        let page : Page | null = null;
-                        if(!pageData.temporary) {
-                            page = await loadPage(pageData.url);
-                        }
-
                         if (audit === undefined) throw new Error(` No audit found for id ${auditId}: check your configuration`);
 
                         await audit.auditPage(page, pageData.errors && pageData.errors.length ? pageData.errors[0] : '');
                         const result = await audit.returnGlobal();
-                        await PageManager.setGlobalResults({result: result, auditType: await audit.getType()});
+                        const meta = await audit.meta();
+                        const auditType = await audit.getType();
+                        await PageManager.setGlobalResults({[auditType]: {...result, ...meta} });
 
                     } catch (e: any) {
                         console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: ERROR`)
@@ -122,6 +143,10 @@ const scan = async (pageData: PageData) => {
 
                         auditingErrors.push(e)
                     }
+                }
+
+                if(page){
+                    await page.close();
                 }
             }
 
@@ -135,8 +160,54 @@ const scan = async (pageData: PageData) => {
             console.error('closing puppeteer...')
             await browser.close()
             PageManager.getAllPages();
-            PageManager.getGlobalResults();
             console.log('SCAN ENDED - navigated pages:')
+            console.log(PageManager.getAllPages());
+
+            const runnerResult : any = await PageManager.getGlobalResults();
+
+            /*if (!runnerResult || !Object.keys(runnerResult).length) {
+                throw new Error("Missing report");
+            }*/
+
+            if (!saveFile) {
+                return {
+                    status: true,
+                    data: {
+                        htmlReport: '',
+                        jsonReport: runnerResult,
+                    },
+                };
+            }
+
+            const reportHtml: string = '';
+            const reportJSON: string = JSON.stringify(runnerResult);
+
+            await mkdir(destination, { recursive: true });
+
+            const htmlPath = format({
+                dir: destination,
+                name: reportName,
+                ext: ".html",
+            });
+            const jsonPath = format({
+                dir: destination,
+                name: reportName,
+                ext: ".json",
+            });
+            await writeFile(htmlPath, reportHtml);
+            await writeFile(jsonPath, reportJSON);
+
+            if (view) {
+                await open(htmlPath);
+            }
+
+            return {
+                status: true,
+                data: {
+                    htmlResultPath: htmlPath,
+                    jsonResultPath: jsonPath,
+                },
+            };
             console.log(PageManager.getAllPages(), JSON.stringify(await PageManager.getGlobalResults()));
 
             await render()

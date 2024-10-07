@@ -20,7 +20,6 @@ import {auditScanVariables} from "../../storage/municipality/auditScanVariables.
 import {
     errorHandling,
     minNumberOfServices,
-    notExecutedErrorMessage,
 } from "../../config/commonAuditsParts.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
@@ -29,11 +28,6 @@ import * as cheerio from "cheerio";
 
 const auditId = "service";
 const auditData = auditDictionary[auditId];
-
-const accuracy = process.env["accuracy"] ?? "suggested";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const auditVariables = auditScanVariables[accuracy][auditId];
 
 class ServiceAudit extends Audit {
     public globalResults: any = {
@@ -55,7 +49,7 @@ class ServiceAudit extends Audit {
     private headings : any = [];
     totalServices = 0;
 
-    static get meta() {
+    async meta() {
         return {
             id: auditId,
             title: auditData.title,
@@ -257,7 +251,7 @@ class ServiceAudit extends Audit {
 
     async returnGlobal() {
 
-        if (this.totalServices < minNumberOfServices) {
+        if (Number(process.env['numberOfServicesFound']) < minNumberOfServices) {
             this.globalResults['score'] = 0;
         }
 

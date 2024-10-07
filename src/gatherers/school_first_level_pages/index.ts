@@ -18,8 +18,6 @@ class firstLevelPageGatherer extends Gatherer {
       fetchedUrls = [...fetchedUrls,...await this.getMultipleDataElementUrls(page,dataElement) as string[]]
     }
 
-    await page.close()
-
     this.gatheredPages = fetchedUrls.map(url => {
         return {
             url: url,

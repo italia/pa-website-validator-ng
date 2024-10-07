@@ -122,6 +122,16 @@ async function run(
     try {
       await initializeConfig(type, scope);
 
+        process.env["accuracy"] = accuracy;
+        process.env["logsLevel"] = logLevel;
+
+        if (numberOfServicePages) {
+            process.env["numberOfServicePages"] = JSON.stringify(numberOfServicePages);
+        }
+        process.env["requestTimeout"] = requestTimeout.toString();
+
+      console.log(audits)
+
       await collectAudits();
       await collectGatherers();
       await initializePuppeteer();
@@ -140,7 +150,7 @@ async function run(
 
       //register method to the event 'page-added'
       PageManager.onPagesAdded((pageData) => {
-        scan(pageData)
+        scan(pageData, saveFile, destination, reportName, view)
       });
 
       await PageManager.addPage({

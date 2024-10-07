@@ -1,7 +1,7 @@
 "use strict";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { domains } from "../../storage/municipality/allowedDomains.js";
+import { domains } from "./allowedDomain.js";
 import { auditDictionary } from "../../storage/auditDictionary.js";
 import { urlExists } from "../../utils/utils.js";
 
@@ -31,13 +31,13 @@ class DomainAudit extends Audit {
   private titleSubHeadings: any = [];
   private headings : any = [];
 
-  static get meta() {
+  async meta() {
     return {
       id: auditId,
       title: auditData.title,
       failureTitle: auditData.failureTitle,
       description: auditData.description,
-      scoreDisplayMode: Audit.SCORING_MODES.BINARY,
+      scoreDisplayMode: this.SCORING_MODES.BINARY,
       requiredArtifacts: ["origin"],
     };
   }
