@@ -33,7 +33,9 @@ const render = async () => {
 
     for(let auditId of Object.keys(audits)){
         const audit = await audits[auditId]() as any
-        const auditResult = audit.returnGlobal as any
+
+        const auditMeta = await audit.meta()
+        const auditResult = audit.globalResults as any
         const score = auditResult.score 
 
         if (score >= 0.5) {
@@ -46,9 +48,11 @@ const render = async () => {
 
         if (auditId == "school_accessibility" )
             informativeAudits.push({
-                ...auditResult,
+                ...auditMeta,
                 auditHTML : await audit.returnGlobalHTML()
         })
+
+
     }
 
 

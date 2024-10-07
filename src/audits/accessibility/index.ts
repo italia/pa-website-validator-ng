@@ -12,6 +12,8 @@ import * as cheerio from "cheerio";
 import * as ejs from 'ejs'
 
 class A11yAudit extends Audit {
+
+    code = ''
     public globalResults: any = {
         score: 0,
         details: {
@@ -27,6 +29,7 @@ class A11yAudit extends Audit {
 
     async meta() {
         return {
+            code: this.code,
             id: this.auditId,
             title: this.auditData.title,
             failureTitle: this.auditData.failureTitle,
@@ -206,7 +209,9 @@ class A11yAudit extends Audit {
     }
 
     async returnGlobalHTML() {
-        const reportHtml = await ejs.renderFile('src/audits/accessibility/template.ejs', { auditId: 'accessibility', table: this.globalResults.details  });   
+
+        const status = 'pass'
+        const reportHtml = await ejs.renderFile('src/audits/accessibility/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults.details, status   });   
         return reportHtml
       }
     
