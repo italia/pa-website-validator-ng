@@ -90,9 +90,9 @@ class PageManager {
         return this.pagesArray.find(page => page.id === id);
     }
 
-    getPageByUrl(url: string): PageData | any {
+    getPageByUrl(url: string, pageType: string): PageData | any {
         if (this.pagesArray && this.pagesArray.length) {
-            return this.pagesArray.find(page => page.url === url);
+            return this.pagesArray.find(page => (page.url === url && page.type === pageType));
         }
         return
     }
@@ -101,13 +101,13 @@ class PageManager {
         return [...this.pagesArray];
     }
 
-    setAudited(url: string) {
-        let page = this.pagesArray.find(page => page.url === url)
+    setAudited(url: string, pageType: string,) {
+        let page = this.pagesArray.find(page => (page.url === url && page.type === pageType))
         if (page) page.audited = true
     }
 
-    setGathered(url: string) {
-        let page = this.pagesArray.find(page => page.url === url)
+    setGathered(url: string, pageType: string,) {
+        let page = this.pagesArray.find(page => (page.url === url && page.type === pageType))
         if (page) page.gathered = true
     }
 
@@ -121,8 +121,8 @@ class PageManager {
         if (page) page.scanning = value
     }
 
-    setErrors(url: string, errors: Error[], returnPage?: boolean): PageData | any {
-        let page = this.pagesArray.find(page => page.url === url)
+    setErrors(url: string, pageType: string, errors: Error[], returnPage?: boolean): PageData | any {
+        let page = this.pagesArray.find(page => (page.url === url && page.type === pageType))
         if (page) page.errors = errors;
 
         if (returnPage) {

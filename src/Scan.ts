@@ -19,8 +19,8 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
         /** if no gathering or auditing for this page type skip*/
 
         if (!config.gatherers[pageData.type] && !config.audits[pageData.type]) {
-            PageManager.setGathered(pageData.url)
-            PageManager.setAudited(pageData.url)
+            PageManager.setGathered(pageData.url, pageData.type)
+            PageManager.setAudited(pageData.url, pageData.type)
             PageManager.setNotTemporary(pageData.url, pageData.type);
 
             if (!PageManager.hasRemainingPages()) {
@@ -30,12 +30,12 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
             }
             return
         }else if(!config.audits[pageData.type]){
-            PageManager.setAudited(pageData.url);
-            pageData = PageManager.getPageByUrl(pageData.url);
+            PageManager.setAudited(pageData.url, pageData.type);
+            pageData = PageManager.getPageByUrl(pageData.url, pageData.type);
             PageManager.setNotTemporary(pageData.url, pageData.type);
         }else if(!config.gatherers[pageData.type]){
-            PageManager.setGathered(pageData.url);
-            pageData = PageManager.getPageByUrl(pageData.url);
+            PageManager.setGathered(pageData.url, pageData.type);
+            pageData = PageManager.getPageByUrl(pageData.url, pageData.type);
         }
 
         /** GATHERING */
@@ -90,13 +90,13 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
                 }
             }
 
-            pageData = await PageManager.setErrors(pageData.url, gatheringErrors, true)
+            pageData = await PageManager.setErrors(pageData.url, pageData.type, gatheringErrors, true)
 
             for(let gatheredPage of gathererPages){
                 await PageManager.addPage(gatheredPage)
             }
 
-            await PageManager.setGathered(pageData.url);
+            await PageManager.setGathered(pageData.url, pageData.type);
             console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Gathering end`);
             if(page){
                 await page.close();
@@ -117,6 +117,8 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
                     await page.waitForNetworkIdle();
                 }
             }
+
+            console.log('page');
 
             if(config.audits[pageData.type]){
                 for (let auditId of config.audits[pageData.type]) {
@@ -146,8 +148,8 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
             }
 
             PageManager.setNotTemporary(pageData.url, pageData.type);
-            PageManager.setErrors(pageData.url, auditingErrors)
-            PageManager.setAudited(pageData.url);
+            PageManager.setErrors(pageData.url, pageData.type, auditingErrors)
+            PageManager.setAudited(pageData.url, pageData.type);
             console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Auditing end`);
         }
 
