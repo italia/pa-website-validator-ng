@@ -25,6 +25,7 @@ declare namespace crawlerTypes {
     audited: boolean
     errors?:any[]
     temporary?: boolean
+    scanning?: boolean
   }
 
   interface requestPages {

@@ -11,7 +11,9 @@ abstract class Gatherer {
     static pageType: string
     static dataElements: string[]
 
-    protected constructor( id: string, timeout = 30000) {
+    private requestTimeout = parseInt(process.env["requestTimeout"] ?? "60000");
+
+    protected constructor( id: string, timeout = this.requestTimeout) {
         this.id = id;
         this.timeout = timeout
         this.gatheredPages = []

@@ -316,7 +316,8 @@ const getRandomThirdLevelPagesUrl = async (
   url: string,
   pageUrl: string,
   linkDataElement: string,
-  numberOfPages = 1
+  numberOfPages = 1,
+  page: Page
 ) => {
   if (pageUrl.length === 0) {
     return [];
@@ -324,25 +325,6 @@ const getRandomThirdLevelPagesUrl = async (
   let $ = await loadPageData(url);
 
   try {
-    const page = await browser.newPage();
-    await page.setRequestInterception(true);
-    page.on("request", (request: any) => {
-      if (
-        ["image", "imageset", "media"].indexOf(request.resourceType()) !== -1 ||
-        new URL(request.url()).pathname.endsWith(".pdf")
-      ) {
-        request.abort();
-      } else {
-        request.continue();
-      }
-    });
-
-    const res = await gotoRetry(
-      page,
-      pageUrl,
-      errorHandling.gotoRetryTentative
-    );
-    console.log(res?.url(), res?.status());
 
     let maxCountPages = 0;
     let clickButton = true;
@@ -385,9 +367,6 @@ const getRandomThirdLevelPagesUrl = async (
     }
     const data = await page.content();
     $ = cheerio.load(data);
-
-    await page.goto("about:blank");
-    await page.close();
   } catch (ex) {
     console.error(`ERROR ${pageUrl}: ${ex}`);
     throw new Error(
@@ -1053,7 +1032,8 @@ const getPages = async (
               url,
               allServicePage,
               `[data-element="${primaryMenuItems.services.third_item_data_element}"]`,
-              request.numberOfPages
+              request.numberOfPages,
+                page
             );
             if (randomServicesUrl.length === 0) {
               throw new DataElementError(
@@ -1077,7 +1057,8 @@ const getPages = async (
                 `[data-element="${primaryMenuItems.live.secondary_item_data_element[1]}"]`
               ),
               `[data-element="${primaryMenuItems.live.third_item_data_element}"]`,
-              request.numberOfPages
+              request.numberOfPages,
+                page
             );
 
             break;

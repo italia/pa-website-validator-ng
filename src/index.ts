@@ -1,13 +1,13 @@
 "use strict";
-import { initializePuppeteer } from './PuppeteerInstance.js'
-import PageManager from "./PageManager.js"       
+import {browser, initializePuppeteer} from './PuppeteerInstance.js'
+import PageManager from "./PageManager.js"
 import scan from "./Scan.js";
 import {audits} from "./AuditManager.js"
 
-import { initializeConfig } from "./config/config.js";
+import {initializeConfig} from "./config/config.js";
 
 import yargs from "yargs";
-import { hideBin } from "yargs/helpers";
+import {hideBin} from "yargs/helpers";
 import {existsSync} from "fs";
 import {mkdir} from "fs/promises";
 
@@ -19,9 +19,9 @@ export const logLevels = {
 };
 
 const parser = yargs(hideBin(process.argv))
-  .usage(
-    "Usage: --type <type> --destination <folder> --report <report_name> --website <url> --scope <scope>"
-  )
+    .usage(
+        "Usage: --type <type> --destination <folder> --report <report_name> --website <url> --scope <scope>"
+    )
     .option("type", {
         describe: "Crawler to run",
         type: "string",
@@ -68,7 +68,7 @@ const parser = yargs(hideBin(process.argv))
             "Request timeout in milliseconds. If the request takes longer than this value, the request will be aborted",
         type: "number",
         demandOption: false,
-        default: 30000,
+        default: 300000,
     })
     .option("number-of-service-pages", {
         describe:
@@ -78,11 +78,11 @@ const parser = yargs(hideBin(process.argv))
     });
 
 try {
-  const args = await parser.argv;
+    const args = await parser.argv;
 
     if (!existsSync(args.destination)) {
         console.log("[WARNING] Directory does not exist..");
-        await mkdir(args.destination, { recursive: true });
+        await mkdir(args.destination, {recursive: true});
         console.log("[INFO] Directory created at: " + args.destination);
     }
 
@@ -101,28 +101,30 @@ try {
     );
 
 } catch (e) {
-  console.error(e);
-  process.exit(1);
+    console.error(e);
+    process.exit(1);
 }
 
 async function run(
     website: string,
-                   type: string,
-                   scope: string,
-                   logLevel: string = logLevels.display_none,
-                   saveFile = true,
-                   destination: string,
-                   reportName: string,
-                   view = false,
-                   accuracy = "suggested",
-                   requestTimeout = 30000,
-                   numberOfServicePages?: number) {
+    type: string,
+    scope: string,
+    logLevel: string = logLevels.display_none,
+    saveFile = true,
+    destination: string,
+    reportName: string,
+    view = false,
+    accuracy = "suggested",
+    requestTimeout = 300000,
+    numberOfServicePages?: number) {
 
 
     try {
 
-      await initializePuppeteer();
-      await initializeConfig(type, scope);
+        let firstAdd = true;
+
+        await initializePuppeteer();
+        await initializeConfig(type, scope);
 
         process.env["accuracy"] = accuracy;
         process.env["logsLevel"] = logLevel;
@@ -132,28 +134,32 @@ async function run(
         }
         process.env["requestTimeout"] = requestTimeout.toString();
 
-      console.log(audits)
+        console.log(audits)
 
-      //register method to the event 'page-added'
-      PageManager.onPagesAdded((pageData) => {
-        scan(pageData, saveFile, destination, reportName, view)
-      });
+        //register method to the event 'page-added'
+        PageManager.onPagesAdded(async (pageData) => {
+            await scan(pageData, saveFile, destination, reportName, view);
+        });
 
-      await PageManager.addPage({
-        id: 'homepage',
-        url: website,
-        type: 'homepage', //to understand if we must parametrized it
-        redirectUrl: '',
-        internal: true,
-          gathered: false,
-        audited: false
-      })
+        PageManager.onPagesClosed(async (pageData) => {
+            await scan(pageData, saveFile, destination, reportName, view)
+        })
+
+        await PageManager.addPage({
+            id: 'homepage',
+            url: website,
+            type: 'homepage', //to understand if we must parametrized it
+            redirectUrl: '',
+            internal: true,
+            gathered: false,
+            audited: false
+        })
 
     } catch (err) {
-      //await browser.close()
-      console.log('program exited with err => ' + err)
-      process.exit()
+        //await browser.close()
+        console.log('program exited with err => ' + err)
+        process.exit()
     }
-  }
+}
   
 

@@ -15,11 +15,9 @@ import open from "open";
 
 const scan = async (pageData: PageData, saveFile = true, destination = '', reportName = '', view = false) => {
     try {
+        await PageManager.setScanning(pageData.url, pageData.type, true);
         /** if no gathering or auditing for this page type skip*/
 
-        console.log(PageManager.getAllPages());
-
-        //console.log(pageData)
         if (!config.gatherers[pageData.type] && !config.audits[pageData.type]) {
             PageManager.setGathered(pageData.url)
             PageManager.setAudited(pageData.url)
@@ -40,14 +38,15 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
             pageData = PageManager.getPageByUrl(pageData.url);
         }
 
-        console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Gathering start`)
-
         /** GATHERING */
         let gathererPages: any = []
         let gatheringErrors = []
 
 
         if(!pageData.gathered || (pageData.gathered && pageData.temporary)){
+            console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Gathering start`)
+            await PageManager.setScanning(pageData.url, pageData.type, true);
+
             let page : Page | null = null;
             if(!pageData.temporary){
                 page = await loadPage(pageData.url);
@@ -60,11 +59,8 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
 
                 if (!gatherers[gathererId]) continue
 
-                //console.log(gathererId)
                 const gatherer = await gatherers[gathererId]()
                 try {
-                    //console.log(gathererId,gatherers[gathererId])
-
                     if (gatherer === undefined) throw new Error(` No gatherer found for id ${gathererId}: check your configuration`)
 
                     const accuracy = process.env["accuracy"] ?? "suggested";
@@ -95,10 +91,10 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
             }
 
             pageData = await PageManager.setErrors(pageData.url, gatheringErrors, true)
-            gathererPages.forEach((page: PageData) => {
-                PageManager.addPage(page)
-            });
 
+            for(let gatheredPage of gathererPages){
+                await PageManager.addPage(gatheredPage)
+            }
 
             await PageManager.setGathered(pageData.url);
             console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Gathering end`);
@@ -114,14 +110,13 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
         if(!pageData.audited || (pageData.audited && pageData.temporary)){
 
             let page : Page | null = null;
+            console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Audit start`);
             if(!pageData.temporary){
                 page = await loadPage(pageData.url);
-                if(page){
+                if(page instanceof Page){
                     await page.waitForNetworkIdle();
                 }
             }
-
-            console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Audit start`);
 
             if(config.audits[pageData.type]){
                 for (let auditId of config.audits[pageData.type]) {
@@ -145,7 +140,7 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
                     }
                 }
 
-                if(page){
+                if(page instanceof Page){
                     await page.close();
                 }
             }
@@ -155,6 +150,8 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
             PageManager.setAudited(pageData.url);
             console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Auditing end`);
         }
+
+        await PageManager.closePage(pageData);
 
         if (!PageManager.hasRemainingPages()) {
             console.error('closing puppeteer...')

@@ -119,29 +119,7 @@ class BootstrapMunAudit extends Audit {
         };
 
         try {
-          const newPage = await browser.newPage();
-
-          await newPage.setRequestInterception(true);
-          newPage.on("request", (request : any) => {
-            if (
-                ["image", "imageset", "media"].indexOf(request.resourceType()) !==
-                -1 ||
-                new URL(request.url()).pathname.endsWith(".pdf")
-            ) {
-              request.abort();
-            } else {
-              request.continue();
-            }
-          });
-
-          const res = await gotoRetry(
-              newPage,
-              url,
-              errorHandling.gotoRetryTentative
-          );
-          console.log(res?.url(), res?.status());
-
-          let bootstrapItaliaVariableVersion = await newPage.evaluate(
+          let bootstrapItaliaVariableVersion = await page.evaluate(
               async function () {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 //@ts-ignore
@@ -154,7 +132,7 @@ class BootstrapMunAudit extends Audit {
                 .trim()
                 .replaceAll('"', "");
 
-          let bootstrapItaliaSelectorVariableVersion = await newPage.evaluate(
+          let bootstrapItaliaSelectorVariableVersion = await page.evaluate(
               async function () {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 //@ts-ignore
@@ -195,7 +173,7 @@ class BootstrapMunAudit extends Audit {
             }
           }
 
-          const foundClasses = await newPage.evaluate(async () => {
+          const foundClasses = await page.evaluate(async () => {
             const used = new Set<string>();
             const elements = document.getElementsByTagName("*");
             for (const element of elements) {
@@ -238,8 +216,6 @@ class BootstrapMunAudit extends Audit {
             }
           }
 
-          await newPage.goto("about:blank");
-          await newPage.close();
         } catch (ex) {
           console.error(`ERROR ${url}: ${ex}`);
           if (!(ex instanceof Error)) {

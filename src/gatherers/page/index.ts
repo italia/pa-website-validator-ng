@@ -3,6 +3,8 @@ import crawlerTypes from "../../types/crawler-types.js";
 import PageData = crawlerTypes.PageData
 import {Page} from "puppeteer";
 
+const requestTimeout = parseInt(process.env["requestTimeout"] ?? "300000");
+
 class pageGatherer extends Gatherer {
 
   static dataElements:string[] = []
@@ -35,7 +37,7 @@ class pageGatherer extends Gatherer {
 
   static getInstance(): Promise<pageGatherer> {
     if (!pageGatherer.instance) {
-      pageGatherer.instance = new pageGatherer('',30000);
+      pageGatherer.instance = new pageGatherer('',requestTimeout);
     }
     return pageGatherer.instance;
   }
