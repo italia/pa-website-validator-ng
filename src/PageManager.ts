@@ -27,17 +27,17 @@ class PageManager {
     async addPage(page: PageData): Promise<void> {
         if (!this.pagesArray.find(pageEl => (pageEl.url == page.url && page.type == pageEl.type))) {
             const pages = this.pagesArray.filter(p => p.scanning);
-            this.pagesArray.push(pages.length >= 5 ? {...page} : {...page, scanning: true});
+            this.pagesArray.push(pages.length >= 20 ? {...page} : {...page, scanning: true});
 
             const newPages = this.pagesArray.filter(p => p.scanning);
 
             console.log(newPages.length, 'qui');
 
-            if (newPages.length <= 5 && this.firstAdd) {
+            if (newPages.length <= 20 && this.firstAdd) {
                 await this.setScanning(page.url, page.type, true);
                 this.emitter.emit('pagesAdded', page);
 
-                if(newPages.length === 5){
+                if(newPages.length === 20){
                     this.firstAdd = false;
                 }
             }
@@ -50,7 +50,7 @@ class PageManager {
         const pages = this.pagesArray.filter(p => p.scanning);
         console.log(pages.length, 'qua');
         if(usablePage){
-            if (pages.length <= 5){
+            if (pages.length <= 20){
                 await this.setScanning(usablePage.url, usablePage.type, true);
                 this.emitter.emit('pagesClosed', {...usablePage, scanning: true});
                 this.firstAdd = true;
