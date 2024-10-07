@@ -12,6 +12,7 @@ import {Page} from "puppeteer";
 import {mkdir, writeFile} from "fs/promises";
 import {format} from "path";
 import open from "open";
+import render from './report/Renderer.js';
 
 const scan = async (pageData: PageData, saveFile = true, destination = '', reportName = '', view = false) => {
     try {
@@ -164,53 +165,54 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
             console.log(PageManager.getAllPages());
 
             const runnerResult : any = await PageManager.getGlobalResults();
+            await render()
 
-            /*if (!runnerResult || !Object.keys(runnerResult).length) {
-                throw new Error("Missing report");
-            }*/
+            // /*if (!runnerResult || !Object.keys(runnerResult).length) {
+            //     throw new Error("Missing report");
+            // }*/
 
-            if (!saveFile) {
-                return {
-                    status: true,
-                    data: {
-                        htmlReport: '',
-                        jsonReport: runnerResult,
-                    },
-                };
-            }
+            // if (!saveFile) {
+            //     return {
+            //         status: true,
+            //         data: {
+            //             htmlReport: '',
+            //             jsonReport: runnerResult,
+            //         },
+            //     };
+            // }
 
-            const reportHtml: string = '';
-            const reportJSON: string = JSON.stringify(runnerResult);
+            // const reportHtml: string = '';
+            // const reportJSON: string = JSON.stringify(runnerResult);
 
-            await mkdir(destination, { recursive: true });
+            // await mkdir(destination, { recursive: true });
 
-            const htmlPath = format({
-                dir: destination,
-                name: reportName,
-                ext: ".html",
-            });
-            const jsonPath = format({
-                dir: destination,
-                name: reportName,
-                ext: ".json",
-            });
-            await writeFile(htmlPath, reportHtml);
-            await writeFile(jsonPath, reportJSON);
+            // const htmlPath = format({
+            //     dir: destination,
+            //     name: reportName,
+            //     ext: ".html",
+            // });
+            // const jsonPath = format({
+            //     dir: destination,
+            //     name: reportName,
+            //     ext: ".json",
+            // });
+            // await writeFile(htmlPath, reportHtml);
+            // await writeFile(jsonPath, reportJSON);
 
-            if (view) {
-                await open(htmlPath);
-            }
+            // if (view) {
+            //     await open(htmlPath);
+            // }
 
-            return {
-                status: true,
-                data: {
-                    htmlResultPath: htmlPath,
-                    jsonResultPath: jsonPath,
-                },
-            };
+            // return {
+            //     status: true,
+            //     data: {
+            //         htmlResultPath: htmlPath,
+            //         jsonResultPath: jsonPath,
+            //     },
+            // };
             console.log(PageManager.getAllPages(), JSON.stringify(await PageManager.getGlobalResults()));
 
-            await render()
+            
         }
     } catch (err) {
         console.log(`SCAN error: ${err}`)
