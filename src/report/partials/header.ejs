@@ -1,0 +1,33 @@
+<div class="it-header-center-wrapper">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="it-header-center-content-wrapper">
+          <div class="it-brand-wrapper">
+            <a href="<%= url_comune %>" target="_blank">
+              <svg class="icon" aria-hidden="true">
+                <use href="#it-pa"></use>
+              </svg>
+              <div class="it-brand-text">
+                <div class="it-brand-title">
+                  <%= url_comune %>
+                </div>
+                <div class="it-brand-tagline d-none d-md-block">
+                  <%= date %>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="it-right-zone">
+            <p>Report generato:
+              <%= date %>
+            </p>
+            <p>Versione Crawler:
+              <%= crawler_version %>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

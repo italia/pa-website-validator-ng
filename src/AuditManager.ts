@@ -1,31 +1,34 @@
-import { Glob, sync } from "glob";
+import { sync } from "glob";
 let audits: any | null = null;
-
-await collectAudits()
+import { getAudits } from "./config/config.js";
 
 function extractFolderName(path: string) {
   const fileNameWithoutExtension = path.replace(/\.[^/.]+$/, '');
-  const pathSegments = fileNameWithoutExtension.split('/');
+  const systemFolderSeparator = process.platform as string == 'windows' ? '\\' : '/'
+  const pathSegments = fileNameWithoutExtension.split(systemFolderSeparator);
   const folderName = pathSegments[pathSegments.length - 2];
   
   return folderName;
 }
 
 async function collectAudits(): Promise<void> {
+  const configAudits = getAudits()
   try {
     if (!audits) {
       let files = sync('./src/audits/**/index.ts');
 
-      console.log(files)
       audits = {};
       for (let file of files) {
         const moduleName = file.replace('src', 'dist').replace('.ts', '.js')
-        const module = await import('../' + moduleName)
-
         const moduleId = extractFolderName(moduleName)
 
+        if (!configAudits.includes(moduleId))
+          continue
+
+        const module = await import('../' + moduleName)
+
         if (moduleId){
-          console.log('AUDIT MANAGER registered audits: '+ moduleId)
+          console.log('AUDIT MANAGER registered audit: '+ moduleId)
           audits[moduleId] = module.default
         }
       }
@@ -37,4 +40,4 @@ async function collectAudits(): Promise<void> {
   }
 }
 
-export {audits}
+export { audits , collectAudits }

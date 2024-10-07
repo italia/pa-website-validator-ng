@@ -2,9 +2,10 @@
 import { initializePuppeteer } from './PuppeteerInstance.js'
 import PageManager from "./PageManager.js"       
 import scan from "./Scan.js";
-import {audits} from "./AuditManager.js"
+import { audits, collectAudits} from "./AuditManager.js"
+import { gatherers, collectGatherers } from './GathererManager.js';
 
-import { initializeConfig } from "./config/config.js";
+import { config, initializeConfig } from "./config/config.js";
 
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
@@ -107,30 +108,35 @@ try {
 
 async function run(
     website: string,
-                   type: string,
-                   scope: string,
-                   logLevel: string = logLevels.display_none,
-                   saveFile = true,
-                   destination: string,
-                   reportName: string,
-                   view = false,
-                   accuracy = "suggested",
-                   requestTimeout = 30000,
-                   numberOfServicePages?: number) {
-
+    type: string,
+    scope: string,
+    logLevel: string = logLevels.display_none,
+    saveFile = true,
+    destination: string,
+    reportName: string,
+    view = false,
+    accuracy = "suggested",
+    requestTimeout = 30000,
+    numberOfServicePages?: number) {
 
     try {
-
-      await initializePuppeteer();
       await initializeConfig(type, scope);
 
-        process.env["accuracy"] = accuracy;
-        if (numberOfServicePages) {
-            process.env["numberOfServicePages"] = JSON.stringify(numberOfServicePages);
-        }
-        process.env["requestTimeout"] = requestTimeout.toString();
+      await collectAudits();
+      await collectGatherers();
+      await initializePuppeteer();
+ 
+      process.env["accuracy"] = accuracy;
+      if (numberOfServicePages) {
+          process.env["numberOfServicePages"] = JSON.stringify(numberOfServicePages);
+      }
 
-      console.log(audits)
+      process.env["website"] = website
+      process.env["requestTimeout"] = requestTimeout.toString();
+      process.env["destination"] = destination
+      process.env["reportName"] = reportName
+      process.env["view"]  = view ? "true" : "false"
+      process.env["saveFile"] = saveFile ? "true" : "false"
 
       //register method to the event 'page-added'
       PageManager.onPagesAdded((pageData) => {

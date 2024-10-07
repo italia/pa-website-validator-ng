@@ -4,6 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "prebuild": "node -p \"'export const VERSION = ' + JSON.stringify(require('./package.json').version) + ';'\" > src/version.ts",
     "build:main": "tsc",
     "lint:check": "eslint --max-warnings 0 .",
     "type:check": "tsc --noEmit && tsc --noEmit",

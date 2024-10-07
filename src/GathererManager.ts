@@ -1,17 +1,18 @@
-import { Glob, sync } from "glob";
+import { sync } from "glob";
 let gatherers: any | null = null;
-
-await collectGatherers()
+import { getGatherers } from "./config/config.js";
 
 function extractFolderName(path: string) {
   const fileNameWithoutExtension = path.replace(/\.[^/.]+$/, '');
-  const pathSegments = fileNameWithoutExtension.split('/');
+  const systemFolderSeparator = process.platform as string == 'windows' ? '\\' : '/'
+  const pathSegments = fileNameWithoutExtension.split(systemFolderSeparator);
   const folderName = pathSegments[pathSegments.length - 2];
   
   return folderName;
 }
 
 async function collectGatherers(): Promise<void> {
+  const configGatherers = getGatherers()
 
   try {
     if (!gatherers) {
@@ -19,9 +20,12 @@ async function collectGatherers(): Promise<void> {
       gatherers = {};
       for (let file of files) {
         const moduleName = file.replace('src', 'dist').replace('.ts', '.js')
-        const module = await import('../' + moduleName)
-
         const moduleId = extractFolderName(moduleName)
+
+        if (!configGatherers.includes(moduleId))
+          continue
+
+        const module = await import('../' + moduleName)
 
         if (moduleId){
           console.log('GATHERER MANAGER registered gatherer: '+ moduleId)
@@ -36,4 +40,4 @@ async function collectGatherers(): Promise<void> {
   }
 }
 
-export {gatherers}
+export { gatherers , collectGatherers} 

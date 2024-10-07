@@ -9,6 +9,7 @@ import PageData = crawlerTypes.PageData
 import {config} from "./config/config.js";
 import {loadPage} from "./utils/utils.js";
 import {Page} from "puppeteer";
+import render from './report/Renderer.js';
 
 const scan = async (pageData: PageData) => {
     try {
@@ -138,6 +139,7 @@ const scan = async (pageData: PageData) => {
             console.log('SCAN ENDED - navigated pages:')
             console.log(PageManager.getAllPages(), JSON.stringify(await PageManager.getGlobalResults()));
 
+            await render()
         }
     } catch (err) {
         console.log(`SCAN error: ${err}`)

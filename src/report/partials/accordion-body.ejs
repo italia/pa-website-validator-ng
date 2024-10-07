@@ -1,0 +1,18 @@
+<div class="accordion-body">
+  <div class="row">
+    <div class="col-4">
+      <div class="nav nav-tabs nav-tabs-vertical" role="tablist" aria-orientation="vertical">
+        <% items.forEach(({ id, code, title, status }, index) => { %>
+        <%- include('tabs/tab-button', { id, code, title, status, index }); %>
+        <% }) %>
+      </div>
+    </div>
+    <div class="col-8">
+      <div class="tab-content">
+        <% items.forEach((audit, index) => { %>
+        <%- include('tabs/tab-pane', { audit, index }); %>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+</div>
