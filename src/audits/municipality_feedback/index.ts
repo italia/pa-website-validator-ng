@@ -6,12 +6,10 @@ import { auditDictionary } from "../../storage/auditDictionary.js";
 import {
   checkFeedbackComponent,
 } from "../../utils/municipality/utils.js";
-import { auditScanVariables } from "../../storage/municipality/auditScanVariables.js";
 import {
   errorHandling,
-  notExecutedErrorMessage,
 } from "../../config/commonAuditsParts.js";
-import { DataElementError } from "../../utils/DataElementError.js";
+
 import {Page} from "puppeteer";
 import {Audit} from "../Audit.js";
 

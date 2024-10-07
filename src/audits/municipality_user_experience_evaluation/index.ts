@@ -1,22 +1,17 @@
 "use strict";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { auditDictionary } from "../../storage/auditDictionary.js";
 import {
   checkFeedbackComponent,
 } from "../../utils/municipality/utils.js";
 import {
   errorHandling,
-  notExecutedErrorMessage,
 } from "../../config/commonAuditsParts.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
 
 const auditId = "municipality-user-experience-evaluation";
 const auditData = auditDictionary[auditId];
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 
 class UserExperienceEvaluationAudit extends Audit {
   public globalResults: any = {

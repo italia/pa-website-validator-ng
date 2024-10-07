@@ -63,7 +63,8 @@ const config: any = {
                     "services_page",
                     "vivere_page",
                     "booking_appointment",
-                    "personal_area_login"
+                    "personal_area_login",
+                    "second-level-page-all"
                 ],
                 "events-page": [
                     "events"
@@ -78,14 +79,26 @@ const config: any = {
             },
             "audits": {
                 "homepage": [
-                    "municipality_accessibility",
+                    "lighthouse",
+                    "municipality_accessibility"
                 ],
                 "services-page": [
                     "municipality_booking_appointment"
                 ],
                 "service": [
-                    "municipality_bootstrap"
+                    "municipality_bootstrap",
+                    "municipality_service"
                 ]
+                /*
+                "second-level-page-all" : [
+                    "municipality_domain_audit"
+                ],
+                "appointment-booking": [
+                    "municipality_bootstrap"
+                ],
+                "event": [
+                    "municipality_domain_audit"
+                ]*/
             },
             "accuracy": {
                 min: 1,

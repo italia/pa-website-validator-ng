@@ -16,7 +16,7 @@ class servicesGatherer extends Gatherer {
     let clickButton = true;
     let foundElements:any = [];
     let pages : string[] = [];
-    let error = '';
+
     while (clickButton) {
       try {
 
@@ -55,6 +55,8 @@ class servicesGatherer extends Gatherer {
         pages = foundElementsHrefs
 
         let currentCountPages = foundElementsHrefs.length;
+
+        process.env['numberOfServicesFound'] = String(currentCountPages);
 
         if (!currentCountPages || currentCountPages === maxCountPages) {
           clickButton = false;

@@ -1,6 +1,6 @@
 "use strict";
 
-import { primaryMenuItems } from "../../storage/municipality/menuItems.js";
+import { primaryMenuItems } from "./menuItems.js";
 import {
   checkOrder,
   getRedirectedUrl,

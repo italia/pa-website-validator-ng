@@ -9,11 +9,10 @@ import { isDrupal } from "../../utils/municipality/utils.js";
 import {
   cssClasses,
   drupalCoreClasses,
-} from "../../storage/municipality/cssClasses.js";
+} from "./cssClasses.js";
 import {Page} from "puppeteer";
 import {
   errorHandling,
-  notExecutedErrorMessage,
 } from "../../config/commonAuditsParts.js";
 import {Audit} from "../Audit.js";
 import {browser} from "../../PuppeteerInstance.js";

@@ -2,7 +2,6 @@ import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
 import {CheerioAPI} from "cheerio";
 import * as cheerio from "cheerio";
-import {BootstrapMunAudit} from "../municipality_bootstrap";
 import {notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
 
 const auditId = "municipality-performance-improvement-plan";

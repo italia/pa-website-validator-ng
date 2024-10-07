@@ -323,17 +323,10 @@ const getRandomThirdLevelPagesUrl = async (
   }
   let $ = await loadPageData(url);
 
-  const browser = await puppeteer.launch({
-    headless: true,
-    protocolTimeout: requestTimeout,
-    args: ["--no-zygote", "--no-sandbox", "--accept-lang=it"],
-  });
-  const browserWSEndpoint = browser.wsEndpoint();
   try {
-    const browser2 = await puppeteer.connect({ browserWSEndpoint });
-    const page = await browser2.newPage();
+    const page = await browser.newPage();
     await page.setRequestInterception(true);
-    page.on("request", (request) => {
+    page.on("request", (request: any) => {
       if (
         ["image", "imageset", "media"].indexOf(request.resourceType()) !== -1 ||
         new URL(request.url()).pathname.endsWith(".pdf")
@@ -395,11 +388,8 @@ const getRandomThirdLevelPagesUrl = async (
 
     await page.goto("about:blank");
     await page.close();
-    browser2.disconnect();
-    await browser.close();
   } catch (ex) {
     console.error(`ERROR ${pageUrl}: ${ex}`);
-    await browser.close();
     throw new Error(
       `Il test è stato interrotto perché nella prima pagina analizzata ${url} si è verificato l'errore "${ex}". Verificarne la causa e rifare il test.`
     );
@@ -926,8 +916,6 @@ const checkFeedbackComponent = async (url: string) => {
       `Il test è stato interrotto perché nella prima pagina analizzata ${url} si è verificato l'errore "${ex}". Verificarne la causa e rifare il test.`
     );
   }
-
-  await browser.close();
 
   returnValues.errors = [...new Set(returnValues.errors)];
 

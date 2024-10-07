@@ -8,7 +8,6 @@ import {Page} from "puppeteer";
 import * as cheerio from "cheerio";
 import {notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
 
-
 const auditId = "municipality-faq-is-present";
 const auditData = auditDictionary[auditId];
 const greenResult = auditData.greenResult;

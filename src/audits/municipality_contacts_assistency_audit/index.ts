@@ -6,7 +6,6 @@ import { CheerioAPI } from "cheerio";
 import { auditDictionary } from "../../storage/auditDictionary.js";
 import {
   errorHandling,
-  notExecutedErrorMessage,
 } from "../../config/commonAuditsParts.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";

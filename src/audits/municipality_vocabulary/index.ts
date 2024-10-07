@@ -1,11 +1,9 @@
 "use strict";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import {
   eurovocVocabulary,
   municipalityModelVocabulary,
-} from "../../storage/municipality/controlledVocabulary.js";
+} from "./controlledVocabulary.js";
 import {
   areAllElementsInVocabulary,
   buildUrl,

@@ -1,20 +1,14 @@
 "use strict";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { loadPageData } from "../../utils/utils.js";
 import { CheerioAPI } from "cheerio";
 import { ValidatorResult } from "jsonschema";
 import * as jsonschema from "jsonschema";
 import { auditDictionary } from "../../storage/auditDictionary.js";
 import {
   errorHandling,
-  notExecutedErrorMessage,
 } from "../../config/commonAuditsParts.js";
-import { DataElementError } from "../../utils/DataElementError.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
 import * as cheerio from "cheerio";
-import {MenuAudit} from "../municipality_menu";
 
 const auditId = "municipality-metatag";
 const auditData = auditDictionary[auditId];

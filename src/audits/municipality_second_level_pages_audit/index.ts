@@ -1,7 +1,5 @@
 "use strict";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import {
   buildUrl,
   getHREFValuesDataAttribute,
@@ -16,9 +14,8 @@ import {
   customPrimaryMenuItemsDataElement,
   customSecondaryMenuItemsDataElement,
   primaryMenuItems,
-} from "../../storage/municipality/menuItems.js";
+} from "./menuItems.js";
 import { DataElementError } from "../../utils/DataElementError.js";
-import { notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
 import * as cheerio from "cheerio";
