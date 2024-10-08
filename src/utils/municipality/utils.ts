@@ -517,9 +517,7 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
         await feedbackComponentRate?.click({
           delay: 1000,
         });
-        await page.waitForNetworkIdle({
-          idleTime: 1000,
-        });
+        await page.waitForNetworkIdle();
       } catch (e) {
         console.log(e, 'errore');
         /* empty */
