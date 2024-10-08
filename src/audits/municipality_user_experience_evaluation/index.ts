@@ -87,7 +87,8 @@ class UserExperienceEvaluationAudit extends Audit {
       };
       try {
         const feedbackComponentAnalysis = await checkFeedbackComponent(
-            url
+            url,
+            page
         );
 
         if (this.score > feedbackComponentAnalysis.score) {
