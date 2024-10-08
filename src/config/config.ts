@@ -145,4 +145,20 @@ async function initializeConfig(siteType: string, scope: string): Promise<void> 
     }
 }
 
-export { exportedConfig as config, initializeConfig }
+const getAudits = () => {
+    let auditIds : string[]= []
+    for (let pageTypeAudits of Object.values(exportedConfig['audits'])){
+        auditIds = [ ...auditIds,...pageTypeAudits as string[]]
+    }
+    return auditIds
+}
+
+const getGatherers = () => {
+    let gathererIds : string[]= []
+    for (let pageTypeGatherers of Object.values(exportedConfig['gatherers'])){
+        gathererIds = [ ...gathererIds,  ...pageTypeGatherers as string[]]
+    }
+    return gathererIds
+}
+
+export { exportedConfig as config, initializeConfig , getAudits, getGatherers }

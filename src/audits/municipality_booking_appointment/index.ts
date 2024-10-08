@@ -13,10 +13,17 @@ import {Audit} from "../Audit.js";
 import {CheerioAPI} from "cheerio";
 import * as cheerio from "cheerio";
 
-const auditId = "municipality-booking-appointment-check";
-const auditData = auditDictionary[auditId];
-
 class BookingAppointment extends Audit {
+
+  code = 'C.SI.2.1'
+  mainTitle = 'PRENOTAZIONE APPUNTAMENTI'
+  mainDescription = 'Il sito comunale deve consentire di prenotare un appuntamento presso lo sportello di competenza.'
+  minRequirement = "la funzionalità di prenotazione di un appuntamento è accessibile dalla sezione di funzionalità trasversali delle schede servizio e della pagina di primo livello 'Servizi';"
+  automaticChecks = 'ricercando specifici attributi "data-element" come spiegato nella Documentazione delle App di valutazione, viene verificata la presenza del componente "Prenota appuntamento" all\'interno della sezione di funzionalità trasversali delle schede servizio analizzate e della pagina di primo livello "Servizi". Viene inoltre indicato se è stato rilevato il pulsante di accesso alla funzionalità di prenotazione appuntamento all\'interno della sezione "Accedi al servizio" delle schede servizio; RIFERIMENTI TECNICI E NORMATIVI:  [Documentazione del Modello Comuni](https://docs.italia.it/italia/designers-italia/design-comuni-docs/it/versione-corrente/index.html), [Documentazione delle App di valutazione](https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/it/versione-attuale/index.html)' 
+  auditId = "municipality-booking-appointment-check";
+  auditData = auditDictionary["municipality-booking-appointment-check"];
+  failures = ''
+
   public globalResults: any = {
     score: 1,
     details: {
@@ -37,10 +44,17 @@ class BookingAppointment extends Audit {
 
   async meta() {
     return {
-      id: auditId,
-      title: auditData.title,
-      failureTitle: auditData.failureTitle,
-      description: auditData.description,
+      code: this.code,
+      id: this.auditId,
+      title: this.auditData.title,
+      mainTitle: this.mainTitle,
+      mainDescription: this.mainDescription,
+      minRequirement:this.minRequirement,
+      automaticChecks: this.automaticChecks,
+      failures: this.failures,
+      auditId: this.auditId,
+      failureTitle: this.auditData.failureTitle,
+      description: this.auditData.description,
       scoreDisplayMode: this.SCORING_MODES.NUMERIC,
       requiredArtifacts: ["origin"],
     };
@@ -192,7 +206,7 @@ class BookingAppointment extends Audit {
 
   }
   async getType(){
-    return auditId;
+    return this.auditId;
   }
 
   async returnGlobal(){
@@ -223,12 +237,12 @@ class BookingAppointment extends Audit {
       switch (this.score) {
         case 1:
           results.push({
-            result: auditData.greenResult,
+            result: this.auditData.greenResult,
           });
           break;
         case 0:
           results.push({
-            result: auditData.redResult,
+            result: this.auditData.redResult,
           });
           break;
       }
@@ -238,7 +252,7 @@ class BookingAppointment extends Audit {
 
     if (this.wrongItems.length > 0) {
       results.push({
-        result: auditData.subItem.redResult,
+        result: this.auditData.subItem.redResult,
         title_component_exist: this.titleSubHeadings[0],
         title_in_page_url: this.titleSubHeadings[1],
       });
@@ -257,7 +271,7 @@ class BookingAppointment extends Audit {
 
     if (this.correctItems.length > 0) {
       results.push({
-        result: auditData.subItem.greenResult,
+        result: this.auditData.subItem.greenResult,
         title_component_exist: this.titleSubHeadings[0],
         title_in_page_url: this.titleSubHeadings[1],
       });

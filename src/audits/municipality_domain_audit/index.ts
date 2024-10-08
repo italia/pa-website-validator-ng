@@ -13,6 +13,13 @@ const auditData = auditDictionary[auditId];
 
 class DomainAudit extends Audit {
 
+  code = 'C.SI.5.2'
+  mainTitle = 'DOMINIO ISTITUZIONALE'
+  mainDescription = 'Il sito comunale utilizza un dominio istituzionale secondo le modalità indicate nella documentazione del modello di sito comunale.'
+  minRequirement = 'il sito comunale è raggiungibile senza necessità di inserimento del sottodominio “www.” e le pagine utilizzano il sottodominio "comune." immediatamente seguito da uno dei domini utilizzabili presenti in [questa pagina](https://raw.githubusercontent.com/italia/pa-website-validator/main/src/storage/municipality/allowedDomains.ts) secondo la struttura indicata nel criterio di conformità;'
+  automaticChecks = 'ricercando specifici attributi "data-element" come spiegato nella Documentazione delle App di valutazione, viene verificato che il dominio utilizzato nelle pagine analizzate rispetti la struttura richiesta dal criterio di conformità e che le pagine siano raggiungibili senza necessità di inserimento del sottodominio "www."; '
+  failures = "Elementi di fallimento:"
+
   public globalResults: any = {
     score: 1,
     details: {
@@ -33,10 +40,17 @@ class DomainAudit extends Audit {
 
   async meta() {
     return {
-      id: auditId,
-      title: auditData.title,
-      failureTitle: auditData.failureTitle,
-      description: auditData.description,
+      code: this.code,
+      id: this.auditId,
+      title: this.auditData.title,
+      mainTitle: this.mainTitle,
+      mainDescription: this.mainDescription,
+      minRequirement:this.minRequirement,
+      automaticChecks: this.automaticChecks,
+      failures: this.failures,
+      auditId: this.auditId,
+      failureTitle: this.auditData.failureTitle,
+      description: this.auditData.description,
       scoreDisplayMode: this.SCORING_MODES.BINARY,
       requiredArtifacts: ["origin"],
     };

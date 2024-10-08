@@ -14,6 +14,12 @@ import * as ejs from 'ejs'
 class A11yAudit extends Audit {
 
     code = ''
+    mainTitle = ''
+    mainDescription = ''
+    minRequirement = ''
+    automaticChecks = ''
+    failures = ''
+
     public globalResults: any = {
         score: 0,
         details: {
@@ -32,6 +38,12 @@ class A11yAudit extends Audit {
             code: this.code,
             id: this.auditId,
             title: this.auditData.title,
+            mainTitle: this.mainTitle,
+            mainDescription: this.mainDescription,
+            minRequirement:this.minRequirement,
+            automaticChecks: this.automaticChecks,
+            failures: this.failures,
+            auditId: this.auditId,
             failureTitle: this.auditData.failureTitle,
             description: this.auditData.description,
             scoreDisplayMode: this.SCORING_MODES.BINARY,
@@ -208,12 +220,9 @@ class A11yAudit extends Audit {
         return A11yAudit.instance;
     }
 
-    async returnGlobalHTML() {
 
-        const status = 'pass'
-        const reportHtml = await ejs.renderFile('src/audits/accessibility/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults.details, status   });   
-        return reportHtml
-      }
+
+    
     
 
 }

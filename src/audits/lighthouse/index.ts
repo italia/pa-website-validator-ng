@@ -9,6 +9,13 @@ const auditId = "lighthouse";
 
 class lighthouseAudit extends Audit {
 
+    code = 'C.SI.4.1'
+    mainTitle = 'LIGHTHOUSE'
+    mainDescription = 'Velocità e tempi di risposta'
+    minRequirement = "il sito presenta livelli di prestazioni (media pesata di 6 metriche standard) pari o superiori a 50. Se il punteggio è inferiore a 50, il Comune deve pubblicare sul sito un “Piano di miglioramento del sito” raggiungibile dal footer che mostri, per ciascuna voce che impatta negativamente le prestazioni, le azioni future di miglioramento e le relative tempistiche di realizzazione attese"
+    automaticChecks = ''  
+    failures = ""
+
     reportJSON = {}
     reportHTML = ''
 
@@ -57,8 +64,22 @@ class lighthouseAudit extends Audit {
     }
 
     async meta() {
-        return {}
-    }
+        return {
+          code: this.code,
+          id: this.auditId,
+          title: this.auditData.title,
+          mainTitle: this.mainTitle,
+          mainDescription: this.mainDescription,
+          minRequirement:this.minRequirement,
+          automaticChecks: this.automaticChecks,
+          failures: this.failures,
+          auditId: this.auditId,
+          failureTitle: this.auditData.failureTitle,
+          description: this.auditData.description,
+          scoreDisplayMode: this.SCORING_MODES.BINARY,
+          requiredArtifacts: ["origin"],
+        };
+      }
 
     async returnGlobal() {
         return this.globalResults;

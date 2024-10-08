@@ -2,8 +2,8 @@
   <div class="row">
     <div class="col-4">
       <div class="nav nav-tabs nav-tabs-vertical" role="tablist" aria-orientation="vertical">
-        <% items.forEach(({ id, code, title, status }, index) => { %>
-        <%- include('tabs/tab-button', { id, code, title, status, index }); %>
+        <% items.forEach(({ id, code, mainTitle, status }, index) => { %>
+        <%- include('tabs/tab-button', { id, code, mainTitle, status, index }); %>
         <% }) %>
       </div>
     </div>

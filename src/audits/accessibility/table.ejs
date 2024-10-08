@@ -1,0 +1,19 @@
+
+<table class="table">
+  <thead>
+    <tr> <% table.headings.forEach(h => { %>
+      <th> 
+        <%- h.text %> 
+      </th>
+      <% }); %>
+    </tr>
+  </thead>
+  <tbody> <% table.items.forEach(row => { %>
+    <tr> <% if (Object.values(row)) Object.values(row).forEach(item => { %>
+      <td>
+        <%= item %></td>
+      <% }); %>
+    </tr> 
+    <% }); %>
+  </tbody>
+</table>

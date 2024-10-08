@@ -18,7 +18,7 @@ const render = async () => {
 
     let successAudits = []
     let failedAudits = []
-    let informativeAudits = []
+    //let informativeAudits = []
     let lighthouseIFrame = null
 
 
@@ -31,18 +31,22 @@ const render = async () => {
         const score = auditResult.score 
 
         if (score >= 0.5) {
-            successAudits.push(
-                { ...auditMeta, id: 'ID', code: 'C34', title: 'critero', status: 'pass' }
-            )
-        } else {
-            failedAudits.push( {...auditMeta, id: 'ID', code: 'C34', title: 'critero', status: 'pass' })
-        }
-
-        if (auditId == "school_accessibility" )
-            informativeAudits.push({
+            successAudits.push({
                 ...auditMeta,
                 auditHTML : await audit.returnGlobalHTML()
         })
+        } else {
+            failedAudits.push({
+                ...auditMeta,
+                auditHTML : await audit.returnGlobalHTML()
+        })
+        }
+
+        // if (auditId == "school_accessibility" )
+        //     informativeAudits.push({
+        //         ...auditMeta,
+        //         auditHTML : await audit.returnGlobalHTML()
+        // })
 
         /** LIGHTHOUSE AUDIT specific flow */
         if (auditId === 'lighthouse') {
@@ -73,7 +77,7 @@ const render = async () => {
          },
          audits: {
             passed: successAudits,
-            info: informativeAudits,
+            info: [], //informativeAudits,
             failed: failedAudits
          },
          url_comune: website,

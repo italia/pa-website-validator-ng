@@ -22,6 +22,13 @@ const auditData = auditDictionary[auditId];
 
 class BootstrapMunAudit extends Audit {
 
+  code = 'C.SI.1.2'
+  mainTitle = 'LIBRERIA DI ELEMENTI DI INTERFACCIA'
+  mainDescription = 'Il sito comunale deve utilizzare la libreria Bootstrap Italia'
+  minRequirement = "in ogni pagina è presente e in uso la libreria Bootstrap Italia in una versione uguale o superiore alla 2.0 e almeno il 30% delle classi CSS usate appartiene alle classi CSS di Bootstrap Italia;"
+  automaticChecks = "in ogni pagina analizzata viene verificata la presenza della libreria Bootstrap Italia e la versione in uso, individuando la proprietà CSS --bootstrap-italia-version all’interno del selettore :root o la variabile globale window.BOOTSTRAP_ITALIA_VERSION. Inoltre, viene verificato che almeno il 30% delle classi CSS uniche trovate nella pagina appartiene all'elenco delle classi CSS di Bootstrap Italia;" 
+  failures = "Elementi di fallimento:"
+
   public globalResults: any = {
     score: 1,
     details: {
@@ -43,10 +50,17 @@ class BootstrapMunAudit extends Audit {
 
   async meta() {
     return {
-      id: auditId,
-      title: auditData.title,
-      failureTitle: auditData.failureTitle,
-      description: auditData.description,
+      code: this.code,
+      id: this.auditId,
+      title: this.auditData.title,
+      mainTitle: this.mainTitle,
+      mainDescription: this.mainDescription,
+      minRequirement:this.minRequirement,
+      automaticChecks: this.automaticChecks,
+      failures: this.failures,
+      auditId: this.auditId,
+      failureTitle: this.auditData.failureTitle,
+      description: this.auditData.description,
       scoreDisplayMode: this.SCORING_MODES.NUMERIC,
       requiredArtifacts: ["origin"],
     };

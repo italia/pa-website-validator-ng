@@ -30,6 +30,14 @@ const auditId = "service";
 const auditData = auditDictionary[auditId];
 
 class ServiceAudit extends Audit {
+
+    code = 'C.SI.1.3'
+    mainTitle = 'SCHEDE INFORMATIVE DI SERVIZIO PER IL CITTADINO'
+    mainDescription = 'Il sito comunale deve utilizzare la libreria Bootstrap Italia'
+    minRequirement = "sono presenti almeno 10 schede informative di servizio e in queste le voci obbligatorie e i relativi contenuti sono presenti e, dove richiesto, sono nell'ordine corretto;"
+    automaticChecks = "ricercando specifici attributi \"data-element\" come spiegato nella Documentazione delle App di valutazione, la presenza e l'ordine delle voci richieste viene verificato ricercandoli all'interno della pagina e dell'indice. Per essere ritenute valide, le voci devono avere contenuti associati della tipologia indicata all'interno del documento di architettura dell'informazione. Maggiori dettagli sono indicati nella Documentazione delle App di valutazione;"
+    failures = "Elementi di fallimento:"
+  
     public globalResults: any = {
         score: 1,
         details: {
@@ -51,10 +59,17 @@ class ServiceAudit extends Audit {
 
     async meta() {
         return {
-            id: auditId,
-            title: auditData.title,
-            failureTitle: auditData.failureTitle,
-            description: auditData.description,
+            code: this.code,
+            id: this.auditId,
+            title: this.auditData.title,
+            mainTitle: this.mainTitle,
+            mainDescription: this.mainDescription,
+            minRequirement:this.minRequirement,
+            automaticChecks: this.automaticChecks,
+            failures: this.failures,
+            auditId: this.auditId,
+            failureTitle: this.auditData.failureTitle,
+            description: this.auditData.description,
             scoreDisplayMode: this.SCORING_MODES.NUMERIC,
             requiredArtifacts: ["origin"],
         };
