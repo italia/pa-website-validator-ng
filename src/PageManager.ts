@@ -46,7 +46,7 @@ class PageManager {
 
     async closePage(page: PageData): Promise<void> {
         await this.setScanning(page.url, page.type, false);
-        const usablePage = this.pagesArray.find(p => (!p.gathered || !p.audited || (!p.gathered && !p.audited && p.temporary)) && !p.scanning);
+        const usablePage = this.pagesArray.find(p => (!p.gathered || !p.audited || (p.gathered && p.audited && (p.temporaryGatherer || p.temporaryAudit))) && !p.scanning);
         const pages = this.pagesArray.filter(p => p.scanning);
         //console.log(pages.length, 'qua');
         if(usablePage){
@@ -111,9 +111,14 @@ class PageManager {
         if (page) page.gathered = true
     }
 
-    setNotTemporary(url: string, pageType: string) {
+    setNotTemporaryGatherer(url: string, pageType: string) {
         let page = this.pagesArray.find(page => (page.url === url && page.type === pageType))
-        if (page) page.temporary = false
+        if (page) page.temporaryGatherer = false
+    }
+
+    setNotTemporaryAudit(url: string, pageType: string) {
+        let page = this.pagesArray.find(page => (page.url === url && page.type === pageType))
+        if (page) page.temporaryAudit = false
     }
 
     setScanning(url: string, pageType: string, value : boolean) {
@@ -131,7 +136,7 @@ class PageManager {
     }
 
     hasRemainingPages() {
-        const remainingPages = this.pagesArray.find(el => !el.audited || !el.gathered || el.temporary)
+        const remainingPages = this.pagesArray.find(el => !el.audited || !el.gathered || (el.temporaryGatherer || el.temporaryAudit))
         return remainingPages != undefined
     }
 }
