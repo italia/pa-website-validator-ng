@@ -136,7 +136,7 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
                     if(page){
                         await page.waitForNetworkIdle();
                     }
-                    console.log('page');
+   
                 }catch (e) {
                     navigatingError = e;
                 }

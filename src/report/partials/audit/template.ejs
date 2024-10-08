@@ -54,7 +54,7 @@ default:
     <svg class="icon <%= status %>" aria-hidden="true">
       <use href="<%= icon %>"></use>
     </svg>
-    <%= code %> <%= mainTitle %>
+    <%= code %> <%= message %>
   </h2>
   <div class="audit-description">
   
@@ -71,9 +71,14 @@ default:
       <%= automaticChecks  %>
     </p>
     <div class="separator"></div>
+
     <p>
-      <span class="h6 uppercase">Elementi di fallimento:</span> %>
+      <span class="h6"> <%= statusMessage %> </span> %>
     </p>
+
+    <!-- <p>
+      <span class="h6 uppercase">Elementi di fallimento:</span> %>
+    </p> -->
     <!-- 
     <% //- include('table', {table}) %>
      -->
