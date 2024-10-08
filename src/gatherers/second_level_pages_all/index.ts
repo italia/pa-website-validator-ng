@@ -3,7 +3,6 @@ import crawlerTypes from "../../types/crawler-types.js";
 import PageData = crawlerTypes.PageData
 import {Page} from "puppeteer";
 import {getSecondLevelPages} from "../../utils/municipality/utils.js";
-import municipalitySecondLevelPages = crawlerTypes.municipalitySecondLevelPages;
 import {primaryMenuItems} from "../../storage/municipality/menuItems.js";
 
 class SecondLevelPagesGatherer extends Gatherer {

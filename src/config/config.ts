@@ -64,7 +64,7 @@ const config: any = {
                     "vivere_page",
                     "booking_appointment",
                     "personal_area_login",
-                    "second-level-page-all"
+                    "second_level_pages_all"
                 ],
                 "events-page": [
                     "events"
@@ -88,11 +88,11 @@ const config: any = {
                 "service": [
                     "municipality_bootstrap",
                     "municipality_service"
-                ]
-                /*
+                ],
                 "second-level-page-all" : [
                     "municipality_domain_audit"
-                ],
+                ]
+                /*
                 "appointment-booking": [
                     "municipality_bootstrap"
                 ],
