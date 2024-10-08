@@ -68,7 +68,7 @@ class ImprovementPlanAudit extends Audit {
   }
 
   async returnGlobal() {
-    return this.score;
+    return {score: this.score};
   }
 
   static getInstance(): Promise<ImprovementPlanAudit> {
