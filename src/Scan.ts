@@ -21,7 +21,8 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
         if (!config.gatherers[pageData.type] && !config.audits[pageData.type]) {
             PageManager.setGathered(pageData.url, pageData.type)
             PageManager.setAudited(pageData.url, pageData.type)
-            PageManager.setNotTemporary(pageData.url, pageData.type);
+            PageManager.setNotTemporaryGatherer(pageData.url, pageData.type);
+            PageManager.setNotTemporaryAudit(pageData.url, pageData.type);
 
             if (!PageManager.hasRemainingPages()) {
                 console.error('closing puppeteer')
@@ -29,12 +30,16 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
                 console.log('SCAN ENDED - navigated pages:')
             }
             return
-        }else if(!config.audits[pageData.type]){
+        }
+        if(!config.audits[pageData.type]){
             PageManager.setAudited(pageData.url, pageData.type);
+            PageManager.setNotTemporaryAudit(pageData.url, pageData.type);
             pageData = PageManager.getPageByUrl(pageData.url, pageData.type);
-            PageManager.setNotTemporary(pageData.url, pageData.type);
-        }else if(!config.gatherers[pageData.type]){
+        }
+
+        if(!config.gatherers[pageData.type]){
             PageManager.setGathered(pageData.url, pageData.type);
+            PageManager.setNotTemporaryGatherer(pageData.url, pageData.type);
             pageData = PageManager.getPageByUrl(pageData.url, pageData.type);
         }
 
@@ -43,15 +48,20 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
         let gatheringErrors = []
 
 
-        if(!pageData.gathered || (pageData.gathered && pageData.temporary)){
+        if(!pageData.gathered || (pageData.gathered && pageData.temporaryGatherer)){
             console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Gathering start`)
             await PageManager.setScanning(pageData.url, pageData.type, true);
+            let navigatingError : any;
 
             let page : Page | null = null;
-            if(!pageData.temporary){
-                page = await loadPage(pageData.url);
-                if(page){
-                    await page.waitForNetworkIdle();
+            if(!pageData.temporaryGatherer){
+                try{
+                    page = await loadPage(pageData.url);
+                    if(page){
+                        await page.waitForNetworkIdle();
+                    }
+                }catch (e) {
+                    navigatingError = e;
                 }
             }
 
@@ -66,8 +76,13 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
                     const accuracy = process.env["accuracy"] ?? "suggested";
                     const configAccuracy = config.accuracy[accuracy];
 
-                    if(!page){
-                        throw new Error(pageData && pageData.errors && pageData.errors.length ? pageData.errors[0] : `Page not available for page ${pageData.type}`);
+                    if(!page && pageData.temporaryGatherer){
+                        throw new Error(pageData && pageData.errors && pageData.errors.length ? pageData.errors[0] : `Page not available for type ${pageData.type}`);
+                    }
+
+                    if(!page && navigatingError){
+                        console.log('navigating Error gatherer =', navigatingError);
+                        throw new Error(navigatingError);
                     }
 
                     const fetchedPages = await gatherer.navigateAndFetchPages(pageData.url, configAccuracy, '', page);
@@ -77,14 +92,15 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
                     console.log(e.message)
                     await PageManager.addPage({
                         id: '',
-                        url: '/temp' + gatherer.getPageType(),
-                        type: gatherer.getPageType(),
+                        url: navigatingError ? pageData.url : '/temp' + gatherer.getPageType(),
+                        type: navigatingError ? pageData.type : gatherer.getPageType(),
                         redirectUrl: '',
                         internal: false,
                         gathered: true,
                         audited: true,
                         errors: [e.message],
-                        temporary: true,
+                        temporaryGatherer: true,
+                        temporaryAudit: true,
                     })
                     gatheringErrors.push(e)
                 }
@@ -96,6 +112,7 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
                 await PageManager.addPage(gatheredPage)
             }
 
+            PageManager.setNotTemporaryGatherer(pageData.url, pageData.type);
             await PageManager.setGathered(pageData.url, pageData.type);
             console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Gathering end`);
             if(page){
@@ -107,18 +124,22 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
         let auditedPages: any = []
         let auditingErrors = []
 
-        if(!pageData.audited || (pageData.audited && pageData.temporary)){
+        if(!pageData.audited || (pageData.audited && pageData.temporaryAudit)){
+            let navigatingError : any;
 
             let page : Page | null = null;
             console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Audit start`);
-            if(!pageData.temporary){
-                page = await loadPage(pageData.url);
-                if(page instanceof Page){
-                    await page.waitForNetworkIdle();
+            if(!pageData.temporaryAudit){
+                try{
+                    page = await loadPage(pageData.url);
+                    if(page){
+                        await page.waitForNetworkIdle();
+                    }
+                    console.log('page');
+                }catch (e) {
+                    navigatingError = e;
                 }
             }
-
-            console.log('page');
 
             if(config.audits[pageData.type]){
                 for (let auditId of config.audits[pageData.type]) {
@@ -142,12 +163,12 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
                     }
                 }
 
-                if(page instanceof Page){
+                if(page){
                     await page.close();
                 }
             }
 
-            PageManager.setNotTemporary(pageData.url, pageData.type);
+            PageManager.setNotTemporaryAudit(pageData.url, pageData.type);
             PageManager.setErrors(pageData.url, pageData.type, auditingErrors)
             PageManager.setAudited(pageData.url, pageData.type);
             console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Auditing end`);

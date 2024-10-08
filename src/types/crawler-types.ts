@@ -24,7 +24,8 @@ declare namespace crawlerTypes {
     gathered: boolean
     audited: boolean
     errors?:any[]
-    temporary?: boolean
+    temporaryGatherer?: boolean
+    temporaryAudit?: boolean
     scanning?: boolean
   }
 
