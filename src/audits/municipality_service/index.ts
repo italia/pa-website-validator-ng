@@ -26,7 +26,7 @@ import {Page} from "puppeteer";
 import * as cheerio from "cheerio";
 
 
-const auditId = "service";
+const auditId = "municipality-servizi-structure-match-model";
 const auditData = auditDictionary[auditId];
 
 class ServiceAudit extends Audit {
