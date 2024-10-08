@@ -1,13 +1,16 @@
 
-import {Audit} from "../Audit.js";
+import { Audit } from "../Audit.js";
 
 import lighthouse from 'lighthouse';
-import {Page} from "puppeteer";
-import {browser} from "../../PuppeteerInstance.js";
+import { Page } from "puppeteer";
+import { browser } from "../../PuppeteerInstance.js";
 
 const auditId = "lighthouse";
 
 class lighthouseAudit extends Audit {
+
+    reportJSON = {}
+    reportHTML = ''
 
     public globalResults: any = {
         score: 1,
@@ -21,13 +24,13 @@ class lighthouseAudit extends Audit {
     };
 
     async auditPage(page: Page | null) {
-        if(page){
+        if (page) {
             const browserWSEndpoint = browser.wsEndpoint();
             const { port } = new URL(browserWSEndpoint);
 
             const options = {
                 logLevel: process.env["logsLevel"],
-                output: 'json',
+                output: ["html", "json"],
                 onlyCategories: [
                     "performance",
                 ],
@@ -35,9 +38,16 @@ class lighthouseAudit extends Audit {
             };
 
             const url = page.url();
-            const results =  await this.runLighthouse(url, options);
+            const runnerResult = await this.runLighthouse(url, options);
+           
+            if (runnerResult.report.length < 2) {
+                throw new Error("Missing JSON or HTML report");
+            }
 
-            this.globalResults.details.items = results;
+            this.reportHTML = runnerResult.report[0];
+            this.reportJSON = runnerResult.report[1];
+
+            this.globalResults.details.items = runnerResult.report.audits ?? {};
 
             return;
         }
@@ -46,35 +56,34 @@ class lighthouseAudit extends Audit {
 
     }
 
-    async meta(){
+    async meta() {
         return {}
     }
 
-    async returnGlobal(){
+    async returnGlobal() {
         return this.globalResults;
     }
 
     async runLighthouse(url: string, options: any): Promise<any> {
         try {
-          const runnerResult = await lighthouse(url, options);
-          return JSON.parse(<string>runnerResult?.report).audits ?? {};
+            return await lighthouse(url, options);
         } catch (error) {
-          console.error('Error running Lighthouse:', error);
-          throw error;
+            console.error('Error running Lighthouse:', error);
+            throw error;
         }
-      }
+    }
 
-    async getType(){
+    async getType() {
         return auditId;
     }
-      
-     
-static getInstance(): Promise<lighthouseAudit> {
-  if (!lighthouseAudit.instance) {
-    lighthouseAudit.instance = new lighthouseAudit('',[],[]);
-  }
-  return lighthouseAudit.instance;
-}
+
+
+    static getInstance(): Promise<lighthouseAudit> {
+        if (!lighthouseAudit.instance) {
+            lighthouseAudit.instance = new lighthouseAudit('', [], []);
+        }
+        return lighthouseAudit.instance;
+    }
 }
 
 export { lighthouseAudit };

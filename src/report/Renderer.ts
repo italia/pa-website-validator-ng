@@ -6,6 +6,7 @@ import open from "open";
 import { format } from "path";
 import { VERSION } from '../version.js';
 import {Audit} from '../audits/Audit.js';
+import PageManager from '../PageManager.js';
 
 const render = async () => {
     const website = process.env.website
@@ -13,24 +14,15 @@ const render = async () => {
     const saveFile = process.env.saveFile
     const view = process.env.view
     const reportName = process.env.reportName
+    const date = formatDate(new Date())
 
-    const  formatDate = (date: Date): string =>{
-        const year = date.getFullYear().toString();
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        const day = date.getDate().toString().padStart(2, '0');
-        const hours = date.getHours().toString().padStart(2, '0');
-        const minutes = date.getMinutes().toString().padStart(2, '0');
-        
-        return `${day}/${month}/${year.slice(-2)} ${hours}:${minutes}`;
-    }
-    const reportDate = formatDate(new Date())
-
-    /** collect data for report tabs */
     let successAudits = []
     let failedAudits = []
     let informativeAudits = []
     let lighthouseIFrame = null
 
+
+    /** get data from report instances */
     for(let auditId of Object.keys(audits)){
         const audit = await audits[auditId]() as any
 
@@ -40,10 +32,10 @@ const render = async () => {
 
         if (score >= 0.5) {
             successAudits.push(
-                {id: 'ID', code: 'C34', title: 'critero', status: 'pass' }
+                { ...auditMeta, id: 'ID', code: 'C34', title: 'critero', status: 'pass' }
             )
         } else {
-            failedAudits.push( {id: 'ID', code: 'C34', title: 'critero', status: 'pass' })
+            failedAudits.push( {...auditMeta, id: 'ID', code: 'C34', title: 'critero', status: 'pass' })
         }
 
         if (auditId == "school_accessibility" )
@@ -52,39 +44,50 @@ const render = async () => {
                 auditHTML : await audit.returnGlobalHTML()
         })
 
-
+        /** LIGHTHOUSE AUDIT specific flow */
+        if (auditId === 'lighthouse') {
+            lighthouseIFrame = audit.reportHTML
+        }
+    
     }
 
+    // console.log('PASSED', successAudits)
+    // console.log('FAILED', successAudits)
+    // console.log('INFO', informativeAudits)
 
-    console.log('PASSED', successAudits)
-    console.log('FAILED', successAudits)
-    console.log('INFO', informativeAudits)
+    const reportJSON = await PageManager.getGlobalResults()
 
-    const reportJSON = ""
+    let status = 'ko'
+    if (successAudits.length > failedAudits.length) {
+        status = 'ok'
+    }
+
     const reportHtml = await ejs.renderFile('src/report/index.ejs', {
-         version: VERSION,
-         reportDate: reportDate,
+         crawler_version: VERSION,
+         date: date,
          results: {
-            passed_audits: 1,
-            failed_audits : 19,
-            total_audits: 20,
+            status: status,
+            passed_audits: successAudits.length,
+            failed_audits : failedAudits.length,
+            total_audits:  Object.keys(audits).length,
          },
          audits: {
             passed: successAudits,
             info: informativeAudits,
             failed: failedAudits
          },
-         website: website
-        });   
+         url_comune: website,
+         lighthouseIFrame: lighthouseIFrame.replace(/"/g, '&quot;')
+    });   
 
     if (saveFile == "false") {
-    return {
-        status: true,
-        data: {
-        htmlReport: reportHtml,
-        jsonReport: reportJSON,
-        },
-    };
+        return {
+            status: true,
+            data: {
+            htmlReport: reportHtml,
+            jsonReport: reportJSON,
+            },
+        };
     }
 
     await mkdir(destination as string, { recursive: true });
@@ -102,7 +105,7 @@ const render = async () => {
     });
 
     await writeFile(htmlPath, reportHtml);
-    await writeFile(jsonPath, reportJSON);
+    await writeFile(jsonPath, JSON.stringify(reportJSON));
 
     if (view == "true") {
         await open(htmlPath);
@@ -117,5 +120,16 @@ const render = async () => {
     //   };
 
 }
+
+const  formatDate = (date: Date): string =>{
+    const year = date.getFullYear().toString();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    
+    return `${day}/${month}/${year.slice(-2)} ${hours}:${minutes}`;
+}
+
 
 export default render

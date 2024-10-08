@@ -132,9 +132,10 @@ class DomainAudit extends Audit {
 
         if (correctDomain && wwwAccess) {
           this.correctItems.push(item);
+        }else{
+          this.wrongItems.push(item);
+          this.score = 0;
         }
-        this.wrongItems.push(item);
-        this.score = 0;
     }
 
     return {

@@ -16,14 +16,12 @@ import render from './report/Renderer.js';
 
 const scan = async (pageData: PageData, saveFile = true, destination = '', reportName = '', view = false) => {
     try {
+        await PageManager.setScanning(pageData.url, pageData.type, true);
         /** if no gathering or auditing for this page type skip*/
 
-        console.log(PageManager.getAllPages());
-
-        //console.log(pageData)
         if (!config.gatherers[pageData.type] && !config.audits[pageData.type]) {
-            PageManager.setGathered(pageData.url)
-            PageManager.setAudited(pageData.url)
+            PageManager.setGathered(pageData.url, pageData.type)
+            PageManager.setAudited(pageData.url, pageData.type)
             PageManager.setNotTemporary(pageData.url, pageData.type);
 
             if (!PageManager.hasRemainingPages()) {
@@ -33,15 +31,13 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
             }
             return
         }else if(!config.audits[pageData.type]){
-            PageManager.setAudited(pageData.url);
-            pageData = PageManager.getPageByUrl(pageData.url);
+            PageManager.setAudited(pageData.url, pageData.type);
+            pageData = PageManager.getPageByUrl(pageData.url, pageData.type);
             PageManager.setNotTemporary(pageData.url, pageData.type);
         }else if(!config.gatherers[pageData.type]){
-            PageManager.setGathered(pageData.url);
-            pageData = PageManager.getPageByUrl(pageData.url);
+            PageManager.setGathered(pageData.url, pageData.type);
+            pageData = PageManager.getPageByUrl(pageData.url, pageData.type);
         }
-
-        console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Gathering start`)
 
         /** GATHERING */
         let gathererPages: any = []
@@ -49,6 +45,9 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
 
 
         if(!pageData.gathered || (pageData.gathered && pageData.temporary)){
+            console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Gathering start`)
+            await PageManager.setScanning(pageData.url, pageData.type, true);
+
             let page : Page | null = null;
             if(!pageData.temporary){
                 page = await loadPage(pageData.url);
@@ -61,11 +60,8 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
 
                 if (!gatherers[gathererId]) continue
 
-                //console.log(gathererId)
                 const gatherer = await gatherers[gathererId]()
                 try {
-                    //console.log(gathererId,gatherers[gathererId])
-
                     if (gatherer === undefined) throw new Error(` No gatherer found for id ${gathererId}: check your configuration`)
 
                     const accuracy = process.env["accuracy"] ?? "suggested";
@@ -95,13 +91,13 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
                 }
             }
 
-            pageData = await PageManager.setErrors(pageData.url, gatheringErrors, true)
-            gathererPages.forEach((page: PageData) => {
-                PageManager.addPage(page)
-            });
+            pageData = await PageManager.setErrors(pageData.url, pageData.type, gatheringErrors, true)
 
+            for(let gatheredPage of gathererPages){
+                await PageManager.addPage(gatheredPage)
+            }
 
-            await PageManager.setGathered(pageData.url);
+            await PageManager.setGathered(pageData.url, pageData.type);
             console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Gathering end`);
             if(page){
                 await page.close();
@@ -115,14 +111,13 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
         if(!pageData.audited || (pageData.audited && pageData.temporary)){
 
             let page : Page | null = null;
+            console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Audit start`);
             if(!pageData.temporary){
                 page = await loadPage(pageData.url);
-                if(page){
+                if(page instanceof Page){
                     await page.waitForNetworkIdle();
                 }
             }
-
-            console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Audit start`);
 
             if(config.audits[pageData.type]){
                 for (let auditId of config.audits[pageData.type]) {
@@ -146,16 +141,18 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
                     }
                 }
 
-                if(page){
+                if(page instanceof Page){
                     await page.close();
                 }
             }
 
             PageManager.setNotTemporary(pageData.url, pageData.type);
-            PageManager.setErrors(pageData.url, auditingErrors)
-            PageManager.setAudited(pageData.url);
+            PageManager.setErrors(pageData.url, pageData.type, auditingErrors)
+            PageManager.setAudited(pageData.url, pageData.type);
             console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Auditing end`);
         }
+
+        await PageManager.closePage(pageData);
 
         if (!PageManager.hasRemainingPages()) {
             console.error('closing puppeteer...')
@@ -164,7 +161,6 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
             console.log('SCAN ENDED - navigated pages:')
             console.log(PageManager.getAllPages());
 
-            const runnerResult : any = await PageManager.getGlobalResults();
             await render()
 
             // /*if (!runnerResult || !Object.keys(runnerResult).length) {
@@ -210,8 +206,6 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
             //         jsonResultPath: jsonPath,
             //     },
             // };
-            console.log(PageManager.getAllPages(), JSON.stringify(await PageManager.getGlobalResults()));
-
             
         }
     } catch (err) {

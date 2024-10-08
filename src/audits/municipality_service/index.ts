@@ -16,7 +16,7 @@ import {
     contentTypeItemsIndexDataElement,
 } from "../../storage/municipality/contentTypeItems.js";
 import {auditDictionary} from "../../storage/auditDictionary.js";
-import {auditScanVariables} from "../../storage/municipality/auditScanVariables.js";
+
 import {
     errorHandling,
     minNumberOfServices,

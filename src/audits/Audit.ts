@@ -8,7 +8,6 @@ export abstract class Audit {
     id: string;
     gathererPageType: string[];
     auditsIds: string[];
-    protected timeout: number = 30000;
     protected static instance: any;
     globalResults : any = {};
 

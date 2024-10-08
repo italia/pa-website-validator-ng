@@ -13,7 +13,7 @@ import {browser} from "../PuppeteerInstance.js";
 
 const cache = new LRUCache<string, CheerioAPI>({ max: 1000 });
 const redirectUrlCache = new LRUCache<string, string>({ max: 1000 });
-const requestTimeout = parseInt(process.env["requestTimeout"] ?? "60000");
+const requestTimeout = parseInt(process.env["requestTimeout"] ?? "300000");
 
 const loadPageData = async (url: string, wait: boolean = false ): Promise<CheerioAPI> => {
   const data_from_cache = cache.get(url);
@@ -82,6 +82,8 @@ const loadPage = async(url: string): Promise<any>  => {
         request.continue();
       }
     });
+
+    //console.log('provo a navigare url:', url)
 
     await gotoRetry(page, url, 3);
 

@@ -337,7 +337,7 @@
 
 <body>
   <%- include('partials/icon'); %>
-  <%- include('partials/header', { url_comune: website, date: reportDate, crawler_version: version  }); %>
+  <%- include('partials/header', { url_comune, date, crawler_version }); %>
 
   <main class="container pt-5 pb-5">
     <%- include('partials/top-text'); %>
@@ -349,64 +349,70 @@
     <!-- EXAMPLE TEMPLATES
 
     -->
-
-
     <div class="accordion" id="collapse">
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="accordion-header-failed-audits">
-          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-failed-audits" aria-expanded="true" aria-controls="accordion-collapse-failed-audits">
-            Criteri non superati
-            <span class="text--fail">
-              <%= results.failed_audits %></span> su
-            <%= results.total_audits %>
-          </button>
-        </h2>
-        <div id="accordion-collapse-failed-audits" class="accordion-collapse collapse show" role="region" aria-labelledby="accordion-header-failed-audits">
-          <!-- <%- include('partials/accordion-body', { items: audits.failed }); %> -->
-        </div>
-      </div>
-
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="accordion-header-passed-audits">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-passed-audits" aria-expanded="false" aria-controls="accordion-collapse-passed-audits">
-            Criteri superati
-            <span class="text--pass">
-              <%= results.passed_audits %></span> su
-            <%= results.total_audits %>
-          </button>
-        </h2>
-        <div id="accordion-collapse-passed-audits" class="accordion-collapse collapse" role="region" aria-labelledby="accordion-header-passed-audits">
-          <%- include('partials/accordion-body', { items: audits.passed }); %>
-        </div>
-      </div>
-
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="accordion-header-info-audits">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-info-audits" aria-expanded="false" aria-controls="accordion-collapse-info-audits">
-            Raccomandazioni non obbligatorie
-          </button>
-        </h2>
-        <div id="accordion-collapse-info-audits" class="accordion-collapse collapse" role="region" aria-labelledby="accordion-header-info-audits">
-          <%- include('partials/accordion-body', { items: audits.info }); %>
-        </div>
-      </div>
-
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="accordion-header-lighthouse-audits">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-lighthouse-audits" aria-expanded="false" aria-controls="accordion-collapse-lighthouse-audits">
-            Lighthouse
-          </button>
-        </h2>
-        <div id="accordion-collapse-lighthouse-audits" class="accordion-collapse collapse" role="region" aria-labelledby="accordion-header-lighthouse-audits">
-          <div class="accordion-body">
-            <iframe title="Lighthouse report" width="100%" height="500px" src="https://www.openstreetmap.org/export/embed.html?bbox=-0.004017949104309083%2C51.47612752641776%2C0.00030577182769775396%2C51.478569861898606&layer=mapnik"></iframe>
+      <% if (audits.failed.length >0) { %>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="accordion-header-failed-audits">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-failed-audits" aria-expanded="true" aria-controls="accordion-collapse-failed-audits">
+              Criteri non superati
+              <span class="text--fail">
+                <%= results.failed_audits %></span> su
+              <%= results.total_audits %>
+            </button>
+          </h2>
+          <div id="accordion-collapse-failed-audits" class="accordion-collapse collapse show" role="region" aria-labelledby="accordion-header-failed-audits">
+            <!-- <%- include('partials/accordion-body', { items: audits.failed }); %> -->
           </div>
         </div>
-      </div>
+      <% } %>
+
+      <% if (audits.passed.length >0) { %>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="accordion-header-passed-audits">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-passed-audits" aria-expanded="false" aria-controls="accordion-collapse-passed-audits">
+              Criteri superati
+              <span class="text--pass">
+                <%= results.passed_audits %></span> su
+              <%= results.total_audits %>
+            </button>
+          </h2>
+          <div id="accordion-collapse-passed-audits" class="accordion-collapse collapse" role="region" aria-labelledby="accordion-header-passed-audits">
+            <%- include('partials/accordion-body', { items: audits.passed }); %>
+          </div>
+        </div>
+      <%  } %>
+
+      <% if (audits.info.length >0) { %>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="accordion-header-info-audits">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-info-audits" aria-expanded="false" aria-controls="accordion-collapse-info-audits">
+              Raccomandazioni non obbligatorie
+            </button>
+          </h2>
+          <div id="accordion-collapse-info-audits" class="accordion-collapse collapse" role="region" aria-labelledby="accordion-header-info-audits">
+            <%- include('partials/accordion-body', { items: audits.info }); %>
+          </div>
+        </div>
+      <%  } %>
+
+      <% if ( lighthouseIFrame ) { %>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="accordion-header-lighthouse-audits">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-lighthouse-audits" aria-expanded="false" aria-controls="accordion-collapse-lighthouse-audits">
+              Lighthouse
+            </button>
+          </h2>
+          <div id="accordion-collapse-lighthouse-audits" class="accordion-collapse collapse" role="region" aria-labelledby="accordion-header-lighthouse-audits">
+            <div class="accordion-body">
+              <iframe title="Lighthouse report" width="100%" height="500px" srcdoc="<%- lighthouseIFrame%>""></iframe>
+            </div>
+          </div>
+        </div>
+      <% } %>
     </div>
   </main>
 
-  <%- include('partials/footer', {crawler_version : version}); %>
+  <%- include('partials/footer', {crawler_version}); %>
 
   <!-- JS DEPENDENCIES -->
   <script src="https://unpkg.com/bootstrap-italia@2.9.1/dist/js/bootstrap-italia.bundle.min.js"></script>
