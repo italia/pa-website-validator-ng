@@ -1,6 +1,8 @@
 'use strict';
 import puppeteer from 'puppeteer';
 import process from "process";
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 let browser: any | null = null;
 let oldBrowser : any | null = null;
