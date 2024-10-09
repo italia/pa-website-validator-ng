@@ -22,6 +22,7 @@ async function initializePuppeteer(): Promise<void> {
 
     oldBrowser = await puppeteer.launch({
       headless: true,
+      args: ["--no-zygote", "--no-sandbox", "--accept-lang=it"],
       executablePath: process.env?.OLD_PUPPETEER_BROWSER_PATH ?? ''
     }).catch((err) => {
       console.error('Failed to launch Puppeteer old version:', err);
