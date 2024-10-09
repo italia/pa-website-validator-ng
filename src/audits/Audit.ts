@@ -67,7 +67,7 @@ export abstract class Audit {
             message = this.auditData.redResult
         }
   
-        const reportHtml = await ejs.renderFile('src/report/partials/audit/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults.details, status, statusMessage: message });   
+        const reportHtml = await ejs.renderFile('src/report/partials/audit/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults.details, status, statusMessage: message, metrics: null ,  totalPercentage : null });   
         return reportHtml
       }
 

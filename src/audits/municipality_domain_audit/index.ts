@@ -8,11 +8,12 @@ import { urlExists } from "../../utils/utils.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
 
-const auditId = "municipality-domain";
-const auditData = auditDictionary[auditId];
+
 
 class DomainAudit extends Audit {
 
+  auditId = "municipality-domain";
+  auditData = auditDictionary[ "municipality-domain"];
   code = 'C.SI.5.2'
   mainTitle = 'DOMINIO ISTITUZIONALE'
   mainDescription = 'Il sito comunale utilizza un dominio istituzionale secondo le modalità indicate nella documentazione del modello di sito comunale.'
@@ -158,7 +159,7 @@ class DomainAudit extends Audit {
   }
 
   async getType(){
-    return auditId;
+    return this.auditId;
   }
 
   async returnGlobal(){
@@ -166,12 +167,12 @@ class DomainAudit extends Audit {
     switch (this.score) {
       case 1:
         results.push({
-          result: auditData.greenResult,
+          result: this.auditData.greenResult,
         });
         break;
       case 0:
         results.push({
-          result: auditData.redResult,
+          result: this.auditData.redResult,
         });
         break;
     }
@@ -180,7 +181,7 @@ class DomainAudit extends Audit {
 
     if (this.wrongItems.length > 0) {
       results.push({
-        result: auditData.subItem.redResult,
+        result: this.auditData.subItem.redResult,
         title_domain: this.titleSubHeadings[0],
         title_correct_domain: this.titleSubHeadings[1],
         title_www_access: this.titleSubHeadings[2],
@@ -200,7 +201,7 @@ class DomainAudit extends Audit {
 
     if (this.correctItems.length > 0) {
       results.push({
-        result: auditData.subItem.greenResult,
+        result: this.auditData.subItem.greenResult,
         title_domain: this.titleSubHeadings[0],
         title_correct_domain: this.titleSubHeadings[1],
         title_www_access: this.titleSubHeadings[2],

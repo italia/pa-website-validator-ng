@@ -60,7 +60,7 @@ const loadPageData = async (url: string, wait: boolean = false ): Promise<Cheeri
     cache.set(redirectedUrl, c);
     return c;
   } catch (ex) {
-    console.error(`ERROR ${url}: ${ex}`);
+    console.error(`ERROR LOAD ${url}: ${ex}`);
     throw new Error(
       `Il test è stato interrotto perché nella prima pagina analizzata ${url} si è verificato l'errore "${ex}". Verificarne la causa e rifare il test.`
     );

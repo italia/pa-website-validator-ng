@@ -17,11 +17,12 @@ import {
 import {Audit} from "../Audit.js";
 import {browser} from "../../PuppeteerInstance.js";
 
-const auditId = "municipality-ux-ui-consistency-bootstrap-italia-double-check";
-const auditData = auditDictionary[auditId];
+
 
 class BootstrapMunAudit extends Audit {
 
+  auditId = "municipality-ux-ui-consistency-bootstrap-italia-double-check";
+  auditData = auditDictionary["municipality-ux-ui-consistency-bootstrap-italia-double-check"];
   code = 'C.SI.1.2'
   mainTitle = 'LIBRERIA DI ELEMENTI DI INTERFACCIA'
   mainDescription = 'Il sito comunale deve utilizzare la libreria Bootstrap Italia'
@@ -284,12 +285,12 @@ class BootstrapMunAudit extends Audit {
       switch (this.score) {
         case 1:
           results.push({
-            result: auditData.greenResult,
+            result: this.auditData.greenResult,
           });
           break;
         case 0:
           results.push({
-            result: auditData.redResult,
+            result: this.auditData.redResult,
           });
           break;
       }
@@ -299,7 +300,7 @@ class BootstrapMunAudit extends Audit {
 
     if (this.wrongItems.length > 0) {
       results.push({
-        result: auditData.subItem.redResult,
+        result: this.auditData.subItem.redResult,
         title_library_name: this.titleSubHeadings[0],
         title_library_version: this.titleSubHeadings[1],
         title_classes_found: this.titleSubHeadings[2],
@@ -317,7 +318,7 @@ class BootstrapMunAudit extends Audit {
 
     if (this.correctItems.length > 0) {
       results.push({
-        result: auditData.subItem.greenResult,
+        result: this.auditData.subItem.greenResult,
         title_library_name: this.titleSubHeadings[0],
         title_library_version: this.titleSubHeadings[1],
         title_classes_found: this.titleSubHeadings[2],
@@ -344,7 +345,7 @@ class BootstrapMunAudit extends Audit {
   }
 
   async getType(){
-    return auditId;
+    return this.auditId;
   }
 
   static getInstance(): Promise<BootstrapMunAudit> {

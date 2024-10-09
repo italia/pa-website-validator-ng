@@ -10,7 +10,6 @@ const config: any = {
                 "services-page": [
                     "services"
                 ],
-
             },
             "audits": {
                 "homepage": [
@@ -60,11 +59,11 @@ const config: any = {
         "municipality": {
             "gatherers": {
                 "homepage": [
-                    "services_page",
-                    "vivere_page",
-                    "booking_appointment",
-                    "personal_area_login",
-                    "second_level_pages_all"
+                    // "services_page",
+                    // "vivere_page",
+                    // "booking_appointment",
+                    // "personal_area_login",
+                    // "second_level_pages_all"
                 ],
                 "events-page": [
                     "events"
@@ -80,7 +79,7 @@ const config: any = {
             "audits": {
                 "homepage": [
                     "lighthouse",
-                    "municipality_accessibility"
+                    //"municipality_accessibility"
                 ],
                 "services-page": [
                     "municipality_booking_appointment"

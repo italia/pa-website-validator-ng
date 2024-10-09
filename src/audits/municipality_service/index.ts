@@ -26,11 +26,12 @@ import {Page} from "puppeteer";
 import * as cheerio from "cheerio";
 
 
-const auditId = "service";
-const auditData = auditDictionary[auditId];
+
 
 class ServiceAudit extends Audit {
 
+    auditId = "service";
+    auditData = auditDictionary["service"];
     code = 'C.SI.1.3'
     mainTitle = 'SCHEDE INFORMATIVE DI SERVIZIO PER IL CITTADINO'
     mainDescription = 'Il sito comunale deve utilizzare la libreria Bootstrap Italia'
@@ -261,7 +262,7 @@ class ServiceAudit extends Audit {
     }
 
     async getType(){
-        return auditId;
+        return this.auditId;
     }
 
     async returnGlobal() {
@@ -273,17 +274,17 @@ class ServiceAudit extends Audit {
         switch (this.score) {
             case 1:
                 this.globalResults['details']['items'].push({
-                    result: auditData.greenResult,
+                    result: this.auditData.greenResult,
                 });
                 break;
             case 0.5:
                 this.globalResults['details']['items'].push({
-                    result: auditData.yellowResult,
+                    result: this.auditData.yellowResult,
                 });
                 break;
             case 0:
                 this.globalResults['details']['items'].push({
-                    result: auditData.redResult,
+                    result: this.auditData.redResult,
                 });
                 break;
         }
@@ -318,7 +319,7 @@ class ServiceAudit extends Audit {
 
         if (this.wrongItems.length > 0) {
             results.push({
-                result: auditData.subItem.redResult,
+                result: this.auditData.subItem.redResult,
                 title_missing_elements: this.titleSubHeadings[0],
                 title_wrong_order_elements: this.titleSubHeadings[1],
             });
@@ -337,7 +338,7 @@ class ServiceAudit extends Audit {
 
         if (this.toleranceItems.length > 0) {
             results.push({
-                result: auditData.subItem.yellowResult,
+                result: this.auditData.subItem.yellowResult,
                 title_missing_elements: this.titleSubHeadings[0],
                 title_wrong_order_elements: this.titleSubHeadings[1],
             });
@@ -356,7 +357,7 @@ class ServiceAudit extends Audit {
 
         if (this.correctItems.length > 0) {
             results.push({
-                result: auditData.subItem.greenResult,
+                result: this.auditData.subItem.greenResult,
                 title_missing_elements: this.titleSubHeadings[0],
                 title_wrong_order_elements: this.titleSubHeadings[1],
             });

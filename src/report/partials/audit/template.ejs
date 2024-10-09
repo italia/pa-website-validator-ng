@@ -76,6 +76,10 @@ default:
       <span class="h6"> <%= statusMessage %> </span> %>
     </p>
 
+    <% if ( metrics ) { %>
+      <%-  include('../metrics', { metrics, totalPercentage }) %>
+    <% } %>
+
     <!-- <p>
       <span class="h6 uppercase">Elementi di fallimento:</span> %>
     </p> -->
