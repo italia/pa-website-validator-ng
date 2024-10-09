@@ -35,14 +35,6 @@ async function initializePuppeteer(): Promise<void> {
         page.setDefaultTimeout(300000);
       }
     });
-
-    oldBrowser.on('targetcreated', async (target : any) => {
-      if (target.type() === 'page') {
-        const page = await target.page();
-
-        page.setDefaultTimeout(300000);
-      }
-    });
   }
 }
 
