@@ -61,6 +61,7 @@ default:
     <p><%= mainDescription  %></p>
     <div class="separator"></div>
     
+    <% if (!metrics) {%>
     <p>
       <span class="h6 uppercase">Requisito minimo da rispettare:</span> 
       <%= minRequirement  %>
@@ -75,7 +76,7 @@ default:
     <p>
       <span class="h6"> <%= statusMessage %> </span> %>
     </p>
-
+    <% }%>
     <% if ( metrics ) { %>
       <%-  include('../metrics', { metrics, totalPercentage }) %>
     <% } %>

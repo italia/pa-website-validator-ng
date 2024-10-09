@@ -33,11 +33,13 @@ const render = async () => {
         if (score >= 0.5) {
             successAudits.push({
                 ...auditMeta,
+                status: 'pass',
                 auditHTML : await audit.returnGlobalHTML()
         })
         } else {
             failedAudits.push({
                 ...auditMeta,
+                status: 'fail',
                 auditHTML : await audit.returnGlobalHTML()
         })
         }

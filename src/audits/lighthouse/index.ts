@@ -12,7 +12,7 @@ class lighthouseAudit extends Audit {
     code = 'C.SI.4.1'
     mainTitle = 'LIGHTHOUSE'
     mainDescription = 'Velocità e tempi di risposta'
-    minRequirement = "il sito presenta livelli di prestazioni (media pesata di 6 metriche standard) pari o superiori a 50. Se il punteggio è inferiore a 50, il Comune deve pubblicare sul sito un “Piano di miglioramento del sito” raggiungibile dal footer che mostri, per ciascuna voce che impatta negativamente le prestazioni, le azioni future di miglioramento e le relative tempistiche di realizzazione attese"
+    minRequirement = ""
     automaticChecks = ''  
     failures = ""
     metricsResult = {}
@@ -86,10 +86,10 @@ class lighthouseAudit extends Audit {
                     const metric = lhrAudits[metricId]
 
                     let score =  metric.score * 100
-                    let status = "fail"
-                    if ( score >= 90 ) {
-                        status = 'pass'
-                    } else if ( score > 49 && score < 90) {
+                    let status = "pass"
+                    if ( score < 50 ) {
+                        status = 'fail'
+                    } else if ( score < 90) {
                         status = 'average'
                     }
 
@@ -155,21 +155,18 @@ class lighthouseAudit extends Audit {
 
 
     async returnGlobalHTML() {
-        let status = 'fail'
         let message = ''
-
-        if (this.globalResults.score > 0.5) {
-            status = 'pass',
-            message = this.auditData.greenResult
-        } else if (this.globalResults.score = 0.5) {
-            status = 'average',
-            message = this.auditData.yellowResult
-        } else {
-            status = 'fail',
-            message = this.auditData.redResult
-        }
+        const score  = this.globalResults.score
+       
   
-        const reportHtml = await ejs.renderFile('src/report/partials/audit/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults.details, status, statusMessage: message , metrics: this.metricsResult,  totalPercentage : this.globalResults.score});   
+        let status = "pass"
+        if ( score < 50 ) {
+            status = 'fail'
+        } else if ( score < 90) {
+            status = 'average'
+        }
+
+        const reportHtml = await ejs.renderFile('src/report/partials/audit/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults.details, status, statusMessage: message , metrics: this.metricsResult,  totalPercentage : score});   
         return reportHtml
     }
 
