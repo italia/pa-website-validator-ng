@@ -16,7 +16,7 @@ class InfoCookieDomain extends Audit {
       title: this.auditData.title,
       failureTitle: this.auditData.failureTitle,
       description: this.auditData.description,
-      scoreDisplayMode: this.SCORING_MODES.BINARY,
+      scoreDisplayMode: this.SCORING_MODES.INFORMATIVE,
       requiredArtifacts: ["origin"],
     };
   }
@@ -31,7 +31,7 @@ class InfoCookieDomain extends Audit {
 
   async returnGlobal(){
     return {
-      score: 1,
+      score: null,
       details: {
         items: [
           {

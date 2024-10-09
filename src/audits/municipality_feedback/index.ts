@@ -46,7 +46,7 @@ class FeedbackAudit extends Audit {
     };
   }
 
-  async audit(
+  async auditPage(
       page: Page | null,
       error?: string,
   ) {

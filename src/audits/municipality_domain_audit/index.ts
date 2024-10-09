@@ -117,7 +117,7 @@ class DomainAudit extends Audit {
 
         let correctDomain = false;
         for (const domain of domains) {
-          if (hostname === "comune." + domain) {
+          if ((hostname === "comune." + domain) || hostname.endsWith(".comune." + domain)) {
             correctDomain = true;
             item.correct_domain = "Sì";
             break;

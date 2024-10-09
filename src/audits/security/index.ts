@@ -150,7 +150,7 @@ class SecurityAudit extends Audit {
 
             if (certificate.valid_from && certificate.valid_to) {
                 const validFrom = new Date((certificate.valid_from as string).toString());
-                const validTo = new Date((certificate.valid_from as string).toString());
+                const validTo = new Date((certificate.valid_to as string).toString());
                 item[0].certificate_validation =
                     "Dal " +
                     validFrom.getDate() +

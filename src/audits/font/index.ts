@@ -191,24 +191,6 @@ class FontAudit extends Audit {
     }
 
     async returnGlobal() {
-        switch (this.score) {
-            case 1:
-                this.globalResults['details']['items'].push({
-                    result: this.auditData.greenResult,
-                });
-                break;
-            case 0.5:
-                this.globalResults['details']['items'].push({
-                    result: this.auditData.yellowResult,
-                });
-                break;
-            case 0:
-                this.globalResults['details']['items'].push({
-                    result: this.auditData.redResult,
-                });
-                break;
-        }
-
         const results = [];
 
         if (this.pagesInError.length) {
@@ -232,6 +214,24 @@ class FontAudit extends Audit {
                         items: [item],
                     },
                 });
+            }
+        }else{
+            switch (this.score) {
+                case 1:
+                    results.push({
+                        result: this.auditData.greenResult,
+                    });
+                    break;
+                case 0.5:
+                    results.push({
+                        result: this.auditData.yellowResult,
+                    });
+                    break;
+                case 0:
+                    results.push({
+                        result: this.auditData.redResult,
+                    });
+                    break;
             }
         }
 

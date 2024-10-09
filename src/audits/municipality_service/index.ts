@@ -255,25 +255,25 @@ class ServiceAudit extends Audit {
             this.globalResults['score'] = 0;
         }
 
+        const results = [];
+
         switch (this.score) {
             case 1:
-                this.globalResults['details']['items'].push({
+                results.push({
                     result: auditData.greenResult,
                 });
                 break;
             case 0.5:
-                this.globalResults['details']['items'].push({
+                results.push({
                     result: auditData.yellowResult,
                 });
                 break;
             case 0:
-                this.globalResults['details']['items'].push({
+                results.push({
                     result: auditData.redResult,
                 });
                 break;
         }
-
-        const results = [];
 
         if (this.pagesInError.length) {
             results.push({
