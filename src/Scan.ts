@@ -152,7 +152,7 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
                         if (audit === undefined) throw new Error(` No audit found for id ${auditId}: check your configuration`);
 
                         const auditType = await audit.getType();
-                        await audit.auditPage(navigatingError ? null : page, pageData.errors && pageData.errors.length ? pageData.errors[0] : navigatingError ? navigatingError : '', auditType);
+                        await audit.auditPage(navigatingError ? null : page, pageData.errors && pageData.errors.length ? pageData.errors[0] : navigatingError ? navigatingError : '', pageData.type);
                         const result = await audit.returnGlobal();
                         const meta = await audit.meta();
 
