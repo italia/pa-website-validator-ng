@@ -44,7 +44,8 @@ class DomainAudit extends Audit {
 
   async auditPage(
     page: Page | null,
-    error?: string
+    error?: string,
+    pageType?: string | null
   ){
 
     this.titleSubHeadings = [
@@ -88,7 +89,7 @@ class DomainAudit extends Audit {
       },
     ];
 
-    if (error && !page) {
+    if (error && !page && pageType !== 'event') {
       this.score = 0;
 
       this.wrongItems.push({

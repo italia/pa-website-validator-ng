@@ -48,6 +48,7 @@ class CookieAudit extends Audit {
     async auditPage(
         page: Page | null,
         error?: string,
+        pageType?: string | null,
     ) {
         if(!this.oldPuppeteerBrowser){
             this.oldPuppeteerBrowser = await puppeteer.launch({
@@ -89,7 +90,7 @@ class CookieAudit extends Audit {
             },
         ];
 
-        if (error && !page) {
+        if (error && !page && pageType !== 'event') {
 
             this.score = 0;
 
@@ -156,8 +157,6 @@ class CookieAudit extends Audit {
                     cookie_domain: errorMessage,
                 });
             }
-
-            console.log(`Results: ${JSON.stringify(this.globalResults)}`);
 
             return {
                 score: this.score,
