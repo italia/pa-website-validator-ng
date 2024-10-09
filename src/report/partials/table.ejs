@@ -1,0 +1,20 @@
+<div class="table-wrapper">
+  <table class="table">
+    <thead>
+      <tr>
+        <% table.headings.forEach(h => { %>
+        <th><%- h %></th>
+        <% }); %>
+      </tr>
+    </thead>
+    <tbody>
+      <% table.rows.forEach(row => { %>
+      <tr>
+        <% row.forEach(item => { %>
+        <td><%- item %></td>
+        <% }); %>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>

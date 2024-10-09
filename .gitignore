@@ -8,7 +8,6 @@ npm-debug.log*
 
 # Dependency directories
 pids
-logs
 *.pid
 *.seed
 *.pid.lock
@@ -30,3 +29,7 @@ dist/
 
 # Debug
 .vscode/
+
+# MAC
+.DS_Store
+.idea

@@ -1,0 +1,132 @@
+{
+    "gatherers": [
+        {
+            "id": "homepage",
+            "audits": [
+                {
+                    "id": "lighthouse-performance"
+                },
+                {
+                    "id": "municipality-ux-ui-consistency-fonts-check"
+                },
+                {
+                    "id": "municipality-ux-ui-consistency-bootstrap-italia-double-check"
+                },
+                {
+                    "id": "municipality-servizi-structure-match-model"
+                }
+            ]
+        },
+        {
+            "id": "first_level_pages",
+            "audits": [
+                {
+                    "id": "municipality-domain"
+                },
+                {
+                    "id": "municipality-legislation-cookie-domain-check"
+                },
+                {
+                    "id": "municipality-ux-ui-consistency-fonts-check"
+                },
+                {
+                    "id": "municipality-ux-ui-consistency-bootstrap-italia-double-check"
+                },
+                {
+                    "id": "municipality-servizi-structure-match-model"
+                }
+            ]
+        },
+        {
+            "id": "second_level_pages",
+            "audits": [
+                {
+                    "id": "municipality-legislation-cookie-domain-check"
+                },
+                {
+                    "id": "municipality-ux-ui-consistency-fonts-check"
+                },
+                {
+                    "id": "municipality-ux-ui-consistency-bootstrap-italia-double-check"
+                },
+                {
+                    "id": "municipality-servizi-structure-match-model"
+                }
+            ]
+        },
+        {
+            "id": "services_page",
+            "audits": [
+                {
+                    "id": "municipality-servizi-structure-match-model"
+                }
+            ]
+        },
+        {
+            "id": "services",
+            "audits": [
+                {
+                    "id": "municipality-domain"
+                },
+                {
+                    "id": "municipality-legislation-cookie-domain-check"
+                },
+                {
+                    "id": "municipality-ux-ui-consistency-bootstrap-italia-double-check"
+                }
+            ]
+        },
+        {
+            "id": "events",
+            "audits": [
+                {
+                    "id": "municipality-domain"
+                },
+                {
+                    "id": "municipality-legislation-cookie-domain-check"
+                }
+            ]
+        },
+        {
+            "id": "booking_appointment",
+            "audits": [
+                {
+                    "id": "municipality-domain"
+                },
+                {
+                    "id": "municipality-legislation-cookie-domain-check"
+                },
+                {
+                    "id": "municipality-ux-ui-consistency-bootstrap-italia-double-check"
+                }
+            ]
+        },
+        {
+            "id": "personal_area_login",
+            "audits": [
+                {
+                    "id": "municipality-domain"
+                },
+                {
+                    "id": "municipality-legislation-cookie-domain-check"
+                },
+                {
+                    "id": "municipality-ux-ui-consistency-bootstrap-italia-double-check"
+                }
+            ]
+        }
+    ],
+    "navigate": {
+        "homepage": {
+            "first_level_pages": {
+                "second_level_pages": {}
+            },
+            "services": {
+                "services_page": {}
+            },
+            "events": {},
+            "personal_area_login": {},
+            "booking_appointment": {}
+        }
+    }
+}
