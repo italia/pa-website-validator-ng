@@ -6,9 +6,7 @@ import {Page} from "puppeteer";
 import crawlerTypes from "../../types/crawler-types";
 import cookie = crawlerTypes.cookie;
 import {gotoRetry} from "../../utils/utils.js";
-import * as dotenv from 'dotenv';
 import {oldBrowser} from "../../PuppeteerInstance.js";
-dotenv.config();
 
 class CookieAudit extends Audit {
     public globalResults: any = {
@@ -162,21 +160,20 @@ class CookieAudit extends Audit {
     }
 
     async returnGlobal() {
+        const results = [];
 
         switch (this.score) {
             case 1:
-                this.globalResults['details']['items'].push({
+                results.push({
                     result: this.auditData.greenResult,
                 });
                 break;
             case 0:
-                this.globalResults['details']['items'].push({
+                results.push({
                     result: this.auditData.redResult,
                 });
                 break;
         }
-
-        const results = [];
 
         if (this.pagesInError.length) {
             results.push({
