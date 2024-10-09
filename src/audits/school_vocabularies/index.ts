@@ -22,8 +22,8 @@ class SchoolVocabularies extends Audit {
   };
 
   private headings : any = [];
-  static auditId = "school-controlled-vocabularies";
-  static auditData = auditDictionary["school-controlled-vocabularies"];
+  auditId = "school-controlled-vocabularies";
+  auditData = auditDictionary["school-controlled-vocabularies"];
 
   async meta() {
     return {
@@ -83,7 +83,7 @@ class SchoolVocabularies extends Audit {
 
       let argumentsElements: string[] = [];
       try {
-        argumentsElements = await getArgumentsElements(url);
+        argumentsElements = await getArgumentsElements(url, page);
       } catch (e) {
         return {
           score: 0,
@@ -158,14 +158,10 @@ class SchoolVocabularies extends Audit {
 export {SchoolVocabularies};
 export default SchoolVocabularies.getInstance;
 
-async function getArgumentsElements(url: string): Promise<string[]> {
+async function getArgumentsElements(url: string, page: Page): Promise<string[]> {
   let elements: string[] = [];
 
   try {
-    const page = await browser.newPage();
-
-    const res = await gotoRetry(page, url, errorHandling.gotoRetryTentative);
-    console.log(res?.url(), res?.status());
 
     await page.waitForSelector('[data-element="search-modal-button"]');
 
@@ -194,9 +190,6 @@ async function getArgumentsElements(url: string): Promise<string[]> {
         '[data-element="all-topics"]',
         "li"
     );
-
-    await page.goto("about:blank");
-    await page.close();
 
     return elements;
   } catch (ex) {

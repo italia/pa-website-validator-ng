@@ -33,8 +33,8 @@ class SchoolSecondLevelMenuAudit extends Audit {
     };
 
     private headings : any = [];
-    static auditId = "school-menu-scuola-second-level-structure-match-model";
-    static auditData = auditDictionary["school-menu-scuola-second-level-structure-match-model"];
+    auditId = "school-menu-scuola-second-level-structure-match-model";
+    auditData = auditDictionary["school-menu-scuola-second-level-structure-match-model"];
 
     async meta() {
         return {
