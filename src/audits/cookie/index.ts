@@ -118,7 +118,7 @@ class CookieAudit extends Audit {
 
                 let cookies = await oldPage.cookies();
 
-                console.log(cookies);
+                await oldPage.close();
 
                 const resultCookies = await checkCookieDomain(url, cookies);
 
@@ -169,6 +169,12 @@ class CookieAudit extends Audit {
     }
 
     async returnGlobal() {
+
+        if(this.oldPuppeteerBrowser){
+            await this.oldPuppeteerBrowser.close();
+            this.oldPuppeteerBrowser = null;
+        }
+
         switch (this.score) {
             case 1:
                 this.globalResults['details']['items'].push({
