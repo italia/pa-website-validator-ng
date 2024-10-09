@@ -2,12 +2,12 @@ import {
     errorHandling,
 } from "../../config/commonAuditsParts.js";
 import {Audit} from "../Audit.js";
-import puppeteer, {Browser, Page} from "puppeteer";
+import {Page} from "puppeteer";
 import crawlerTypes from "../../types/crawler-types";
 import cookie = crawlerTypes.cookie;
 import {gotoRetry} from "../../utils/utils.js";
 import * as dotenv from 'dotenv';
-import * as process from 'process';
+import {oldBrowser} from "../../PuppeteerInstance.js";
 dotenv.config();
 
 class CookieAudit extends Audit {
@@ -29,7 +29,6 @@ class CookieAudit extends Audit {
     private titleSubHeadings: any = [];
     private headings : any = [];
 
-    private oldPuppeteerBrowser:Browser|null = null;
     constructor(id: string, gathererPageType: string[], auditsIds: string[]) {
         super(id, gathererPageType, auditsIds);
     }
@@ -50,12 +49,6 @@ class CookieAudit extends Audit {
         error?: string,
         pageType?: string | null,
     ) {
-        if(!this.oldPuppeteerBrowser){
-            this.oldPuppeteerBrowser = await puppeteer.launch({
-                headless: true,
-                executablePath: process.env?.OLD_PUPPETEER_BROWSER_PATH ?? ''
-            });
-        }
 
         this.titleSubHeadings = [
             "Dominio del cookie",
@@ -112,7 +105,7 @@ class CookieAudit extends Audit {
                 const items = [];
                 let score = 1;
 
-                const oldPage = await this.oldPuppeteerBrowser.newPage()
+                const oldPage = await oldBrowser.newPage()
 
                 await gotoRetry(oldPage, url, errorHandling.gotoRetryTentative);
 
@@ -169,11 +162,6 @@ class CookieAudit extends Audit {
     }
 
     async returnGlobal() {
-
-        if(this.oldPuppeteerBrowser){
-            await this.oldPuppeteerBrowser.close();
-            this.oldPuppeteerBrowser = null;
-        }
 
         switch (this.score) {
             case 1:

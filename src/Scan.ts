@@ -1,5 +1,5 @@
 import PageManager from './PageManager.js';
-import {browser} from './PuppeteerInstance.js';
+import {browser, oldBrowser} from './PuppeteerInstance.js';
 
 import {gatherers} from './GathererManager.js';
 import {audits} from './AuditManager.js';
@@ -29,6 +29,7 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
             if (!PageManager.hasRemainingPages()) {
                 console.error('closing puppeteer')
                 await browser.close()
+                await oldBrowser.close()
                 console.log('SCAN ENDED - navigated pages:')
             }
             return
@@ -187,6 +188,7 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
         if (!PageManager.hasRemainingPages()) {
             console.error('closing puppeteer...')
             await browser.close()
+            await oldBrowser.close()
             PageManager.getAllPages();
             console.log('SCAN ENDED - navigated pages:')
             console.log(PageManager.getAllPages());
