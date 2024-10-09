@@ -33,6 +33,7 @@
     "axios": "^1.7.4",
     "cheerio": "^1.0.0-rc.12",
     "compare-versions": "^6.1.1",
+    "dotenv": "^16.4.5",
     "geoip-lite": "^1.4.10",
     "get-ssl-certificate": "^2.3.3",
     "glob": "^11.0.0",

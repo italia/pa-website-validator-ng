@@ -1,12 +1,15 @@
 import {
     errorHandling,
-    notExecutedErrorMessage,
 } from "../../config/commonAuditsParts.js";
-import {DataElementError} from "../../utils/DataElementError.js";
 import {Audit} from "../Audit.js";
-import {Page} from "puppeteer";
+import puppeteer, {Browser, Page} from "puppeteer";
 import crawlerTypes from "../../types/crawler-types";
 import cookie = crawlerTypes.cookie;
+import {gotoRetry} from "../../utils/utils.js";
+import * as dotenv from 'dotenv';
+import * as process from 'process';
+dotenv.config();
+
 class CookieAudit extends Audit {
     public globalResults: any = {
         score: 1,
@@ -26,6 +29,11 @@ class CookieAudit extends Audit {
     private titleSubHeadings: any = [];
     private headings : any = [];
 
+    private oldPuppeteerBrowser:Browser|null = null;
+    constructor(id: string, gathererPageType: string[], auditsIds: string[]) {
+        super(id, gathererPageType, auditsIds);
+    }
+
     async meta() {
         return {
             id: this.auditId,
@@ -41,6 +49,12 @@ class CookieAudit extends Audit {
         page: Page | null,
         error?: string,
     ) {
+        if(!this.oldPuppeteerBrowser){
+            this.oldPuppeteerBrowser = await puppeteer.launch({
+                headless: true,
+                executablePath: process.env?.OLD_PUPPETEER_BROWSER_PATH ?? ''
+            });
+        }
 
         this.titleSubHeadings = [
             "Dominio del cookie",
@@ -97,8 +111,15 @@ class CookieAudit extends Audit {
                 const items = [];
                 let score = 1;
 
-                let cookies = await page.cookies();
-                const resultCookies = await checkCookieDomain(page.url(), cookies);
+                const oldPage = await this.oldPuppeteerBrowser.newPage()
+
+                await gotoRetry(oldPage, url, errorHandling.gotoRetryTentative);
+
+                let cookies = await oldPage.cookies();
+
+                console.log(cookies);
+
+                const resultCookies = await checkCookieDomain(url, cookies);
 
                 for (const resultCookie of resultCookies) {
                     if (!resultCookie.is_correct) {
