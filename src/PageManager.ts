@@ -27,7 +27,7 @@ class PageManager {
     async addPage(page: PageData): Promise<void> {
         if (!this.pagesArray.find(pageEl => (pageEl.url == page.url && page.type == pageEl.type))) {
             const pages = this.pagesArray.filter(p => p.scanning);
-            this.pagesArray.push(pages.length >= 20 ? {...page} : {...page, scanning: true});
+            this.pagesArray.push(page);
 
             const newPages = this.pagesArray.filter(p => p.scanning);
 

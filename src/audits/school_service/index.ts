@@ -21,7 +21,7 @@ import {
     contentTypeItemsIndexDataElements, contentTypeItemsLocation, contentTypeItemsMetadata
 } from "./contentTypeItems.js";
 
-const auditId = "service";
+const auditId = "school-servizi-structure-match-model";
 const auditData = auditDictionary[auditId];
 
 class SchoolServiceAudit extends Audit {

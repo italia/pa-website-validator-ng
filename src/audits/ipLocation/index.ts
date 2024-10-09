@@ -101,7 +101,7 @@ class IpLocationAudit extends Audit {
   }
 
   async getType(){
-    return this.auditId;
+    return auditId;
   }
 
   async returnGlobal(){

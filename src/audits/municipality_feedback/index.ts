@@ -89,7 +89,8 @@ class FeedbackAudit extends Audit {
         };
         try {
           const feedbackComponentAnalysis = await checkFeedbackComponent(
-              url
+              url,
+              page
           );
 
           if (this.score > feedbackComponentAnalysis.score) {
@@ -241,7 +242,7 @@ class FeedbackAudit extends Audit {
     }
 
     this.globalResults['score'] = this.score;
-    this.globalResults['ils']['items'].push(results);
+    this.globalResults['details']['items'].push(results);
     this.globalResults['errorMessage'] = this.pagesInError.length || this.wrongItems.length ? errorHandling.popupMessage : "";
     this.globalResults['details']['headings'] = this.headings;
 

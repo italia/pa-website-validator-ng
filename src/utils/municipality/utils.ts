@@ -441,7 +441,7 @@ const getPrimaryPageUrl = async (url: string, dataElement: string) => {
   return pageUrl;
 };
 
-const checkFeedbackComponent = async (url: string) => {
+const checkFeedbackComponent = async (url: string, page: Page) => {
   const score = 1;
   const errors: string[] = [];
 
@@ -451,20 +451,6 @@ const checkFeedbackComponent = async (url: string) => {
   };
 
   try {
-    const page = await browser.newPage();
-    await page.setRequestInterception(true);
-    page.on("request", (request : any) => {
-      if (
-        ["image", "imageset", "media"].indexOf(request.resourceType()) !== -1 ||
-        new URL(request.url()).pathname.endsWith(".pdf")
-      ) {
-        request.abort();
-      } else {
-        request.continue();
-      }
-    });
-    const res = await gotoRetry(page, url, errorHandling.gotoRetryTentative);
-    console.log(res?.url(), res?.status());
 
     returnValues = await page.evaluate(async (feedbackComponentStructure : any) => {
       let score = 1;
@@ -531,9 +517,7 @@ const checkFeedbackComponent = async (url: string) => {
         await feedbackComponentRate?.click({
           delay: 1000,
         });
-        await page.waitForNetworkIdle({
-          idleTime: 1000,
-        });
+        await page.waitForNetworkIdle();
       } catch (e) {
         console.log(e, 'errore');
         /* empty */
@@ -886,9 +870,6 @@ const checkFeedbackComponent = async (url: string) => {
         returnValues.score = feedbackReturnValue.score;
       }
     }
-
-    await page.goto("about:blank");
-    await page.close();
   } catch (ex) {
     console.error(`ERROR ${url}: ${ex}`);
     throw new Error(

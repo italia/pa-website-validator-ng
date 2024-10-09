@@ -30,8 +30,8 @@ import * as cheerio from "cheerio";
 
 class ServiceAudit extends Audit {
 
-    auditId = "service";
-    auditData = auditDictionary["service"];
+    auditId = "municipality-servizi-structure-match-model";
+    auditData = auditDictionary["municipality-servizi-structure-match-model"];
     code = 'C.SI.1.3'
     mainTitle = 'SCHEDE INFORMATIVE DI SERVIZIO PER IL CITTADINO'
     mainDescription = 'Il sito comunale deve utilizzare la libreria Bootstrap Italia'

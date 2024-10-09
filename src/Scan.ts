@@ -24,6 +24,8 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
             PageManager.setAudited(pageData.url, pageData.type)
             PageManager.setNotTemporaryGatherer(pageData.url, pageData.type);
             PageManager.setNotTemporaryAudit(pageData.url, pageData.type);
+            await PageManager.setScanning(pageData.url, pageData.type, false);
+            await PageManager.closePage(pageData);
 
             if (!PageManager.hasRemainingPages()) {
                 console.error('closing puppeteer')
@@ -51,7 +53,6 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
 
         if(!pageData.gathered || (pageData.gathered && pageData.temporaryGatherer)){
             console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Gathering start`)
-            await PageManager.setScanning(pageData.url, pageData.type, true);
             let navigatingError : any;
 
             let page : Page | null = null;
@@ -81,7 +82,7 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
                         throw new Error(pageData && pageData.errors && pageData.errors.length ? pageData.errors[0] : `Page not available for type ${pageData.type}`);
                     }
 
-                    if(!page && navigatingError){
+                    if(navigatingError){
                         console.log('navigating Error gatherer =', navigatingError);
                         throw new Error(navigatingError);
                     }
@@ -91,10 +92,11 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
                 } catch (e: any) {
                     console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: ERROR`)
                     console.log(e.message)
+
                     await PageManager.addPage({
                         id: '',
-                        url: navigatingError ? pageData.url : '/temp' + gatherer.getPageType(),
-                        type: navigatingError ? pageData.type : gatherer.getPageType(),
+                        url: '/temp' + gatherer.getPageType(),
+                        type: gatherer.getPageType(),
                         redirectUrl: '',
                         internal: false,
                         gathered: true,
@@ -150,7 +152,7 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
 
                         if (audit === undefined) throw new Error(` No audit found for id ${auditId}: check your configuration`);
 
-                        await audit.auditPage(page, pageData.errors && pageData.errors.length ? pageData.errors[0] : '');
+                        await audit.auditPage(navigatingError ? null : page, pageData.errors && pageData.errors.length ? pageData.errors[0] : navigatingError ? navigatingError : '');
                         const result = await audit.returnGlobal();
                         const meta = await audit.meta();
                         const auditType = await audit.getType();
@@ -174,6 +176,11 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
             PageManager.setAudited(pageData.url, pageData.type);
             console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Auditing end`);
         }
+
+        await PageManager.setScanning(pageData.url, pageData.type, false);
+        PageManager.setNotTemporaryAudit(pageData.url, pageData.type);
+        PageManager.setNotTemporaryGatherer(pageData.url, pageData.type);
+
 
         await PageManager.closePage(pageData);
 
