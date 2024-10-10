@@ -1,19 +1,27 @@
-
-<table class="table">
-  <thead>
-    <tr> <% table.headings.forEach(h => { %>
-      <th> 
-        <%- h.text %> 
-      </th>
-      <% }); %>
-    </tr>
-  </thead>
-  <tbody> <% if (Object.values(table.items)) table.items.forEach(row => { %>
-    <tr> <% if (Object.values(row)) Object.values(row).forEach(item => { %>
-      <td>
-        <%= item %></td>
-      <% }); %>
-    </tr> 
-    <% }); %>
-  </tbody>
-</table>
+<div class="table-wrapper">
+    <table class="table">
+        <thead>
+        <tr> <% table.headings.forEach(h => { %>
+                <th>
+                    <%- h %>
+                </th>
+            <% }); %>
+        </tr>
+        </thead>
+        <tbody>
+        <% table.pages.forEach(item => { %>
+            <tr>
+                <% Object.keys(item).forEach(element => { %>
+                    <td>
+                        <% if(element == 'link') { %>
+                        <a href="<%=item[element]%>"><%= new URL(item[element]).pathname %></a>
+                        <% }else{ %>
+                        <%=item[element]%>
+                        <%} %>
+                </td>
+                    <%}); %>
+            </tr>
+        <% }); %>
+        </tbody>
+    </table>
+</div>
