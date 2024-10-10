@@ -5,6 +5,10 @@ import lighthouse from 'lighthouse';
 import { Page } from "puppeteer";
 import { browser } from "../../PuppeteerInstance.js";
 import * as ejs from 'ejs'
+import municipalityOnlineConfig from "../../config/lighthouse-municipality-config-online.js";
+
+
+const auditId = "lighthouse";
 
 class lighthouseAudit extends Audit {
 
@@ -13,7 +17,7 @@ class lighthouseAudit extends Audit {
     mainTitle = 'LIGHTHOUSE'
     mainDescription = 'Velocità e tempi di risposta'
     minRequirement = ""
-    automaticChecks = ''  
+    automaticChecks = ''
     failures = ""
     metricsResult = {}
     displayMetrics = [
@@ -47,26 +51,24 @@ class lighthouseAudit extends Audit {
             const options = {
                 logLevel: process.env["logsLevel"],
                 output: ["html", "json"],
-                onlyCategories: [
-                    "performance",
-                ],
-                port: port
+                port: port,
+                municipalityOnlineConfig
             };
 
             const url = page.url();
             const runnerResult = await this.runLighthouse(url, options);
-           
+
             if (runnerResult.report.length < 2) {
                 throw new Error("Missing JSON or HTML report");
             }
-  
+
             const metrics = runnerResult.lhr.audits.metrics
             const lhrAudits = runnerResult.lhr.audits
             const metricsScore = metrics.score
             const metricsDetails = metrics.details
             const performanceScore = runnerResult.lhr.categories.performance.score
             const items =  metricsDetails.items[0]
-            
+
             let metricsResult = []
 
 
@@ -97,7 +99,7 @@ class lighthouseAudit extends Audit {
                         "status": status,
                         "title": metric.title,
                         "result": metric.displayValue,
-                        "description": metric.description 
+                        "description": metric.description
                     })
                 }
             }
@@ -157,8 +159,8 @@ class lighthouseAudit extends Audit {
     async returnGlobalHTML() {
         let message = ''
         const score  = this.globalResults.score
-       
-  
+
+
         let status = "pass"
         if ( score < 50 ) {
             status = 'fail'
@@ -166,7 +168,7 @@ class lighthouseAudit extends Audit {
             status = 'average'
         }
 
-        const reportHtml = await ejs.renderFile('src/report/partials/audit/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults.details, status, statusMessage: message , metrics: this.metricsResult,  totalPercentage : score});   
+        const reportHtml = await ejs.renderFile('src/report/partials/audit/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults.details, status, statusMessage: message , metrics: this.metricsResult,  totalPercentage : score});
         return reportHtml
     }
 

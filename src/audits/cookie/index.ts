@@ -6,6 +6,10 @@ import {Page} from "puppeteer";
 import crawlerTypes from "../../types/crawler-types";
 import cookie = crawlerTypes.cookie;
 import * as ejs from "ejs";
+import {gotoRetry} from "../../utils/utils.js";
+import {oldBrowser} from "../../PuppeteerInstance.js";
+
+
 class CookieAudit extends Audit {
     public globalResults: any = {
         score: 1,
@@ -59,6 +63,7 @@ class CookieAudit extends Audit {
     async auditPage(
         page: Page | null,
         error?: string,
+        pageType?: string | null,
     ) {
 
         this.titleSubHeadings = [
@@ -94,7 +99,7 @@ class CookieAudit extends Audit {
             },
         ];
 
-        if (error && !page) {
+        if (error && !page && pageType !== 'event') {
 
             this.score = 0;
 
@@ -116,8 +121,15 @@ class CookieAudit extends Audit {
                 const items = [];
                 let score = 1;
 
-                let cookies = await page.cookies();
-                const resultCookies = await checkCookieDomain(page.url(), cookies);
+                const oldPage = await oldBrowser.newPage()
+
+                await gotoRetry(oldPage, url, errorHandling.gotoRetryTentative);
+
+                let cookies = await oldPage.cookies();
+
+                await oldPage.close();
+
+                const resultCookies = await checkCookieDomain(url, cookies);
 
                 for (const resultCookie of resultCookies) {
                     if (!resultCookie.is_correct) {
@@ -176,14 +188,18 @@ class CookieAudit extends Audit {
 
         switch (this.score) {
             case 1:
+                results.push({
+                    result: this.auditData.greenResult,
+                });
                 this.globalResults.generalMessage = this.auditData.greenResult;
                 break;
             case 0:
+                results.push({
+                    result: this.auditData.redResult,
+                });
                 this.globalResults.generalMessage = this.auditData.redResult;
                 break;
         }
-
-        const results = [];
 
         if (this.pagesInError.length) {
             results.push({

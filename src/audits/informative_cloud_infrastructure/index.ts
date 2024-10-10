@@ -27,7 +27,7 @@ class InfoCloudAudit extends Audit {
 
   async returnGlobal(){
     return {
-      score: 1,
+      score: null,
     }
   }
 

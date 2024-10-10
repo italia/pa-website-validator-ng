@@ -61,8 +61,8 @@ class IpLocationAudit extends Audit {
     }
 
     if(page){
-      const hostname = page.url();
-
+      const url = page.url()
+      const hostname = new URL(url).hostname.replace("www.", "");
       this.score = 0;
 
       this.globalResults.details.headings = [
@@ -78,6 +78,7 @@ class IpLocationAudit extends Audit {
 
         if (Boolean(ip) && Boolean(ip.address)) {
           const ipInformation = geoip.lookup(ip.address);
+          console.log(ip);
 
           if (ipInformation !== null) {
             if (allowedCountries.includes(ipInformation.country)) {

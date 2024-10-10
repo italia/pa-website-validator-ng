@@ -1,5 +1,5 @@
 import PageManager from './PageManager.js';
-import {browser} from './PuppeteerInstance.js';
+import {browser, oldBrowser} from './PuppeteerInstance.js';
 
 import {gatherers} from './GathererManager.js';
 import {audits} from './AuditManager.js';
@@ -30,6 +30,7 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
             if (!PageManager.hasRemainingPages()) {
                 console.error('closing puppeteer')
                 await browser.close()
+                await oldBrowser.close()
                 console.log('SCAN ENDED - navigated pages:')
             }
             return
@@ -152,10 +153,11 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
 
                         if (audit === undefined) throw new Error(` No audit found for id ${auditId}: check your configuration`);
 
-                        await audit.auditPage(navigatingError ? null : page, pageData.errors && pageData.errors.length ? pageData.errors[0] : navigatingError ? navigatingError : '');
+                        const auditType = await audit.getType();
+                        await audit.auditPage(navigatingError ? null : page, pageData.errors && pageData.errors.length ? pageData.errors[0] : navigatingError ? navigatingError : '', pageData.type);
                         const result = await audit.returnGlobal();
                         const meta = await audit.meta();
-                        const auditType = await audit.getType();
+
                         await PageManager.setGlobalResults({[auditType]: {...result, ...meta} });
 
                     } catch (e: any) {
@@ -187,6 +189,7 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
         if (!PageManager.hasRemainingPages()) {
             console.error('closing puppeteer...')
             await browser.close()
+            await oldBrowser.close()
             PageManager.getAllPages();
             console.log('SCAN ENDED - navigated pages:')
             console.log(PageManager.getAllPages());

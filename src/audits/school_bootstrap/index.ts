@@ -1,9 +1,7 @@
 import {auditDictionary} from "../../storage/auditDictionary.js";
 import {
     errorHandling,
-    notExecutedErrorMessage,
 } from "../../config/commonAuditsParts.js";
-import {DataElementError} from "../../utils/DataElementError.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
 
@@ -197,8 +195,6 @@ class SchoolBootstrap extends Audit {
                 this.score = 0;
                 this.wrongItems.push(item);
             }
-
-            console.log(`Results: ${JSON.stringify(this.globalResults)}`);
 
             return {
                 score: this.score,

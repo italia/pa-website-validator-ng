@@ -10,6 +10,7 @@ const config: any = {
                 "services-page": [
                     "services"
                 ],
+
             },
             "audits": {
                 "homepage": [
@@ -59,32 +60,14 @@ const config: any = {
         "municipality": {
             "gatherers": {
                 "homepage": [
-                    "services_page",
-                    // "vivere_page",
-                    // "booking_appointment",
-                    // "personal_area_login",
-                    // "second_level_pages_all"
-                ],
-                "events-page": [
-                    "events"
-                ],
-                "vivere-page": [
-                    "events_page"
-                ],
-                "services-page": [
-                    "services"
+                    "personal_area_login",
                 ],
 
             },
             "audits": {
                 "homepage": [
                     "lighthouse",
-                    "municipality_accessibility",
-                    "municipality_cookie"
-                ],
-                "service": [
-                    //"municipality_bootstrap",
-                    "municipality_service"
+                    "municipality_accessibility"
                 ],
                 /*
                 "appointment-booking": [
@@ -139,20 +122,4 @@ async function initializeConfig(siteType: string, scope: string): Promise<void> 
     }
 }
 
-const getAudits = () => {
-    let auditIds : string[]= []
-    for (let pageTypeAudits of Object.values(exportedConfig['audits'])){
-        auditIds = [ ...auditIds,...pageTypeAudits as string[]]
-    }
-    return auditIds
-}
-
-const getGatherers = () => {
-    let gathererIds : string[]= []
-    for (let pageTypeGatherers of Object.values(exportedConfig['gatherers'])){
-        gathererIds = [ ...gathererIds,  ...pageTypeGatherers as string[]]
-    }
-    return gathererIds
-}
-
-export { exportedConfig as config, initializeConfig , getAudits, getGatherers }
+export { exportedConfig as config, initializeConfig }

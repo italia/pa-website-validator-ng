@@ -1,23 +1,20 @@
 "use strict";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { auditDictionary } from "../../storage/auditDictionary.js";
 import {Audit} from "../Audit.js";
 
-
-const auditId = "municipality-informative-cookie-domain-check";
+const auditId = "common-informative-ip-location";
 const auditData = auditDictionary[auditId];
 
-class InfoCookieDomain extends Audit {
+class InformativeIpAudit extends Audit {
   async meta() {
     return {
-      id: this.auditId,
-      title: this.auditData.title,
-      failureTitle: this.auditData.failureTitle,
-      description: this.auditData.description,
+      id: auditId,
+      title: auditData.title,
+      failureTitle: auditData.failureTitle,
+      description: auditData.description,
       scoreDisplayMode: this.SCORING_MODES.INFORMATIVE,
-      requiredArtifacts: ["origin"],
+      requiredArtifacts: [],
     };
   }
 
@@ -26,12 +23,12 @@ class InfoCookieDomain extends Audit {
   }
 
   async getType(){
-    return this.auditId;
+    return auditId;
   }
 
   async returnGlobal(){
     return {
-      score: null,
+      score: 1,
       details: {
         items: [
           {
@@ -51,14 +48,14 @@ class InfoCookieDomain extends Audit {
     }
   }
 
-  static getInstance(): Promise<InfoCookieDomain> {
-    if (!InfoCookieDomain.instance) {
-      InfoCookieDomain.instance = new InfoCookieDomain('',[],[]);
+  static getInstance(): Promise<InformativeIpAudit> {
+    if (!InformativeIpAudit.instance) {
+      InformativeIpAudit.instance = new InformativeIpAudit('',[],[]);
     }
-    return InfoCookieDomain.instance;
+    return InformativeIpAudit.instance;
   }
 
 }
 
-export {InfoCookieDomain};
-export default InfoCookieDomain.getInstance;
+export {InformativeIpAudit};
+export default InformativeIpAudit.getInstance;

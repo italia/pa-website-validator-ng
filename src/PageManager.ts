@@ -26,18 +26,17 @@ class PageManager {
 
     async addPage(page: PageData): Promise<void> {
         if (!this.pagesArray.find(pageEl => (pageEl.url == page.url && page.type == pageEl.type))) {
-            const pages = this.pagesArray.filter(p => p.scanning);
             this.pagesArray.push(page);
 
-            const newPages = this.pagesArray.filter(p => p.scanning);
+            const pages = this.pagesArray.filter(p => p.scanning);
 
-           // console.log(newPages.length, 'qui');
+            console.log(pages.length, 'qui');
 
-            if (newPages.length <= 20 && this.firstAdd) {
+            if (pages.length <= 20 && this.firstAdd) {
                 await this.setScanning(page.url, page.type, true);
                 this.emitter.emit('pagesAdded', page);
 
-                if(newPages.length === 20){
+                if(pages.length === 20){
                     this.firstAdd = false;
                 }
             }
@@ -48,7 +47,7 @@ class PageManager {
         await this.setScanning(page.url, page.type, false);
         const usablePage = this.pagesArray.find(p => (!p.gathered || !p.audited || (p.gathered && p.audited && (p.temporaryGatherer || p.temporaryAudit))) && !p.scanning);
         const pages = this.pagesArray.filter(p => p.scanning);
-        //console.log(pages.length, 'qua');
+        console.log(pages.length, 'qua');
         if(usablePage){
             if (pages.length <= 20){
                 await this.setScanning(usablePage.url, usablePage.type, true);

@@ -120,8 +120,8 @@ class FaqAudit extends Audit {
         items[0].link_destination = checkUrl.inspectedUrl;
 
         if (!checkUrl.result) {
-          this.globalResults.details.items = this.headings;
-          this.globalResults.details.headings = items;
+          this.globalResults.details.items = items;
+          this.globalResults.details.headings = this.headings;
           this.globalResults.score = 0;
           this.score = 0;
 
@@ -134,8 +134,8 @@ class FaqAudit extends Audit {
 
         if (!label.includes("faq") && !label.includes("domande frequenti")) {
           items[0].result = yellowResult;
-          this.globalResults.details.items = this.headings;
-          this.globalResults.details.headings = items;
+          this.globalResults.details.items = items;
+          this.globalResults.details.headings = this.headings;
           this.globalResults.score = 0.5;
           this.score = 0.5;
           return {
@@ -144,8 +144,8 @@ class FaqAudit extends Audit {
         }
 
         items[0].result = greenResult;
-        this.globalResults.details.items = this.headings;
-        this.globalResults.details.headings = items;
+        this.globalResults.details.items = items;
+        this.globalResults.details.headings = this.headings;
         this.globalResults.score = 1;
         this.score = 1;
       }

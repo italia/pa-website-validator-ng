@@ -81,10 +81,7 @@ class ServiceAudit extends Audit {
             code: this.code,
             id: this.auditId,
             title: this.auditData.title,
-            mainTitle: this.mainTitle,
             auditId: this.auditId,
-            failureTitle: this.auditData.failureTitle,
-            description: this.auditData.description,
             scoreDisplayMode: this.SCORING_MODES.NUMERIC,
             requiredArtifacts: ["origin"],
         };
@@ -289,19 +286,31 @@ class ServiceAudit extends Audit {
             this.globalResults['score'] = 0;
         }
 
+        const results = [];
+
         switch (this.score) {
             case 1:
+                results.push({
+                    result: this.auditData.greenResult,
+                });
                 this.globalResults.generalMessage = this.auditData.greenResult;
+
                 break;
             case 0.5:
+                results.push({
+                    result: this.auditData.yellowResult,
+                });
                 this.globalResults.generalMessage = this.auditData.yellowResult;
+
                 break;
             case 0:
+                results.push({
+                    result: this.auditData.redResult,
+                });
                 this.globalResults.generalMessage = this.auditData.redResult;
+
                 break;
         }
-
-        const results = [];
 
         if (this.pagesInError.length) {
             results.push({

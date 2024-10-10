@@ -1,7 +1,11 @@
 'use strict';
 import puppeteer from 'puppeteer';
+import process from "process";
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 let browser: any | null = null;
+let oldBrowser : any | null = null;
 
 await initializePuppeteer();
 
@@ -18,6 +22,15 @@ async function initializePuppeteer(): Promise<void> {
       throw err;
     });
 
+    oldBrowser = await puppeteer.launch({
+      headless: true,
+      args: ["--no-zygote", "--no-sandbox", "--accept-lang=it"],
+      executablePath: process.env?.OLD_PUPPETEER_BROWSER_PATH ?? ''
+    }).catch((err) => {
+      console.error('Failed to launch Puppeteer old version:', err);
+      throw err;
+    });
+
     browser.on('targetcreated', async (target : any) => {
       if (target.type() === 'page') {
         const page = await target.page();
@@ -28,4 +41,4 @@ async function initializePuppeteer(): Promise<void> {
   }
 }
 
-export { browser, initializePuppeteer }
+export { browser, oldBrowser, initializePuppeteer }

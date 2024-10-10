@@ -62,7 +62,8 @@ class BookingAppointment extends Audit {
 
   async auditPage(
     page: Page | null,
-    error?: string
+    error?: string,
+    pageType?: string | null
   ) {
     this.titleSubHeadings = [
       "Componente individuato",
@@ -113,13 +114,16 @@ class BookingAppointment extends Audit {
 
       let url = page.url()
 
-      const itemFirst = {
-        inspected_page: url,
-        component_exist: "Sì",
-        in_page_url: "Non si applica",
-      };
+      if(pageType && pageType === 'services-page'){
+        const itemFirst = {
+          inspected_page: url,
+          component_exist: "Sì",
+          in_page_url: "Non si applica",
+        };
 
-      this.correctItems.push(itemFirst);
+        this.correctItems.push(itemFirst);
+      }
+
 
       try {
         const bookingAppointmentPage = await getPages(

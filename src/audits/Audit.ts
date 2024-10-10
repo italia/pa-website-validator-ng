@@ -23,7 +23,8 @@ export abstract class Audit {
     }
 
     async auditPage( page: Page | null,
-                     error?: string) : Promise<any> {
+                     error?: string,
+                     pageType?: string | null) : Promise<any> {
         return {}
     }
 
