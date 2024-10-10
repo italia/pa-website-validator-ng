@@ -1,0 +1,13 @@
+.it-header-center-wrapper .it-header-center-content-wrapper {
+  padding-left: 0;
+  padding-right: 0;
+
+  .it-right-zone {
+    flex-direction: column;
+    align-items: end;
+  }
+
+  .it-right-zone p {
+    margin: 0;
+  }
+}
