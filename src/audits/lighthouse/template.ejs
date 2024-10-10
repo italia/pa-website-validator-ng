@@ -8,12 +8,7 @@
     - failures?: string
     - content: HTML template
 %>
-<% 
- const audit = {
-    status: "pass",
- }
-const  {status} = audit;
-
+<%
 let icon = "";
 let message = "";
 switch (status) {
@@ -54,13 +49,14 @@ default:
     <svg class="icon <%= status %>" aria-hidden="true">
       <use href="<%= icon %>"></use>
     </svg>
-    <%= code %> <%= mainTitle %>
+    <%= code %> <%= message %>
   </h2>
   <div class="audit-description">
   
-    <p><%= description  %></p>
+    <p><%= mainDescription  %></p>
     <div class="separator"></div>
-        <%= mainDescription  %>
+    
+    <% if (!metrics) {%>
     <p>
       <span class="h6 uppercase">Requisito minimo da rispettare:</span> 
       <%= minRequirement  %>
@@ -71,9 +67,20 @@ default:
       <%= automaticChecks  %>
     </p>
     <div class="separator"></div>
+
     <p>
-      <span class="h6 uppercase">Elementi di fallimento:</span> questi %>
+      <span class="h6"> <%= statusMessage %> </span> %>
     </p>
-    <%- include('table', {table}) %>
+    <% }%>
+    <% if ( metrics ) { %>
+      <%-  include('../metrics', { metrics, totalPercentage }) %>
+    <% } %>
+
+    <!-- <p>
+      <span class="h6 uppercase">Elementi di fallimento:</span> %>
+    </p> -->
+    <!-- 
+    <% //- include('table', {table}) %>
+     -->
   </div>
 </div>

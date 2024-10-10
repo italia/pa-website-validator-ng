@@ -75,7 +75,7 @@ declare namespace crawlerTypes {
   }
 
   interface cookie {
-    inspected_page: string;
+    link: string;
     cookie_name: string;
     cookie_value: string;
     cookie_domain: string;

@@ -30,12 +30,18 @@ const render = async () => {
         const auditResult = audit.globalResults as any
         const score = auditResult.score 
 
-        if (score >= 0.5) {
+        if (score > 0.5) {
             successAudits.push({
                 ...auditMeta,
                 status: 'pass',
                 auditHTML : await audit.returnGlobalHTML()
         })
+        } else if (score === 0.5) {
+            successAudits.push({
+                ...auditMeta,
+                status: 'average',
+                auditHTML : await audit.returnGlobalHTML()
+            })
         } else {
             failedAudits.push({
                 ...auditMeta,
