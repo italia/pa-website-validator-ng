@@ -24,6 +24,7 @@ import {
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
 import * as cheerio from "cheerio";
+import * as ejs from "ejs";
 
 
 
@@ -34,11 +35,7 @@ class ServiceAudit extends Audit {
     auditData = auditDictionary["municipality-servizi-structure-match-model"];
     code = 'C.SI.1.3'
     mainTitle = 'SCHEDE INFORMATIVE DI SERVIZIO PER IL CITTADINO'
-    mainDescription = 'Il sito comunale deve utilizzare la libreria Bootstrap Italia'
-    minRequirement = "sono presenti almeno 10 schede informative di servizio e in queste le voci obbligatorie e i relativi contenuti sono presenti e, dove richiesto, sono nell'ordine corretto;"
-    automaticChecks = "ricercando specifici attributi \"data-element\" come spiegato nella Documentazione delle App di valutazione, la presenza e l'ordine delle voci richieste viene verificato ricercandoli all'interno della pagina e dell'indice. Per essere ritenute valide, le voci devono avere contenuti associati della tipologia indicata all'interno del documento di architettura dell'informazione. Maggiori dettagli sono indicati nella Documentazione delle App di valutazione;"
-    failures = "Elementi di fallimento:"
-  
+
     public globalResults: any = {
         score: 1,
         details: {
@@ -47,7 +44,28 @@ class ServiceAudit extends Audit {
             headings: [],
             summary: ''
         },
-        errorMessage: ''
+        generalMessage: '',
+        pagesInError: {
+            message: '',
+            headings: [],
+            pages: []
+        },
+        wrongPages: {
+            message: '',
+            headings: [],
+            pages: []
+        },
+        tolerancePages: {
+            message: '',
+            headings: [],
+            pages: []
+        },
+        correctPages: {
+            message: '',
+            headings: [],
+            pages: []
+        },
+        errorMessage: '',
     };
     public wrongItems: any = [];
     public toleranceItems: any = [];
@@ -64,10 +82,6 @@ class ServiceAudit extends Audit {
             id: this.auditId,
             title: this.auditData.title,
             mainTitle: this.mainTitle,
-            mainDescription: this.mainDescription,
-            minRequirement:this.minRequirement,
-            automaticChecks: this.automaticChecks,
-            failures: this.failures,
             auditId: this.auditId,
             failureTitle: this.auditData.failureTitle,
             description: this.auditData.description,
@@ -117,7 +131,7 @@ class ServiceAudit extends Audit {
             this.score = 0;
 
             this.pagesInError.push({
-                inspected_page: '',
+                link: '',
                 wrong_order_elements: "",
                 missing_elements: error,
             });
@@ -142,12 +156,12 @@ class ServiceAudit extends Audit {
             let $: CheerioAPI = await cheerio.load(data);
 
             const item = {
-                missing_elements: "",
+                link: "",
                 wrong_order_elements: "",
-                inspected_page: "",
+                missing_elements: "",
             };
 
-            item.inspected_page = url;
+            item.link = url;
 
             let indexElements = await getServicesFromIndex($, mandatoryIndexVoices);
 
@@ -266,6 +280,10 @@ class ServiceAudit extends Audit {
     }
 
     async returnGlobal() {
+        this.globalResults.correctPages.pages = [];
+        this.globalResults.tolerancePages.pages = [];
+        this.globalResults.wrongPages.pages = [];
+        this.globalResults.pagesInError.pages = [];
 
         if (Number(process.env['numberOfServicesFound']) < minNumberOfServices) {
             this.globalResults['score'] = 0;
@@ -273,19 +291,13 @@ class ServiceAudit extends Audit {
 
         switch (this.score) {
             case 1:
-                this.globalResults['details']['items'].push({
-                    result: this.auditData.greenResult,
-                });
+                this.globalResults.generalMessage = this.auditData.greenResult;
                 break;
             case 0.5:
-                this.globalResults['details']['items'].push({
-                    result: this.auditData.yellowResult,
-                });
+                this.globalResults.generalMessage = this.auditData.yellowResult;
                 break;
             case 0:
-                this.globalResults['details']['items'].push({
-                    result: this.auditData.redResult,
-                });
+                this.globalResults.generalMessage = this.auditData.redResult;
                 break;
         }
 
@@ -304,8 +316,12 @@ class ServiceAudit extends Audit {
                 title_wrong_order_elements: "",
             });
 
+            this.globalResults.pagesInError.message = errorHandling.errorMessage
+            this.globalResults.wrongPages.headings = [errorHandling.errorColumnTitles[0], errorHandling.errorColumnTitles[1]];
 
             for (const item of this.pagesInError) {
+                this.globalResults.pagesInError.pages.push(item);
+
                 results.push({
                     subItems: {
                         type: "subitems",
@@ -324,7 +340,10 @@ class ServiceAudit extends Audit {
                 title_wrong_order_elements: this.titleSubHeadings[1],
             });
 
+            this.globalResults.wrongPages.headings = [this.auditData.subItem.redResult, this.titleSubHeadings[0], this.titleSubHeadings[1]];
+
             for (const item of this.wrongItems) {
+                this.globalResults.wrongPages.pages.push(item);
                 results.push({
                     subItems: {
                         type: "subitems",
@@ -343,7 +362,10 @@ class ServiceAudit extends Audit {
                 title_wrong_order_elements: this.titleSubHeadings[1],
             });
 
+            this.globalResults.tolerancePages.headings = [this.auditData.subItem.yellowResult, this.titleSubHeadings[0], this.titleSubHeadings[1]]
+
             for (const item of this.toleranceItems) {
+                this.globalResults.tolerancePages.pages.push(item);
                 results.push({
                     subItems: {
                         type: "subitems",
@@ -362,7 +384,10 @@ class ServiceAudit extends Audit {
                 title_wrong_order_elements: this.titleSubHeadings[1],
             });
 
+            this.globalResults.correctPages.headings = [this.auditData.subItem.greenResult, this.titleSubHeadings[0], this.titleSubHeadings[1]];
+
             for (const item of this.correctItems) {
+                this.globalResults.correctPages.pages.push(item)
                 results.push({
                     subItems: {
                         type: "subitems",
@@ -380,6 +405,25 @@ class ServiceAudit extends Audit {
         this.globalResults.score = this.score;
 
         return this.globalResults;
+    }
+
+    async returnGlobalHTML() {
+        let status = 'fail'
+        let message = ''
+
+        if (this.score > 0.5) {
+            status = 'pass';
+            message = this.auditData.greenResult;
+        } else if (this.score == 0.5) {
+            status = 'average';
+            message = this.auditData.yellowResult
+        } else {
+            status = 'fail';
+            message = this.auditData.redResult
+        }
+
+        const reportHtml = await ejs.renderFile('src/audits/municipality_service/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null ,  totalPercentage : null });
+        return reportHtml
     }
 
     static getInstance(): Promise<ServiceAudit> {

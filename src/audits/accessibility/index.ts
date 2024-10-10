@@ -15,10 +15,6 @@ class A11yAudit extends Audit {
 
     code = ''
     mainTitle = ''
-    mainDescription = ''
-    minRequirement = ''
-    automaticChecks = ''
-    failures = ''
 
     public globalResults: any = {
         score: 0,
@@ -28,7 +24,12 @@ class A11yAudit extends Audit {
             headings: [],
             summary: ''
         },
-        errorMessage: ''
+        pagesItems: {
+            message: '',
+            headings: [],
+            pages: [],
+        },
+        errorMessage: '',
     };
 
     private headings : any = [];
@@ -38,14 +39,7 @@ class A11yAudit extends Audit {
             code: this.code,
             id: this.auditId,
             title: this.auditData.title,
-            mainTitle: this.mainTitle,
-            mainDescription: this.mainDescription,
-            minRequirement:this.minRequirement,
-            automaticChecks: this.automaticChecks,
-            failures: this.failures,
             auditId: this.auditId,
-            failureTitle: this.auditData.failureTitle,
-            description: this.auditData.description,
             scoreDisplayMode: this.SCORING_MODES.BINARY,
             requiredArtifacts: ["origin"],
         };
@@ -66,6 +60,19 @@ class A11yAudit extends Audit {
             );
             this.globalResults.details.headings= [{ key: "result", itemType: "text", text: "Risultato" }];
 
+            this.globalResults.pagesItems.headings = [{ key: "result", itemType: "text", text: "Risultato" }];
+            this.globalResults.pagesItems.message = notExecutedErrorMessage.replace("<LIST>", error);
+            this.globalResults.pagesItems.items = [
+                {
+                    result: this.auditData.redResult,
+                    link_name: "",
+                    link: "",
+                    existing_page: "No",
+                    page_contains_correct_url: "",
+                    wcag: "",
+                },
+            ];
+
             return {
                 score: 0,
             }
@@ -74,44 +81,12 @@ class A11yAudit extends Audit {
         if(page){
             const url = page.url();
 
-            this.headings = [
-                {
-                    key: "result",
-                    itemType: "text",
-                    text: "Risultato",
-                },
-                {
-                    key: "link_name",
-                    itemType: "text",
-                    text: "Testo del link",
-                },
-                {
-                    key: "link_destination",
-                    itemType: "url",
-                    text: "Pagina di destinazione del link",
-                },
-                {
-                    key: "existing_page",
-                    itemType: "text",
-                    text: "Pagina esistente",
-                },
-                {
-                    key: "page_contains_correct_url",
-                    itemType: "text",
-                    text: "La pagina contiene l'url del sito di origine",
-                },
-                {
-                    key: "wcag",
-                    itemType: "text",
-                    text: "È dichiarata la conformità alle specifiche WCAG 2.1",
-                },
-            ];
-
+            this.headings = ['Risultato', "Testo del link", "Pagina di destinazione del link", "Pagina esistente", "La pagina contiene l'url del sito di origine", "È dichiarata la conformità alle specifiche WCAG 2.1"];
             const items = [
                 {
                     result: this.auditData.redResult,
                     link_name: "",
-                    link_destination: "",
+                    link: "",
                     existing_page: "No",
                     page_contains_correct_url: "",
                     wcag: "",
@@ -126,7 +101,7 @@ class A11yAudit extends Audit {
             );
             const elementObj = $(accessibilityDeclarationElement).attr();
             items[0].link_name = accessibilityDeclarationElement.text().trim() ?? "";
-            items[0].link_destination = elementObj?.href ?? "";
+            items[0].link = elementObj?.href ?? "";
 
             if (
                 elementObj &&
@@ -145,6 +120,9 @@ class A11yAudit extends Audit {
                     this.globalResults.details.items = items;
                     this.globalResults.details.headings = this.headings;
 
+                    this.globalResults.pagesItems.headings = this.headings;
+                    this.globalResults.pagesItems.pages = items;
+
                     return {
                         score: 0,
                     }
@@ -158,6 +136,8 @@ class A11yAudit extends Audit {
                     this.globalResults.score = 0;
                     this.globalResults.details.items = items;
                     this.globalResults.details.headings = this.headings;
+                    this.globalResults.pagesItems.headings = this.headings;
+                    this.globalResults.pagesItems.pages = items;
 
                     return {
                         score: 0,
@@ -172,6 +152,8 @@ class A11yAudit extends Audit {
                     this.globalResults.score = 0;
                     this.globalResults.details.items = items;
                     this.globalResults.details.headings = this.headings;
+                    this.globalResults.pagesItems.headings = this.headings;
+                    this.globalResults.pagesItems.pages = items;
 
                     return {
                         score: 0,
@@ -187,6 +169,8 @@ class A11yAudit extends Audit {
                     this.globalResults.score = 0;
                     this.globalResults.details.items = items;
                     this.globalResults.details.headings = this.headings;
+                    this.globalResults.pagesItems.headings = this.headings;
+                    this.globalResults.pagesItems.pages = items;
 
                     return {
                         score: 0,
@@ -202,6 +186,9 @@ class A11yAudit extends Audit {
             this.globalResults.details.items = items;
             this.globalResults.details.headings = this.headings;
             this.globalResults.id = this.auditId;
+
+            this.globalResults.pagesItems.headings = this.headings;
+            this.globalResults.pagesItems.pages = items;
 
             return {
                 score: 1,
