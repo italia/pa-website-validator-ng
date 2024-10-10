@@ -60,20 +60,7 @@ const config: any = {
         "municipality": {
             "gatherers": {
                 "homepage": [
-                    "services_page",
-                    "vivere_page",
-                    "booking_appointment",
                     "personal_area_login",
-                    "second_level_pages_all"
-                ],
-                "events-page": [
-                    "events"
-                ],
-                "vivere-page": [
-                    "events_page"
-                ],
-                "services-page": [
-                    "services"
                 ],
 
             },
@@ -82,16 +69,6 @@ const config: any = {
                     "lighthouse",
                     "municipality_accessibility"
                 ],
-                "services-page": [
-                    "municipality_booking_appointment"
-                ],
-                "service": [
-                    "municipality_bootstrap",
-                    "municipality_service"
-                ],
-                "second-level-page-all" : [
-                    "municipality_domain_audit"
-                ]
                 /*
                 "appointment-booking": [
                     "municipality_bootstrap"

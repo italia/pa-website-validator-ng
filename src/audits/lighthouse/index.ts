@@ -4,6 +4,8 @@ import {Audit} from "../Audit.js";
 import lighthouse from 'lighthouse';
 import {Page} from "puppeteer";
 import {browser} from "../../PuppeteerInstance.js";
+import municipalityOnlineConfig from "../../config/lighthouse-municipality-config-online.js";
+
 
 const auditId = "lighthouse";
 
@@ -28,10 +30,8 @@ class lighthouseAudit extends Audit {
             const options = {
                 logLevel: process.env["logsLevel"],
                 output: 'json',
-                onlyCategories: [
-                    "performance",
-                ],
-                port: port
+                port: port,
+                municipalityOnlineConfig
             };
 
             const url = page.url();
