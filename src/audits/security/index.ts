@@ -34,8 +34,16 @@ class SecurityAudit extends Audit {
             headings: [],
             summary: ''
         },
+        pagesItems: {
+            message: '',
+            headings: [],
+            pages: [],
+        },
         errorMessage: ''
     };
+
+    code = ''
+    mainTitle = ''
 
     private headings : any = [];
 
@@ -47,6 +55,9 @@ class SecurityAudit extends Audit {
             description: this.auditData.description,
             scoreDisplayMode: this.SCORING_MODES.BINARY,
             requiredArtifacts: ["origin"],
+            code: this.code,
+            mainTitle: this.mainTitle,
+            auditId: this.auditId,
         };
     }
 
@@ -64,6 +75,13 @@ class SecurityAudit extends Audit {
                 },
             ]);
             this.globalResults.details.headings= [{ key: "result", itemType: "text", text: "Risultato" }];
+            this.globalResults.pagesItems.headings = ["Risultato"];
+            this.globalResults.pagesItems.message = notExecutedErrorMessage.replace("<LIST>", error);
+            this.globalResults.pagesItems.items = [
+                {
+                    result: this.auditData.redResult,
+                },
+            ];
 
             return {
                 score: 0,
@@ -212,6 +230,9 @@ class SecurityAudit extends Audit {
             this.globalResults.details.items = item;
             this.globalResults.details.headings = this.headings;
             this.globalResults.id = this.auditId;
+
+            this.globalResults.pagesItems.pages = item;
+            this.globalResults.pagesItems.headings = ["Risultato", "Protocollo usato dal dominio", "Validità del certificato", "Versione TLS", "Suite di cifratura", "La pagina effettua redirect da http a https"];
 
             return {
                 score: score,

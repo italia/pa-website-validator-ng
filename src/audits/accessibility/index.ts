@@ -12,8 +12,8 @@ import * as cheerio from "cheerio";
 
 class A11yAudit extends Audit {
 
-    code = ''
     mainTitle = ''
+    code = '';
 
     public globalResults: any = {
         score: 0,
@@ -178,9 +178,9 @@ class A11yAudit extends Audit {
                 }
 
                 items[0].result = this.auditData.greenResult;
+                this.globalResults.score = 1;
             }
 
-            this.globalResults.score = 1;
             this.globalResults.details.items = items;
             this.globalResults.details.headings = this.headings;
             this.globalResults.id = this.auditId;
@@ -189,7 +189,7 @@ class A11yAudit extends Audit {
             this.globalResults.pagesItems.pages = items;
 
             return {
-                score: 1,
+                score: this.globalResults.score ,
             };
         }
     }

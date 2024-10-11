@@ -319,7 +319,7 @@ class ServiceAudit extends Audit {
             });
 
             this.globalResults.pagesInError.message = errorHandling.errorMessage
-            this.globalResults.wrongPages.headings = [errorHandling.errorColumnTitles[0], errorHandling.errorColumnTitles[1]];
+            this.globalResults.pagesInError.headings = [errorHandling.errorColumnTitles[0], errorHandling.errorColumnTitles[1]];
 
             for (const item of this.pagesInError) {
                 this.globalResults.pagesInError.pages.push(item);

@@ -30,4 +30,18 @@
       }
     }
   }
+
+  &.info{
+    padding-left: 18px;
+
+    .top{
+      display: flex;
+      gap: 24px;
+      margin-bottom: 18px;
+      svg{
+        position: initial;
+      }
+    }
+  }
 }
+

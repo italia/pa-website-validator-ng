@@ -7,18 +7,11 @@ import { browser } from "../../PuppeteerInstance.js";
 import * as ejs from 'ejs'
 import municipalityOnlineConfig from "../../config/lighthouse-municipality-config-online.js";
 
-
-const auditId = "lighthouse";
-
 class lighthouseAudit extends Audit {
 
     auditId = "lighthouse";
     code = 'C.SI.4.1'
     mainTitle = 'LIGHTHOUSE'
-    mainDescription = 'Velocità e tempi di risposta'
-    minRequirement = ""
-    automaticChecks = ''
-    failures = ""
     metricsResult = {}
     displayMetrics = [
         "first-contentful-paint",
@@ -126,10 +119,6 @@ class lighthouseAudit extends Audit {
           id: this.auditId,
           title: this.auditData.title,
           mainTitle: this.mainTitle,
-          mainDescription: this.mainDescription,
-          minRequirement:this.minRequirement,
-          automaticChecks: this.automaticChecks,
-          failures: this.failures,
           auditId: this.auditId,
           failureTitle: this.auditData.failureTitle,
           description: this.auditData.description,
@@ -168,7 +157,7 @@ class lighthouseAudit extends Audit {
             status = 'average'
         }
 
-        const reportHtml = await ejs.renderFile('src/report/partials/audit/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults.details, status, statusMessage: message , metrics: this.metricsResult,  totalPercentage : score});
+        const reportHtml = await ejs.renderFile('src/audits/lighthouse/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults.details, status, statusMessage: message , metrics: this.metricsResult,  totalPercentage : score});
         return reportHtml
     }
 

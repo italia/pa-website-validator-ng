@@ -12,11 +12,15 @@ import {
 
 import {Page} from "puppeteer";
 import {Audit} from "../Audit.js";
+import * as ejs from "ejs";
 
 const auditId = "municipality-feedback-element";
 const auditData = auditDictionary[auditId];
 
 class FeedbackAudit extends Audit {
+    code = 'C.SI.2.5'
+    mainTitle = "VALUTAZIONE DELL'ESPERIENZA D'USO, CHIAREZZA DELLE PAGINE INFORMATIVE"
+
     public globalResults: any = {
         score: 1,
         details: {
@@ -24,6 +28,26 @@ class FeedbackAudit extends Audit {
             type: 'table',
             headings: [],
             summary: ''
+        },
+        pagesInError: {
+            message: '',
+            headings: [],
+            pages: []
+        },
+        wrongPages: {
+            message: '',
+            headings: [],
+            pages: []
+        },
+        tolerancePages: {
+            message: '',
+            headings: [],
+            pages: []
+        },
+        correctPages: {
+            message: '',
+            headings: [],
+            pages: []
         },
         errorMessage: ''
     };
@@ -43,11 +67,15 @@ class FeedbackAudit extends Audit {
             description: auditData.description,
             scoreDisplayMode: this.SCORING_MODES.BINARY,
             requiredArtifacts: ["origin"],
+            mainTitle: this.mainTitle,
+            code: this.code,
+            auditId: auditId,
         };
     }
 
     async auditPage(
         page: Page | null,
+        url: string,
         error?: string,
     ) {
 
@@ -71,7 +99,7 @@ class FeedbackAudit extends Audit {
             this.score = 0;
 
             this.pagesInError.push({
-                inspected_page: '',
+                inspected_page: url,
                 errors_found: error,
             });
 
@@ -84,7 +112,7 @@ class FeedbackAudit extends Audit {
             let url = page.url();
 
             const item = {
-                inspected_page: url,
+                link: url,
                 errors_found: "",
             };
             try {
@@ -123,7 +151,7 @@ class FeedbackAudit extends Audit {
                 );
 
                 this.pagesInError.push({
-                    inspected_page: url,
+                    link: url,
                     errors_found: errorMessage,
                 });
             }
@@ -141,6 +169,11 @@ class FeedbackAudit extends Audit {
     }
 
     async returnGlobal() {
+        this.globalResults.correctPages.pages = [];
+        this.globalResults.tolerancePages.pages = [];
+        this.globalResults.wrongPages.pages = [];
+        this.globalResults.pagesInError.pages = [];
+
         if (this.score > 0) {
             this.score = 1;
         }
@@ -159,7 +192,11 @@ class FeedbackAudit extends Audit {
                 title_errors_found: errorHandling.errorColumnTitles[1],
             });
 
+            this.globalResults.pagesInError.message = errorHandling.errorMessage
+            this.globalResults.wrongPages.headings = [errorHandling.errorColumnTitles[0], errorHandling.errorColumnTitles[1]];
+
             for (const item of this.pagesInError) {
+                this.globalResults.pagesInError.pages.push(item);
                 results.push({
                     subItems: {
                         type: "subitems",
@@ -197,7 +234,12 @@ class FeedbackAudit extends Audit {
                 title_errors_found: this.titleSubHeadings[0],
             });
 
+            this.globalResults.wrongPages.headings = [auditData.subItem.redResult, this.titleSubHeadings[0]];
+
+
             for (const item of this.wrongItems) {
+                this.globalResults.wrongPages.pages.push(item);
+
                 results.push({
                     subItems: {
                         type: "subitems",
@@ -213,7 +255,11 @@ class FeedbackAudit extends Audit {
                 title_errors_found: this.titleSubHeadings[0],
             });
 
+            this.globalResults.tolerancePages.headings = [auditData.subItem.yellowResult, this.titleSubHeadings[0]];
+
+
             for (const item of this.toleranceItems) {
+                this.globalResults.tolerancePages.pages.push(item);
                 results.push({
                     subItems: {
                         type: "subitems",
@@ -229,7 +275,11 @@ class FeedbackAudit extends Audit {
                 title_errors_found: this.titleSubHeadings[0],
             });
 
+            this.globalResults.correctPages.headings = [auditData.subItem.greenResult, this.titleSubHeadings[0]];
+
+
             for (const item of this.correctItems) {
+                this.globalResults.correctPages.pages.push(item);
                 results.push({
                     subItems: {
                         type: "subitems",
@@ -254,6 +304,25 @@ class FeedbackAudit extends Audit {
             FeedbackAudit.instance = new FeedbackAudit('', [], []);
         }
         return FeedbackAudit.instance;
+    }
+
+    async returnGlobalHTML() {
+        let status = 'fail'
+        let message = ''
+
+        if (this.score > 0.5) {
+            status = 'pass';
+            message = this.auditData.greenResult;
+        } else if (this.score == 0.5) {
+            status = 'average';
+            message = this.auditData.yellowResult
+        } else {
+            status = 'fail';
+            message = this.auditData.redResult
+        }
+
+        const reportHtml = await ejs.renderFile('src/audits/municipality_feedback/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null ,  totalPercentage : null });
+        return reportHtml
     }
 
 }

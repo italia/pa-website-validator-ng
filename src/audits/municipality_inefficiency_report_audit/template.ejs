@@ -1,0 +1,82 @@
+<%# 
+    PARAMETERS NEEDED:
+    - status: pass | average | fails
+    - code: string
+    - description?: string
+    - minRequirement?: string
+    - automaticChecks?: string
+    - failures?: string
+    - content: HTML template
+%>
+<%
+let icon = "";
+let message = "";
+switch (status) {
+    case 'pass':
+        icon = '#it-check-circle';
+        message = "- Criterio superato";
+        break;
+
+    case 'average':
+        icon = '#it-warning-circle';
+        message = "- Criterio nella media";
+        break;
+
+
+    case 'fail':
+        icon = '#it-error';
+        message = "- Criterio non superato";
+        break;
+
+    default:
+        icon = '#it-info-circle';
+        message = "";
+        break;
+} %>
+
+
+<!-- {
+    code: this.code,
+    id: this.auditId,
+    title: this.auditData.title,
+    failureTitle: this.auditData.failureTitle,
+    description: this.auditData.description,
+    scoreDisplayMode: this.SCORING_MODES.BINARY,
+    requiredArtifacts: ["origin"],
+}; -->
+
+<div class="audit-content">
+    <h2 class="h3 audit-title">
+        <svg class="icon <%= status %>" aria-hidden="true">
+            <use href="<%= icon %>"></use>
+        </svg>
+        <%= code %> <%= message %>
+    </h2>
+    <div class="audit-description">
+
+
+        <p>Il sito comunale deve fornire al cittadino la possibilità di segnalare un disservizio, tramite email o servizio dedicato.</p>
+        <p>
+            <span class="h6 uppercase">Condizioni di successo:</span>
+            nel footer del sito è presente un link contenente le espressioni "disservizio" oppure "segnala disservizio" oppure "segnalazione disservizio" che invia alla funzionalità di segnalazione di un disservizio. Se viene usata una funzionalità dedicata di segnalazione disservizio, devono essere presenti i campi richiesti nella Documentazione del modello;
+        </p>
+        <p>
+            <span class="h6 uppercase">Verifiche automatiche:</span>
+            viene verificata la presenza del link nel footer, ricercando uno specifico attributo "data-element" come spiegato nella Documentazione delle App di valutazione, che il link invii ad una pagina esistente e che il testo del link contenga le espressioni indicate, senza fare distinzione tra caratteri minuscoli o maiuscoli; RIFERIMENTI TECNICI E NORMATIVI:
+            <a href="https://docs.italia.it/italia/designers-italia/design-comuni-docs/">Documentazione del Modello Comuni</a>,
+            <a href="https://op.europa.eu/en/publication-detail/-/publication/333fe21f-4372-11ec-89db-01aa75ed71a1">eGovernment benchmark method paper 2020-2023</a>,
+            <a href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>.
+        </p>
+        <div class="separator"></div>
+
+        <p>
+            <span class="h6"> <%= statusMessage %> </span>
+        </p>
+
+        <% if( table.pagesItems.pages.length ) { %>
+            <p>
+                <%- include('../../report/partials/audit/table', {table: table.pagesItems}) %>
+            </p>
+        <% } %>
+    </div>
+</div>

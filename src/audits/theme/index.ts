@@ -22,11 +22,18 @@ class ThemeAudit extends Audit {
             headings: [],
             summary: ''
         },
+        pagesItems: {
+            message: '',
+            headings: [],
+            pages: [],
+        },
         errorMessage: ''
     };
 
     private headings : any = [];
     protected minVersion = '1.0.0';
+    code = ''
+    mainTitle = ''
 
      async meta() {
         return {
@@ -36,6 +43,9 @@ class ThemeAudit extends Audit {
             description: this.auditData.description,
             scoreDisplayMode: this.SCORING_MODES.NUMERIC,
             requiredArtifacts: ["origin"],
+            code: this.code,
+            mainTitle: this.mainTitle,
+            auditId: this.auditId,
         };
     }
 
@@ -53,6 +63,13 @@ class ThemeAudit extends Audit {
                 },
             ]);
             this.globalResults.details.headings= [{ key: "result", itemType: "text", text: "Risultato" }];
+            this.globalResults.pagesItems.headings = ["Risultato"];
+            this.globalResults.pagesItems.message = notExecutedErrorMessage.replace("<LIST>", error);
+            this.globalResults.pagesItems.items = [
+                {
+                    result: this.auditData.redResult,
+                },
+            ];
 
             return {
                 score: 0,
@@ -138,6 +155,9 @@ class ThemeAudit extends Audit {
             this.globalResults.details.items = items;
             this.globalResults.details.headings = this.headings;
             this.globalResults.id = this.auditId;
+
+            this.globalResults.pagesItems.pages = items;
+            this.globalResults.pagesItems.headings = ["Risultato", "Tema CMS del modello in uso", "Versione del tema CMS in uso"];
 
             return {
                 score: score,

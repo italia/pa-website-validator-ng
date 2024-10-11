@@ -14,6 +14,9 @@ import {Gatherer} from "../../gatherers/Gatherer.js";
 
 class LicenceAudit extends Audit {
 
+    code = ''
+    mainTitle = ''
+
     public globalResults: any = {
         score: 0,
         details: {
@@ -21,6 +24,11 @@ class LicenceAudit extends Audit {
             type: 'table',
             headings: [],
             summary: ''
+        },
+        pagesItems: {
+            message: '',
+            headings: [],
+            pages: [],
         },
         errorMessage: ''
     };
@@ -35,6 +43,9 @@ class LicenceAudit extends Audit {
             description: this.auditData.description,
             scoreDisplayMode: this.SCORING_MODES.BINARY,
             requiredArtifacts: ["origin"],
+            code: this.code,
+            mainTitle: this.mainTitle,
+            auditId: this.auditId,
         };
     }
 
@@ -52,6 +63,14 @@ class LicenceAudit extends Audit {
                 },
             );
             this.globalResults.details.headings= [{ key: "result", itemType: "text", text: "Risultato" }];
+
+            this.globalResults.pagesItems.headings = ["Risultato"];
+            this.globalResults.pagesItems.message = notExecutedErrorMessage.replace("<LIST>", error);
+            this.globalResults.pagesItems.items = [
+                {
+                    result: this.auditData.redResult,
+                },
+            ];
 
             return {
                 score: 0,
@@ -89,13 +108,15 @@ class LicenceAudit extends Audit {
                 },
             ];
 
+            this.globalResults.pagesItems.headings = ["Risultato", "Testo del link", "Pagina di destinazione del link", "Il titolo della sezione è corretto", "La dicitura è corretta"];
+
             let score = 0;
 
             const items = [
                 {
                     result: this.auditData.redResult,
                     link_name: "",
-                    link_destination: "",
+                    link: "",
                     page_section: "",
                     page_contains_correct_text: "",
                 },
@@ -113,7 +134,7 @@ class LicenceAudit extends Audit {
                 if ((await isInternalUrl(pageUrl)) && !pageUrl.includes(url)) {
                     pageUrl = await buildUrl(url, pageUrl);
                 }
-                items[0].link_destination = pageUrl;
+                items[0].link = pageUrl;
 
                 const checkUrl = await urlExists(url, pageUrl);
                 if (!checkUrl.result) {
@@ -173,6 +194,7 @@ class LicenceAudit extends Audit {
             this.globalResults.details.items = items;
             this.globalResults.details.headings = this.headings;
             this.globalResults.id = this.auditId;
+            this.globalResults.pagesItems.pages = items;
 
             return {
                 score: score,

@@ -3,6 +3,7 @@ import {Page} from "puppeteer";
 import {CheerioAPI} from "cheerio";
 import * as cheerio from "cheerio";
 import {notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
+import * as ejs from "ejs";
 
 const auditId = "municipality-performance-improvement-plan";
 
@@ -11,14 +12,30 @@ const improvementPlan = /piano di miglioramento del sito/i;
 class ImprovementPlanAudit extends Audit {
   public score = 0;
 
+  public globalResults: any = {
+    score: 0,
+    details: {
+      items: [],
+      type: 'table',
+      headings: [],
+      summary: ''
+    },
+    pagesItems: {
+      message: '',
+      headings: [],
+      pages: [],
+    },
+    errorMessage: '',
+    info: true,
+    infoScore: false
+  };
+
   async meta() {
     return {
       id: auditId,
       title: "Il sito ha un link al piano di miglioramento nel footer",
       failureTitle:
           "Il sito non ha un link al piano di miglioramento nel footer",
-      description:
-          "Nel caso in cui il sito comunale presenti livelli di performance (media pesata di 6 metriche standard) inferiori a 50, secondo quanto calcolato e verificato tramite le [librerie Lighthouse](https://web.dev/performance-scoring/), il Comune pubblica sul sito comunale un «Piano di miglioramento del sito» che mostri, per ciascuna voce che impatta negativamente la performance, le azioni future di miglioramento della performance stessa e le relative tempistiche di realizzazione attese. RIFERIMENTI TECNICI E NORMATIVI: [Documentazione del Modello Comuni](https://docs.italia.it/italia/designers-italia/design-comuni-docs/it/versione-corrente/index.html), [Documentazione delle App di valutazione](https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/it/versione-attuale/requisiti-e-modalita-verifica-comuni.html#criterio-c-si-4-1-velocita-e-tempi-di-risposta).",
       scoreDisplayMode: this.SCORING_MODES.BINARY,
       requiredArtifacts: ["origin"],
     };
@@ -60,7 +77,6 @@ class ImprovementPlanAudit extends Audit {
         return {score: 0.5};
       }
     }
-
   }
 
   async getType(){
@@ -68,7 +84,26 @@ class ImprovementPlanAudit extends Audit {
   }
 
   async returnGlobal() {
-    return {score: this.score};
+    this.globalResults.score = this.score;
+    return {
+      score: this.score
+    };
+  }
+
+  async returnGlobalHTML() {
+    let status = 'fail'
+    let message = ''
+
+    if (this.score > 0.5) {
+      status = 'pass';
+      message = this.auditData.greenResult;
+    } else {
+      status = 'average';
+      message = this.auditData.yellowResult
+    }
+
+    const reportHtml = await ejs.renderFile('src/audits/municipality_improvement_plan/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null ,  totalPercentage : null });
+    return reportHtml
   }
 
   static getInstance(): Promise<ImprovementPlanAudit> {

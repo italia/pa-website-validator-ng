@@ -1,0 +1,80 @@
+<%# 
+    PARAMETERS NEEDED:
+    - status: pass | average | fails
+    - code: string
+    - description?: string
+    - minRequirement?: string
+    - automaticChecks?: string
+    - failures?: string
+    - content: HTML template
+%>
+<%
+let icon = "";
+let message = "";
+switch (status) {
+    case 'pass':
+        icon = '#it-check-circle';
+        message = "- Criterio superato";
+        break;
+
+    case 'average':
+        icon = '#it-warning-circle';
+        message = "- Criterio nella media";
+        break;
+
+
+    case 'fail':
+        icon = '#it-error';
+        message = "- Criterio non superato";
+        break;
+
+    default:
+        icon = '#it-info-circle';
+        message = "";
+        break;
+} %>
+
+
+<!-- {
+    code: this.code,
+    id: this.auditId,
+    title: this.auditData.title,
+    failureTitle: this.auditData.failureTitle,
+    description: this.auditData.description,
+    scoreDisplayMode: this.SCORING_MODES.BINARY,
+    requiredArtifacts: ["origin"],
+}; -->
+
+<div class="audit-content">
+    <h2 class="h3 audit-title">
+        <svg class="icon <%= status %>" aria-hidden="true">
+            <use href="<%= icon %>"></use>
+        </svg>
+        <%= code %> <%= message %>
+    </h2>
+    <div class="audit-description">
+
+        <p>Nel sito comunale, i titoli delle pagine di secondo livello devono rispettare il vocabolario descritto dalla documentazione del modello di sito comunale.</p>
+        <p>
+            <span class="h6 uppercase">Condizioni di successo:</span>
+            i titoli delle pagine di secondo livello corrispondono a quelli indicati nel capitolo "Conformità al modello Comuni" della Documentazione del Modello Comuni
+        </p>
+        <p>
+            <span class="h6 uppercase">Verifiche automatiche:</span>
+            ricercando specifici attributi "data-element" come spiegato nella Documentazione delle App di valutazione, viene verificato che i titoli delle card usate per rimandare alle pagine di secondo livello siano corretti e presenti sulle rispettive pagine genitore di primo livello. Nel caso della pagina di primo livello "Vivere il Comune", viene verificato che i titoli delle pagine di secondo livello raggiungibili da questa siano corretti. Nel conteggio vengono incluse anche le pagine di secondo livello raggiungibili da pagine di primo livello non indicate nella documentazione; RIFERIMENTI TECNICI E NORMATIVI:
+            <a href="https://docs.italia.it/italia/designers-italia/design-comuni-docs/">Documentazione del Modello Comuni</a>,
+            <a href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>.
+        </p>
+        <div class="separator"></div>
+
+        <p>
+            <span class="h6"> <%= statusMessage %> </span>
+        </p>
+
+        <% if( table.pagesItems.pages.length ) { %>
+            <p>
+                <%- include('../../report/partials/audit/table', {table: table.pagesItems}) %>
+            </p>
+        <% } %>
+    </div>
+</div>

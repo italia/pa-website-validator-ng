@@ -13,6 +13,7 @@ import {Page} from "puppeteer";
 import {Audit} from "../Audit.js";
 import * as cheerio from "cheerio";
 import {notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
+import * as ejs from "ejs";
 
 const auditId = "municipality-inefficiency-report";
 const auditData = auditDictionary[auditId];
@@ -26,12 +27,17 @@ class InefficiencyAudit extends Audit {
       headings: [],
       summary: ''
     },
+    pagesItems: {
+      message: '',
+      headings: [],
+      pages: [],
+    },
     errorMessage: ''
   };
-  public wrongItems: any = [];
-  public toleranceItems: any = [];
-  public correctItems: any = [];
-  public pagesInError : any = [];
+
+  code = 'C.SI.2.4';
+  mainTitle = 'SEGNALAZIONE DISSERVIZIO'
+
   public score = 0;
   private headings : any = [];
 
@@ -43,6 +49,9 @@ class InefficiencyAudit extends Audit {
       description: auditData.description,
       scoreDisplayMode: this.SCORING_MODES.NUMERIC,
       requiredArtifacts: ["origin"],
+      code: this.code,
+      mainTitle: this.mainTitle,
+      auditId: auditId,
     };
   }
 
@@ -62,6 +71,14 @@ class InefficiencyAudit extends Audit {
       this.globalResults['details']['type'] = 'table';
       this.globalResults['details']['headings'] = [{key: "result", itemType: "text", text: "Risultato"}];
       this.globalResults['details']['summary'] = '';
+
+      this.globalResults.pagesItems.headings = ["Risultato"];
+      this.globalResults.pagesItems.message = notExecutedErrorMessage.replace("<LIST>", error);
+      this.globalResults.pagesItems.items = [
+        {
+          result: this.auditData.redResult,
+        },
+      ];
 
       return {
         score: 0,
@@ -99,11 +116,13 @@ class InefficiencyAudit extends Audit {
         },
       ];
 
+      this.globalResults.pagesItems.headings = ["Risultato", "Testo del link", "Pagina di destinazione", "Pagina esistente", "Viene usato il servizio dedicato"];
+
       const items = [
         {
           result: auditData.redResult,
           link_name: "",
-          link_destination: "",
+          link: "",
           existing_page: "No",
           is_service: "No",
         },
@@ -119,7 +138,7 @@ class InefficiencyAudit extends Audit {
 
       const label = reportInefficiencyElement.text().trim().toLowerCase() ?? "";
       items[0].link_name = label;
-      items[0].link_destination = elementObj?.href ?? "";
+      items[0].link = elementObj?.href ?? "";
 
       if (
           elementObj &&
@@ -128,7 +147,7 @@ class InefficiencyAudit extends Audit {
           elementObj.href !== ""
       ) {
         if (isMailto(elementObj.href)) {
-          items[0].link_destination = elementObj.href;
+          items[0].link = elementObj.href;
           items[0].existing_page = "N/A";
         } else {
           let pageUrl = elementObj.href;
@@ -137,13 +156,15 @@ class InefficiencyAudit extends Audit {
           }
 
           const checkUrl = await urlExists(url, pageUrl);
-          items[0].link_destination = checkUrl.inspectedUrl;
+          items[0].link = checkUrl.inspectedUrl;
 
           if (!checkUrl.result) {
             this.score = 0;
             this.globalResults.details.headings = this.headings;
             this.globalResults.details.items = items;
             this.globalResults.score = 0;
+
+            this.globalResults.pagesItems.pages = items;
 
             return {
               score: 0,
@@ -169,6 +190,8 @@ class InefficiencyAudit extends Audit {
           this.globalResults.details.items = items;
           this.globalResults.score = 0.5;
 
+          this.globalResults.pagesItems.pages = items;
+
           return {
             score: 0.5,
           };
@@ -180,6 +203,8 @@ class InefficiencyAudit extends Audit {
         this.globalResults.details.headings = this.headings;
         this.globalResults.details.items = items;
         this.globalResults.score = 1;
+
+        this.globalResults.pagesItems.pages = items;
       }
 
       return {
@@ -191,6 +216,25 @@ class InefficiencyAudit extends Audit {
 
   async getType(){
     return auditId;
+  }
+
+  async returnGlobalHTML() {
+    let status = 'fail'
+    let message = ''
+
+    if (this.score > 0.5) {
+      status = 'pass';
+      message = this.auditData.greenResult;
+    } else if (this.score == 0.5) {
+      status = 'average';
+      message = this.auditData.yellowResult
+    } else {
+      status = 'fail';
+      message = this.auditData.redResult
+    }
+
+    const reportHtml = await ejs.renderFile('src/audits/municipality_inefficiency_report_audit/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null ,  totalPercentage : null });
+    return reportHtml
   }
 
   static getInstance(): Promise<InefficiencyAudit> {

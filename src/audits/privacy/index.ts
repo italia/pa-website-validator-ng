@@ -18,10 +18,17 @@ class PrivacyAudit extends Audit {
             headings: [],
             summary: ''
         },
+        pagesItems: {
+            message: '',
+            headings: [],
+            pages: [],
+        },
         errorMessage: ''
     };
 
     private headings : any = [];
+    code = ''
+    mainTitle = ''
 
     async meta() {
         return {
@@ -31,11 +38,15 @@ class PrivacyAudit extends Audit {
             description: this.auditData.description,
             scoreDisplayMode: this.SCORING_MODES.NUMERIC,
             requiredArtifacts: ["origin"],
+            code: this.code,
+            mainTitle: this.mainTitle,
+            auditId: this.auditId,
         };
     }
 
     async auditPage(
         page: Page | null,
+        url: string,
         error?: string,
     ) {
         //TODO: secondo me dovremmo creare un gatherer per questa tipologia di pagina e qui fare solo il controllo sulla pagina
@@ -78,6 +89,14 @@ class PrivacyAudit extends Audit {
             ]);
             this.globalResults.details.headings= [{ key: "result", itemType: "text", text: "Risultato" }];
 
+            this.globalResults.pagesItems.headings = ["Risultato"];
+            this.globalResults.pagesItems.message = notExecutedErrorMessage.replace("<LIST>", error);
+            this.globalResults.pagesItems.items = [
+                {
+                    result: this.auditData.redResult,
+                },
+            ];
+
             return {
                 score: 0,
             }
@@ -92,7 +111,7 @@ class PrivacyAudit extends Audit {
                 {
                     result: this.auditData.redResult,
                     link_name: "",
-                    link_destination: "",
+                    link: "",
                     existing_page: "No",
                     secure_page: "No",
                 },
@@ -106,7 +125,7 @@ class PrivacyAudit extends Audit {
             );
             const elementObj = $(privacyPolicyElement).attr();
             items[0].link_name = privacyPolicyElement.text().trim() ?? "";
-            items[0].link_destination = elementObj?.href ?? "";
+            items[0].link = elementObj?.href ?? "";
 
             if (
                 elementObj &&
@@ -116,7 +135,7 @@ class PrivacyAudit extends Audit {
             ) {
                 const checkUrlHttps = await urlExists(url, elementObj.href, true);
 
-                items[0].link_destination = checkUrlHttps.inspectedUrl;
+                items[0].link = checkUrlHttps.inspectedUrl;
 
                 if (checkUrlHttps.result) {
                     items[0].result = this.auditData.greenResult;
@@ -126,12 +145,13 @@ class PrivacyAudit extends Audit {
                 }
             }
 
-            console.log('passo');
-
             this.globalResults.score = score;
             this.globalResults.details.items = items;
             this.globalResults.details.headings = this.headings;
             this.globalResults.id = this.auditId;
+
+            this.globalResults.pagesItems.pages = items;
+            this.globalResults.pagesItems.headings = ["Risultato", "Testo del link", "Pagina di destinazione del link", "Pagina esistente", "Pagina sicura"];
 
             return {
                 score: score,

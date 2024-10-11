@@ -5,11 +5,10 @@ import {A11yAudit} from "../accessibility/index.js";
 import * as ejs from "ejs";
 
 class MunicipalityA11yAudit extends A11yAudit {
-
-  mainTitle = 'DICHIARAZIONE DI ACCESSIBILITÀ '
-  code = "C.SI.3.2";
   auditId = "municipality-legislation-accessibility-declaration-is-present";
   auditData = auditDictionary["municipality-legislation-accessibility-declaration-is-present"];
+  mainTitle = 'DICHIARAZIONE DI ACCESSIBILITÀ'
+  code = "C.SI.3.2";
 
   async returnGlobalHTML() {
     let status = 'fail'

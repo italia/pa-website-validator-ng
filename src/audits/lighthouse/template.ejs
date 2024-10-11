@@ -53,34 +53,12 @@ default:
   </h2>
   <div class="audit-description">
   
-    <p><%= mainDescription  %></p>
-    <div class="separator"></div>
-    
-    <% if (!metrics) {%>
-    <p>
-      <span class="h6 uppercase">Requisito minimo da rispettare:</span> 
-      <%= minRequirement  %>
-    </p>
-
-    <p>
-      <span class="h6 uppercase">Verifiche automatiche:</span> 
-      <%= automaticChecks  %>
-    </p>
+    <p>Velocità e tempi di risposta</p>
     <div class="separator"></div>
 
-    <p>
-      <span class="h6"> <%= statusMessage %> </span> %>
-    </p>
-    <% }%>
     <% if ( metrics ) { %>
-      <%-  include('../metrics', { metrics, totalPercentage }) %>
+      <%-  include('../../report/partials/audit/metrics', { metrics, totalPercentage }) %>
     <% } %>
 
-    <!-- <p>
-      <span class="h6 uppercase">Elementi di fallimento:</span> %>
-    </p> -->
-    <!-- 
-    <% //- include('table', {table}) %>
-     -->
   </div>
 </div>

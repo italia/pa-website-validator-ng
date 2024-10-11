@@ -1,11 +1,9 @@
 import {audits} from '../AuditManager.js';
 import * as ejs from 'ejs';
-import { promises as fs } from 'fs';
 import { mkdir, writeFile } from "fs/promises";
 import open from "open";
 import { format } from "path";
 import { VERSION } from '../version.js';
-import {Audit} from '../audits/Audit.js';
 import PageManager from '../PageManager.js';
 
 const render = async () => {
@@ -18,7 +16,7 @@ const render = async () => {
 
     let successAudits = []
     let failedAudits = []
-    //let informativeAudits = []
+    let informativeAudits = []
     let lighthouseIFrame = null
 
 
@@ -28,14 +26,21 @@ const render = async () => {
 
         const auditMeta = await audit.meta()
         const auditResult = audit.globalResults as any
-        const score = auditResult.score 
+        const score = auditResult.score;
+        const infoScore = auditResult.infoScore as any;
 
-        if (score > 0.5) {
+        if(auditResult.info){
+            informativeAudits.push({
+                ...auditMeta,
+                auditHTML : await audit.returnGlobalHTML(),
+                status: infoScore ? '' : score > 0.5 ? 'pass' : score === 0.5 ? 'average' : 'fail'
+            })
+        }else if (score > 0.5) {
             successAudits.push({
                 ...auditMeta,
                 status: 'pass',
                 auditHTML : await audit.returnGlobalHTML()
-        })
+            })
         } else if (score === 0.5) {
             successAudits.push({
                 ...auditMeta,
@@ -47,8 +52,9 @@ const render = async () => {
                 ...auditMeta,
                 status: 'fail',
                 auditHTML : await audit.returnGlobalHTML()
-        })
+            })
         }
+
 
         // if (auditId == "school_accessibility" )
         //     informativeAudits.push({
@@ -86,7 +92,7 @@ const render = async () => {
          },
          audits: {
             passed: successAudits,
-            info: [], //informativeAudits,
+            info: informativeAudits,
             failed: failedAudits
          },
          url_comune: website,

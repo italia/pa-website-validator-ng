@@ -12,6 +12,7 @@ import { getFirstLevelPages } from "../../utils/municipality/utils.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
 import {notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
+import * as ejs from "ejs";
 
 const auditId = "municipality-menu-structure-match-model";
 const auditData = auditDictionary[auditId];
@@ -30,12 +31,22 @@ class MenuAudit extends Audit {
       headings: [],
       summary: ''
     },
+    pagesItems: {
+      message: '',
+      headings: [],
+      pages: [],
+    },
+    recapItems: {
+      message: '',
+      headings: [],
+      pages: [],
+    },
     errorMessage: ''
   };
-  public wrongItems: any = [];
-  public toleranceItems: any = [];
-  public correctItems: any = [];
-  public pagesInError : any = [];
+
+  code = 'C.SI.1.6';
+  mainTitle = 'VOCI DI MENÙ DI PRIMO LIVELLO'
+
   public score = 0;
   private headings : any = [];
   async meta() {
@@ -46,6 +57,9 @@ class MenuAudit extends Audit {
       description: auditData.description,
       scoreDisplayMode: this.SCORING_MODES.NUMERIC,
       requiredArtifacts: ["origin"],
+      code: this.code,
+      mainTitle: this.mainTitle,
+      auditId: auditId,
     };
   }
 
@@ -64,6 +78,14 @@ class MenuAudit extends Audit {
       this.globalResults['details']['type'] = 'table';
       this.globalResults['details']['headings'] = [{key: "result", itemType: "text", text: "Risultato"}];
       this.globalResults['details']['summary'] = '';
+
+      this.globalResults.pagesItems.headings = ["Risultato"];
+      this.globalResults.pagesItems.message = notExecutedErrorMessage.replace("<LIST>", error);
+      this.globalResults.pagesItems.items = [
+        {
+          result: this.auditData.redResult,
+        },
+      ];
 
       return {
         score: 0,
@@ -163,6 +185,9 @@ class MenuAudit extends Audit {
         results[0].result = yellowResult;
       }
 
+      this.globalResults.recapItems.headings = ["Risultato", "Voci del menù identificate", "Voci del menù mancanti", "Voci del menù in ordine errato"];
+      this.globalResults.recapItems.pages = [results[0]];
+
       results.push({});
 
       results.push({
@@ -170,6 +195,9 @@ class MenuAudit extends Audit {
         found_menu_voices: "Link trovato",
         missing_menu_voices: "Pagina interna al dominio",
       });
+
+      this.globalResults.pagesItems.headings = ["Voce di menù", "Link trovato", "Pagina interna al dominio"];
+
 
       const host = new URL(url).hostname.replace("www.", "");
       for (const page of firstLevelPages) {
@@ -183,7 +211,7 @@ class MenuAudit extends Audit {
 
         const item = {
           menu_voice: page.linkName,
-          inspected_page: page.linkUrl,
+          link: page.linkUrl,
           external: isInternal ? "Sì" : "No",
         };
 
@@ -193,11 +221,14 @@ class MenuAudit extends Audit {
             items: [item],
           },
         });
+
+        this.globalResults.pagesItems.pages.push(item);
       }
 
       this.globalResults.score = this.score;
       this.globalResults.details.headings = this.headings;
       this.globalResults.details.items = results;
+
     }
 
     return {
@@ -207,6 +238,25 @@ class MenuAudit extends Audit {
 
   async getType(){
     return auditId;
+  }
+
+  async returnGlobalHTML() {
+    let status = 'fail'
+    let message = ''
+
+    if (this.score > 0.5) {
+      status = 'pass';
+      message = this.auditData.greenResult;
+    } else if (this.score == 0.5) {
+      status = 'average';
+      message = this.auditData.yellowResult
+    } else {
+      status = 'fail';
+      message = this.auditData.redResult
+    }
+
+    const reportHtml = await ejs.renderFile('src/audits/municipality_menu/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null ,  totalPercentage : null });
+    return reportHtml
   }
 
   static getInstance(): Promise<MenuAudit> {

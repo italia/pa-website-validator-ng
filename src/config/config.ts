@@ -143,12 +143,14 @@ const config: any = {
                     //"municipality_domain_audit",
                     //"municipality_faq",
                     //"municipality_vocabulary",
-                    //"municipality_improvement_plan",
-                    //"municipality_inefficiency_report_audit",
-                    //"municipality_license",
-                    //"municipality_privacy",
-                   // "municipality_security",
-                    //"municipality_theme",
+                    "municipality_improvement_plan",
+                    "municipality_inefficiency_report_audit",
+                    "municipality_license",
+                    "municipality_privacy",
+                    "municipality_security",
+                    "municipality_theme",
+                    "municipality_menu",
+                    "municipality_second_level_pages_audit",
                     //"municipality_informative_accessibility",
                     //"municipality_informative_cloud_infrastructure",
                     //"municipality_informative_cookie",
@@ -157,9 +159,9 @@ const config: any = {
                     //"municipality_informative_security",
                     "ipLocation"
                 ],
-                /*"services-page": [
-                    //"municipality_booking_appointment"
-                ],*/
+                "services-page": [
+                    "municipality_booking_appointment"
+                ],
                 "service": [
                     //"municipality_domain_audit",
                     //"municipality_bootstrap",
@@ -183,7 +185,7 @@ const config: any = {
                     //"municipality_domain_audit",
                     //"municipality_feedback",
                     "municipality_font",
-                    //"municipality_menu"
+
                 ],
                 "second-level-page-all" : [
                     //"municipality_bootstrap",
@@ -191,7 +193,7 @@ const config: any = {
                     //"municipality_domain_audit",
                     //"municipality_feedback",
                     //"municipality_font",
-                    //"municipality_second_level_pages_audit"
+
                 ],
 
                 "appointment-booking": [

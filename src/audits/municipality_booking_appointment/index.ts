@@ -12,17 +12,14 @@ import {Page} from "puppeteer";
 import {Audit} from "../Audit.js";
 import {CheerioAPI} from "cheerio";
 import * as cheerio from "cheerio";
+import * as ejs from "ejs";
 
 class BookingAppointment extends Audit {
 
   code = 'C.SI.2.1'
   mainTitle = 'PRENOTAZIONE APPUNTAMENTI'
-  mainDescription = 'Il sito comunale deve consentire di prenotare un appuntamento presso lo sportello di competenza.'
-  minRequirement = "la funzionalità di prenotazione di un appuntamento è accessibile dalla sezione di funzionalità trasversali delle schede servizio e della pagina di primo livello 'Servizi';"
-  automaticChecks = 'ricercando specifici attributi "data-element" come spiegato nella Documentazione delle App di valutazione, viene verificata la presenza del componente "Prenota appuntamento" all\'interno della sezione di funzionalità trasversali delle schede servizio analizzate e della pagina di primo livello "Servizi". Viene inoltre indicato se è stato rilevato il pulsante di accesso alla funzionalità di prenotazione appuntamento all\'interno della sezione "Accedi al servizio" delle schede servizio; RIFERIMENTI TECNICI E NORMATIVI:  [Documentazione del Modello Comuni](https://docs.italia.it/italia/designers-italia/design-comuni-docs/it/versione-corrente/index.html), [Documentazione delle App di valutazione](https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/it/versione-attuale/index.html)' 
   auditId = "municipality-booking-appointment-check";
   auditData = auditDictionary["municipality-booking-appointment-check"];
-  failures = ''
 
   public globalResults: any = {
     score: 1,
@@ -31,6 +28,26 @@ class BookingAppointment extends Audit {
       type: 'table',
       headings: [],
       summary: ''
+    },
+    pagesInError: {
+      message: '',
+      headings: [],
+      pages: []
+    },
+    wrongPages: {
+      message: '',
+      headings: [],
+      pages: []
+    },
+    tolerancePages: {
+      message: '',
+      headings: [],
+      pages: []
+    },
+    correctPages: {
+      message: '',
+      headings: [],
+      pages: []
     },
     errorMessage: ''
   };
@@ -48,10 +65,6 @@ class BookingAppointment extends Audit {
       id: this.auditId,
       title: this.auditData.title,
       mainTitle: this.mainTitle,
-      mainDescription: this.mainDescription,
-      minRequirement:this.minRequirement,
-      automaticChecks: this.automaticChecks,
-      failures: this.failures,
       auditId: this.auditId,
       failureTitle: this.auditData.failureTitle,
       description: this.auditData.description,
@@ -62,6 +75,7 @@ class BookingAppointment extends Audit {
 
   async auditPage(
     page: Page | null,
+    url: string,
     error?: string,
     pageType?: string | null
   ) {
@@ -74,7 +88,7 @@ class BookingAppointment extends Audit {
         key: "result",
         itemType: "text",
         text: "Risultato",
-        subItemsHeading: { key: "inspected_page", itemType: "url" },
+        subItemsHeading: { key: "link", itemType: "url" },
       },
       {
         key: "title_component_exist",
@@ -101,7 +115,7 @@ class BookingAppointment extends Audit {
       this.score = 0;
 
       this.pagesInError.push({
-        inspected_page: '',
+        link: url,
         component_exist: error,
       });
 
@@ -116,7 +130,7 @@ class BookingAppointment extends Audit {
 
       if(pageType && pageType === 'services-page'){
         const itemFirst = {
-          inspected_page: url,
+          link: url,
           component_exist: "Sì",
           in_page_url: "Non si applica",
         };
@@ -175,13 +189,13 @@ class BookingAppointment extends Audit {
               errorMessage.lastIndexOf('"')
           );
           this.pagesInError.push({
-            inspected_page: url,
+            link: url,
             component_exist: errorMessage,
           });
         }
 
         const item = {
-          inspected_page: url,
+          link: url,
           component_exist: "Sì",
           in_page_url: "No",
         };
@@ -214,6 +228,10 @@ class BookingAppointment extends Audit {
   }
 
   async returnGlobal(){
+    this.globalResults.correctPages.pages = [];
+    this.globalResults.tolerancePages.pages = [];
+    this.globalResults.wrongPages.pages = [];
+    this.globalResults.pagesInError.pages = [];
 
     const results = [];
     if (this.pagesInError.length > 0) {
@@ -229,7 +247,11 @@ class BookingAppointment extends Audit {
         title_in_page_url: "",
       });
 
+      this.globalResults.pagesInError.message = errorHandling.errorMessage
+      this.globalResults.pagesInError.headings = [errorHandling.errorColumnTitles[0], errorHandling.errorColumnTitles[1]];
+
       for (const item of this.pagesInError) {
+        this.globalResults.pagesInError.pages.push(item);
         results.push({
           subItems: {
             type: "subitems",
@@ -261,7 +283,10 @@ class BookingAppointment extends Audit {
         title_in_page_url: this.titleSubHeadings[1],
       });
 
+      this.globalResults.wrongPages.headings = [this.auditData.subItem.redResult, this.titleSubHeadings[0], this.titleSubHeadings[1]];
+
       for (const item of this.wrongItems) {
+        this.globalResults.wrongPages.pages.push(item);
         results.push({
           subItems: {
             type: "subitems",
@@ -280,7 +305,11 @@ class BookingAppointment extends Audit {
         title_in_page_url: this.titleSubHeadings[1],
       });
 
+      this.globalResults.correctPages.headings = [this.auditData.subItem.greenResult, this.titleSubHeadings[0], this.titleSubHeadings[1]];
+
+
       for (const item of this.correctItems) {
+        this.globalResults.correctPages.pages.push(item)
         results.push({
           subItems: {
             type: "subitems",
@@ -305,6 +334,22 @@ class BookingAppointment extends Audit {
       BookingAppointment.instance = new BookingAppointment('',[],[]);
     }
     return BookingAppointment.instance;
+  }
+
+  async returnGlobalHTML() {
+    let status = 'fail'
+    let message = ''
+
+    if (this.score > 0.5) {
+      status = 'pass';
+      message = this.auditData.greenResult;
+    } else {
+      status = 'fail';
+      message = this.auditData.redResult
+    }
+
+    const reportHtml = await ejs.renderFile('src/audits/municipality_booking_appointment/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null ,  totalPercentage : null });
+    return reportHtml
   }
 
 }

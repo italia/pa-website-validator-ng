@@ -1,0 +1,11 @@
+<div class="accordion-body">
+  <div class="row">
+    <div class="col-12" style="padding-right: 0;">
+      <div class="tab-content">
+        <% items.forEach((audit, index) => { %>
+        <%- include('tabs/tab-pane', { audit, index }); %>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+</div>
