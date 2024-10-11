@@ -63,7 +63,7 @@ const render = async () => {
     
     }
 
-    console.log(failedAudits)
+    //console.log(failedAudits)
     // console.log('PASSED', successAudits)
     // console.log('FAILED', successAudits)
     // console.log('INFO', informativeAudits)

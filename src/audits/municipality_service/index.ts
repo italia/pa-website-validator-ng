@@ -26,9 +26,6 @@ import {Page} from "puppeteer";
 import * as cheerio from "cheerio";
 import * as ejs from "ejs";
 
-
-
-
 class ServiceAudit extends Audit {
 
     auditId = "municipality-servizi-structure-match-model";
@@ -44,7 +41,6 @@ class ServiceAudit extends Audit {
             headings: [],
             summary: ''
         },
-        generalMessage: '',
         pagesInError: {
             message: '',
             headings: [],
@@ -81,7 +77,10 @@ class ServiceAudit extends Audit {
             code: this.code,
             id: this.auditId,
             title: this.auditData.title,
+            mainTitle: this.mainTitle,
             auditId: this.auditId,
+            failureTitle: this.auditData.failureTitle,
+            description: this.auditData.description,
             scoreDisplayMode: this.SCORING_MODES.NUMERIC,
             requiredArtifacts: ["origin"],
         };
@@ -89,6 +88,7 @@ class ServiceAudit extends Audit {
 
     async auditPage(
         page: Page | null,
+        url: string,
         error?: string,
     ) {
 
@@ -128,8 +128,7 @@ class ServiceAudit extends Audit {
             this.score = 0;
 
             this.pagesInError.push({
-                link: '',
-                wrong_order_elements: "",
+                link: url,
                 missing_elements: error,
             });
 
@@ -293,22 +292,16 @@ class ServiceAudit extends Audit {
                 results.push({
                     result: this.auditData.greenResult,
                 });
-                this.globalResults.generalMessage = this.auditData.greenResult;
-
                 break;
             case 0.5:
                 results.push({
                     result: this.auditData.yellowResult,
                 });
-                this.globalResults.generalMessage = this.auditData.yellowResult;
-
                 break;
             case 0:
                 results.push({
                     result: this.auditData.redResult,
                 });
-                this.globalResults.generalMessage = this.auditData.redResult;
-
                 break;
         }
 

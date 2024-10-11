@@ -1,8 +1,6 @@
 import {
     errorHandling,
-    notExecutedErrorMessage,
 } from "../../config/commonAuditsParts.js";
-import {DataElementError} from "../../utils/DataElementError.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
 import { allowedFonts } from './allowedFonts.js'
@@ -18,6 +16,26 @@ class FontAudit extends Audit {
             headings: [],
             summary: ''
         },
+        pagesInError: {
+            message: '',
+            headings: [],
+            pages: []
+        },
+        wrongPages: {
+            message: '',
+            headings: [],
+            pages: []
+        },
+        tolerancePages: {
+            message: '',
+            headings: [],
+            pages: []
+        },
+        correctPages: {
+            message: '',
+            headings: [],
+            pages: []
+        },
         errorMessage: ''
     };
     public wrongItems: any = [];
@@ -29,11 +47,16 @@ class FontAudit extends Audit {
     private headings : any = [];
 
     static allowedFonts = allowedFonts;
+    code = ''
+    mainTitle = ''
 
     async meta() {
         return {
+            code: this.code,
             id: this.auditId,
             title: this.auditData.title,
+            mainTitle: this.mainTitle,
+            auditId: this.auditId,
             failureTitle: this.auditData.failureTitle,
             description: this.auditData.description,
             scoreDisplayMode: this.SCORING_MODES.NUMERIC,
@@ -43,6 +66,7 @@ class FontAudit extends Audit {
 
     async auditPage(
         page: Page | null,
+        url: string,
         error?: string,
     ) {
 
@@ -77,7 +101,7 @@ class FontAudit extends Audit {
             this.score = 0;
 
             this.pagesInError.push({
-                inspected_page: '',
+                link: url,
                 wrong_fonts: error,
             });
 
@@ -91,7 +115,7 @@ class FontAudit extends Audit {
             let url = page.url();
 
             const item = {
-                inspected_page: url,
+                link: url,
                 wrong_fonts: "",
                 wrong_number_elements: 0,
             };
@@ -178,8 +202,6 @@ class FontAudit extends Audit {
             item.wrong_number_elements = badElements.length;
             this.toleranceItems.push(item);
 
-            console.log(`Results: ${JSON.stringify(this.globalResults)}`);
-
             return {
                 score: this.score,
             };
@@ -191,6 +213,10 @@ class FontAudit extends Audit {
     }
 
     async returnGlobal() {
+        this.globalResults.correctPages.pages = [];
+        this.globalResults.tolerancePages.pages = [];
+        this.globalResults.wrongPages.pages = [];
+        this.globalResults.pagesInError.pages = [];
         const results = [];
 
         if (this.pagesInError.length) {
@@ -206,8 +232,13 @@ class FontAudit extends Audit {
                 title_wrong_order_elements: "",
             });
 
+            this.globalResults.pagesInError.message = errorHandling.errorMessage
+            this.globalResults.pagesInError.headings = [errorHandling.errorColumnTitles[0], errorHandling.errorColumnTitles[1]];
+
 
             for (const item of this.pagesInError) {
+                this.globalResults.pagesInError.pages.push(item);
+
                 results.push({
                     subItems: {
                         type: "subitems",
@@ -244,7 +275,12 @@ class FontAudit extends Audit {
                 title_wrong_fonts: this.titleSubHeadings[1],
             });
 
+            this.globalResults.wrongPages.headings = [this.auditData?.subItem?.redResult ?? '', this.titleSubHeadings[0], this.titleSubHeadings[1]];
+
+
             for (const item of this.wrongItems) {
+                this.globalResults.wrongPages.pages.push(item);
+
                 results.push({
                     subItems: {
                         type: "subitems",
@@ -263,7 +299,11 @@ class FontAudit extends Audit {
                 title_wrong_fonts: this.titleSubHeadings[1],
             });
 
+            this.globalResults.wrongPages.headings = [this.auditData?.subItem?.yellowResult ?? '', this.titleSubHeadings[0], this.titleSubHeadings[1]];
+
+
             for (const item of this.toleranceItems) {
+                this.globalResults.tolerancePages.pages.push(item);
                 results.push({
                     subItems: {
                         type: "subitems",
@@ -282,7 +322,12 @@ class FontAudit extends Audit {
                 title_wrong_fonts: this.titleSubHeadings[1],
             });
 
+            this.globalResults.wrongPages.headings = [this.auditData?.subItem?.greenResult ?? '', this.titleSubHeadings[0], this.titleSubHeadings[1]];
+
+
             for (const item of this.correctItems) {
+                this.globalResults.correctPages.pages.push(item);
+
                 results.push({
                     subItems: {
                         type: "subitems",

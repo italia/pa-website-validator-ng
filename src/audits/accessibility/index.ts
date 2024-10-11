@@ -9,7 +9,6 @@ import {Page} from "puppeteer";
 import {Audit} from "../Audit.js";
 import {notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
 import * as cheerio from "cheerio";
-import * as ejs from 'ejs'
 
 class A11yAudit extends Audit {
 
@@ -39,14 +38,18 @@ class A11yAudit extends Audit {
             code: this.code,
             id: this.auditId,
             title: this.auditData.title,
+            mainTitle: this.mainTitle,
             auditId: this.auditId,
-            scoreDisplayMode: this.SCORING_MODES.BINARY,
+            failureTitle: this.auditData.failureTitle,
+            description: this.auditData.description,
+            scoreDisplayMode: this.SCORING_MODES.NUMERIC,
             requiredArtifacts: ["origin"],
         };
     }
 
     async auditPage(
         page: Page | null,
+        url: string,
         error?: string,
     ) {
 
@@ -60,16 +63,11 @@ class A11yAudit extends Audit {
             );
             this.globalResults.details.headings= [{ key: "result", itemType: "text", text: "Risultato" }];
 
-            this.globalResults.pagesItems.headings = [{ key: "result", itemType: "text", text: "Risultato" }];
+            this.globalResults.pagesItems.headings = ["Risultato"];
             this.globalResults.pagesItems.message = notExecutedErrorMessage.replace("<LIST>", error);
             this.globalResults.pagesItems.items = [
                 {
                     result: this.auditData.redResult,
-                    link_name: "",
-                    link: "",
-                    existing_page: "No",
-                    page_contains_correct_url: "",
-                    wcag: "",
                 },
             ];
 
@@ -101,7 +99,7 @@ class A11yAudit extends Audit {
             );
             const elementObj = $(accessibilityDeclarationElement).attr();
             items[0].link_name = accessibilityDeclarationElement.text().trim() ?? "";
-            items[0].link = elementObj?.href ?? "";
+            items[0].link = elementObj?.href ?? url;
 
             if (
                 elementObj &&

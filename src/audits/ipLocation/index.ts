@@ -10,6 +10,7 @@ import { auditDictionary } from "../../storage/auditDictionary.js";
 import {Page} from "puppeteer";
 import {Audit} from "../Audit.js";
 import {notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
+import * as ejs from "ejs";
 const auditId = "common-security-ip-location";
 const auditData = auditDictionary[auditId];
 
@@ -25,8 +26,16 @@ class IpLocationAudit extends Audit {
       headings: [],
       summary: ''
     },
+    pagesItems: {
+      message: '',
+      headings: [],
+      pages: [],
+    },
     errorMessage: ''
   };
+
+  code = 'LOCALIZZAZIONE IP'
+  mainTitle = 'LOCALIZZAZIONE IP'
 
   score = 0;
 
@@ -38,11 +47,15 @@ class IpLocationAudit extends Audit {
       description: auditData.description,
       scoreDisplayMode: this.SCORING_MODES.BINARY,
       requiredArtifacts: ["hostname"],
+      code: this.code,
+      mainTitle: this.mainTitle,
+      auditId: auditId,
     };
   }
 
   async auditPage(
       page: Page | null,
+      url: string,
       error?:string
   ) {
     if(error && !page){
@@ -54,6 +67,14 @@ class IpLocationAudit extends Audit {
         },
       ]);
       this.globalResults.details.headings= [{ key: "result", itemType: "text", text: "Risultato" }];
+
+      this.globalResults.pagesItems.headings = ["Risultato"];
+      this.globalResults.pagesItems.message = notExecutedErrorMessage.replace("<LIST>", error);
+      this.globalResults.pagesItems.items = [
+        {
+          result: this.auditData.redResult,
+        },
+      ];
 
       return {
         score: 0,
@@ -70,6 +91,7 @@ class IpLocationAudit extends Audit {
         { key: "ip_city", itemType: "text", text: "Città indirizzo IP" },
         { key: "ip_country", itemType: "text", text: "Paese indirizzo IP" },
       ];
+      this.globalResults.pagesItems.headings = ["Risultato", "Città indirizzo IP", "Paese indirizzo IP"];
       const items = [{ result: redResult, ip_city: "", ip_country: "" }];
 
       if (hostname) {
@@ -94,6 +116,7 @@ class IpLocationAudit extends Audit {
 
       this.globalResults.score = this.score;
       this.globalResults.details.items = items;
+      this.globalResults.pagesItems.pages = items;
 
       return {
         score: this.score,
@@ -107,6 +130,22 @@ class IpLocationAudit extends Audit {
 
   async returnGlobal(){
     return this.globalResults;
+  }
+
+  async returnGlobalHTML() {
+    let status = 'fail'
+    let message = ''
+
+    if (this.globalResults.score > 0.5) {
+      status = 'pass';
+      message = this.auditData.greenResult;
+    } else {
+      status = 'fail';
+      message = this.auditData.redResult
+    }
+
+    const reportHtml = await ejs.renderFile('src/audits/ipLocation/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null ,  totalPercentage : null });
+    return reportHtml
   }
 
   static getInstance(): Promise<IpLocationAudit> {

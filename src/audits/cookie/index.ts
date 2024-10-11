@@ -5,7 +5,6 @@ import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
 import crawlerTypes from "../../types/crawler-types";
 import cookie = crawlerTypes.cookie;
-import * as ejs from "ejs";
 import {gotoRetry} from "../../utils/utils.js";
 import {oldBrowser} from "../../PuppeteerInstance.js";
 
@@ -19,18 +18,12 @@ class CookieAudit extends Audit {
             headings: [],
             summary: ''
         },
-        generalMessage: '',
         pagesInError: {
             message: '',
             headings: [],
             pages: []
         },
         wrongPages: {
-            message: '',
-            headings: [],
-            pages: []
-        },
-        tolerancePages: {
             message: '',
             headings: [],
             pages: []
@@ -48,20 +41,26 @@ class CookieAudit extends Audit {
     public score = 1;
     private titleSubHeadings: any = [];
     private headings : any = [];
+    code = ''
+    mainTitle = ''
 
     async meta() {
         return {
-            id: this.auditId,
             code: this.code,
+            id: this.auditId,
             title: this.auditData.title,
-            scoreDisplayMode: this.SCORING_MODES.BINARY,
+            mainTitle: this.mainTitle,
+            auditId: this.auditId,
+            failureTitle: this.auditData.failureTitle,
             description: this.auditData.description,
+            scoreDisplayMode: this.SCORING_MODES.NUMERIC,
             requiredArtifacts: ["origin"],
         };
     }
 
     async auditPage(
         page: Page | null,
+        url: string,
         error?: string,
         pageType?: string | null,
     ) {
@@ -104,7 +103,7 @@ class CookieAudit extends Audit {
             this.score = 0;
 
             this.pagesInError.push({
-                link: 'url',
+                link: url,
                 cookie_domain: error,
             });
 
@@ -150,7 +149,6 @@ class CookieAudit extends Audit {
                         this.wrongItems.push({link: item.link, cookie_domain: item.cookie_domain, cookie_name: item.cookie_name, cookie_value: item.cookie_value});
                     }
                 }
-                this.pagesInError.push({link: 'https://www.google.com/', cookie_domain: 'ciao', cookie_name: 'mondo', cookie_value: 'hello'})
             } catch (ex) {
                 if (!(ex instanceof Error)) {
                     throw ex;
@@ -182,22 +180,21 @@ class CookieAudit extends Audit {
 
     async returnGlobal() {
         this.globalResults.correctPages.pages = [];
-        this.globalResults.tolerancePages.pages = [];
         this.globalResults.wrongPages.pages = [];
         this.globalResults.pagesInError.pages = [];
+
+        let results = [];
 
         switch (this.score) {
             case 1:
                 results.push({
                     result: this.auditData.greenResult,
                 });
-                this.globalResults.generalMessage = this.auditData.greenResult;
                 break;
             case 0:
                 results.push({
                     result: this.auditData.redResult,
                 });
-                this.globalResults.generalMessage = this.auditData.redResult;
                 break;
         }
 
@@ -241,7 +238,7 @@ class CookieAudit extends Audit {
                 title_cookie_value: this.titleSubHeadings[2],
             });
 
-            this.globalResults.wrongPages.message = [this.auditData?.subItem?.redResult ?? '', this.titleSubHeadings[0], this.titleSubHeadings[1], this.titleSubHeadings[2]];
+            this.globalResults.wrongPages.headings = [this.auditData?.subItem?.redResult ?? '', this.titleSubHeadings[0], this.titleSubHeadings[1], this.titleSubHeadings[2]];
 
             for (const item of this.wrongItems) {
                 this.globalResults.wrongPages.pages.push(item);
@@ -286,22 +283,6 @@ class CookieAudit extends Audit {
         this.globalResults.id = this.auditId;
 
         return this.globalResults;
-    }
-
-    async returnGlobalHTML() {
-        let status = 'fail'
-        let message = ''
-
-        if (this.score > 0.5) {
-            status = 'pass';
-            message = this.auditData.greenResult;
-        } else {
-            status = 'fail';
-            message = this.auditData.redResult
-        }
-
-        const reportHtml = await ejs.renderFile('src/audits/municipality_cookie/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null ,  totalPercentage : null });
-        return reportHtml
     }
 
     static getInstance(): Promise<CookieAudit> {
