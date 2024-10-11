@@ -4,9 +4,10 @@
 import { domains } from "./allowedDomain.js";
 import { auditDictionary } from "../../storage/auditDictionary.js";
 import { urlExists } from "../../utils/utils.js";
-
+import { errorHandling } from "../../config/commonAuditsParts.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
+import * as ejs from "ejs";
 
 
 
@@ -28,6 +29,21 @@ class DomainAudit extends Audit {
       type: 'table',
       headings: [],
       summary: ''
+    },   
+    pagesInError: {
+      message: '',
+      headings: [],
+      pages: []
+   }, 
+    wrongPages: {
+      message: '',
+      headings: [],
+      pages: []
+    },
+    correctPages: {
+      message: '',
+      headings: [],
+      pages: []
     },
     errorMessage: ''
   };
@@ -59,6 +75,7 @@ class DomainAudit extends Audit {
 
   async auditPage(
     page: Page | null,
+    url: string,
     error?: string,
     pageType?: string | null
   ){
@@ -107,8 +124,8 @@ class DomainAudit extends Audit {
     if (error && !page && pageType !== 'event') {
       this.score = 0;
 
-      this.wrongItems.push({
-        inspected_page: '',
+      this.pagesInError.push({
+        link: url,
         domain: '',
         correct_domain: "No",
         www_access: ""
@@ -125,7 +142,7 @@ class DomainAudit extends Audit {
 
       const hostname = new URL(url).hostname.replace("www.", "");
       const item = {
-        inspected_page: url,
+        link: url,
         domain: hostname,
         correct_domain: "No",
         www_access: "",
@@ -153,7 +170,7 @@ class DomainAudit extends Audit {
           this.score = 0;
         }
     }
-
+    
     return {
       score: this.score,
     };
@@ -164,6 +181,10 @@ class DomainAudit extends Audit {
   }
 
   async returnGlobal(){
+    this.globalResults.correctPages.pages = [];
+    this.globalResults.wrongPages.pages = [];
+    this.globalResults.pagesInError.pages = [];
+   
     const results = [];
     switch (this.score) {
       case 1:
@@ -177,7 +198,37 @@ class DomainAudit extends Audit {
         });
         break;
     }
+    
 
+    if (this.pagesInError.length) {
+      results.push({
+          result: errorHandling.errorMessage,
+      });
+
+      results.push({});
+
+      results.push({
+          result: errorHandling.errorColumnTitles[0],
+          title_domain: errorHandling.errorColumnTitles[1],
+          title_correct_domain: "",
+          title_www_access: ""
+      });
+
+      this.globalResults.pagesInError.message = errorHandling.errorMessage
+      this.globalResults.pagesInError.headings = [errorHandling.errorColumnTitles[0], errorHandling.errorColumnTitles[1]];
+
+      for (const item of this.pagesInError) {
+          this.globalResults.pagesInError.pages.push(item);
+
+          results.push({
+              subItems: {
+                  type: "subitems",
+                  items: [item],
+              },
+          });
+      }
+  }
+    
     results.push({});
 
     if (this.wrongItems.length > 0) {
@@ -187,8 +238,11 @@ class DomainAudit extends Audit {
         title_correct_domain: this.titleSubHeadings[1],
         title_www_access: this.titleSubHeadings[2],
       });
+     
+      this.globalResults.wrongPages.headings = [this.auditData.subItem.redResult, this.titleSubHeadings[0], this.titleSubHeadings[1],  this.titleSubHeadings[2]];
 
       for (const item of this.wrongItems) {
+        this.globalResults.wrongPages.pages.push(item);
         results.push({
           subItems: {
             type: "subitems",
@@ -207,8 +261,11 @@ class DomainAudit extends Audit {
         title_correct_domain: this.titleSubHeadings[1],
         title_www_access: this.titleSubHeadings[2],
       });
+      
+      this.globalResults.correctPages.headings = [this.auditData.subItem.greenResult, this.titleSubHeadings[0], this.titleSubHeadings[1], this.titleSubHeadings[2]];
 
       for (const item of this.correctItems) {
+        this.globalResults.correctPages.pages.push(item)
         results.push({
           subItems: {
             type: "subitems",
@@ -226,6 +283,22 @@ class DomainAudit extends Audit {
 
     return this.globalResults;
   }
+  
+  async returnGlobalHTML() {
+    let status = 'fail'
+    let message = ''
+
+    if (this.globalResults.score > 0.5) {
+      status = 'pass';
+      message = this.auditData.greenResult;
+    } else {
+      status = 'fail';
+      message = this.auditData.redResult
+    }
+
+    const reportHtml = await ejs.renderFile('src/audits/municipality_domain_audit/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null ,totalPercentage : null });
+    return reportHtml
+}
 
   static getInstance(): Promise<DomainAudit> {
     if (!DomainAudit.instance) {

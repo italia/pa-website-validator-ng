@@ -1,0 +1,91 @@
+<%# 
+    PARAMETERS NEEDED:
+    - status: pass | average | fails
+    - code: string
+    - description?: string
+    - minRequirement?: string
+    - automaticChecks?: string
+    - failures?: string
+    - content: HTML template
+%>
+<%
+let icon = "";
+let message = "";
+switch (status) {
+case 'pass':
+    icon = '#it-check-circle';
+    message = "- Criterio superato";
+    break;
+
+case 'fail':
+    icon = '#it-error';
+    message = "- Criterio non superato";
+    break;
+
+default:
+    icon = '#it-info-circle';
+    message = "";
+    break;
+} %>
+
+
+<!-- {
+    code: this.code,
+    id: this.auditId,
+    title: this.auditData.title,
+    failureTitle: this.auditData.failureTitle,
+    description: this.auditData.description,
+    scoreDisplayMode: this.SCORING_MODES.BINARY,
+    requiredArtifacts: ["origin"],
+}; -->
+
+<div class="audit-content">
+  <h2 class="h3 audit-title">
+    <svg class="icon <%= status %>" aria-hidden="true">
+      <use href="<%= icon %>"></use>
+    </svg>
+      <%=code%> <%= message %>
+  </h2>
+  <div class="audit-description">
+
+
+      <p> Il sito comunale utilizza un dominio istituzionale secondo le modalità indicate nella documentazione del modello di sito comunale.</p>
+    <p>
+      <span class="h6 uppercase">CONDIZIONI DI SUCCESSO:</span>
+      il sito comunale è raggiungibile senza necessità di inserimento del sottodominio “www.” e le pagine utilizzano il sottodominio "comune." immediatamente seguito da uno dei domini utilizzabili presenti in   
+      <a href="https://raw.githubusercontent.com/italia/pa-website-validator/main/src/storage/municipality/allowedDomains.ts">questa pagina</a> 
+      secondo la struttura indicata nel criterio di conformità;
+    </p>
+
+    <p>
+      <span class="h6 uppercase">Verifiche automatiche:</span>
+      ricercando specifici attributi "data-element" come spiegato nella Documentazione delle App di valutazione, viene verificato che il dominio utilizzato nelle pagine analizzate rispetti la struttura richiesta dal criterio di conformità e che le pagine siano raggiungibili senza necessità di inserimento del sottodominio "www."; RIFERIMENTI TECNICI E NORMATIVI: 
+      <a href="https://docs.italia.it/italia/designers-italia/design-comuni-docs/">Documentazione del Modello Comuni</a>, 
+      <a href="https://www.nic.it/sites/default/files/docs/comuni_list.html">Elenco Nomi a Dominio Riservati Per i Comuni Italiani</a>, 
+      <a href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>
+    </p>
+    <div class="separator"></div>
+
+      <p>
+          <span class="h6"> <%= statusMessage %> </span> %>
+      </p>
+          <% if( table.pagesInError.pages.length ) { %>
+          <p>
+            <span class="h6 uppercase">Elementi di fallimento: <%=table.pagesInError.message %></span> %>
+              <%-  include('../../report/partials/audit/table', {table: table.pagesInError}) %>
+          </p>
+          <% } %>
+    
+          <% if( table.wrongPages.pages.length ) { %>
+          <p>
+              <%-  include('../../report/partials/audit/table', {table : table.wrongPages}) %>
+          </p>
+          <% } %>
+         
+          <% if( table.correctPages.pages.length ) { %>
+          <p>
+              <%-  include('../../report/partials/audit/table', {table: table.correctPages}) %>
+          </p>
+          <% } %>
+  </div>
+</div>
