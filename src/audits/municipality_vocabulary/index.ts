@@ -19,6 +19,7 @@ import {Audit} from "../Audit.js";
 import {CheerioAPI} from "cheerio";
 import * as cheerio from "cheerio";
 import {Page} from "puppeteer";
+import * as ejs from "ejs";
 
 const auditId = "municipality-controlled-vocabularies";
 const auditData = auditDictionary[auditId];
@@ -36,8 +37,16 @@ class MunicipalityVocabulary extends Audit {
       headings: [],
       summary: ''
     },
+    pagesItems: {
+      message: '',
+      headings: [],
+      pages: [],
+    },
     errorMessage: ''
   };
+  
+  code = 'C.SI.1.5'
+  mainTitle = 'VOCABOLARI CONTROLLATI'
 
   score = 0;
 
@@ -49,11 +58,15 @@ class MunicipalityVocabulary extends Audit {
       description: auditData.description,
       scoreDisplayMode: this.SCORING_MODES.NUMERIC,
       requiredArtifacts: ["origin"],
+      code: this.code,
+      mainTitle: this.mainTitle,
+      auditId: auditId,
     };
   }
 
   async auditPage(
     page: Page | null,
+    url:string,
     error?:string
   ) {
 
@@ -66,6 +79,16 @@ class MunicipalityVocabulary extends Audit {
         },
       ]);
       this.globalResults.details.headings= [{ key: "result", itemType: "text", text: "Risultato" }];
+      
+      this.globalResults.details.headings= [{ key: "result", itemType: "text", text: "Risultato" }];
+
+      this.globalResults.pagesItems.headings = ["Risultato"];
+      this.globalResults.pagesItems.message = notExecutedErrorMessage.replace("<LIST>", error);
+      this.globalResults.pagesItems.items = [
+        {
+          result: this.auditData.redResult,
+        },
+      ];
 
       return {
         score: 0,
@@ -121,7 +144,9 @@ class MunicipalityVocabulary extends Audit {
       if (allArgumentsHREF.length <= 0) {
         item[0].result = notExecutedErrorMessage.replace("<LIST>", "`all-topics");
         this.globalResults.details.headings = headings;
+        this.globalResults.pagesItems.headings = ["Risultato", "% di argomenti presenti nell'elenco del modello", "Argomenti non presenti nell'elenco del modello", "% di argomenti presenti nell'elenco del modello o EuroVoc", "Argomenti non presenti nell'elenco del modello o EuroVoc"];
         this.globalResults.details.items = item;
+        this.globalResults.pagesItems.pages = item;
         this.globalResults.score = 0;
         this.score = 0;
 
@@ -147,7 +172,9 @@ class MunicipalityVocabulary extends Audit {
       if (argumentList.length === 0) {
 
         this.globalResults.details.headings = headings;
+        this.globalResults.pagesItems.headings = ["Risultato", "% di argomenti presenti nell'elenco del modello", "Argomenti non presenti nell'elenco del modello", "% di argomenti presenti nell'elenco del modello o EuroVoc", "Argomenti non presenti nell'elenco del modello o EuroVoc"];
         this.globalResults.details.items = item;
+        this.globalResults.pagesItems.pages = item;
         this.globalResults.score = 0;
         this.score = 0;
 
@@ -211,7 +238,9 @@ class MunicipalityVocabulary extends Audit {
           elementInUnionVocabulary.elementNotIncluded.join(", ");
 
       this.globalResults.details.headings = headings;
+      this.globalResults.pagesItems.headings = ["Risultato", "% di argomenti presenti nell'elenco del modello", "Argomenti non presenti nell'elenco del modello", "% di argomenti presenti nell'elenco del modello o EuroVoc", "Argomenti non presenti nell'elenco del modello o EuroVoc"];
       this.globalResults.details.items = item;
+      this.globalResults.pagesItems.pages = item;
       this.globalResults.score = this.score;
 
       return {
@@ -228,6 +257,25 @@ class MunicipalityVocabulary extends Audit {
 
   async returnGlobal(){
     return this.globalResults;
+  }
+  
+  async returnGlobalHTML() {
+    let status = 'fail'
+    let message = ''
+
+    if (this.score > 0.5) {
+        status = 'pass';
+        message = this.auditData.greenResult;
+    } else if (this.score == 0.5) {
+        status = 'average';
+        message = this.auditData.yellowResult
+    } else {
+        status = 'fail';
+        message = this.auditData.redResult
+    }
+
+    const reportHtml = await ejs.renderFile('src/audits/municipality_vocabulary/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null , totalPercentage : null });
+    return reportHtml
   }
 
   static getInstance(): Promise<MunicipalityVocabulary> {
