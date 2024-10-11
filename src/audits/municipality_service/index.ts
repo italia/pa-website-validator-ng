@@ -153,8 +153,8 @@ class ServiceAudit extends Audit {
 
             const item = {
                 link: "",
-                wrong_order_elements: "",
                 missing_elements: "",
+                wrong_order_elements: "",
             };
 
             item.link = url;

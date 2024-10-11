@@ -7,6 +7,8 @@ import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
 import * as cheerio from "cheerio";
 import {notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
+import * as ejs from "ejs";
+
 
 const auditId = "municipality-faq-is-present";
 const auditData = auditDictionary[auditId];
@@ -23,8 +25,17 @@ class FaqAudit extends Audit {
       headings: [],
       summary: ''
     },
+    pagesItems: {
+      message: '',
+      headings: [],
+      pages: [],
+    },
     errorMessage: ''
   };
+
+  code = 'C.SI.2.3'
+  mainTitle = 'RICHIESTA DI ASSISTENZA / DOMANDE FREQUENTI'
+
   public wrongItems: any = [];
   public toleranceItems: any = [];
   public correctItems: any = [];
@@ -40,6 +51,9 @@ class FaqAudit extends Audit {
       description: auditData.description,
       scoreDisplayMode: this.SCORING_MODES.BINARY,
       requiredArtifacts: ["origin"],
+      code: this.code,
+      mainTitle: this.mainTitle,
+      auditId: auditId,
     };
   }
 
@@ -49,6 +63,7 @@ class FaqAudit extends Audit {
 
   async auditPage(
     page: Page | null,
+    url: string,
     error?: string
   ) {
     if(error && !page){
@@ -60,6 +75,14 @@ class FaqAudit extends Audit {
         },
       );
       this.globalResults.details.headings= [{ key: "result", itemType: "text", text: "Risultato" }];
+      
+      this.globalResults.pagesItems.headings = ["Risultato"];
+      this.globalResults.pagesItems.message = notExecutedErrorMessage.replace("<LIST>", error);
+      this.globalResults.pagesItems.items = [
+        {
+          result: this.auditData.redResult,
+        },
+      ];
 
       return {
         score: 0,
@@ -96,7 +119,7 @@ class FaqAudit extends Audit {
         {
           result: redResult,
           link_name: "",
-          link_destination: "",
+          link: "",
           existing_page: "No",
         },
       ];
@@ -108,7 +131,7 @@ class FaqAudit extends Audit {
 
       const label = privacyPolicyElement.text().trim().toLowerCase() ?? "";
       items[0].link_name = label;
-      items[0].link_destination = elementObj?.href ?? "";
+      items[0].link = elementObj?.href ?? "";
 
       if (
           elementObj &&
@@ -117,14 +140,17 @@ class FaqAudit extends Audit {
           elementObj.href !== ""
       ) {
         const checkUrl = await urlExists(url, elementObj.href);
-        items[0].link_destination = checkUrl.inspectedUrl;
+        items[0].link = checkUrl.inspectedUrl;
 
         if (!checkUrl.result) {
           this.globalResults.details.items = items;
+          this.globalResults.pagesItems.pages = items;
           this.globalResults.details.headings = this.headings;
+          this.globalResults.pagesItems.headings = ['Risultato', "Testo del link", "Pagina di destinazione", "Pagina esistente"];
+
           this.globalResults.score = 0;
           this.score = 0;
-
+          
           return {
             score: 0,
           };
@@ -135,7 +161,9 @@ class FaqAudit extends Audit {
         if (!label.includes("faq") && !label.includes("domande frequenti")) {
           items[0].result = yellowResult;
           this.globalResults.details.items = items;
+          this.globalResults.pagesItems.pages = items;
           this.globalResults.details.headings = this.headings;
+          this.globalResults.pagesItems.headings = ['Risultato', "Testo del link", "Pagina di destinazione", "Pagina esistente"];
           this.globalResults.score = 0.5;
           this.score = 0.5;
           return {
@@ -145,7 +173,9 @@ class FaqAudit extends Audit {
 
         items[0].result = greenResult;
         this.globalResults.details.items = items;
+        this.globalResults.pagesItems.pages = items;
         this.globalResults.details.headings = this.headings;
+        this.globalResults.pagesItems.headings = ['Risultato', "Testo del link", "Pagina di destinazione", "Pagina esistente"];
         this.globalResults.score = 1;
         this.score = 1;
       }
@@ -156,6 +186,25 @@ class FaqAudit extends Audit {
       score: this.score,
     };
   }
+  
+  async returnGlobalHTML() {
+    let status = 'fail'
+    let message = ''
+
+    if (this.score > 0.5) {
+        status = 'pass';
+        message = this.auditData.greenResult;
+    } else if (this.score == 0.5) {
+        status = 'average';
+        message = this.auditData.yellowResult
+    } else {
+        status = 'fail';
+        message = this.auditData.redResult
+    }
+
+    const reportHtml = await ejs.renderFile('src/audits/municipality_faq/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null , totalPercentage : null });
+    return reportHtml
+}
 
   static getInstance(): Promise<FaqAudit> {
     if (!FaqAudit.instance) {

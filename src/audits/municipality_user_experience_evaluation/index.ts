@@ -9,6 +9,7 @@ import {
 } from "../../config/commonAuditsParts.js";
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
+import * as ejs from "ejs";
 
 const auditId = "municipality-user-experience-evaluation";
 const auditData = auditDictionary[auditId];
@@ -22,8 +23,32 @@ class UserExperienceEvaluationAudit extends Audit {
       headings: [],
       summary: ''
     },
+    pagesInError: {
+      message: '',
+      headings: [],
+      pages: []
+    },
+    wrongPages: {
+      message: '',
+      headings: [],
+      pages: []
+    },
+    tolerancePages: {
+      message: '',
+      headings: [],
+      pages: []
+    },
+    correctPages: {
+      message: '',
+      headings: [],
+      pages: []
+    },
     errorMessage: ''
   };
+
+  code = 'C.SI.2.6'
+  mainTitle = 'VALUTAZIONE DELL’ESPERIENZA D’USO, CHIAREZZA INFORMATIVA DELLA SCHEDA DI SERVIZIO'
+
   public wrongItems: any = [];
   public toleranceItems: any = [];
   public correctItems: any = [];
@@ -31,6 +56,7 @@ class UserExperienceEvaluationAudit extends Audit {
   public score = 1;
   private titleSubHeadings: any = [];
   private headings : any = [];
+ 
 
   async meta() {
     return {
@@ -40,11 +66,15 @@ class UserExperienceEvaluationAudit extends Audit {
       description: auditData.description,
       scoreDisplayMode: this.SCORING_MODES.BINARY,
       requiredArtifacts: ["origin"],
+      code: this.code,
+      mainTitle: this.mainTitle,
+      auditId: auditId,
     };
   }
 
   async auditPage(
    page: Page | null,
+   url:string, 
    error?: string
   ) {
 
@@ -69,7 +99,7 @@ class UserExperienceEvaluationAudit extends Audit {
       this.score = 0;
 
       this.pagesInError.push({
-        inspected_page: '',
+        link: '',
         errors_found: error,
       });
 
@@ -82,7 +112,7 @@ class UserExperienceEvaluationAudit extends Audit {
       let url = page.url();
 
       const item = {
-        inspected_page: url,
+        link: url,
         errors_found: "",
       };
       try {
@@ -121,7 +151,7 @@ class UserExperienceEvaluationAudit extends Audit {
         );
 
         this.pagesInError.push({
-          inspected_page: url,
+          link: url,
           errors_found: errorMessage,
         });
       }
@@ -133,6 +163,11 @@ class UserExperienceEvaluationAudit extends Audit {
   }
 
   async returnGlobal() {
+    this.globalResults.correctPages.pages = [];
+    this.globalResults.tolerancePages.pages = [];
+    this.globalResults.wrongPages.pages = [];
+    this.globalResults.pagesInError.pages = [];
+
     const results = [];
     if (this.pagesInError.length > 0) {
       results.push({
@@ -146,7 +181,11 @@ class UserExperienceEvaluationAudit extends Audit {
         title_errors_found: errorHandling.errorColumnTitles[1],
       });
 
+      this.globalResults.pagesInError.message = errorHandling.errorMessage
+      this.globalResults.pagesInError.headings = [errorHandling.errorColumnTitles[0], errorHandling.errorColumnTitles[1]];
+
       for (const item of this.pagesInError) {
+        this.globalResults.pagesInError.pages.push(item);
         results.push({
           subItems: {
             type: "subitems",
@@ -181,8 +220,10 @@ class UserExperienceEvaluationAudit extends Audit {
         result: auditData.subItem.redResult,
         title_errors_found: this.titleSubHeadings[0],
       });
+      this.globalResults.wrongPages.headings = [auditData.subItem.redResult, this.titleSubHeadings[0]];
 
       for (const item of this.wrongItems) {
+        this.globalResults.wrongPages.pages.push(item);
         results.push({
           subItems: {
             type: "subitems",
@@ -197,8 +238,11 @@ class UserExperienceEvaluationAudit extends Audit {
         result: auditData.subItem.yellowResult,
         title_errors_found: this.titleSubHeadings[0],
       });
+      
+      this.globalResults.tolerancePages.headings = [auditData.subItem.yellowResult, this.titleSubHeadings[0]]
 
       for (const item of this.toleranceItems) {
+        this.globalResults.tolerancePages.pages.push(item);
         results.push({
           subItems: {
             type: "subitems",
@@ -213,8 +257,11 @@ class UserExperienceEvaluationAudit extends Audit {
         result: auditData.subItem.greenResult,
         title_errors_found: this.titleSubHeadings[0],
       });
+      
+      this.globalResults.correctPages.headings = [auditData.subItem.greenResult, this.titleSubHeadings[0]];
 
       for (const item of this.correctItems) {
+        this.globalResults.correctPages.pages.push(item)
         results.push({
           subItems: {
             type: "subitems",
@@ -233,6 +280,25 @@ class UserExperienceEvaluationAudit extends Audit {
 
     return this.globalResults
   }
+
+  async returnGlobalHTML() {
+    let status = 'fail'
+    let message = ''
+
+    if (this.score > 0.5) {
+        status = 'pass';
+        message = this.auditData.greenResult;
+    } else if (this.score == 0.5) {
+        status = 'average';
+        message = this.auditData.yellowResult
+    } else {
+        status = 'fail';
+        message = this.auditData.redResult
+    }
+
+    const reportHtml = await ejs.renderFile('src/audits/municipality_user_experience_evaluation/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null ,  totalPercentage : null });
+    return reportHtml
+}
 
   static getInstance(): Promise<UserExperienceEvaluationAudit> {
     if (!UserExperienceEvaluationAudit.instance) {

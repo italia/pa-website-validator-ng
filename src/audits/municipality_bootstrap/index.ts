@@ -16,7 +16,7 @@ import {
 } from "../../config/commonAuditsParts.js";
 import {Audit} from "../Audit.js";
 import {browser} from "../../PuppeteerInstance.js";
-
+import * as ejs from "ejs";
 
 
 class BootstrapMunAudit extends Audit {
@@ -37,6 +37,21 @@ class BootstrapMunAudit extends Audit {
       type: 'table',
       headings: [],
       summary: ''
+    },
+    pagesInError: {
+      message: '',
+      headings: [],
+      pages: []
+   }, 
+    wrongPages: {
+      message: '',
+      headings: [],
+      pages: []
+    },
+    correctPages: {
+      message: '',
+      headings: [],
+      pages: []
     },
     errorMessage: ''
   };
@@ -69,6 +84,7 @@ class BootstrapMunAudit extends Audit {
 
   async auditPage(
     page: Page | null,
+    url:string,
     error?: string
   ) {
     this.titleSubHeadings = [
@@ -111,7 +127,7 @@ class BootstrapMunAudit extends Audit {
       this.score = 0;
 
       this.pagesInError.push({
-        inspected_page: '',
+        link: '',
         library_name: error,
       });
 
@@ -127,7 +143,7 @@ class BootstrapMunAudit extends Audit {
 
         let singleResult = 0;
         const item = {
-          inspected_page: url,
+          link: url,
           library_name: "No",
           library_version: "",
           classes_found: "",
@@ -238,7 +254,7 @@ class BootstrapMunAudit extends Audit {
           }
 
           this.pagesInError.push({
-            inspected_page: url,
+            link: url,
             library_name: ex.message,
           });
         }
@@ -258,6 +274,10 @@ class BootstrapMunAudit extends Audit {
 
 
   async returnGlobal(){
+    this.globalResults.correctPages.pages = [];
+    this.globalResults.wrongPages.pages = [];
+    this.globalResults.pagesInError.pages = [];
+    
     const results = [];
     if (this.pagesInError.length > 0) {
       results.push({
@@ -273,7 +293,11 @@ class BootstrapMunAudit extends Audit {
         title_classes_found: "",
       });
 
+      this.globalResults.pagesInError.message = errorHandling.errorMessage
+      this.globalResults.pagesInError.headings = [errorHandling.errorColumnTitles[0], errorHandling.errorColumnTitles[1]];
+
       for (const item of this.pagesInError) {
+        this.globalResults.pagesInError.pages.push(item);
         results.push({
           subItems: {
             type: "subitems",
@@ -305,8 +329,10 @@ class BootstrapMunAudit extends Audit {
         title_library_version: this.titleSubHeadings[1],
         title_classes_found: this.titleSubHeadings[2],
       });
+      this.globalResults.wrongPages.headings = [this.auditData.subItem.redResult, this.titleSubHeadings[0], this.titleSubHeadings[1], this.titleSubHeadings[2]];
 
       for (const item of this.wrongItems) {
+        this.globalResults.wrongPages.pages.push(item);
         results.push({
           subItems: {
             type: "subitems",
@@ -323,8 +349,11 @@ class BootstrapMunAudit extends Audit {
         title_library_version: this.titleSubHeadings[1],
         title_classes_found: this.titleSubHeadings[2],
       });
-
+      
+      this.globalResults.correctPages.headings = [this.auditData.subItem.greenResult, this.titleSubHeadings[0], this.titleSubHeadings[1], this.titleSubHeadings[2]];
+      
       for (const item of this.correctItems) {
+        this.globalResults.correctPages.pages.push(item)
         results.push({
           subItems: {
             type: "subitems",
@@ -343,6 +372,22 @@ class BootstrapMunAudit extends Audit {
 
     return this.globalResults;
   }
+
+  async returnGlobalHTML() {
+    let status = 'fail'
+    let message = ''
+
+    if (this.globalResults.score > 0.5) {
+      status = 'pass';
+      message = this.auditData.greenResult;
+    } else {
+      status = 'fail';
+      message = this.auditData.redResult
+    }
+
+    const reportHtml = await ejs.renderFile('src/audits/municipality_bootstrap/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null ,totalPercentage : null });
+    return reportHtml
+}
 
   async getType(){
     return this.auditId;
