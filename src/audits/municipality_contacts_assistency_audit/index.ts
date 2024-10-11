@@ -10,6 +10,7 @@ import {
 import {Audit} from "../Audit.js";
 import {Page} from "puppeteer";
 import * as cheerio from "cheerio";
+import * as ejs from "ejs";
 
 const auditId = "municipality-contacts-assistency";
 const auditData = auditDictionary[auditId];
@@ -23,8 +24,27 @@ class ContactAssistencyAudit extends Audit {
       headings: [],
       summary: ''
     },
+    pagesInError: {
+      message: '',
+      headings: [],
+      pages: []
+   }, 
+    wrongPages: {
+      message: '',
+      headings: [],
+      pages: []
+    },
+    correctPages: {
+      message: '',
+      headings: [],
+      pages: []
+    },
     errorMessage: ''
   };
+  
+  code = 'C.SI.2.2'
+  mainTitle = 'RICHIESTA DI ASSISTENZA / CONTATTI'
+
   public wrongItems: any = [];
   public toleranceItems: any = [];
   public correctItems: any = [];
@@ -41,11 +61,15 @@ class ContactAssistencyAudit extends Audit {
       description: auditData.description,
       scoreDisplayMode: this.SCORING_MODES.NUMERIC,
       requiredArtifacts: ["origin"],
+      code: this.code,
+      mainTitle: this.mainTitle,
+      auditId: auditId,
     };
   }
 
   async auditPage(
     page: Page | null,
+    url:string,
     error?: string
   ) {
 
@@ -88,7 +112,7 @@ class ContactAssistencyAudit extends Audit {
       this.score = 0;
 
       this.pagesInError.push({
-        inspected_page: '',
+        link: '',
         in_index: error,
       });
 
@@ -118,13 +142,13 @@ class ContactAssistencyAudit extends Audit {
         );
 
         this.pagesInError.push({
-          inspected_page: url,
+          link: url,
           in_index: errorMessage,
         });
       }
 
       const item = {
-        inspected_page: url,
+        link: url,
         in_index: "No",
         component_exists: "No",
       };
@@ -163,6 +187,10 @@ class ContactAssistencyAudit extends Audit {
   }
 
   async returnGlobal(){
+    this.globalResults.correctPages.pages = [];
+    this.globalResults.wrongPages.pages = [];
+    this.globalResults.pagesInError.pages = [];
+
     const results = [];
     if (this.pagesInError.length > 0) {
       results.push({
@@ -177,7 +205,11 @@ class ContactAssistencyAudit extends Audit {
         title_component_exists: "",
       });
 
+      this.globalResults.pagesInError.message = errorHandling.errorMessage
+      this.globalResults.pagesInError.headings = [errorHandling.errorColumnTitles[0], errorHandling.errorColumnTitles[1]];
+
       for (const item of this.pagesInError) {
+        this.globalResults.pagesInError.pages.push(item);
         results.push({
           subItems: {
             type: "subitems",
@@ -209,7 +241,10 @@ class ContactAssistencyAudit extends Audit {
         title_component_exists: this.titleSubHeadings[1],
       });
 
+      this.globalResults.wrongPages.headings = [auditData.subItem.redResult, this.titleSubHeadings[0], this.titleSubHeadings[1]];
+
       for (const item of this.wrongItems) {
+        this.globalResults.wrongPages.pages.push(item);
         results.push({
           subItems: {
             type: "subitems",
@@ -228,7 +263,10 @@ class ContactAssistencyAudit extends Audit {
         title_component_exists: this.titleSubHeadings[1],
       });
 
+      this.globalResults.correctPages.headings = [auditData.subItem.greenResult, this.titleSubHeadings[0], this.titleSubHeadings[1]];
+
       for (const item of this.correctItems) {
+        this.globalResults.correctPages.pages.push(item)
         results.push({
           subItems: {
             type: "subitems",
@@ -247,6 +285,22 @@ class ContactAssistencyAudit extends Audit {
 
     return this.globalResults;
   }
+
+  async returnGlobalHTML() {
+    let status = 'fail'
+    let message = ''
+
+    if (this.globalResults.score > 0.5) {
+      status = 'pass';
+      message = this.auditData.greenResult;
+    } else {
+      status = 'fail';
+      message = this.auditData.redResult
+    }
+
+    const reportHtml = await ejs.renderFile('src/audits/municipality_contacts_assistency_audit/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null ,totalPercentage : null });
+    return reportHtml
+}
 
   async getType(){
     return auditId;
