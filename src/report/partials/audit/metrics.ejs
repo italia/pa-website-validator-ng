@@ -9,9 +9,9 @@
     - description: string
 %>
 <% 
-  const statusColor = totalPercentage < 50 
+  const statusColor = totalPercentage * 100 < 50 
   ? '#c68700' // fail 
-  : totalPercentage < 90  
+  : totalPercentage * 100 < 90  
     ? '#c68700' // average 
     : '#5cc98d'; // pass
 

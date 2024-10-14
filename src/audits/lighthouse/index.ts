@@ -41,7 +41,6 @@ class lighthouseAudit extends Audit {
             const browserWSEndpoint = browser.wsEndpoint();
             const { port } = new URL(browserWSEndpoint);
 
-
             const options = {
                 logLevel: process.env["logsLevel"],
                 output: ["html", "json"],
@@ -83,11 +82,11 @@ class lighthouseAudit extends Audit {
                 if (Object.keys(lhrAudits).includes(metricId)) {
                     const metric = lhrAudits[metricId]
 
-                    let score =  metric.score * 100
+                    let score =  metric.score
                     let status = "pass"
-                    if ( score < 50 ) {
+                    if ( score * 100 < 50 ) {
                         status = 'fail'
-                    } else if ( score < 90) {
+                    } else if ( score * 100 < 90) {
                         status = 'average'
                     }
 
@@ -153,9 +152,9 @@ class lighthouseAudit extends Audit {
 
 
         let status = "pass"
-        if ( score < 50 ) {
+        if ( score * 100 < 50 ) {
             status = 'fail'
-        } else if ( score < 90) {
+        } else if ( score * 100 < 90) {
             status = 'average'
         }
 

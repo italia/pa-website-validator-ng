@@ -124,7 +124,7 @@ const config: any = {
                     "booking_appointment",
                     "personal_area_login",
                     "first_level_pages",
-                    //"second_level_pages_all"
+                    "second_level_pages_all"
                 ],
                 "events-page": [
                     "events"
@@ -141,28 +141,23 @@ const config: any = {
                     "lighthouse",
                     "municipality_accessibility",
                     "municipality_domain_audit",
-                    //"municipality_faq",
-                    //"municipality_vocabulary",
+                    "municipality_faq",
+                    "municipality_vocabulary",
                     //"municipality_improvement_plan",
                     //"municipality_inefficiency_report_audit",
                     //"municipality_license",
                     //"municipality_privacy",
-                    // "municipality_security",
+                   // "municipality_security",
                     //"municipality_theme",
+                    //"municipality_informative_accessibility",
                     //"municipality_informative_cloud_infrastructure",
                     //"municipality_informative_cookie",
                     //"municipality_informative_domain",
-                    //"municipality_informative_reuse",
+                   // "municipality_informative_reuse",
                     //"municipality_informative_security",
-                   // "ipLocation"
+                    "ipLocation"
                 ],
-                "personal-area-login": [
-                    "municipality_bootstrap",
-                    "municipality_cookie",
-                    "municipality_domain_audit",
-                    "municipality_font"
-                ],
-                /*"services-page": [
+                "services-page": [
                     "municipality_booking_appointment"
                 ],
                 "service": [
@@ -170,7 +165,7 @@ const config: any = {
                     "municipality_bootstrap",
                     //"municipality_booking_appointment",
                     "municipality_contacts_assistency_audit",
-                    // "municipality_cookie",
+                    "municipality_cookie",
                     "municipality_font",
                     //"municipality_metatag",
                     "municipality_service",
@@ -178,7 +173,7 @@ const config: any = {
                 ],
                 "personal-area-login": [
                     "municipality_bootstrap",
-                    //   "municipality_cookie",
+                    "municipality_cookie",
                     "municipality_domain_audit",
                     "municipality_font"
                 ],
@@ -190,6 +185,14 @@ const config: any = {
                     "municipality_font",
 
                 ],
+                "second-level-page-all" : [
+                    "municipality_bootstrap",
+                    //  "municipality_cookie",
+                    "municipality_domain_audit",
+                    //"municipality_feedback",
+                    //"municipality_font",
+
+                ],
 
                 "appointment-booking": [
                     "municipality_domain_audit",
@@ -199,15 +202,7 @@ const config: any = {
                 "event": [
                     "municipality_domain_audit",
                     //    "municipality_cookie"
-                ]*/
-               // "second-level-page-all" : [
-                    //"municipality_bootstrap",
-                    //"municipality_cookie",
-                    //"municipality_domain_audit",
-                    //"municipality_feedback",
-                    //"municipality_font",
-
-               // ],
+                ]
             },
             "accuracy": {
                 min: 1,

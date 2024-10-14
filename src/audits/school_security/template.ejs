@@ -1,0 +1,77 @@
+<%# 
+    PARAMETERS NEEDED:
+    - status: pass | average | fails
+    - code: string
+    - description?: string
+    - minRequirement?: string
+    - automaticChecks?: string
+    - failures?: string
+    - content: HTML template
+%>
+<%
+
+let icon = "";
+let message = "";
+switch (status) {
+case 'pass':
+    icon = '#it-check-circle';
+    message = "- Criterio superato";
+    break;
+
+case 'fail':
+    icon = '#it-error';
+    message = "- Criterio non superato";
+    break;
+
+default:
+    icon = '#it-info-circle';
+    message = "";
+    break;
+} %>
+
+
+<!-- {
+    code: this.code,
+    id: this.auditId,
+    title: this.auditData.title,
+    failureTitle: this.auditData.failureTitle,
+    description: this.auditData.description,
+    scoreDisplayMode: this.SCORING_MODES.BINARY,
+    requiredArtifacts: ["origin"],
+}; -->
+
+<div class="audit-content">
+  <h2 class="h3 audit-title">
+    <svg class="icon <%= status %>" aria-hidden="true">
+      <use href="<%= icon %>"></use>
+    </svg>
+      <%=code%> <%= message %>
+  </h2>
+  <div class="audit-description">
+
+
+      <p>Il sito della scuola deve avere un certificato https valido e attivo.</p>
+    <p>
+      <span class="h6 uppercase">Condizioni di successo:</span>
+        il sito utilizza un certificato https valido e non obsoleto secondo le raccomandazioni AgID;
+    </p>
+
+    <p>
+      <span class="h6 uppercase">Verifiche automatiche:</span>
+        viene verificato che il certificato https del sito sia valido e attivo; RIFERIMENTI TECNICI E NORMATIVI:
+        <a href="https://docs.italia.it/italia/designers-italia/design-scuole-docs">Documentazione del Modello scuole</a>,
+        <a href="https://cert-agid.gov.it/wp-content/uploads/2020/11/AgID-RACCSECTLS-01.pdf">Agid Raccomandazioni in merito allo standard Transport Layer Security (TLS)</a>.
+    </p>
+    <div class="separator"></div>
+
+      <p>
+          <span class="h6"> <%= statusMessage %> </span> %>
+      </p>
+
+      <% if( table.pagesItems.pages.length ) { %>
+      <p>
+          <%-  include('../../report/partials/audit/table', {table: table.pagesItems}) %>
+      </p>
+      <% } %>
+  </div>
+</div>
