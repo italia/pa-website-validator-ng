@@ -20,6 +20,8 @@ import {
     contentTypeItemsIndex,
     contentTypeItemsIndexDataElements, contentTypeItemsLocation, contentTypeItemsMetadata
 } from "./contentTypeItems.js";
+import * as ejs from "ejs";
+
 
 const auditId = "school-servizi-structure-match-model";
 const auditData = auditDictionary[auditId];
@@ -33,8 +35,32 @@ class SchoolServiceAudit extends Audit {
             headings: [],
             summary: ''
         },
+        pagesInError: {
+            message: '',
+            headings: [],
+            pages: []
+        },
+        wrongPages: {
+            message: '',
+            headings: [],
+            pages: []
+        },
+        tolerancePages: {
+            message: '',
+            headings: [],
+            pages: []
+        },
+        correctPages: {
+            message: '',
+            headings: [],
+            pages: []
+        },
         errorMessage: ''
     };
+
+    code = 'R.SC.1.2';
+    mainTitle = 'SCHEDE INFORMATIVE DI SERVIZIO'; 
+
     public wrongItems: any = [];
     public toleranceItems: any = [];
     public correctItems: any = [];
@@ -52,11 +78,15 @@ class SchoolServiceAudit extends Audit {
             description: auditData.description,
             scoreDisplayMode: this.SCORING_MODES.NUMERIC,
             requiredArtifacts: ["origin"],
+            code: this.code,
+            mainTitle: this.mainTitle,
+            auditId: auditId,
         };
     }
 
     async auditPage(
         page: Page | null,
+        url:string,
         error?: string,
     ) {
 
@@ -96,9 +126,9 @@ class SchoolServiceAudit extends Audit {
             this.score = 0;
 
             this.pagesInError.push({
-                inspected_page: '',
-                wrong_order_elements: "",
+                link: '',
                 missing_elements: error,
+                wrong_order_elements: "",
             });
 
             return {
@@ -124,12 +154,12 @@ class SchoolServiceAudit extends Audit {
             const mandatoryMetadata = contentTypeItemsMetadata;
 
             const item = {
+                link: "",
                 missing_elements: "",
                 wrong_order_elements: "",
-                inspected_page: "",
             };
 
-            item.inspected_page = url;
+            item.link = url;
 
             let indexElements = await getServicesFromIndex($, mandatoryVoices);
 
@@ -263,6 +293,11 @@ class SchoolServiceAudit extends Audit {
     }
 
     async returnGlobal() {
+        this.globalResults.correctPages.pages = [];
+        this.globalResults.tolerancePages.pages = [];
+        this.globalResults.wrongPages.pages = [];
+        this.globalResults.pagesInError.pages = [];
+
         if (this.totalServices < minNumberOfServices) {
             this.globalResults['score'] = 0;
         }
@@ -299,9 +334,13 @@ class SchoolServiceAudit extends Audit {
                 title_missing_elements: errorHandling.errorColumnTitles[1],
                 title_wrong_order_elements: "",
             });
+            
+            this.globalResults.pagesInError.message = errorHandling.errorMessage
+            this.globalResults.pagesInError.headings = [errorHandling.errorColumnTitles[0], errorHandling.errorColumnTitles[1]];
 
 
             for (const item of this.pagesInError) {
+                this.globalResults.pagesInError.pages.push(item);
                 results.push({
                     subItems: {
                         type: "subitems",
@@ -319,8 +358,11 @@ class SchoolServiceAudit extends Audit {
                 title_missing_elements: this.titleSubHeadings[0],
                 title_wrong_order_elements: this.titleSubHeadings[1],
             });
+            
+            this.globalResults.wrongPages.headings = [auditData.subItem.redResult, this.titleSubHeadings[0], this.titleSubHeadings[1]];
 
             for (const item of this.wrongItems) {
+                this.globalResults.wrongPages.pages.push(item);
                 results.push({
                     subItems: {
                         type: "subitems",
@@ -338,8 +380,10 @@ class SchoolServiceAudit extends Audit {
                 title_missing_elements: this.titleSubHeadings[0],
                 title_wrong_order_elements: this.titleSubHeadings[1],
             });
+            this.globalResults.tolerancePages.headings = [auditData.subItem.yellowResult, this.titleSubHeadings[0], this.titleSubHeadings[1]]
 
             for (const item of this.toleranceItems) {
+                this.globalResults.tolerancePages.pages.push(item);
                 results.push({
                     subItems: {
                         type: "subitems",
@@ -357,8 +401,10 @@ class SchoolServiceAudit extends Audit {
                 title_missing_elements: this.titleSubHeadings[0],
                 title_wrong_order_elements: this.titleSubHeadings[1],
             });
+            this.globalResults.correctPages.headings = [auditData.subItem.greenResult, this.titleSubHeadings[0], this.titleSubHeadings[1]];
 
             for (const item of this.correctItems) {
+                this.globalResults.correctPages.pages.push(item)
                 results.push({
                     subItems: {
                         type: "subitems",
@@ -377,6 +423,25 @@ class SchoolServiceAudit extends Audit {
         this.globalResults.id = this.auditId;
 
         return this.globalResults;
+    }
+
+    async returnGlobalHTML() {
+        let status = 'fail'
+        let message = ''
+
+        if (this.score > 0.5) {
+            status = 'pass';
+            message = this.auditData.greenResult;
+        } else if (this.score == 0.5) {
+            status = 'average';
+            message = this.auditData.yellowResult
+        } else {
+            status = 'fail';
+            message = this.auditData.redResult
+        }
+
+        const reportHtml = await ejs.renderFile('src/audits/school_service/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null ,  totalPercentage : null });
+        return reportHtml
     }
 
     static getInstance(): Promise<SchoolServiceAudit> {

@@ -8,6 +8,7 @@ import {Audit} from "../Audit.js";
 import {errorHandling, notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
 import {areAllElementsInVocabulary, getPageElementDataAttribute, gotoRetry} from "../../utils/utils.js";
 import {schoolModelVocabulary} from "./controlledVocabulary.js";
+import * as ejs from "ejs";
 
 class SchoolVocabularies extends Audit {
   public globalResults: any = {
@@ -18,12 +19,19 @@ class SchoolVocabularies extends Audit {
       headings: [],
       summary: ''
     },
+    pagesItems: {
+      message: '',
+      headings: [],
+      pages: [],
+    },
     errorMessage: ''
   };
 
   private headings : any = [];
   auditId = "school-controlled-vocabularies";
   auditData = auditDictionary["school-controlled-vocabularies"];
+  code = 'R.SC.1.1';
+  mainTitle = 'VOCABOLARI CONTROLLATI'; 
 
   async meta() {
     return {
@@ -33,11 +41,15 @@ class SchoolVocabularies extends Audit {
       description: this.auditData.description,
       scoreDisplayMode: this.SCORING_MODES.NUMERIC,
       requiredArtifacts: ["origin"],
+      code: this.code,
+      mainTitle: this.mainTitle,
+      auditId: this.auditId,
     };
   }
 
   async auditPage(
       page: Page | null,
+      url: string, 
       error?: string,
   ) {
 
@@ -50,6 +62,14 @@ class SchoolVocabularies extends Audit {
         },
       ]);
       this.globalResults.details.headings= [{ key: "result", itemType: "text", text: "Risultato" }];
+      
+      this.globalResults.pagesItems.headings = ["Risultato"];
+      this.globalResults.pagesItems.message = notExecutedErrorMessage.replace("<LIST>", error);
+      this.globalResults.pagesItems.items = [
+        {
+          result: this.auditData.redResult,
+        },
+      ];
 
       return {
         score: 0,
@@ -129,7 +149,9 @@ class SchoolVocabularies extends Audit {
 
       this.globalResults.score = score;
       this.globalResults.details.items = item;
+      this.globalResults.pagesItems.pages = item;
       this.globalResults.details.headings = this.headings;
+      this.globalResults.pagesItems.headings = ["Risultato", "% di argomenti presenti nell'elenco del modello", "Argomenti non presenti nell'elenco del modello"];
       this.globalResults.id = this.auditId;
 
       return {
@@ -144,6 +166,25 @@ class SchoolVocabularies extends Audit {
 
   async returnGlobal(){
     return this.globalResults;
+  }
+  
+  async returnGlobalHTML() {
+    let status = 'fail'
+    let message = ''
+
+    if (this.globalResults.score > 0.5) {
+        status = 'pass';
+        message = this.auditData.greenResult;
+    } else if (this.globalResults.score == 0.5) {
+        status = 'average';
+        message = this.auditData.yellowResult
+    } else {
+        status = 'fail';
+        message = this.auditData.redResult
+    }
+
+    const reportHtml = await ejs.renderFile('src/audits/school_vocabularies/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null , totalPercentage : null });
+    return reportHtml
   }
 
   static getInstance(): Promise<SchoolVocabularies> {

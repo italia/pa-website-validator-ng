@@ -12,12 +12,17 @@
 let icon = "";
 let message = "";
 switch (status) {
-case 'pass':
+  case 'pass':
     icon = '#it-check-circle';
     message = "- Criterio superato";
     break;
 
-case 'fail':
+  case 'average':
+    icon = '#it-warning-circle';
+    message = "- Criterio nella media";
+    break;
+
+  case 'fail':
     icon = '#it-error';
     message = "- Criterio non superato";
     break;

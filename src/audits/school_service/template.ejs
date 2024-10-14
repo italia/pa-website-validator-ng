@@ -1,0 +1,99 @@
+<%# 
+    PARAMETERS NEEDED:
+    - status: pass | average | fails
+    - code: string
+    - description?: string
+    - minRequirement?: string
+    - automaticChecks?: string
+    - failures?: string
+    - content: HTML template
+%>
+<%
+let icon = "";
+let message = "";
+switch (status) {
+case 'pass':
+    icon = '#it-check-circle';
+    message = "- Criterio superato";
+    break;
+
+case 'average':
+    icon = '#it-warning-circle';
+    message = "- Criterio nella media";
+    break;
+
+case 'fail':
+    icon = '#it-error';
+    message = "- Criterio non superato";
+    break;
+
+default:
+    icon = '#it-info-circle';
+    message = "";
+    break;
+} %>
+
+
+<!-- {
+    code: this.code,
+    id: this.auditId,
+    title: this.auditData.title,
+    failureTitle: this.auditData.failureTitle,
+    description: this.auditData.description,
+    scoreDisplayMode: this.SCORING_MODES.BINARY,
+    requiredArtifacts: ["origin"],
+}; -->
+
+<div class="audit-content">
+  <h2 class="h3 audit-title">
+    <svg class="icon <%= status %>" aria-hidden="true">
+      <use href="<%= icon %>"></use>
+    </svg>
+      <%=code%> <%= message %>
+  </h2>
+  <div class="audit-description">
+  
+    <p>Tutte le schede informative dei servizi devono mostrare le voci segnalate come obbligatorie all'interno dell'architettura dell'informazione, nell'ordine segnalato dal modello.</p>
+    <div class="separator"></div>
+
+    <p>
+      <span class="h6 uppercase">CONDIZIONI DI SUCCESSO:</span>
+      nelle schede informative di servizio le voci obbligatorie e i relativi contenuti sono presenti e, dove richiesto, sono nell'ordine corretto;
+    </p>
+
+    <p>
+      <span class="h6 uppercase">Verifiche automatiche:</span>
+      ricercando specifici attributi \"data-element\" come spiegato nella Documentazione delle App di valutazione, la presenza e l'ordine delle voci richieste viene verificato ricercandoli all'interno della pagina e dell'indice. Per essere ritenute valide, le voci devono avere contenuti associati della tipologia indicata all'interno del documento di architettura dell'informazione. Maggiori dettagli sono indicati nella Documentazione delle App di valutazione; RIFERIMENTI TECNICI E NORMATIVI:
+      <a href="https://docs.italia.it/italia/designers-italia/design-scuole-docs">Documentazione del Modello scuole</a>,      
+      <a href="https://docs.google.com/spreadsheets/d/1MoayTY05SE4ixtgBsfsdngdrFJf_Z2KNvDkMF3tKfc8/edit#gid=0">Content type: scheda servizio</a>,      
+      <a href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>.     
+    <div class="separator"></div>
+
+    <p>
+      <span class="h6"> <%= statusMessage %> </span> %>
+    </p>
+
+      <% if( table.pagesInError.pages.length ) { %>
+    <p>
+      <span class="h6 uppercase">Elementi di fallimento: <%=table.pagesInError.message %></span> %>
+        <%-  include('../../report/partials/audit/table', {table: table.pagesInError}) %>
+    </p>
+    <% } %>
+      <% if( table.wrongPages.pages.length ) { %>
+      <p>
+          <%-  include('../../report/partials/audit/table', {table : table.wrongPages}) %>
+      </p>
+      <% } %>
+      <% if( table.tolerancePages.pages.length ) { %>
+      <p>
+          <%-  include('../../report/partials/audit/table', {table: table.tolerancePages}) %>
+      </p>
+      <% } %>
+      <% if( table.correctPages.pages.length ) { %>
+      <p>
+          <%-  include('../../report/partials/audit/table', {table: table.correctPages}) %>
+      </p>
+      <% } %>
+
+  </div>
+</div>

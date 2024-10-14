@@ -519,7 +519,7 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
         });
         await page.waitForNetworkIdle();
       } catch (e) {
-        console.log(e, 'errore');
+     
         /* empty */
       }
 

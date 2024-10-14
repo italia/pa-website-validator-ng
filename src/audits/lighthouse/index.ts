@@ -51,9 +51,7 @@ class lighthouseAudit extends Audit {
             };
 
             const url = page.url();
-
-            await page.goto(url, {waitUntil: 'domcontentloaded'});
-
+            await page.goto(url, {waitUntil:'domcontentloaded'});
             const runnerResult = await this.runLighthouse(url, options);
 
             if (runnerResult.report.length < 2) {
