@@ -198,6 +198,10 @@ async function run(
             const result = await audit.returnGlobal();
             const meta = await audit.meta();
 
+            if(page){
+                await page.close();
+            }
+
             await PageManager.setGlobalResults({lighthouse: {...result, ...meta} });
         }
 
