@@ -15,7 +15,7 @@ class lighthouseAudit extends Audit {
     metricsResult = {}
     displayMetrics = [
         "first-contentful-paint",
-        //"interactive",
+        "interactive",
         "speed-index",
         "total-blocking-time",
         "largest-contentful-paint",
@@ -41,11 +41,14 @@ class lighthouseAudit extends Audit {
             const browserWSEndpoint = browser.wsEndpoint();
             const { port } = new URL(browserWSEndpoint);
 
+
             const options = {
                 logLevel: process.env["logsLevel"],
                 output: ["html", "json"],
                 port: port,
-                municipalityOnlineConfig
+                municipalityOnlineConfig,
+                maxWaitForLoad: 300000,
+                locale: "it",
             };
 
             const url = page.url();
@@ -98,13 +101,12 @@ class lighthouseAudit extends Audit {
             }
 
 
-            //console.log(JSON.stringify(runnerResult.lhr.audits.metrics))
             this.globalResults.score = performanceScore
             this.metricsResult = metricsResult
             this.reportHTML = runnerResult.report[0];
             this.reportJSON = runnerResult.report[1];
 
-            this.globalResults.details.items = runnerResult.report.audits ?? {};
+            this.globalResults.details.items = JSON.parse(runnerResult.report[1]).audits
 
             return;
         }

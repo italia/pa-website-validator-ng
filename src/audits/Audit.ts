@@ -11,7 +11,8 @@ export abstract class Audit {
     auditsIds: string[];
     protected static instance: any;
     globalResults : any = {};
-    code = ''
+    code = '';
+    info= false;
 
     protected auditId = "audit";
     protected auditData: crawlerTypes.AuditDictionary = auditDictionary["audit"];

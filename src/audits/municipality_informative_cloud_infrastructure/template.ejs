@@ -1,0 +1,42 @@
+<%# 
+    PARAMETERS NEEDED:
+    - status: pass | average | fails
+    - code: string
+    - description?: string
+    - minRequirement?: string
+    - automaticChecks?: string
+    - failures?: string
+    - content: HTML template
+%>
+<%
+let icon = '#it-info-circle';
+let message = mainTitle;
+%>
+
+
+<!-- {
+    code: this.code,
+    id: this.auditId,
+    title: this.auditData.title,
+    failureTitle: this.auditData.failureTitle,
+    description: this.auditData.description,
+    scoreDisplayMode: this.SCORING_MODES.BINARY,
+    requiredArtifacts: ["origin"],
+}; -->
+
+<div class="audit-content info">
+    <div class="top">
+        <svg class="icon info" aria-hidden="true">
+            <use href="<%= icon %>"></use>
+        </svg>
+        <%= code%> <%= message %> Il sito comunale deve essere ospitato su infrastrutture qualificate ai sensi della normativa vigente.
+    </div>
+    <div class="separator"></div>
+    <div class="audit-description">
+        <p>
+            RIFERIMENTI TECNICI E NORMATIVI: per consentire un'erogazione più sicura, efficiente e scalabile del sito comunale, può essere utile considerare di impostare l'infrastruttura che lo ospita in cloud, secondo quanto descritto nella
+            <a href="https://cloud.italia.it/strategia-cloud-pa/">Strategia Cloud Italia</a>.
+        </p>
+
+    </div>
+</div>

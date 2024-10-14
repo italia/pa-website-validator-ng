@@ -31,6 +31,25 @@
     }
   }
 
+  .top {
+    margin-bottom: 1.5rem;
+    position: relative;
+
+    svg {
+      position: initial;
+
+      &.pass {
+        stroke: $success;
+      }
+      &.average {
+        stroke: $warning;
+      }
+      &.fail {
+        stroke: $error;
+      }
+    }
+  }
+
   &.info{
     padding-left: 18px;
 

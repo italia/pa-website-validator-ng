@@ -6,8 +6,7 @@ import {Page} from "puppeteer";
 import crawlerTypes from "../../types/crawler-types";
 import cookie = crawlerTypes.cookie;
 import {gotoRetry} from "../../utils/utils.js";
-import {oldBrowser} from "../../PuppeteerInstance.js";
-
+import {oldBrowser} from "../../PuppeteerInstanceOld.js";
 
 class CookieAudit extends Audit {
     public globalResults: any = {

@@ -29,7 +29,7 @@ const render = async () => {
         const score = auditResult.score;
         const infoScore = auditResult.infoScore as any;
 
-        if(auditResult.info){
+        if(auditResult.info || audit.info){
             informativeAudits.push({
                 ...auditMeta,
                 auditHTML : await audit.returnGlobalHTML(),
@@ -126,18 +126,17 @@ const render = async () => {
     await writeFile(htmlPath, reportHtml);
     await writeFile(jsonPath, JSON.stringify(reportJSON));
 
-    if (view == "true") {
+    if (view && Boolean(view)) {
         await open(htmlPath);
     }
   
-    //   return {
-    //     status: true,
-    //     data: {
-    //       htmlResultPath: htmlPath,
-    //       jsonResultPath: jsonPath,
-    //     },
-    //   };
-
+       return {
+         status: true,
+           data: {
+           htmlResultPath: htmlPath,
+           jsonResultPath: jsonPath,
+         },
+       };
 }
 
 const  formatDate = (date: Date): string =>{

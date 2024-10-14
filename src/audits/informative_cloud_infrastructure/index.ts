@@ -1,15 +1,16 @@
 "use strict";
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { auditDictionary } from "../../storage/auditDictionary.js";
 import {Audit} from "../Audit.js";
 
 class InfoCloudAudit extends Audit {
+  code = ''
+  mainTitle = ''
+  info= true
   async meta() {
     return {
       id: this.auditId,
       title: this.auditData.title,
+      code: this.code,
+      mainTitle: this.mainTitle,
       failureTitle: this.auditData.failureTitle,
       description: this.auditData.description,
       scoreDisplayMode: this.SCORING_MODES.BINARY,

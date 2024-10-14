@@ -9,8 +9,12 @@ const auditId = "school-ux-ui-consistency-bootstrap-italia-double-check";
 const auditData = auditDictionary[auditId];
 import { compareVersions } from "compare-versions";
 import { cssClasses } from "./cssClasses.js";
+import * as ejs from "ejs";
 
 class SchoolBootstrap extends Audit {
+    code = 'C.SC.1.2'
+    mainTitle = 'LIBRERIA DI ELEMENTI DI INTERFACCIA'
+
     public globalResults: any = {
         score: 1,
         details: {
@@ -18,6 +22,21 @@ class SchoolBootstrap extends Audit {
             type: 'table',
             headings: [],
             summary: ''
+        },
+        pagesInError: {
+            message: '',
+            headings: [],
+            pages: []
+        },
+        wrongPages: {
+            message: '',
+            headings: [],
+            pages: []
+        },
+        correctPages: {
+            message: '',
+            headings: [],
+            pages: []
         },
         errorMessage: ''
     };
@@ -33,6 +52,8 @@ class SchoolBootstrap extends Audit {
             id: auditId,
             title: auditData.title,
             failureTitle: auditData.failureTitle,
+            mainTitle: this.mainTitle,
+            code: this.code,
             description: auditData.description,
             scoreDisplayMode: this.SCORING_MODES.BINARY,
             requiredArtifacts: ["origin"],
@@ -49,7 +70,7 @@ class SchoolBootstrap extends Audit {
             this.score = 0;
 
             this.pagesInError.push({
-                inspected_page: '',
+                link: '',
                 wrong_order_elements: "",
                 missing_elements: error,
             });
@@ -99,7 +120,7 @@ class SchoolBootstrap extends Audit {
 
             let singleResult = 0;
             const item = {
-                inspected_page: url,
+                link: url,
                 library_name: "No",
                 library_version: "",
                 classes_found: "",
@@ -177,7 +198,7 @@ class SchoolBootstrap extends Audit {
                 }
 
                 this.pagesInError.push({
-                    inspected_page: url,
+                    link: url,
                     library_name: ex.message,
                 });
             }
@@ -207,6 +228,10 @@ class SchoolBootstrap extends Audit {
     }
 
     async returnGlobal() {
+        this.globalResults.correctPages.pages = [];
+        this.globalResults.wrongPages.pages = [];
+        this.globalResults.pagesInError.pages = [];
+
         switch (this.score) {
             case 1:
                 this.globalResults['details']['items'].push({
@@ -235,8 +260,12 @@ class SchoolBootstrap extends Audit {
                 title_wrong_order_elements: "",
             });
 
+            this.globalResults.pagesInError.message = errorHandling.errorMessage
+            this.globalResults.pagesInError.headings = [errorHandling.errorColumnTitles[0], errorHandling.errorColumnTitles[1]];
+
 
             for (const item of this.pagesInError) {
+                this.globalResults.pagesInError.pages.push(item);
                 results.push({
                     subItems: {
                         type: "subitems",
@@ -256,7 +285,11 @@ class SchoolBootstrap extends Audit {
                 title_classes_found: this.titleSubHeadings[2],
             });
 
+            this.globalResults.wrongPages.headings = [auditData.subItem.redResult, this.titleSubHeadings[0], this.titleSubHeadings[1], this.titleSubHeadings[2]];
+
             for (const item of this.wrongItems) {
+                this.globalResults.wrongPages.pages.push(item);
+
                 results.push({
                     subItems: {
                         type: "subitems",
@@ -276,7 +309,11 @@ class SchoolBootstrap extends Audit {
                 title_classes_found: this.titleSubHeadings[2],
             });
 
+            this.globalResults.correctPages.headings = [auditData.subItem.greenResult, this.titleSubHeadings[0], this.titleSubHeadings[1], this.titleSubHeadings[2]];
+
             for (const item of this.correctItems) {
+                this.globalResults.correctPages.pages.push(item)
+
                 results.push({
                     subItems: {
                         type: "subitems",
@@ -295,6 +332,22 @@ class SchoolBootstrap extends Audit {
         this.globalResults.id = this.auditId;
 
         return this.globalResults;
+    }
+
+    async returnGlobalHTML() {
+        let status = 'fail'
+        let message = ''
+
+        if (this.globalResults.score > 0.5) {
+            status = 'pass';
+            message = this.auditData.greenResult;
+        } else {
+            status = 'fail';
+            message = this.auditData.redResult
+        }
+
+        const reportHtml = await ejs.renderFile('src/audits/school_bootstrap/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null ,totalPercentage : null });
+        return reportHtml
     }
 
     static getInstance(): Promise<SchoolBootstrap> {

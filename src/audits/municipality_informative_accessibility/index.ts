@@ -8,6 +8,9 @@ class MunicipalityInformativeAccAudit extends InformativeAccAudit {
   auditId = "municipality-informative-legislation-accessibility-declaration-is-present";
   auditData = auditDictionary["municipality-informative-legislation-accessibility-declaration-is-present"];
 
+  code = 'C.SI.3.2'
+  mainTitle = 'DICHIARAZIONE DI ACCESSIBILITÀ'
+
   static getInstance(): Promise<MunicipalityInformativeAccAudit> {
     if (!MunicipalityInformativeAccAudit.instance) {
       MunicipalityInformativeAccAudit.instance = new MunicipalityInformativeAccAudit('',[],[]);

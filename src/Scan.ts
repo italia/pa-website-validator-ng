@@ -1,5 +1,6 @@
 import PageManager from './PageManager.js';
-import {browser, oldBrowser} from './PuppeteerInstance.js';
+import {browser} from './PuppeteerInstance.js';
+import {oldBrowser} from './PuppeteerInstanceOld.js';
 
 import {gatherers} from './GathererManager.js';
 import {audits} from './AuditManager.js';
@@ -9,12 +10,10 @@ import PageData = crawlerTypes.PageData
 import {config} from "./config/config.js";
 import {loadPage} from "./utils/utils.js";
 import {Page} from "puppeteer";
-import {mkdir, writeFile} from "fs/promises";
-import {format} from "path";
-import open from "open";
 import render from './report/Renderer.js';
 
 const scan = async (pageData: PageData, saveFile = true, destination = '', reportName = '', view = false) => {
+    let results : any;
     try {
         await PageManager.setScanning(pageData.url, pageData.type, true);
         /** if no gathering or auditing for this page type skip*/
@@ -26,14 +25,6 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
             PageManager.setNotTemporaryAudit(pageData.url, pageData.type);
             await PageManager.setScanning(pageData.url, pageData.type, false);
             await PageManager.closePage(pageData);
-
-            if (!PageManager.hasRemainingPages()) {
-                console.error('closing puppeteer')
-                await browser.close()
-                await oldBrowser.close()
-                console.log('SCAN ENDED - navigated pages:')
-            }
-            return
         }
         if(!config.audits[pageData.type]){
             PageManager.setAudited(pageData.url, pageData.type);
@@ -147,24 +138,26 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
 
             if(config.audits[pageData.type]){
                 for (let auditId of config.audits[pageData.type]) {
-                    if (!audits[auditId]) continue
-                    const audit = await audits[auditId]()
-                    try {
+                    if(auditId !== 'lighthouse'){
+                        if (!audits[auditId]) continue
+                        const audit = await audits[auditId]()
+                        try {
 
-                        if (audit === undefined) throw new Error(` No audit found for id ${auditId}: check your configuration`);
+                            if (audit === undefined) throw new Error(` No audit found for id ${auditId}: check your configuration`);
 
-                        const auditType = await audit.getType();
-                        await audit.auditPage(navigatingError ? null : page, pageData.url, pageData.errors && pageData.errors.length ? pageData.errors[0] : navigatingError ? navigatingError : '', pageData.type);
-                        const result = await audit.returnGlobal();
-                        const meta = await audit.meta();
+                            const auditType = await audit.getType();
+                            await audit.auditPage(navigatingError ? null : page, pageData.url, pageData.errors && pageData.errors.length ? pageData.errors[0] : navigatingError ? navigatingError : '', pageData.type);
+                            const result = await audit.returnGlobal();
+                            const meta = await audit.meta();
 
-                        await PageManager.setGlobalResults({[auditType]: {...result, ...meta} });
+                            await PageManager.setGlobalResults({[auditType]: {...result, ...meta} });
 
-                    } catch (e: any) {
-                        console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: ERROR`)
-                        console.log(e.message)
+                        } catch (e: any) {
+                            console.log(` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: ERROR`)
+                            console.log(e.message)
 
-                        auditingErrors.push(e)
+                            auditingErrors.push(e)
+                        }
                     }
                 }
 
@@ -187,14 +180,13 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
         await PageManager.closePage(pageData);
 
         if (!PageManager.hasRemainingPages()) {
-            console.error('closing puppeteer...')
-            await browser.close()
-            await oldBrowser.close()
-            PageManager.getAllPages();
-            console.log('SCAN ENDED - navigated pages:')
+            console.log('SCAN ENDED - navigated pages end:')
             console.log(PageManager.getAllPages());
 
-            await render()
+            results = await render();
+
+            await PageManager.closeScript(results);
+
 
             // /*if (!runnerResult || !Object.keys(runnerResult).length) {
             //     throw new Error("Missing report");
@@ -244,6 +236,10 @@ const scan = async (pageData: PageData, saveFile = true, destination = '', repor
     } catch (err) {
         console.log(`SCAN error: ${err}`)
         await browser.close()
+    }
+
+    if(results){
+        return results;
     }
 }
 

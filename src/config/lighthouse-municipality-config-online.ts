@@ -1,13 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import defaultConfig from "lighthouse/lighthouse-core/config/default-config.js";
-/*
-import {
-  commonGatherersFolder,
-  commonAuditsFolder,
-  municipalityAuditsFolder,
-  municipalityInformativeAuditsFolder,
-} from "../configFolderingConstants.js";*/
 
 import {
   groups,
@@ -16,6 +9,7 @@ import {
   seoAudits,
   pwaAudits,
 } from "./commonAuditsParts.js";
+import {commonGatherersFolder} from "./configFolderingConstants.js";
 
 export default {
   extends: "lighthouse:default",
@@ -26,7 +20,7 @@ export default {
     ],
   },
 
-  /*passes: [
+  passes: [
     {
       gatherers: [
         commonGatherersFolder + "/originGatherer.js",
@@ -35,7 +29,7 @@ export default {
         commonGatherersFolder + "/bootstrapItaliaSelectorCheckGatherer.js",
       ],
     },
-  ],*/
+  ],
 
   groups: groups,
 

@@ -95,7 +95,7 @@ class ImprovementPlanAudit extends Audit {
     let message = ''
 
     if (this.score > 0.5) {
-      status = 'pass';
+      status = 'info';
       message = this.auditData.greenResult;
     } else {
       status = 'average';

@@ -1,7 +1,6 @@
 import {EventEmitter} from 'events';
 import crawlerTypes from "./types/crawler-types";
 import PageData = crawlerTypes.PageData
-import {browser} from "./PuppeteerInstance.js";
 
 class PageManager {
     private static instance: PageManager;
@@ -11,6 +10,7 @@ class PageManager {
         audits: {}
     };
     private emitter: EventEmitter;
+    numberOfConcurrentPages = process.env["concurrentPages"] ? parseInt(process.env["concurrentPages"]) : 20;
 
     private constructor() {
         this.emitter = new EventEmitter();
@@ -32,15 +32,19 @@ class PageManager {
 
             console.log(pages.length, 'qui');
 
-            if (pages.length <= 20 && this.firstAdd) {
+            if (pages.length <= this.numberOfConcurrentPages && this.firstAdd) {
                 await this.setScanning(page.url, page.type, true);
                 this.emitter.emit('pagesAdded', page);
 
-                if(pages.length === 20){
+                if(pages.length === this.numberOfConcurrentPages){
                     this.firstAdd = false;
                 }
             }
         }
+    }
+
+    async closeScript(results: any): Promise<void> {
+        this.emitter.emit('scriptClosed', results);
     }
 
     async closePage(page: PageData): Promise<void> {
@@ -49,7 +53,7 @@ class PageManager {
         const pages = this.pagesArray.filter(p => p.scanning);
         console.log(pages.length, 'qua');
         if(usablePage){
-            if (pages.length <= 20){
+            if (pages.length <= this.numberOfConcurrentPages){
                 await this.setScanning(usablePage.url, usablePage.type, true);
                 this.emitter.emit('pagesClosed', {...usablePage, scanning: true});
                 this.firstAdd = true;
@@ -83,6 +87,10 @@ class PageManager {
 
     onPagesClosed(callback: (pageData: PageData) => void): void {
         this.emitter.on('pagesClosed', callback);
+    }
+
+    async onScriptClosed(callback: (results: any) => void) {
+        this.emitter.on('scriptClosed', callback);
     }
 
     getPageById(id: string): PageData | undefined {

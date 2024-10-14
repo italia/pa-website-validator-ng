@@ -1,0 +1,87 @@
+<%# 
+    PARAMETERS NEEDED:
+    - status: pass | average | fails
+    - code: string
+    - description?: string
+    - minRequirement?: string
+    - automaticChecks?: string
+    - failures?: string
+    - content: HTML template
+%>
+<%
+let icon = "";
+let message = "";
+switch (status) {
+case 'pass':
+    icon = '#it-check-circle';
+    message = "- Criterio superato";
+    break;
+
+case 'fail':
+    icon = '#it-error';
+    message = "- Criterio non superato";
+    break;
+
+default:
+    icon = '#it-info-circle';
+    message = "";
+    break;
+} %>
+
+
+<!-- {
+    code: this.code,
+    id: this.auditId,
+    title: this.auditData.title,
+    failureTitle: this.auditData.failureTitle,
+    description: this.auditData.description,
+    scoreDisplayMode: this.SCORING_MODES.BINARY,
+    requiredArtifacts: ["origin"],
+}; -->
+
+<div class="audit-content">
+  <h2 class="h3 audit-title">
+    <svg class="icon <%= status %>" aria-hidden="true">
+      <use href="<%= icon %>"></use>
+    </svg>
+      <%=code%> <%= message %>
+  </h2>
+  <div class="audit-description">
+  
+    <p>Il sito della scuola deve utilizzare la libreria Bootstrap Italia in una versione più recente di 1.6.</p>
+    <div class="separator"></div>
+
+    <p>
+      <span class="h6 uppercase">CONDIZIONI DI SUCCESSO:</span>
+        la libreria Bootstrap Italia è presente e in uso in una versione uguale o superiore alla 1.6;
+    </p>
+
+    <p>
+        in ogni pagina analizzata viene verificata la presenza della libreria Bootstrap Italia e la versione in uso, individuando la proprietà CSS --bootstrap-italia-version all’interno del selettore :root o la variabile globale window.BOOTSTRAP_ITALIA_VERSION. Inoltre deve utilizzare almeno una tra le classi CSS di Bootstrap Italia indicate nella Documentazione dell'App di valutazione; RIFERIMENTI TECNICI E NORMATIVI:
+        <a href="https://docs.italia.it/italia/designers-italia/design-scuole-docs">Documentazione del Modello scuole</a>.
+    </p>
+    <div class="separator"></div>
+
+    <p>
+      <span class="h6"> <%= statusMessage %> </span> %>
+    </p>
+
+    <% if( table.pagesInError.pages.length ) { %>
+        <p>
+        <span class="h6 uppercase">Elementi di fallimento: <%=table.pagesInError.message %></span> %>
+            <%-  include('../../report/partials/audit/table', {table: table.pagesInError}) %>
+        </p>
+    <% } %>
+    <% if( table.wrongPages.pages.length ) { %>
+      <p>
+          <%-  include('../../report/partials/audit/table', {table : table.wrongPages}) %>
+      </p>
+    <% } %>
+    <% if( table.correctPages.pages.length ) { %>
+      <p>
+          <%-  include('../../report/partials/audit/table', {table: table.correctPages}) %>
+      </p>
+    <% } %>
+
+  </div>
+</div>

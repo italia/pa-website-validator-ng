@@ -25,10 +25,6 @@ class BootstrapMunAudit extends Audit {
   auditData = auditDictionary["municipality-ux-ui-consistency-bootstrap-italia-double-check"];
   code = 'C.SI.1.2'
   mainTitle = 'LIBRERIA DI ELEMENTI DI INTERFACCIA'
-  mainDescription = 'Il sito comunale deve utilizzare la libreria Bootstrap Italia'
-  minRequirement = "in ogni pagina è presente e in uso la libreria Bootstrap Italia in una versione uguale o superiore alla 2.0 e almeno il 30% delle classi CSS usate appartiene alle classi CSS di Bootstrap Italia;"
-  automaticChecks = "in ogni pagina analizzata viene verificata la presenza della libreria Bootstrap Italia e la versione in uso, individuando la proprietà CSS --bootstrap-italia-version all’interno del selettore :root o la variabile globale window.BOOTSTRAP_ITALIA_VERSION. Inoltre, viene verificato che almeno il 30% delle classi CSS uniche trovate nella pagina appartiene all'elenco delle classi CSS di Bootstrap Italia;" 
-  failures = "Elementi di fallimento:"
 
   public globalResults: any = {
     score: 1,
@@ -70,10 +66,6 @@ class BootstrapMunAudit extends Audit {
       id: this.auditId,
       title: this.auditData.title,
       mainTitle: this.mainTitle,
-      mainDescription: this.mainDescription,
-      minRequirement:this.minRequirement,
-      automaticChecks: this.automaticChecks,
-      failures: this.failures,
       auditId: this.auditId,
       failureTitle: this.auditData.failureTitle,
       description: this.auditData.description,
@@ -100,7 +92,7 @@ class BootstrapMunAudit extends Audit {
         key: "result",
         itemType: "text",
         text: "Risultato totale",
-        subItemsHeading: { key: "inspected_page", itemType: "url" },
+        subItemsHeading: { key: "link", itemType: "url" },
       },
       {
         key: "title_library_name",
@@ -354,6 +346,7 @@ class BootstrapMunAudit extends Audit {
       
       for (const item of this.correctItems) {
         this.globalResults.correctPages.pages.push(item)
+
         results.push({
           subItems: {
             type: "subitems",

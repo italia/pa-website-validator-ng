@@ -1,20 +1,20 @@
 "use strict";
-
-import { auditDictionary } from "../../storage/auditDictionary.js";
 import {Audit} from "../Audit.js";
 
-const auditId = "common-informative-ip-location";
-const auditData = auditDictionary[auditId];
-
 class InformativeIpAudit extends Audit {
+  code = ''
+  mainTitle = ''
+  info= true
   async meta() {
     return {
-      id: auditId,
-      title: auditData.title,
-      failureTitle: auditData.failureTitle,
-      description: auditData.description,
-      scoreDisplayMode: this.SCORING_MODES.INFORMATIVE,
-      requiredArtifacts: [],
+      id: this.auditId,
+      title: this.auditData.title,
+      code: this.code,
+      mainTitle: this.mainTitle,
+      failureTitle: this.auditData.failureTitle,
+      description: this.auditData.description,
+      scoreDisplayMode: this.SCORING_MODES.BINARY,
+      requiredArtifacts: ["origin"],
     };
   }
 
@@ -23,7 +23,7 @@ class InformativeIpAudit extends Audit {
   }
 
   async getType(){
-    return auditId;
+    return this.auditId;
   }
 
   async returnGlobal(){
