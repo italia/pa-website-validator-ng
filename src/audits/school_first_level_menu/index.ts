@@ -11,6 +11,8 @@ import * as cheerio from "cheerio";
 import {detectLang, getFirstLevelPages} from "../../utils/school/utils.js";
 import {MenuItem, primaryMenuItems} from "./menuItem.js";
 import {auditDictionary} from "../../storage/auditDictionary.js";
+import * as ejs from "ejs";
+
 
 class SchoolFirstLevelMenuAudit extends Audit {
 
@@ -22,12 +24,24 @@ class SchoolFirstLevelMenuAudit extends Audit {
             headings: [],
             summary: ''
         },
+        pagesItems: {
+            message: '',
+            headings: [],
+            pages: [],
+        },
+        recapItems: {
+            message: '',
+            headings: [],
+            pages: [],
+        },
         errorMessage: ''
     };
 
     private headings : any = [];
     auditId = "school-menu-structure-match-model";
     auditData = auditDictionary["school-menu-structure-match-model"];
+    code = "C.SC.1.4";
+    mainTitle = "VOCI DI MENÙ DI PRIMO LIVELLO"; 
 
     async meta() {
         return {
@@ -37,11 +51,15 @@ class SchoolFirstLevelMenuAudit extends Audit {
             description: this.auditData.description,
             scoreDisplayMode: this.SCORING_MODES.NUMERIC,
             requiredArtifacts: ["origin"],
+            code: this.code,
+            mainTitle: this.mainTitle,
+            auditId: this.auditId,
         };
     }
 
     async auditPage(
         page: Page | null,
+        url: string,
         error?: string,
     ) {
 
@@ -54,6 +72,14 @@ class SchoolFirstLevelMenuAudit extends Audit {
                 },
             ]);
             this.globalResults.details.headings= [{ key: "result", itemType: "text", text: "Risultato" }];
+            
+            this.globalResults.pagesItems.headings = ["Risultato"];
+            this.globalResults.pagesItems.message = notExecutedErrorMessage.replace("<LIST>", error);
+            this.globalResults.pagesItems.items = [
+                {
+                result: this.auditData.redResult,
+                },
+            ];
 
             return {
                 score: 0,
@@ -177,6 +203,9 @@ class SchoolFirstLevelMenuAudit extends Audit {
                 score = 0.5;
                 results[0].result = this.auditData.yellowResult;
             }
+            
+            this.globalResults.recapItems.headings = ["Risultato", "Voci del menù identificate", "Voci obbligatorie del menù mancanti", "Voci del menù in ordine errato"];
+            this.globalResults.recapItems.pages = [results[0]];
 
             const firstLevelPages = await getFirstLevelPages(url);
 
@@ -187,6 +216,8 @@ class SchoolFirstLevelMenuAudit extends Audit {
                 found_menu_voices: "Link trovato",
                 missing_menu_voices: "Pagina interna al dominio",
             });
+            
+            this.globalResults.pagesItems.headings = ["Voce di menù", "Link trovato", "Pagina interna al dominio"];
 
             const host = new URL(url).hostname.replace("www.", "");
             for (const page of firstLevelPages) {
@@ -200,7 +231,7 @@ class SchoolFirstLevelMenuAudit extends Audit {
 
                 const item = {
                     menu_voice: page.linkName,
-                    inspected_page: page.linkUrl,
+                    link: page.linkUrl,
                     external: isInternal ? "Sì" : "No",
                 };
 
@@ -210,6 +241,9 @@ class SchoolFirstLevelMenuAudit extends Audit {
                         items: [item],
                     },
                 });
+
+                this.globalResults.pagesItems.pages.push(item);
+
             }
 
             this.globalResults.score = score;
@@ -230,6 +264,26 @@ class SchoolFirstLevelMenuAudit extends Audit {
     async returnGlobal(){
         return this.globalResults;
     }
+
+   
+  async returnGlobalHTML() {
+    let status = 'fail'
+    let message = ''
+
+    if (this.globalResults.score > 0.5) {
+      status = 'pass';
+      message = this.auditData.greenResult;
+    } else if (this.globalResults.score == 0.5) {
+      status = 'average';
+      message = this.auditData.yellowResult
+    } else {
+      status = 'fail';
+      message = this.auditData.redResult
+    }
+
+    const reportHtml = await ejs.renderFile('src/audits/school_first_level_menu/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null ,  totalPercentage : null });
+    return reportHtml
+  }
 
     static getInstance(): Promise<SchoolFirstLevelMenuAudit> {
         if (!SchoolFirstLevelMenuAudit.instance) {

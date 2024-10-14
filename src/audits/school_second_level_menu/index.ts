@@ -12,6 +12,7 @@ import {detectLang, getSecondLevelPages} from "../../utils/school/utils.js";
 
 import {auditDictionary} from "../../storage/auditDictionary.js";
 import {customPrimaryMenuItemsDataElement, menuItems, primaryMenuDataElement} from "./menuItem.js";
+import * as ejs from "ejs";
 
 interface itemPage {
     key: string;
@@ -29,12 +30,24 @@ class SchoolSecondLevelMenuAudit extends Audit {
             headings: [],
             summary: ''
         },
+        pagesItems: {
+            message: '',
+            headings: [],
+            pages: [],
+        },
+        recapItems: {
+            message: '',
+            headings: [],
+            pages: [],
+        },
         errorMessage: ''
     };
 
     private headings : any = [];
     auditId = "school-menu-scuola-second-level-structure-match-model";
     auditData = auditDictionary["school-menu-scuola-second-level-structure-match-model"];
+    code = "C.SC.1.5";
+    mainTitle = "VOCI DI MENÙ DI SECONDO LIVELLO"; 
 
     async meta() {
         return {
@@ -44,11 +57,15 @@ class SchoolSecondLevelMenuAudit extends Audit {
             description: this.auditData.description,
             scoreDisplayMode: this.SCORING_MODES.NUMERIC,
             requiredArtifacts: ["origin"],
+            code: this.code,
+            mainTitle: this.mainTitle,
+            auditId: this.auditId,
         };
     }
 
     async auditPage(
         page: Page | null,
+        url:string, 
         error?: string,
     ) {
 
@@ -61,6 +78,14 @@ class SchoolSecondLevelMenuAudit extends Audit {
                 },
             ]);
             this.globalResults.details.headings= [{ key: "result", itemType: "text", text: "Risultato" }];
+            
+            this.globalResults.pagesItems.headings = ["Risultato"];
+            this.globalResults.pagesItems.message = notExecutedErrorMessage.replace("<LIST>", error);
+            this.globalResults.pagesItems.items = [
+                {
+                result: this.auditData.redResult,
+                },
+            ];
 
             return {
                 score: 0,
@@ -240,6 +265,9 @@ class SchoolSecondLevelMenuAudit extends Audit {
             results[0].correct_voices_percentage =
                 presentVoicesPercentage.toString() + "%";
             results[0].wrong_voices = wrongTitleFound;
+            
+            this.globalResults.recapItems.headings = ["Risultato", "% di voci corrette tra quelle usate", "Voci corrette identificate", "Voci aggiuntive trovate"];
+            this.globalResults.recapItems.pages = [results[0]];
 
             const secondLevelPages = await getSecondLevelPages(url); //TODO: questo metodo utilizza una nuova istanza di puppeteer
 
@@ -250,6 +278,8 @@ class SchoolSecondLevelMenuAudit extends Audit {
                 correct_voices: "Pagina interna al dominio",
                 correct_voices_percentage: "Link trovato",
             });
+            
+            this.globalResults.pagesItems.headings = ["Voce di menù","Link trovato", "Pagina interna al dominio"];
 
             const host = new URL(url).hostname.replace("www.", "");
             for (const page of secondLevelPages) {
@@ -263,7 +293,7 @@ class SchoolSecondLevelMenuAudit extends Audit {
 
                 const item = {
                     menu_voice: page.linkName,
-                    inspected_page: page.linkUrl,
+                    link: page.linkUrl,
                     external: isInternal ? "Sì" : "No",
                 };
 
@@ -271,8 +301,11 @@ class SchoolSecondLevelMenuAudit extends Audit {
                     subItems: {
                         type: "subitems",
                         items: [item],
-                    },
+                    },                    
                 });
+
+                this.globalResults.pagesItems.pages.push(item);
+
             }
 
             this.globalResults.score = score;
@@ -292,6 +325,25 @@ class SchoolSecondLevelMenuAudit extends Audit {
 
     async returnGlobal(){
         return this.globalResults;
+    }
+    
+    async returnGlobalHTML() {
+        let status = 'fail'
+        let message = ''
+    
+        if (this.globalResults.score > 0.5) {
+          status = 'pass';
+          message = this.auditData.greenResult;
+        } else if (this.globalResults.score == 0.5) {
+          status = 'average';
+          message = this.auditData.yellowResult
+        } else {
+          status = 'fail';
+          message = this.auditData.redResult
+        }
+    
+        const reportHtml = await ejs.renderFile('src/audits/school_second_level_menu/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null ,  totalPercentage : null });
+        return reportHtml
     }
 
     static getInstance(): Promise<SchoolSecondLevelMenuAudit> {
