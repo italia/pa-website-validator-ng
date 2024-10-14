@@ -120,18 +120,18 @@ const config: any = {
             "gatherers": {
                 "homepage": [
                     "services_page",
-                    //"vivere_page",
-                    //"booking_appointment",
+                    "vivere_page",
+                    "booking_appointment",
                     "personal_area_login",
-                    //"first_level_pages",
-                    //"second_level_pages_all"
+                    "first_level_pages",
+                    "second_level_pages_all"
                 ],
-               /* "events-page": [
+                "events-page": [
                     "events"
                 ],
                 "vivere-page": [
                     "events_page"
-                ],*/
+                ],
                 "services-page": [
                     "services"
                 ],
@@ -140,17 +140,15 @@ const config: any = {
                 "homepage": [
                     "lighthouse",
                     "municipality_accessibility",
-                    //"municipality_domain_audit",
-                    //"municipality_faq",
-                    //"municipality_vocabulary",
-                    "municipality_improvement_plan",
-                    "municipality_inefficiency_report_audit",
-                    "municipality_license",
-                    "municipality_privacy",
-                    "municipality_security",
-                    "municipality_theme",
-                    "municipality_menu",
-                    "municipality_second_level_pages_audit",
+                    "municipality_domain_audit",
+                    "municipality_faq",
+                    "municipality_vocabulary",
+                    //"municipality_improvement_plan",
+                    //"municipality_inefficiency_report_audit",
+                    //"municipality_license",
+                    //"municipality_privacy",
+                   // "municipality_security",
+                    //"municipality_theme",
                     //"municipality_informative_accessibility",
                     //"municipality_informative_cloud_infrastructure",
                     //"municipality_informative_cookie",
@@ -163,48 +161,48 @@ const config: any = {
                     "municipality_booking_appointment"
                 ],
                 "service": [
-                    //"municipality_domain_audit",
-                    //"municipality_bootstrap",
+                    "municipality_domain_audit",
+                    "municipality_bootstrap",
                     //"municipality_booking_appointment",
-                    //"municipality_contacts_assistency_audit",
+                    "municipality_contacts_assistency_audit",
                     "municipality_cookie",
                     "municipality_font",
                     //"municipality_metatag",
                     "municipality_service",
-                    //"municipality_user_experience_evaluation"
+                    "municipality_user_experience_evaluation"
                 ],
                 "personal-area-login": [
-                    //"municipality_bootstrap",
+                    "municipality_bootstrap",
                     "municipality_cookie",
-                    // "municipality_domain_audit",
+                    "municipality_domain_audit",
                     "municipality_font"
                 ],
-                /*"first-level-page": [
-                   // "municipality_bootstrap",
-                    //    "municipality_cookie",
-                    //"municipality_domain_audit",
+                "first-level-page": [
+                    "municipality_bootstrap",
+                    // "municipality_cookie",
+                    "municipality_domain_audit",
                     //"municipality_feedback",
                     "municipality_font",
 
                 ],
                 "second-level-page-all" : [
-                    //"municipality_bootstrap",
+                    "municipality_bootstrap",
                     //  "municipality_cookie",
-                    //"municipality_domain_audit",
+                    "municipality_domain_audit",
                     //"municipality_feedback",
                     //"municipality_font",
 
                 ],
 
                 "appointment-booking": [
-                   // "municipality_domain_audit",
-                    //"municipality_bootstrap",
+                    "municipality_domain_audit",
+                    "municipality_bootstrap",
                     // "municipality_cookie"
                 ],
                 "event": [
                     "municipality_domain_audit",
                     //    "municipality_cookie"
-                ]*/
+                ]
             },
             "accuracy": {
                 min: 1,

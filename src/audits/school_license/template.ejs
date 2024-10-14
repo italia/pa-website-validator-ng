@@ -1,0 +1,81 @@
+<%# 
+    PARAMETERS NEEDED:
+    - status: pass | average | fails
+    - code: string
+    - description?: string
+    - minRequirement?: string
+    - automaticChecks?: string
+    - failures?: string
+    - content: HTML template
+%>
+<%
+
+let icon = "";
+let message = "";
+switch (status) {
+case 'pass':
+    icon = '#it-check-circle';
+    message = "- Criterio superato";
+    break;
+
+case 'fail':
+    icon = '#it-error';
+    message = "- Criterio non superato";
+    break;
+
+default:
+    icon = '#it-info-circle';
+    message = "";
+    break;
+} %>
+
+
+<!-- {
+    code: this.code,
+    id: this.auditId,
+    title: this.auditData.title,
+    failureTitle: this.auditData.failureTitle,
+    description: this.auditData.description,
+    scoreDisplayMode: this.SCORING_MODES.BINARY,
+    requiredArtifacts: ["origin"],
+}; -->
+
+<div class="audit-content">
+  <h2 class="h3 audit-title">
+    <svg class="icon <%= status %>" aria-hidden="true">
+      <use href="<%= icon %>"></use>
+    </svg>
+      <%=code%> <%= message %>
+  </h2>
+  <div class="audit-description">
+
+
+      <p>Il sito della scuola deve pubblicare dati, documenti e informazioni con licenza aperta (es. CC-BY 4.0).</p>
+    <p>
+      <span class="h6 uppercase">Condizioni di successo:</span>
+      nella pagina delle noti legali viene indicato che i dati, documenti e informazioni riportati sul sito sono rilasciati con licenza CC-BY 4.0;
+    </p>
+
+    <p>
+      <span class="h6 uppercase">Verifiche automatiche:</span>
+      ricercando uno specifico attributo "data-element" come spiegato nella Documentazione delle App di valutazione, viene verificato che la pagina delle note legali sia raggiungibile dal footer e che questa contenga una sezione "Licenza dei contenuti" riportante la dicitura indicata nella Documentazione del modello; RIFERIMENTI TECNICI E NORMATIVI: 
+        <a href="https://docs.italia.it/italia/designers-italia/design-scuole-docs">Documentazione del Modello scuole</a>,
+        <a href="https://docs.italia.it/italia/piano-triennale-ict/codice-amministrazione-digitale-docs/it/stabile/_rst/capo_V-sezione_I-articolo_52.html">CAD Art. 52 d.lgs. 82/2005</a>,
+        <a href="https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:decreto.legislativo:2013-03-14;33">art. 7, comma 1, D.Lgs. n. 33/2013</a>,
+        <a href="https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:decreto.legislativo:2006-01-24;36!vig=">d.lgs. n. 36/2006</a>,
+        <a href="https://www.agid.gov.it/it/design-servizi/riuso-open-source/linee-guida-acquisizione-riuso-software-pa">AgID Linee guida su acquisizione e riuso di software per le pubbliche amministrazioni</a>,
+        <a href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>.
+    </p>
+    <div class="separator"></div>
+
+      <p>
+          <span class="h6"> <%= statusMessage %> </span> %>
+      </p>
+
+      <% if( table.pagesItems.pages.length ) { %>
+      <p>
+          <%-  include('../../report/partials/audit/table', {table: table.pagesItems}) %>
+      </p>
+      <% } %>
+  </div>
+</div>

@@ -1,0 +1,78 @@
+<%# 
+    PARAMETERS NEEDED:
+    - status: pass | average | fails
+    - code: string
+    - description?: string
+    - minRequirement?: string
+    - automaticChecks?: string
+    - failures?: string
+    - content: HTML template
+%>
+<%
+
+let icon = "";
+let message = "";
+switch (status) {
+case 'pass':
+    icon = '#it-check-circle';
+    message = "- Criterio superato";
+    break;
+
+case 'fail':
+    icon = '#it-error';
+    message = "- Criterio non superato";
+    break;
+
+default:
+    icon = '#it-info-circle';
+    message = "";
+    break;
+} %>
+
+
+<!-- {
+    code: this.code,
+    id: this.auditId,
+    title: this.auditData.title,
+    failureTitle: this.auditData.failureTitle,
+    description: this.auditData.description,
+    scoreDisplayMode: this.SCORING_MODES.BINARY,
+    requiredArtifacts: ["origin"],
+}; -->
+
+<div class="audit-content">
+  <h2 class="h3 audit-title">
+    <svg class="icon <%= status %>" aria-hidden="true">
+      <use href="<%= icon %>"></use>
+    </svg>
+      <%=code%> <%= message %>
+  </h2>
+  <div class="audit-description">
+
+
+      <p>Il sito della scuola deve presentare l'informativa sul trattamento dei dati personali, secondo quanto previsto dalla normativa vigente.</p>
+    <p>
+      <span class="h6 uppercase">Condizioni di successo:</span>
+      il sito presenta una voce nel footer che riporta a una pagina sicura riguardante l\'informativa sulla privacy;
+    </p>
+
+    <p>
+      <span class="h6 uppercase">Verifiche automatiche:</span>
+      viene verificata la presenza del link nel footer, che riporti a una pagina esistente e con certificato HTTPS valido e attivo, ricercando uno specifico attributo "data-element" come spiegato nella Documentazione delle App di valutazione; RIFERIMENTI TECNICI E NORMATIVI: 
+        <a href="https://docs.italia.it/italia/designers-italia/design-scuole-docs/it/versione-corrente/index.html">Documentazione del Modello scuole</a>,
+        <a href="https://www.garanteprivacy.it/regolamentoue">GDPR Artt. 13 e 14, Reg. UE n. 2016/679</a>,
+        <a href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/it/versione-attuale/index.html">Documentazione delle App di valutazione</a>.
+    </p>
+    <div class="separator"></div>
+
+      <p>
+          <span class="h6"> <%= statusMessage %> </span> %>
+      </p>
+
+      <% if( table.pagesItems.pages.length ) { %>
+      <p>
+          <%-  include('../../report/partials/audit/table', {table: table.pagesItems}) %>
+      </p>
+      <% } %>
+  </div>
+</div>

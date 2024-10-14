@@ -40,15 +40,17 @@ class lighthouseAudit extends Audit {
         if (page) {
             const browserWSEndpoint = browser.wsEndpoint();
             const { port } = new URL(browserWSEndpoint);
-
+           
             const options = {
                 logLevel: process.env["logsLevel"],
                 output: ["html", "json"],
                 port: port,
-                municipalityOnlineConfig
+                municipalityOnlineConfig,
+                maxWaitForLoad: 300000
             };
 
             const url = page.url();
+            await page.goto(url, {waitUntil:'domcontentloaded'});
             const runnerResult = await this.runLighthouse(url, options);
 
             if (runnerResult.report.length < 2) {
@@ -60,6 +62,7 @@ class lighthouseAudit extends Audit {
             const metricsScore = metrics.score
             const metricsDetails = metrics.details
             const performanceScore = runnerResult.lhr.categories.performance.score
+            console.log('PERFORMANCE SCORE', performanceScore); 
             const items =  metricsDetails.items[0]
 
             let metricsResult = []
@@ -80,14 +83,14 @@ class lighthouseAudit extends Audit {
                 if (Object.keys(lhrAudits).includes(metricId)) {
                     const metric = lhrAudits[metricId]
 
-                    let score =  metric.score * 100
+                    let score =  metric.score
                     let status = "pass"
-                    if ( score < 50 ) {
+                    if ( score * 100 < 50 ) {
                         status = 'fail'
-                    } else if ( score < 90) {
+                    } else if ( score * 100 < 90) {
                         status = 'average'
                     }
-
+                     
                     metricsResult.push({
                         "status": status,
                         "title": metric.title,
@@ -97,7 +100,7 @@ class lighthouseAudit extends Audit {
                 }
             }
 
-
+     
             //console.log(JSON.stringify(runnerResult.lhr.audits.metrics))
             this.globalResults.score = performanceScore
             this.metricsResult = metricsResult
@@ -151,9 +154,9 @@ class lighthouseAudit extends Audit {
 
 
         let status = "pass"
-        if ( score < 50 ) {
+        if ( score * 100 < 50 ) {
             status = 'fail'
-        } else if ( score < 90) {
+        } else if ( score * 100 < 90) {
             status = 'average'
         }
 
