@@ -164,6 +164,7 @@ async function run(
         process.env["view"] = view ? String(view) : ''
         process.env["saveFile"] = saveFile ? "true" : "false"
         process.env["concurrentPages"] = concurrentPages ? concurrentPages.toString() : '20';
+        process.env["type"] = type
         //register method to the event 'page-added'
         PageManager.onPagesAdded(async (pageData) => {
             await scan(pageData, saveFile, destination, reportName, view);

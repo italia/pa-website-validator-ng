@@ -112,7 +112,7 @@ class ContactAssistencyAudit extends Audit {
       this.score = 0;
 
       this.pagesInError.push({
-        link: '',
+        link: url,
         in_index: error,
       });
 

@@ -322,7 +322,7 @@ class FontAudit extends Audit {
                 title_wrong_fonts: this.titleSubHeadings[1],
             });
 
-            this.globalResults.wrongPages.headings = [this.auditData?.subItem?.greenResult ?? '', this.titleSubHeadings[0], this.titleSubHeadings[1]];
+            this.globalResults.correctPages.headings = [this.auditData?.subItem?.greenResult ?? '', this.titleSubHeadings[0], this.titleSubHeadings[1]];
 
 
             for (const item of this.correctItems) {

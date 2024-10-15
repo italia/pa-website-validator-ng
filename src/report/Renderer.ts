@@ -5,6 +5,7 @@ import open from "open";
 import { format } from "path";
 import { VERSION } from '../version.js';
 import PageManager from '../PageManager.js';
+import {municipalityWeights, schoolWeights} from "../config/weights.js";
 
 const render = async () => {
     const website = process.env.website
@@ -81,6 +82,9 @@ const render = async () => {
         status = 'ok'
     }
 
+    successAudits = sortByWeights(successAudits);
+    failedAudits = sortByWeights(failedAudits);
+
     const reportHtml = await ejs.renderFile('src/report/index.ejs', {
          crawler_version: VERSION,
          date: date,
@@ -147,6 +151,18 @@ const  formatDate = (date: Date): string =>{
     const minutes = date.getMinutes().toString().padStart(2, '0');
     
     return `${day}/${month}/${year.slice(-2)} ${hours}:${minutes}`;
+}
+
+const sortByWeights = (audits : Array<any>) => {
+    const referenceArray = process.env["type"] === 'municipality' ? municipalityWeights : schoolWeights;
+
+    audits.forEach(audit => {
+        const referenceItem = referenceArray.find(el => el.id === audit.id);
+        audit['weight'] = referenceItem && referenceItem.weight ? referenceItem.weight : 1;
+    });
+
+    return audits.sort((a, b) => b.weight - a.weight);
+
 }
 
 

@@ -77,6 +77,7 @@ class MetatagAudit extends Audit {
 
   async auditPage(
     page: Page | null,
+    url: string,
     error?: string
   ) {
     this.titleSubHeadings = ["JSON valido", "Metatag non presenti o errati"];
@@ -112,7 +113,7 @@ class MetatagAudit extends Audit {
       this.score = 0;
 
       this.pagesInError.push({
-        link: '',
+        link: url,
         missing_elements: error,
       });
 

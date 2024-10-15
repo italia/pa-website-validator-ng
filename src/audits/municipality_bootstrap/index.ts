@@ -119,7 +119,7 @@ class BootstrapMunAudit extends Audit {
       this.score = 0;
 
       this.pagesInError.push({
-        link: '',
+        link: url,
         library_name: error,
       });
 

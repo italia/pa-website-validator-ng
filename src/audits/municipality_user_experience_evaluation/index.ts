@@ -99,7 +99,7 @@ class UserExperienceEvaluationAudit extends Audit {
       this.score = 0;
 
       this.pagesInError.push({
-        link: '',
+        link: url,
         errors_found: error,
       });
 

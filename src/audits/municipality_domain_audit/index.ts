@@ -126,9 +126,7 @@ class DomainAudit extends Audit {
 
       this.pagesInError.push({
         link: url,
-        domain: '',
-        correct_domain: "No",
-        www_access: ""
+        domain: error,
       });
 
       return {

@@ -16,6 +16,7 @@ class servicesGatherer extends Gatherer {
     let clickButton = true;
     let foundElements:any = [];
     let pages : string[] = [];
+    let click = false;
 
     while (clickButton) {
       try {
@@ -25,8 +26,9 @@ class servicesGatherer extends Gatherer {
               '[data-element="load-other-cards"]'
           ) as HTMLElement;
           if (!button) {
-            return false;
+            return true;
           }
+          click = true;
           button.click();
           return true;
         });
@@ -70,7 +72,7 @@ class servicesGatherer extends Gatherer {
       }
     }
 
-    if (!maxCountPages || maxCountPages == 0) {
+    if (!maxCountPages || (maxCountPages == 0 && click)) {
       throw new Error(`Cannot find elements with data-element "${servicesGatherer.dataElement}"`);
     }
 

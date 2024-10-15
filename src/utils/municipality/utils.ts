@@ -509,14 +509,19 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
     ) {
       try {
 
-        await page.evaluate(async (feedbackComponentStructure : any, i : number) => {
+        await page.waitForNetworkIdle();
+
+        await page.evaluate(async (feedbackComponentStructure : any, i : number, urlValue: string) => {
           const button = document.querySelector(
               `[data-element="${feedbackComponentStructure.rate.dataElement}${i}"]`
           ) as HTMLElement;
-          if (!button) {
-            return false;
+
+          await new Promise((resolve : any) => setTimeout(resolve, 500));
+
+          if (button) {
+            button.click();
           }
-          button.click();
+
           return true;
         }, feedbackComponentStructure,
             i);
@@ -575,7 +580,7 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
 
             if (existsRatingQAComponents && !checkRateComponentAssociation) {
               if (score > 0) score = 0;
-              errors.push(feedbackComponentStructure.rate.errorAssociation);
+              errors.push(feedbackComponentStructure.rate.errorAssociation + 'tre');
             }
 
             return {
@@ -590,6 +595,7 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
           ) {
             existsRatingQAComponents = false;
             checkRateComponentAssociation = false;
+            errors.push( 'non esistono' );
             if (!existsRateComponents) {
               if (score > 0.5) score = 0.5;
               errors.push(feedbackComponentStructure.rate.missingError);
@@ -606,7 +612,7 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
 
             if (existsRatingQAComponents && !checkRateComponentAssociation) {
               if (score > 0) score = 0;
-              errors.push(feedbackComponentStructure.rate.errorAssociation);
+              errors.push(feedbackComponentStructure.rate.errorAssociation + 'due');
             }
 
             return {
@@ -630,7 +636,7 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
             feedbackRatingPositiveElement
           );
           const feedbackPositiveVisible =
-            feedbackRatingPositiveElement.offsetParent &&
+            //feedbackRatingPositiveElement.offsetParent &&
             feedbackPositiveStyle.visibility !== "hidden" &&
             feedbackPositiveRect.bottom > 0 &&
             feedbackPositiveRect.top > 0 &&
@@ -643,7 +649,7 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
             feedbackRatingNegativeElement
           );
           const feedbackNegativeVisible =
-            feedbackRatingNegativeElement.offsetParent &&
+            //feedbackRatingNegativeElement.offsetParent &&
             feedbackNegativeStyle.visibility !== "hidden" &&
             feedbackNegativeRect.bottom > 0 &&
             feedbackNegativeRect.top > 0 &&
@@ -654,6 +660,7 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
               i <= feedbackComponentStructure.rate.positiveThreshold &&
               (feedbackPositiveVisible || !feedbackNegativeVisible)
           ) {
+            errors.push( `non matcha 1- ${feedbackPositiveVisible} ${feedbackNegativeVisible} ${feedbackNegativeRect.bottom}` );
             checkRateComponentAssociation = false;
           }
 
@@ -661,6 +668,7 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
               i > feedbackComponentStructure.rate.positiveThreshold &&
               (!feedbackPositiveVisible || feedbackNegativeVisible)
           ) {
+            errors.push( 'non matcha 2' );
             checkRateComponentAssociation = false;
           }
 
@@ -852,7 +860,7 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
 
           if (existsRatingQAComponents && !checkRateComponentAssociation) {
             if (score > 0) score = 0;
-            errors.push(feedbackComponentStructure.rate.errorAssociation);
+            errors.push(feedbackComponentStructure.rate.errorAssociation + 'uno');
           }
 
           return {
