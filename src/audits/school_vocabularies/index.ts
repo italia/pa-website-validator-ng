@@ -263,7 +263,6 @@ async function getArgumentsElements(
 
     const $ = cheerio.load(await page.content());
     if ($.length <= 0) {
-      await browser.close();
       return elements;
     }
 
@@ -276,7 +275,6 @@ async function getArgumentsElements(
     return elements;
   } catch (ex) {
     console.error(`ERROR ${url}: ${ex}`);
-    await browser.close();
     throw new Error(
       `Il test è stato interrotto perché nella prima pagina analizzata ${url} si è verificato l'errore "${ex}". Verificarne la causa e rifare il test.`,
     );

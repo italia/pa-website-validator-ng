@@ -279,7 +279,6 @@ const scan = async (
     }
   } catch (err) {
     console.log(`SCAN error: ${err}`);
-    await browser.close();
   }
 
   if (results) {
