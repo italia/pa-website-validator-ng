@@ -8,7 +8,7 @@
     "lint:check": "eslint --max-warnings 0 .",
     "type:check": "tsc --noEmit && tsc --noEmit",
     "format:check": "prettier -c .",
-    "format:write": "prettier --write \"src/**/*.ts\""
+    "format:write": "prettier --write ."
   },
   "author": "",
   "license": "ISC",

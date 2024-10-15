@@ -1,27 +1,25 @@
 {
-    "school": {
+  "school": {
+    "gather": {
+      "homepage": {
         "gather": {
-            "homepage": {
-                "gather": {
-                    "first_level_pages": {
-                        "gather": {
-                            "second_level_pages": {
-                                
-                            }
-                        },
-                        "audit": [
-                            "municipality-ux-ui-consistency-fonts-check",
-                            "municipality-ux-ui-consistency-bootstrap-italia-double-check",
-                            "municipality-servizi-structure-match-model"
-                        ]
-                    }
-                },
-                "audit": [
-                    "municipality-ux-ui-consistency-fonts-check",
-                    "municipality-ux-ui-consistency-bootstrap-italia-double-check",
-                    "municipality-servizi-structure-match-model"
-                ]
-            }
-        }
+          "first_level_pages": {
+            "gather": {
+              "second_level_pages": {}
+            },
+            "audit": [
+              "municipality-ux-ui-consistency-fonts-check",
+              "municipality-ux-ui-consistency-bootstrap-italia-double-check",
+              "municipality-servizi-structure-match-model"
+            ]
+          }
+        },
+        "audit": [
+          "municipality-ux-ui-consistency-fonts-check",
+          "municipality-ux-ui-consistency-bootstrap-italia-double-check",
+          "municipality-servizi-structure-match-model"
+        ]
+      }
     }
+  }
 }

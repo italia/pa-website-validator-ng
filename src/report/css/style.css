@@ -146,16 +146,32 @@
 .cards-container .card-wrapper .card .card-body .card-content .result-point.ok {
   background-color: #5cc98d;
 }
-.cards-container .card-wrapper .card .card-body .card-content .result-point.error {
+.cards-container
+  .card-wrapper
+  .card
+  .card-body
+  .card-content
+  .result-point.error {
   background-color: #ffffff;
 }
-.cards-container .card-wrapper .card .card-body .card-content .result-point.error svg {
+.cards-container
+  .card-wrapper
+  .card
+  .card-body
+  .card-content
+  .result-point.error
+  svg {
   width: 50px;
   height: 50px;
   font-weight: 700;
   fill: #bc4050;
 }
-.cards-container .card-wrapper .card .card-body .card-content .progress-donut-wrapper::before {
+.cards-container
+  .card-wrapper
+  .card
+  .card-body
+  .card-content
+  .progress-donut-wrapper::before {
   background: #bc4050;
 }
 .cards-container .card-wrapper .card .card-body .card-content .result-donut {
@@ -163,7 +179,13 @@
   margin-top: 16px;
   text-align: center;
 }
-.cards-container .card-wrapper .card .card-body .card-content .result-donut span {
+.cards-container
+  .card-wrapper
+  .card
+  .card-body
+  .card-content
+  .result-donut
+  span {
   font-size: 18px;
   font-weight: bold;
   color: #5cc98d;
@@ -179,7 +201,8 @@ footer a {
   text-decoration: none;
   margin-right: 12px;
 }
-footer a:hover, footer a:visited {
+footer a:hover,
+footer a:visited {
   text-decoration: underline;
   color: #ffffff;
 }
@@ -325,4 +348,4 @@ iframe {
 .table-wrapper .table tr th:last-child,
 .table-wrapper .table tr td:last-child {
   padding-right: 1.5rem;
-}/*# sourceMappingURL=style.css.map */
+} /*# sourceMappingURL=style.css.map */
