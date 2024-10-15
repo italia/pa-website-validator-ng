@@ -1,37 +1,47 @@
-import {auditDictionary} from "../../storage/auditDictionary.js";
-import {CookieAudit} from "../cookie/index.js";
+import { auditDictionary } from "../../storage/auditDictionary.js";
+import { CookieAudit } from "../cookie/index.js";
 import * as ejs from "ejs";
 
 class SchoolCookie extends CookieAudit {
-    auditId = "school-legislation-cookie-domain-check";
-    auditData = auditDictionary["school-legislation-cookie-domain-check"];
-    code = 'C.SC.2.3'; 
-    mainTitle = 'COOKIE';
+  auditId = "school-legislation-cookie-domain-check";
+  auditData = auditDictionary["school-legislation-cookie-domain-check"];
+  code = "C.SC.2.3";
+  mainTitle = "COOKIE";
 
-    static getInstance(): Promise<SchoolCookie> {
-        if (!SchoolCookie.instance) {
-            SchoolCookie.instance = new SchoolCookie('', [], []);
-        }
-        return SchoolCookie.instance;
+  static getInstance(): Promise<SchoolCookie> {
+    if (!SchoolCookie.instance) {
+      SchoolCookie.instance = new SchoolCookie("", [], []);
+    }
+    return SchoolCookie.instance;
+  }
+
+  async returnGlobalHTML() {
+    let status = "fail";
+    let message = "";
+
+    if (this.score > 0.5) {
+      status = "pass";
+      message = this.auditData.greenResult;
+    } else {
+      status = "fail";
+      message = this.auditData.redResult;
     }
 
-    async returnGlobalHTML() {
-        let status = 'fail'
-        let message = ''
-
-        if (this.score > 0.5) {
-            status = 'pass';
-            message = this.auditData.greenResult;
-        } else {
-            status = 'fail';
-            message = this.auditData.redResult
-        }
-
-        const reportHtml = await ejs.renderFile('src/audits/school_cookie/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null ,  totalPercentage : null });
-        return reportHtml
-    }
+    const reportHtml = await ejs.renderFile(
+      "src/audits/school_cookie/template.ejs",
+      {
+        ...(await this.meta()),
+        code: this.code,
+        table: this.globalResults,
+        status,
+        statusMessage: message,
+        metrics: null,
+        totalPercentage: null,
+      },
+    );
+    return reportHtml;
+  }
 }
 
-
-export {SchoolCookie};
+export { SchoolCookie };
 export default SchoolCookie.getInstance;

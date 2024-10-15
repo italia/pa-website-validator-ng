@@ -1,8 +1,8 @@
-import {Audit} from "../Audit.js";
-import {Page} from "puppeteer";
-import {CheerioAPI} from "cheerio";
+import { Audit } from "../Audit.js";
+import { Page } from "puppeteer";
+import { CheerioAPI } from "cheerio";
 import * as cheerio from "cheerio";
-import {notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
+import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import * as ejs from "ejs";
 
 const auditId = "municipality-performance-improvement-plan";
@@ -16,18 +16,18 @@ class ImprovementPlanAudit extends Audit {
     score: 0,
     details: {
       items: [],
-      type: 'table',
+      type: "table",
       headings: [],
-      summary: ''
+      summary: "",
     },
     pagesItems: {
-      message: '',
+      message: "",
       headings: [],
       pages: [],
     },
-    errorMessage: '',
+    errorMessage: "",
     info: true,
-    infoScore: false
+    infoScore: false,
   };
 
   async meta() {
@@ -35,32 +35,29 @@ class ImprovementPlanAudit extends Audit {
       id: auditId,
       title: "Il sito ha un link al piano di miglioramento nel footer",
       failureTitle:
-          "Il sito non ha un link al piano di miglioramento nel footer",
+        "Il sito non ha un link al piano di miglioramento nel footer",
       scoreDisplayMode: this.SCORING_MODES.BINARY,
       requiredArtifacts: ["origin"],
     };
   }
 
-  async auditPage(
-      page: Page | null,
-      error?: string
-  ) {
-
+  async auditPage(page: Page | null, error?: string) {
     if (error && !page) {
-
-      this.globalResults['score'] = 0;
-      this.globalResults['details']['items'] =  [
+      this.globalResults["score"] = 0;
+      this.globalResults["details"]["items"] = [
         {
           result: notExecutedErrorMessage.replace("<LIST>", error),
         },
       ];
-      this.globalResults['details']['type'] = 'table';
-      this.globalResults['details']['headings'] = [{key: "result", itemType: "text", text: "Risultato"}];
-      this.globalResults['details']['summary'] = '';
+      this.globalResults["details"]["type"] = "table";
+      this.globalResults["details"]["headings"] = [
+        { key: "result", itemType: "text", text: "Risultato" },
+      ];
+      this.globalResults["details"]["summary"] = "";
 
       return {
         score: 0,
-      }
+      };
     }
 
     if (page) {
@@ -71,44 +68,55 @@ class ImprovementPlanAudit extends Audit {
 
       if (footer.match(improvementPlan)) {
         this.score = 1;
-        return {score: 1};
+        return { score: 1 };
       } else {
         this.score = 0.5;
-        return {score: 0.5};
+        return { score: 0.5 };
       }
     }
   }
 
-  async getType(){
+  async getType() {
     return auditId;
   }
 
   async returnGlobal() {
     this.globalResults.score = this.score;
     return {
-      score: this.score
+      score: this.score,
     };
   }
 
   async returnGlobalHTML() {
-    let status = 'fail'
-    let message = ''
+    let status = "fail";
+    let message = "";
 
     if (this.score > 0.5) {
-      status = 'info';
+      status = "info";
       message = this.auditData.greenResult;
     } else {
-      status = 'average';
-      message = this.auditData.yellowResult
+      status = "average";
+      message = this.auditData.yellowResult;
     }
 
-    const reportHtml = await ejs.renderFile('src/audits/municipality_improvement_plan/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null ,  totalPercentage : null });
-    return reportHtml
+    const reportHtml = await ejs.renderFile(
+      "src/audits/municipality_improvement_plan/template.ejs",
+      {
+        ...(await this.meta()),
+        code: this.code,
+        table: this.globalResults,
+        status,
+        statusMessage: message,
+        metrics: null,
+        totalPercentage: null,
+      },
+    );
+    return reportHtml;
   }
 
   static getInstance(): Promise<ImprovementPlanAudit> {
     if (!ImprovementPlanAudit.instance) {
-      ImprovementPlanAudit.instance = new ImprovementPlanAudit('', [], []);
+      ImprovementPlanAudit.instance = new ImprovementPlanAudit("", [], []);
     }
     return ImprovementPlanAudit.instance;
   }

@@ -1,13 +1,20 @@
 "use strict";
 
 import { auditDictionary } from "../../storage/auditDictionary.js";
-import {Page} from "puppeteer";
+import { Page } from "puppeteer";
 import * as cheerio from "cheerio";
-import { browser } from './../../PuppeteerInstance.js'
-import {Audit} from "../Audit.js";
-import {errorHandling, notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
-import {areAllElementsInVocabulary, getPageElementDataAttribute, gotoRetry} from "../../utils/utils.js";
-import {schoolModelVocabulary} from "./controlledVocabulary.js";
+import { browser } from "./../../PuppeteerInstance.js";
+import { Audit } from "../Audit.js";
+import {
+  errorHandling,
+  notExecutedErrorMessage,
+} from "../../config/commonAuditsParts.js";
+import {
+  areAllElementsInVocabulary,
+  getPageElementDataAttribute,
+  gotoRetry,
+} from "../../utils/utils.js";
+import { schoolModelVocabulary } from "./controlledVocabulary.js";
 import * as ejs from "ejs";
 
 class SchoolVocabularies extends Audit {
@@ -15,23 +22,23 @@ class SchoolVocabularies extends Audit {
     score: 0,
     details: {
       items: [],
-      type: 'table',
+      type: "table",
       headings: [],
-      summary: ''
+      summary: "",
     },
     pagesItems: {
-      message: '',
+      message: "",
       headings: [],
       pages: [],
     },
-    errorMessage: ''
+    errorMessage: "",
   };
 
-  private headings : any = [];
+  private headings: any = [];
   auditId = "school-controlled-vocabularies";
   auditData = auditDictionary["school-controlled-vocabularies"];
-  code = 'R.SC.1.1';
-  mainTitle = 'VOCABOLARI CONTROLLATI'; 
+  code = "R.SC.1.1";
+  mainTitle = "VOCABOLARI CONTROLLATI";
 
   async meta() {
     return {
@@ -47,24 +54,23 @@ class SchoolVocabularies extends Audit {
     };
   }
 
-  async auditPage(
-      page: Page | null,
-      url: string, 
-      error?: string,
-  ) {
-
-    if(error && !page){
-
+  async auditPage(page: Page | null, url: string, error?: string) {
+    if (error && !page) {
       this.globalResults.score = 0;
       this.globalResults.details.items.push([
         {
           result: notExecutedErrorMessage.replace("<LIST>", error),
         },
       ]);
-      this.globalResults.details.headings= [{ key: "result", itemType: "text", text: "Risultato" }];
-      
+      this.globalResults.details.headings = [
+        { key: "result", itemType: "text", text: "Risultato" },
+      ];
+
       this.globalResults.pagesItems.headings = ["Risultato"];
-      this.globalResults.pagesItems.message = notExecutedErrorMessage.replace("<LIST>", error);
+      this.globalResults.pagesItems.message = notExecutedErrorMessage.replace(
+        "<LIST>",
+        error,
+      );
       this.globalResults.pagesItems.items = [
         {
           result: this.auditData.redResult,
@@ -73,10 +79,10 @@ class SchoolVocabularies extends Audit {
 
       return {
         score: 0,
-      }
+      };
     }
 
-    if(page){
+    if (page) {
       const url = page.url();
 
       this.headings = [
@@ -107,29 +113,47 @@ class SchoolVocabularies extends Audit {
       } catch (e) {
         return {
           score: 0,
-          details: {  items: [{ result: notExecutedErrorMessage.replace("<LIST>", "all-topics") }],  type: 'table',  headings: [{ key: "result", itemType: "text", text: "Risultato" }],  summary: ''},
+          details: {
+            items: [
+              {
+                result: notExecutedErrorMessage.replace("<LIST>", "all-topics"),
+              },
+            ],
+            type: "table",
+            headings: [{ key: "result", itemType: "text", text: "Risultato" }],
+            summary: "",
+          },
         };
       }
 
       if (argumentsElements.length <= 0) {
         return {
           score: 0,
-          details: {  items: [{ result: notExecutedErrorMessage.replace("<LIST>", "all-topics") }],  type: 'table',  headings: [{ key: "result", itemType: "text", text: "Risultato" }],  summary: ''},
+          details: {
+            items: [
+              {
+                result: notExecutedErrorMessage.replace("<LIST>", "all-topics"),
+              },
+            ],
+            type: "table",
+            headings: [{ key: "result", itemType: "text", text: "Risultato" }],
+            summary: "",
+          },
         };
       }
 
       const schoolModelCheck = await areAllElementsInVocabulary(
-          argumentsElements,
-          schoolModelVocabulary
+        argumentsElements,
+        schoolModelVocabulary,
       );
 
       let numberOfElementsNotInScuoleModelPercentage = 100;
 
       if (argumentsElements.length > 0) {
         numberOfElementsNotInScuoleModelPercentage =
-            (schoolModelCheck.elementNotIncluded.length /
-                argumentsElements.length) *
-            100;
+          (schoolModelCheck.elementNotIncluded.length /
+            argumentsElements.length) *
+          100;
       }
 
       let score = 0;
@@ -142,16 +166,21 @@ class SchoolVocabularies extends Audit {
       }
 
       item[0].element_in_school_model_percentage =
-          (100 - numberOfElementsNotInScuoleModelPercentage).toFixed(0).toString() +
-          "%";
+        (100 - numberOfElementsNotInScuoleModelPercentage)
+          .toFixed(0)
+          .toString() + "%";
       item[0].element_not_in_school_model =
-          schoolModelCheck.elementNotIncluded.join(", ");
+        schoolModelCheck.elementNotIncluded.join(", ");
 
       this.globalResults.score = score;
       this.globalResults.details.items = item;
       this.globalResults.pagesItems.pages = item;
       this.globalResults.details.headings = this.headings;
-      this.globalResults.pagesItems.headings = ["Risultato", "% di argomenti presenti nell'elenco del modello", "Argomenti non presenti nell'elenco del modello"];
+      this.globalResults.pagesItems.headings = [
+        "Risultato",
+        "% di argomenti presenti nell'elenco del modello",
+        "Argomenti non presenti nell'elenco del modello",
+      ];
       this.globalResults.id = this.auditId;
 
       return {
@@ -160,55 +189,67 @@ class SchoolVocabularies extends Audit {
     }
   }
 
-  async getType(){
+  async getType() {
     return this.auditId;
   }
 
-  async returnGlobal(){
+  async returnGlobal() {
     return this.globalResults;
   }
-  
+
   async returnGlobalHTML() {
-    let status = 'fail'
-    let message = ''
+    let status = "fail";
+    let message = "";
 
     if (this.globalResults.score > 0.5) {
-        status = 'pass';
-        message = this.auditData.greenResult;
+      status = "pass";
+      message = this.auditData.greenResult;
     } else if (this.globalResults.score == 0.5) {
-        status = 'average';
-        message = this.auditData.yellowResult
+      status = "average";
+      message = this.auditData.yellowResult;
     } else {
-        status = 'fail';
-        message = this.auditData.redResult
+      status = "fail";
+      message = this.auditData.redResult;
     }
 
-    const reportHtml = await ejs.renderFile('src/audits/school_vocabularies/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null , totalPercentage : null });
-    return reportHtml
+    const reportHtml = await ejs.renderFile(
+      "src/audits/school_vocabularies/template.ejs",
+      {
+        ...(await this.meta()),
+        code: this.code,
+        table: this.globalResults,
+        status,
+        statusMessage: message,
+        metrics: null,
+        totalPercentage: null,
+      },
+    );
+    return reportHtml;
   }
 
   static getInstance(): Promise<SchoolVocabularies> {
     if (!SchoolVocabularies.instance) {
-      SchoolVocabularies.instance = new SchoolVocabularies('',[],[]);
+      SchoolVocabularies.instance = new SchoolVocabularies("", [], []);
     }
     return SchoolVocabularies.instance;
   }
-
 }
 
-export {SchoolVocabularies};
+export { SchoolVocabularies };
 export default SchoolVocabularies.getInstance;
 
-async function getArgumentsElements(url: string, page: Page): Promise<string[]> {
+async function getArgumentsElements(
+  url: string,
+  page: Page,
+): Promise<string[]> {
   let elements: string[] = [];
 
   try {
-
     await page.waitForSelector('[data-element="search-modal-button"]');
 
     await page.$eval(
-        '[data-element="search-modal-button"]',
-        (el: any) => (el.value = "scuola")
+      '[data-element="search-modal-button"]',
+      (el: any) => (el.value = "scuola"),
     );
 
     const button = await page.$('[data-element="search-submit"]');
@@ -227,9 +268,9 @@ async function getArgumentsElements(url: string, page: Page): Promise<string[]> 
     }
 
     elements = await getPageElementDataAttribute(
-        $,
-        '[data-element="all-topics"]',
-        "li"
+      $,
+      '[data-element="all-topics"]',
+      "li",
     );
 
     return elements;
@@ -237,7 +278,7 @@ async function getArgumentsElements(url: string, page: Page): Promise<string[]> 
     console.error(`ERROR ${url}: ${ex}`);
     await browser.close();
     throw new Error(
-        `Il test è stato interrotto perché nella prima pagina analizzata ${url} si è verificato l'errore "${ex}". Verificarne la causa e rifare il test.`
+      `Il test è stato interrotto perché nella prima pagina analizzata ${url} si è verificato l'errore "${ex}". Verificarne la causa e rifare il test.`,
     );
   }
 }

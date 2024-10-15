@@ -1,10 +1,10 @@
 "use strict";
-import {Audit} from "../Audit.js";
+import { Audit } from "../Audit.js";
 
 class InfoCloudAudit extends Audit {
-  code = ''
-  mainTitle = ''
-  info= true
+  code = "";
+  mainTitle = "";
+  info = true;
   async meta() {
     return {
       id: this.auditId,
@@ -18,28 +18,27 @@ class InfoCloudAudit extends Audit {
     };
   }
 
-  async auditPage(){
-    return {}
+  async auditPage() {
+    return {};
   }
 
-  async getType(){
+  async getType() {
     return this.auditId;
   }
 
-  async returnGlobal(){
+  async returnGlobal() {
     return {
       score: null,
-    }
+    };
   }
 
   static getInstance(): Promise<InfoCloudAudit> {
     if (!InfoCloudAudit.instance) {
-      InfoCloudAudit.instance = new InfoCloudAudit('',[],[]);
+      InfoCloudAudit.instance = new InfoCloudAudit("", [], []);
     }
     return InfoCloudAudit.instance;
   }
-
 }
 
-export {InfoCloudAudit};
+export { InfoCloudAudit };
 export default InfoCloudAudit.getInstance;

@@ -1,10 +1,10 @@
 "use strict";
-import {Audit} from "../Audit.js";
+import { Audit } from "../Audit.js";
 
 class InformativeIpAudit extends Audit {
-  code = ''
-  mainTitle = ''
-  info= true
+  code = "";
+  mainTitle = "";
+  info = true;
   async meta() {
     return {
       id: this.auditId,
@@ -18,15 +18,15 @@ class InformativeIpAudit extends Audit {
     };
   }
 
-  async auditPage(){
-    return {}
+  async auditPage() {
+    return {};
   }
 
-  async getType(){
+  async getType() {
     return this.auditId;
   }
 
-  async returnGlobal(){
+  async returnGlobal() {
     return {
       score: 1,
       details: {
@@ -37,25 +37,24 @@ class InformativeIpAudit extends Audit {
             text: "Risultato",
           },
         ],
-        headings:[
+        headings: [
           {
             result:
-                "Questo audit produce un risultato solo quando viene effettuato su un sito pubblicato online.",
+              "Questo audit produce un risultato solo quando viene effettuato su un sito pubblicato online.",
           },
         ],
-        type: 'table',
+        type: "table",
       },
-    }
+    };
   }
 
   static getInstance(): Promise<InformativeIpAudit> {
     if (!InformativeIpAudit.instance) {
-      InformativeIpAudit.instance = new InformativeIpAudit('',[],[]);
+      InformativeIpAudit.instance = new InformativeIpAudit("", [], []);
     }
     return InformativeIpAudit.instance;
   }
-
 }
 
-export {InformativeIpAudit};
+export { InformativeIpAudit };
 export default InformativeIpAudit.getInstance;

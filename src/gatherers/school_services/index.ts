@@ -1,52 +1,68 @@
-import {Gatherer} from '../Gatherer.js'
+import { Gatherer } from "../Gatherer.js";
 import crawlerTypes from "../../types/crawler-types.js";
-import PageData = crawlerTypes.PageData
-import {Page} from "puppeteer";
-import {loadPage} from "../../utils/utils.js";
+import PageData = crawlerTypes.PageData;
+import { Page } from "puppeteer";
+import { loadPage } from "../../utils/utils.js";
 
 class servicesPageGatherer extends Gatherer {
+  static dataElements: string[] = ["service-type"];
+  static pageType: string = "service";
+  static serviceDataElement = "service-link";
 
-  static dataElements:string[] = ['service-type']
-  static pageType:string= 'service'
-  static serviceDataElement = 'service-link'
-
-  async navigateAndFetchPages(url: string, numberOfPages = 5, website= '', page : Page): Promise<PageData[]> {
+  async navigateAndFetchPages(
+    url: string,
+    numberOfPages = 5,
+    website = "",
+    page: Page,
+  ): Promise<PageData[]> {
     if (this.gatheredPages.length > 0) {
-        return this.gatheredPages
+      return this.gatheredPages;
     }
 
-    const currentClass = this.constructor as typeof Gatherer
-    let fetchedUrls:string[] = []
+    const currentClass = this.constructor as typeof Gatherer;
+    let fetchedUrls: string[] = [];
     for (let dataElement of currentClass.dataElements) {
-      fetchedUrls = [...fetchedUrls,...await this.getMultipleDataElementUrls(page,dataElement) as string[]]
+      fetchedUrls = [
+        ...fetchedUrls,
+        ...((await this.getMultipleDataElementUrls(
+          page,
+          dataElement,
+        )) as string[]),
+      ];
     }
 
-    let servicesUrls:string[] = []
-    for (let fetchedUrl of fetchedUrls){
-      const servicePage = await loadPage(fetchedUrl)
+    let servicesUrls: string[] = [];
+    for (let fetchedUrl of fetchedUrls) {
+      const servicePage = await loadPage(fetchedUrl);
 
-      servicesUrls = [...servicesUrls,...await this.getMultipleDataElementUrls(servicePage, servicesPageGatherer.serviceDataElement) as string[]]
-      await servicePage.close()
+      servicesUrls = [
+        ...servicesUrls,
+        ...((await this.getMultipleDataElementUrls(
+          servicePage,
+          servicesPageGatherer.serviceDataElement,
+        )) as string[]),
+      ];
+      await servicePage.close();
     }
 
-    this.gatheredPages = servicesUrls.map(url => {
-        return {
-            url: url,
-            id: currentClass.pageType + Date.now(),
-            type: currentClass.pageType,
-            gathered: false,
-            audited: false,
-            redirectUrl: '',
-            internal: true
-        }
-    })
+    this.gatheredPages = servicesUrls.map((url) => {
+      return {
+        url: url,
+        id: currentClass.pageType + Date.now(),
+        type: currentClass.pageType,
+        gathered: false,
+        audited: false,
+        redirectUrl: "",
+        internal: true,
+      };
+    });
 
-    return this.gatheredPages
-}
+    return this.gatheredPages;
+  }
 
   static getInstance(): Promise<servicesPageGatherer> {
     if (!servicesPageGatherer.instance) {
-      servicesPageGatherer.instance = new servicesPageGatherer('');
+      servicesPageGatherer.instance = new servicesPageGatherer("");
     }
     return servicesPageGatherer.instance;
   }
@@ -54,8 +70,6 @@ class servicesPageGatherer extends Gatherer {
 
 export { servicesPageGatherer };
 export default servicesPageGatherer.getInstance;
-
-
 
 // const getRandomServicesUrl = async (
 //   url: string,

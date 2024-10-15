@@ -1,361 +1,363 @@
-import {
-    errorHandling,
-} from "../../config/commonAuditsParts.js";
-import {Audit} from "../Audit.js";
-import {Page} from "puppeteer";
-import { allowedFonts } from './allowedFonts.js'
+import { errorHandling } from "../../config/commonAuditsParts.js";
+import { Audit } from "../Audit.js";
+import { Page } from "puppeteer";
+import { allowedFonts } from "./allowedFonts.js";
 
 type BadElement = [string[], boolean]; // First value is element snippet, second is whether it is tolerable
 
 class FontAudit extends Audit {
-    public globalResults: any = {
-        score: 1,
-        details: {
-            items: [],
-            type: 'table',
-            headings: [],
-            summary: ''
-        },
-        pagesInError: {
-            message: '',
-            headings: [],
-            pages: []
-        },
-        wrongPages: {
-            message: '',
-            headings: [],
-            pages: []
-        },
-        tolerancePages: {
-            message: '',
-            headings: [],
-            pages: []
-        },
-        correctPages: {
-            message: '',
-            headings: [],
-            pages: []
-        },
-        errorMessage: ''
+  public globalResults: any = {
+    score: 1,
+    details: {
+      items: [],
+      type: "table",
+      headings: [],
+      summary: "",
+    },
+    pagesInError: {
+      message: "",
+      headings: [],
+      pages: [],
+    },
+    wrongPages: {
+      message: "",
+      headings: [],
+      pages: [],
+    },
+    tolerancePages: {
+      message: "",
+      headings: [],
+      pages: [],
+    },
+    correctPages: {
+      message: "",
+      headings: [],
+      pages: [],
+    },
+    errorMessage: "",
+  };
+  public wrongItems: any = [];
+  public toleranceItems: any = [];
+  public correctItems: any = [];
+  public pagesInError: any = [];
+  public score = 1;
+  private titleSubHeadings: any = [];
+  private headings: any = [];
+
+  static allowedFonts = allowedFonts;
+  code = "";
+  mainTitle = "";
+
+  async meta() {
+    return {
+      code: this.code,
+      id: this.auditId,
+      title: this.auditData.title,
+      mainTitle: this.mainTitle,
+      auditId: this.auditId,
+      failureTitle: this.auditData.failureTitle,
+      description: this.auditData.description,
+      scoreDisplayMode: this.SCORING_MODES.NUMERIC,
+      requiredArtifacts: ["origin"],
     };
-    public wrongItems: any = [];
-    public toleranceItems: any = [];
-    public correctItems: any = [];
-    public pagesInError : any = [];
-    public score = 1;
-    private titleSubHeadings: any = [];
-    private headings : any = [];
+  }
 
-    static allowedFonts = allowedFonts;
-    code = ''
-    mainTitle = ''
+  async auditPage(page: Page | null, url: string, error?: string) {
+    this.titleSubHeadings = [
+      "Numero di <h> o <p> con font errati",
+      "Font errati individuati",
+    ];
 
-    async meta() {
+    this.headings = [
+      {
+        key: "result",
+        itemType: "text",
+        text: "Risultato",
+        subItemsHeading: { key: "inspected_page", itemType: "url" },
+      },
+      {
+        key: "title_wrong_number_elements",
+        itemType: "text",
+        text: "",
+        subItemsHeading: { key: "wrong_number_elements", itemType: "text" },
+      },
+      {
+        key: "title_wrong_fonts",
+        itemType: "text",
+        text: "",
+        subItemsHeading: { key: "wrong_fonts", itemType: "text" },
+      },
+    ];
+
+    if (error && !page) {
+      this.score = 0;
+
+      this.pagesInError.push({
+        link: url,
+        wrong_fonts: error,
+      });
+
+      return {
+        score: 0,
+      };
+    }
+
+    if (page) {
+      let url = page.url();
+
+      const item = {
+        link: url,
+        wrong_fonts: "",
+        wrong_number_elements: 0,
+      };
+
+      const badElements: Array<BadElement> = await page.evaluate(
+        (requiredFonts) => {
+          const badElements: Array<BadElement> = [];
+          const outerElems = window.document.body.querySelectorAll(
+            "h1, h2, h3, h4, h5, h6, p",
+          );
+
+          const wrongFonts = (e: Element) => {
+            const elementFonts = window
+              .getComputedStyle(e)
+              .fontFamily.split(",", 1)
+              .map((s) => s.replace(/^"|"$/g, ""));
+            return elementFonts.filter((x) => !requiredFonts.includes(x));
+          };
+
+          for (const e of outerElems) {
+            const elementWrongFonts = wrongFonts(e);
+            if (elementWrongFonts.length > 0) {
+              badElements.push([elementWrongFonts, false]);
+              continue;
+            }
+
+            const children = [...e.querySelectorAll("*")];
+            for (const child of children) {
+              const wrongFontChild = wrongFonts(child);
+              if (wrongFontChild.length > 0) {
+                badElements.push([wrongFontChild, true]);
+                break;
+              }
+            }
+          }
+          return badElements;
+        },
+        (this.constructor as typeof FontAudit).allowedFonts,
+      );
+
+      if (badElements.length === 0) {
+        this.correctItems.push(item);
         return {
-            code: this.code,
-            id: this.auditId,
-            title: this.auditData.title,
-            mainTitle: this.mainTitle,
-            auditId: this.auditId,
-            failureTitle: this.auditData.failureTitle,
-            description: this.auditData.description,
-            scoreDisplayMode: this.SCORING_MODES.NUMERIC,
-            requiredArtifacts: ["origin"],
+          score: this.score,
         };
+      }
+
+      const reallyBadElements = badElements.filter((e) => !e[1]);
+
+      const wrongFontsUnique = (arrays: Array<BadElement>) => {
+        const arrayUnique = (array: string[]) => {
+          const a = array.concat();
+          for (let i = 0; i < a.length; ++i) {
+            for (let j = i + 1; j < a.length; ++j) {
+              if (a[i] === a[j]) a.splice(j--, 1);
+            }
+          }
+          return a;
+        };
+
+        let arrayMerged: string[] = [];
+        for (const array of arrays) {
+          arrayMerged = arrayMerged.concat(array[0]);
+        }
+        return arrayUnique(arrayMerged);
+      };
+
+      if (reallyBadElements.length > 0) {
+        if (this.score > 0) {
+          this.score = 0;
+        }
+        item.wrong_fonts = wrongFontsUnique(reallyBadElements).join(", ");
+        item.wrong_number_elements = reallyBadElements.length;
+        this.wrongItems.push(item);
+        return {
+          score: this.score,
+        };
+      }
+
+      if (this.score > 0.5) {
+        this.score = 0.5;
+      }
+      item.wrong_fonts = wrongFontsUnique(badElements).join(", ");
+      item.wrong_number_elements = badElements.length;
+      this.toleranceItems.push(item);
+
+      return {
+        score: this.score,
+      };
+    }
+  }
+
+  async getType() {
+    return this.auditId;
+  }
+
+  async returnGlobal() {
+    this.globalResults.correctPages.pages = [];
+    this.globalResults.tolerancePages.pages = [];
+    this.globalResults.wrongPages.pages = [];
+    this.globalResults.pagesInError.pages = [];
+    const results = [];
+
+    if (this.pagesInError.length) {
+      results.push({
+        result: errorHandling.errorMessage,
+      });
+
+      results.push({});
+
+      results.push({
+        result: errorHandling.errorColumnTitles[0],
+        title_missing_elements: errorHandling.errorColumnTitles[1],
+        title_wrong_order_elements: "",
+      });
+
+      this.globalResults.pagesInError.message = errorHandling.errorMessage;
+      this.globalResults.pagesInError.headings = [
+        errorHandling.errorColumnTitles[0],
+        errorHandling.errorColumnTitles[1],
+      ];
+
+      for (const item of this.pagesInError) {
+        this.globalResults.pagesInError.pages.push(item);
+
+        results.push({
+          subItems: {
+            type: "subitems",
+            items: [item],
+          },
+        });
+      }
+    } else {
+      switch (this.score) {
+        case 1:
+          results.push({
+            result: this.auditData.greenResult,
+          });
+          break;
+        case 0.5:
+          results.push({
+            result: this.auditData.yellowResult,
+          });
+          break;
+        case 0:
+          results.push({
+            result: this.auditData.redResult,
+          });
+          break;
+      }
     }
 
-    async auditPage(
-        page: Page | null,
-        url: string,
-        error?: string,
-    ) {
+    results.push({});
 
-        this.titleSubHeadings = [
-            "Numero di <h> o <p> con font errati",
-            "Font errati individuati",
-        ];
+    if (this.wrongItems.length > 0) {
+      results.push({
+        result: this.auditData?.subItem?.redResult ?? "",
+        title_wrong_number_elements: this.titleSubHeadings[0],
+        title_wrong_fonts: this.titleSubHeadings[1],
+      });
 
-        this.headings = [
-            {
-                key: "result",
-                itemType: "text",
-                text: "Risultato",
-                subItemsHeading: { key: "inspected_page", itemType: "url" },
-            },
-            {
-                key: "title_wrong_number_elements",
-                itemType: "text",
-                text: "",
-                subItemsHeading: { key: "wrong_number_elements", itemType: "text" },
-            },
-            {
-                key: "title_wrong_fonts",
-                itemType: "text",
-                text: "",
-                subItemsHeading: { key: "wrong_fonts", itemType: "text" },
-            },
-        ];
+      this.globalResults.wrongPages.headings = [
+        this.auditData?.subItem?.redResult ?? "",
+        this.titleSubHeadings[0],
+        this.titleSubHeadings[1],
+      ];
 
-        if (error && !page) {
+      for (const item of this.wrongItems) {
+        this.globalResults.wrongPages.pages.push(item);
 
-            this.score = 0;
+        results.push({
+          subItems: {
+            type: "subitems",
+            items: [item],
+          },
+        });
+      }
 
-            this.pagesInError.push({
-                link: url,
-                wrong_fonts: error,
-            });
-
-            return {
-                score: 0,
-            }
-        }
-
-        if (page) {
-
-            let url = page.url();
-
-            const item = {
-                link: url,
-                wrong_fonts: "",
-                wrong_number_elements: 0,
-            };
-
-            const badElements: Array<BadElement> = await page.evaluate(
-                (requiredFonts) => {
-                    const badElements: Array<BadElement> = [];
-                    const outerElems = window.document.body.querySelectorAll(
-                        "h1, h2, h3, h4, h5, h6, p"
-                    );
-
-                    const wrongFonts = (e: Element) => {
-                        const elementFonts = window
-                            .getComputedStyle(e)
-                            .fontFamily.split(",", 1)
-                            .map((s) => s.replace(/^"|"$/g, ""));
-                        return elementFonts.filter((x) => !requiredFonts.includes(x));
-                    };
-
-                    for (const e of outerElems) {
-                        const elementWrongFonts = wrongFonts(e);
-                        if (elementWrongFonts.length > 0) {
-                            badElements.push([elementWrongFonts, false]);
-                            continue;
-                        }
-
-                        const children = [...e.querySelectorAll("*")];
-                        for (const child of children) {
-                            const wrongFontChild = wrongFonts(child);
-                            if (wrongFontChild.length > 0) {
-                                badElements.push([wrongFontChild, true]);
-                                break;
-                            }
-                        }
-                    }
-                    return badElements;
-                },
-                (this.constructor as typeof FontAudit).allowedFonts
-            );
-
-            if (badElements.length === 0) {
-                this.correctItems.push(item);
-                return {
-                    score: this.score,
-                };
-            }
-
-            const reallyBadElements = badElements.filter((e) => !e[1]);
-
-            const wrongFontsUnique = (arrays: Array<BadElement>) => {
-                const arrayUnique = (array: string[]) => {
-                    const a = array.concat();
-                    for (let i = 0; i < a.length; ++i) {
-                        for (let j = i + 1; j < a.length; ++j) {
-                            if (a[i] === a[j]) a.splice(j--, 1);
-                        }
-                    }
-                    return a;
-                };
-
-                let arrayMerged: string[] = [];
-                for (const array of arrays) {
-                    arrayMerged = arrayMerged.concat(array[0]);
-                }
-                return arrayUnique(arrayMerged);
-            };
-
-            if (reallyBadElements.length > 0) {
-                if (this.score > 0) {
-                    this.score = 0;
-                }
-                item.wrong_fonts = wrongFontsUnique(reallyBadElements).join(", ");
-                item.wrong_number_elements = reallyBadElements.length;
-                this.wrongItems.push(item);
-                return {
-                    score: this.score,
-                };
-            }
-
-            if (this.score > 0.5) {
-                this.score = 0.5;
-            }
-            item.wrong_fonts = wrongFontsUnique(badElements).join(", ");
-            item.wrong_number_elements = badElements.length;
-            this.toleranceItems.push(item);
-
-            return {
-                score: this.score,
-            };
-        }
+      results.push({});
     }
 
-    async getType(){
-        return this.auditId;
+    if (this.toleranceItems.length > 0) {
+      results.push({
+        result: this.auditData?.subItem?.yellowResult ?? "",
+        title_wrong_number_elements: this.titleSubHeadings[0],
+        title_wrong_fonts: this.titleSubHeadings[1],
+      });
+
+      this.globalResults.wrongPages.headings = [
+        this.auditData?.subItem?.yellowResult ?? "",
+        this.titleSubHeadings[0],
+        this.titleSubHeadings[1],
+      ];
+
+      for (const item of this.toleranceItems) {
+        this.globalResults.tolerancePages.pages.push(item);
+        results.push({
+          subItems: {
+            type: "subitems",
+            items: [item],
+          },
+        });
+      }
+
+      results.push({});
     }
 
-    async returnGlobal() {
-        this.globalResults.correctPages.pages = [];
-        this.globalResults.tolerancePages.pages = [];
-        this.globalResults.wrongPages.pages = [];
-        this.globalResults.pagesInError.pages = [];
-        const results = [];
+    if (this.correctItems.length > 0) {
+      results.push({
+        result: this.auditData?.subItem?.greenResult ?? "",
+        title_wrong_number_elements: this.titleSubHeadings[0],
+        title_wrong_fonts: this.titleSubHeadings[1],
+      });
 
-        if (this.pagesInError.length) {
-            results.push({
-                result: errorHandling.errorMessage,
-            });
+      this.globalResults.correctPages.headings = [
+        this.auditData?.subItem?.greenResult ?? "",
+        this.titleSubHeadings[0],
+        this.titleSubHeadings[1],
+      ];
 
-            results.push({});
+      for (const item of this.correctItems) {
+        this.globalResults.correctPages.pages.push(item);
 
-            results.push({
-                result: errorHandling.errorColumnTitles[0],
-                title_missing_elements: errorHandling.errorColumnTitles[1],
-                title_wrong_order_elements: "",
-            });
+        results.push({
+          subItems: {
+            type: "subitems",
+            items: [item],
+          },
+        });
+      }
 
-            this.globalResults.pagesInError.message = errorHandling.errorMessage
-            this.globalResults.pagesInError.headings = [errorHandling.errorColumnTitles[0], errorHandling.errorColumnTitles[1]];
-
-
-            for (const item of this.pagesInError) {
-                this.globalResults.pagesInError.pages.push(item);
-
-                results.push({
-                    subItems: {
-                        type: "subitems",
-                        items: [item],
-                    },
-                });
-            }
-        }else{
-            switch (this.score) {
-                case 1:
-                    results.push({
-                        result: this.auditData.greenResult,
-                    });
-                    break;
-                case 0.5:
-                    results.push({
-                        result: this.auditData.yellowResult,
-                    });
-                    break;
-                case 0:
-                    results.push({
-                        result: this.auditData.redResult,
-                    });
-                    break;
-            }
-        }
-
-        results.push({});
-
-        if (this.wrongItems.length > 0) {
-            results.push({
-                result: this.auditData?.subItem?.redResult ?? '',
-                title_wrong_number_elements: this.titleSubHeadings[0],
-                title_wrong_fonts: this.titleSubHeadings[1],
-            });
-
-            this.globalResults.wrongPages.headings = [this.auditData?.subItem?.redResult ?? '', this.titleSubHeadings[0], this.titleSubHeadings[1]];
-
-
-            for (const item of this.wrongItems) {
-                this.globalResults.wrongPages.pages.push(item);
-
-                results.push({
-                    subItems: {
-                        type: "subitems",
-                        items: [item],
-                    },
-                });
-            }
-
-            results.push({});
-        }
-
-        if (this.toleranceItems.length > 0) {
-            results.push({
-                result: this.auditData?.subItem?.yellowResult ?? '',
-                title_wrong_number_elements: this.titleSubHeadings[0],
-                title_wrong_fonts: this.titleSubHeadings[1],
-            });
-
-            this.globalResults.wrongPages.headings = [this.auditData?.subItem?.yellowResult ?? '', this.titleSubHeadings[0], this.titleSubHeadings[1]];
-
-
-            for (const item of this.toleranceItems) {
-                this.globalResults.tolerancePages.pages.push(item);
-                results.push({
-                    subItems: {
-                        type: "subitems",
-                        items: [item],
-                    },
-                });
-            }
-
-            results.push({});
-        }
-
-        if (this.correctItems.length > 0) {
-            results.push({
-                result: this.auditData?.subItem?.greenResult ?? '',
-                title_wrong_number_elements: this.titleSubHeadings[0],
-                title_wrong_fonts: this.titleSubHeadings[1],
-            });
-
-            this.globalResults.correctPages.headings = [this.auditData?.subItem?.greenResult ?? '', this.titleSubHeadings[0], this.titleSubHeadings[1]];
-
-
-            for (const item of this.correctItems) {
-                this.globalResults.correctPages.pages.push(item);
-
-                results.push({
-                    subItems: {
-                        type: "subitems",
-                        items: [item],
-                    },
-                });
-            }
-
-            results.push({});
-        }
-
-        this.globalResults.errorMessage =  this.pagesInError.length > 0 ? errorHandling.popupMessage : "";
-        this.globalResults.details.items = results;
-        this.globalResults.details.headings = this.headings;
-        this.globalResults.score = this.score;
-        this.globalResults.id = this.auditId;
-
-        return this.globalResults;
+      results.push({});
     }
 
-    static getInstance(): Promise<FontAudit> {
-        if (!FontAudit.instance) {
-            FontAudit.instance = new FontAudit('', [], []);
-        }
-        return FontAudit.instance;
+    this.globalResults.errorMessage =
+      this.pagesInError.length > 0 ? errorHandling.popupMessage : "";
+    this.globalResults.details.items = results;
+    this.globalResults.details.headings = this.headings;
+    this.globalResults.score = this.score;
+    this.globalResults.id = this.auditId;
+
+    return this.globalResults;
+  }
+
+  static getInstance(): Promise<FontAudit> {
+    if (!FontAudit.instance) {
+      FontAudit.instance = new FontAudit("", [], []);
     }
+    return FontAudit.instance;
+  }
 }
 
-
-export {FontAudit};
+export { FontAudit };
 export default FontAudit.getInstance;

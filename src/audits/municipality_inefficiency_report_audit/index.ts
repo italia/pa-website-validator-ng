@@ -2,17 +2,13 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { CheerioAPI } from "cheerio";
-import {
-  buildUrl,
-  isInternalUrl,
-  urlExists,
-} from "../../utils/utils.js";
+import { buildUrl, isInternalUrl, urlExists } from "../../utils/utils.js";
 import { auditDictionary } from "../../storage/auditDictionary.js";
 import isEmail from "validator/lib/isEmail.js";
-import {Page} from "puppeteer";
-import {Audit} from "../Audit.js";
+import { Page } from "puppeteer";
+import { Audit } from "../Audit.js";
 import * as cheerio from "cheerio";
-import {notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
+import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import * as ejs from "ejs";
 
 const auditId = "municipality-inefficiency-report";
@@ -23,23 +19,23 @@ class InefficiencyAudit extends Audit {
     score: 0,
     details: {
       items: [],
-      type: 'table',
+      type: "table",
       headings: [],
-      summary: ''
+      summary: "",
     },
     pagesItems: {
-      message: '',
+      message: "",
       headings: [],
       pages: [],
     },
-    errorMessage: ''
+    errorMessage: "",
   };
 
-  code = 'C.SI.2.4';
-  mainTitle = 'SEGNALAZIONE DISSERVIZIO'
+  code = "C.SI.2.4";
+  mainTitle = "SEGNALAZIONE DISSERVIZIO";
 
   public score = 0;
-  private headings : any = [];
+  private headings: any = [];
 
   async meta() {
     return {
@@ -55,25 +51,25 @@ class InefficiencyAudit extends Audit {
     };
   }
 
-  async auditPage(
-    page: Page | null,
-    error?: string
-  ) {
-
+  async auditPage(page: Page | null, error?: string) {
     if (error && !page) {
-
-      this.globalResults['score'] = 0;
-      this.globalResults['details']['items'] =  [
+      this.globalResults["score"] = 0;
+      this.globalResults["details"]["items"] = [
         {
           result: notExecutedErrorMessage.replace("<LIST>", error),
         },
       ];
-      this.globalResults['details']['type'] = 'table';
-      this.globalResults['details']['headings'] = [{key: "result", itemType: "text", text: "Risultato"}];
-      this.globalResults['details']['summary'] = '';
+      this.globalResults["details"]["type"] = "table";
+      this.globalResults["details"]["headings"] = [
+        { key: "result", itemType: "text", text: "Risultato" },
+      ];
+      this.globalResults["details"]["summary"] = "";
 
       this.globalResults.pagesItems.headings = ["Risultato"];
-      this.globalResults.pagesItems.message = notExecutedErrorMessage.replace("<LIST>", error);
+      this.globalResults.pagesItems.message = notExecutedErrorMessage.replace(
+        "<LIST>",
+        error,
+      );
       this.globalResults.pagesItems.items = [
         {
           result: this.auditData.redResult,
@@ -82,10 +78,10 @@ class InefficiencyAudit extends Audit {
 
       return {
         score: 0,
-      }
+      };
     }
 
-    if(page){
+    if (page) {
       const url = page.url();
 
       this.headings = [
@@ -116,7 +112,13 @@ class InefficiencyAudit extends Audit {
         },
       ];
 
-      this.globalResults.pagesItems.headings = ["Risultato", "Testo del link", "Pagina di destinazione", "Pagina esistente", "Viene usato il servizio dedicato"];
+      this.globalResults.pagesItems.headings = [
+        "Risultato",
+        "Testo del link",
+        "Pagina di destinazione",
+        "Pagina esistente",
+        "Viene usato il servizio dedicato",
+      ];
 
       const items = [
         {
@@ -129,10 +131,10 @@ class InefficiencyAudit extends Audit {
       ];
 
       const data = await page.content();
-      const $ : CheerioAPI = await cheerio.load(data);
+      const $: CheerioAPI = await cheerio.load(data);
 
       const reportInefficiencyElement = $("footer").find(
-          '[data-element="report-inefficiency"]'
+        '[data-element="report-inefficiency"]',
       );
       const elementObj = $(reportInefficiencyElement).attr();
 
@@ -141,10 +143,10 @@ class InefficiencyAudit extends Audit {
       items[0].link = elementObj?.href ?? "";
 
       if (
-          elementObj &&
-          "href" in elementObj &&
-          elementObj.href !== "#" &&
-          elementObj.href !== ""
+        elementObj &&
+        "href" in elementObj &&
+        elementObj.href !== "#" &&
+        elementObj.href !== ""
       ) {
         if (isMailto(elementObj.href)) {
           items[0].link = elementObj.href;
@@ -180,9 +182,9 @@ class InefficiencyAudit extends Audit {
         }
 
         if (
-            label !== "disservizio" &&
-            label !== "segnala disservizio" &&
-            label !== "segnalazione disservizio"
+          label !== "disservizio" &&
+          label !== "segnala disservizio" &&
+          label !== "segnalazione disservizio"
         ) {
           items[0].result = auditData.yellowResult;
           this.score = 0.5;
@@ -211,42 +213,51 @@ class InefficiencyAudit extends Audit {
         score: this.score,
       };
     }
-
   }
 
-  async getType(){
+  async getType() {
     return auditId;
   }
 
   async returnGlobalHTML() {
-    let status = 'fail'
-    let message = ''
+    let status = "fail";
+    let message = "";
 
     if (this.score > 0.5) {
-      status = 'pass';
+      status = "pass";
       message = this.auditData.greenResult;
     } else if (this.score == 0.5) {
-      status = 'average';
-      message = this.auditData.yellowResult
+      status = "average";
+      message = this.auditData.yellowResult;
     } else {
-      status = 'fail';
-      message = this.auditData.redResult
+      status = "fail";
+      message = this.auditData.redResult;
     }
 
-    const reportHtml = await ejs.renderFile('src/audits/municipality_inefficiency_report_audit/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null ,  totalPercentage : null });
-    return reportHtml
+    const reportHtml = await ejs.renderFile(
+      "src/audits/municipality_inefficiency_report_audit/template.ejs",
+      {
+        ...(await this.meta()),
+        code: this.code,
+        table: this.globalResults,
+        status,
+        statusMessage: message,
+        metrics: null,
+        totalPercentage: null,
+      },
+    );
+    return reportHtml;
   }
 
   static getInstance(): Promise<InefficiencyAudit> {
     if (!InefficiencyAudit.instance) {
-      InefficiencyAudit.instance = new InefficiencyAudit('',[],[]);
+      InefficiencyAudit.instance = new InefficiencyAudit("", [], []);
     }
     return InefficiencyAudit.instance;
   }
-
 }
 
-export {InefficiencyAudit};
+export { InefficiencyAudit };
 export default InefficiencyAudit.getInstance;
 
 const isMailto = (str: string) => {
@@ -255,4 +266,3 @@ const isMailto = (str: string) => {
   const emails = str.slice(7, end >= 0 ? end : undefined);
   return emails.split(",").every((e) => isEmail(e));
 };
-

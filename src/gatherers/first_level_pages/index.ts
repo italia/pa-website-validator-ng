@@ -1,27 +1,35 @@
-import { Gatherer } from '../Gatherer.js';
+import { Gatherer } from "../Gatherer.js";
 import crawlerTypes from "../../types/crawler-types.js";
-import PageData = crawlerTypes.PageData
-import {Page} from "puppeteer";
-import {getRandomFirstLevelPagesUrl} from "../../utils/municipality/utils.js";
+import PageData = crawlerTypes.PageData;
+import { Page } from "puppeteer";
+import { getRandomFirstLevelPagesUrl } from "../../utils/municipality/utils.js";
 
 class firstLevelPagesGatherer extends Gatherer {
-
-  static dataElements:string[] = ['custom-submenu']
-  static pageType:string= 'first-level-page'
+  static dataElements: string[] = ["custom-submenu"];
+  static pageType: string = "first-level-page";
 
   static getInstance(): Promise<firstLevelPagesGatherer> {
     if (!firstLevelPagesGatherer.instance) {
-      firstLevelPagesGatherer.instance = new firstLevelPagesGatherer('');
+      firstLevelPagesGatherer.instance = new firstLevelPagesGatherer("");
     }
     return firstLevelPagesGatherer.instance;
   }
 
-  async navigateAndFetchPages(url: string, numberOfPages = 5,  website: '', page : Page): Promise<PageData[]> {
-    if (this.gatheredPages.length > 0) return this.gatheredPages
+  async navigateAndFetchPages(
+    url: string,
+    numberOfPages = 5,
+    website: "",
+    page: Page,
+  ): Promise<PageData[]> {
+    if (this.gatheredPages.length > 0) return this.gatheredPages;
 
     const currentClass = this.constructor as typeof Gatherer;
 
-    let fetchedUrls:string[] = await getRandomFirstLevelPagesUrl(url, numberOfPages, page)
+    let fetchedUrls: string[] = await getRandomFirstLevelPagesUrl(
+      url,
+      numberOfPages,
+      page,
+    );
 
     this.gatheredPages = fetchedUrls.map((url: any) => {
       return {
@@ -29,13 +37,13 @@ class firstLevelPagesGatherer extends Gatherer {
         id: currentClass.pageType + Date.now(),
         type: currentClass.pageType,
         gathered: false,
-        audited:false,
+        audited: false,
         internal: true,
-        redirectUrl:''
-      }
-    })
+        redirectUrl: "",
+      };
+    });
 
-    return this.gatheredPages
+    return this.gatheredPages;
 
     // const randomPagesUrl = await this.getRandomFirstLevelPagesUrl(url, numberOfPages, '')
 
@@ -53,13 +61,7 @@ class firstLevelPagesGatherer extends Gatherer {
 
     // return this.gatheredPages
   }
-
-
 }
 
 export { firstLevelPagesGatherer };
 export default firstLevelPagesGatherer.getInstance;
-
-
-
-

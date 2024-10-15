@@ -14,11 +14,11 @@ import {
 } from "../../utils/utils.js";
 import { auditDictionary } from "../../storage/auditDictionary.js";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
-import {Audit} from "../Audit.js";
+import { Audit } from "../Audit.js";
 
-import {CheerioAPI} from "cheerio";
+import { CheerioAPI } from "cheerio";
 import * as cheerio from "cheerio";
-import {Page} from "puppeteer";
+import { Page } from "puppeteer";
 import * as ejs from "ejs";
 
 const auditId = "municipality-controlled-vocabularies";
@@ -33,20 +33,20 @@ class MunicipalityVocabulary extends Audit {
     score: 0,
     details: {
       items: [],
-      type: 'table',
+      type: "table",
       headings: [],
-      summary: ''
+      summary: "",
     },
     pagesItems: {
-      message: '',
+      message: "",
       headings: [],
       pages: [],
     },
-    errorMessage: ''
+    errorMessage: "",
   };
-  
-  code = 'C.SI.1.5'
-  mainTitle = 'VOCABOLARI CONTROLLATI'
+
+  code = "C.SI.1.5";
+  mainTitle = "VOCABOLARI CONTROLLATI";
 
   score = 0;
 
@@ -64,26 +64,27 @@ class MunicipalityVocabulary extends Audit {
     };
   }
 
-  async auditPage(
-    page: Page | null,
-    url:string,
-    error?:string
-  ) {
-
-    if(error && !page){
-
+  async auditPage(page: Page | null, url: string, error?: string) {
+    if (error && !page) {
       this.globalResults.score = 0;
       this.globalResults.details.items.push([
         {
           result: notExecutedErrorMessage.replace("<LIST>", error),
         },
       ]);
-      this.globalResults.details.headings= [{ key: "result", itemType: "text", text: "Risultato" }];
-      
-      this.globalResults.details.headings= [{ key: "result", itemType: "text", text: "Risultato" }];
+      this.globalResults.details.headings = [
+        { key: "result", itemType: "text", text: "Risultato" },
+      ];
+
+      this.globalResults.details.headings = [
+        { key: "result", itemType: "text", text: "Risultato" },
+      ];
 
       this.globalResults.pagesItems.headings = ["Risultato"];
-      this.globalResults.pagesItems.message = notExecutedErrorMessage.replace("<LIST>", error);
+      this.globalResults.pagesItems.message = notExecutedErrorMessage.replace(
+        "<LIST>",
+        error,
+      );
       this.globalResults.pagesItems.items = [
         {
           result: this.auditData.redResult,
@@ -92,11 +93,10 @@ class MunicipalityVocabulary extends Audit {
 
       return {
         score: 0,
-      }
+      };
     }
 
-    if(page){
-
+    if (page) {
       const url = page.url();
 
       const headings = [
@@ -137,14 +137,23 @@ class MunicipalityVocabulary extends Audit {
       let $: CheerioAPI = await cheerio.load(data);
 
       const allArgumentsHREF = await getHREFValuesDataAttribute(
-          $,
-          '[data-element="all-topics"]'
+        $,
+        '[data-element="all-topics"]',
       );
 
       if (allArgumentsHREF.length <= 0) {
-        item[0].result = notExecutedErrorMessage.replace("<LIST>", "`all-topics");
+        item[0].result = notExecutedErrorMessage.replace(
+          "<LIST>",
+          "`all-topics",
+        );
         this.globalResults.details.headings = headings;
-        this.globalResults.pagesItems.headings = ["Risultato", "% di argomenti presenti nell'elenco del modello", "Argomenti non presenti nell'elenco del modello", "% di argomenti presenti nell'elenco del modello o EuroVoc", "Argomenti non presenti nell'elenco del modello o EuroVoc"];
+        this.globalResults.pagesItems.headings = [
+          "Risultato",
+          "% di argomenti presenti nell'elenco del modello",
+          "Argomenti non presenti nell'elenco del modello",
+          "% di argomenti presenti nell'elenco del modello o EuroVoc",
+          "Argomenti non presenti nell'elenco del modello o EuroVoc",
+        ];
         this.globalResults.details.items = item;
         this.globalResults.pagesItems.pages = item;
         this.globalResults.score = 0;
@@ -157,22 +166,27 @@ class MunicipalityVocabulary extends Audit {
 
       let allArgumentsPageUrl = allArgumentsHREF[0];
       if (
-          (await isInternalUrl(allArgumentsPageUrl)) &&
-          !allArgumentsPageUrl.includes(url)
+        (await isInternalUrl(allArgumentsPageUrl)) &&
+        !allArgumentsPageUrl.includes(url)
       ) {
         allArgumentsPageUrl = await buildUrl(url, allArgumentsHREF[0]);
       }
 
       $ = await loadPageData(allArgumentsPageUrl);
       const argumentList = await getPageElementDataAttribute(
-          $,
-          '[data-element="topic-element"]'
+        $,
+        '[data-element="topic-element"]',
       );
 
       if (argumentList.length === 0) {
-
         this.globalResults.details.headings = headings;
-        this.globalResults.pagesItems.headings = ["Risultato", "% di argomenti presenti nell'elenco del modello", "Argomenti non presenti nell'elenco del modello", "% di argomenti presenti nell'elenco del modello o EuroVoc", "Argomenti non presenti nell'elenco del modello o EuroVoc"];
+        this.globalResults.pagesItems.headings = [
+          "Risultato",
+          "% di argomenti presenti nell'elenco del modello",
+          "Argomenti non presenti nell'elenco del modello",
+          "% di argomenti presenti nell'elenco del modello o EuroVoc",
+          "Argomenti non presenti nell'elenco del modello o EuroVoc",
+        ];
         this.globalResults.details.items = item;
         this.globalResults.pagesItems.pages = item;
         this.globalResults.score = 0;
@@ -183,17 +197,18 @@ class MunicipalityVocabulary extends Audit {
         };
       }
 
-      const elementInfoMunicipalityVocabulary = await areAllElementsInVocabulary(
+      const elementInfoMunicipalityVocabulary =
+        await areAllElementsInVocabulary(
           argumentList,
-          municipalityModelVocabulary
-      );
+          municipalityModelVocabulary,
+        );
 
       const elementInMunicipalityModelPercentage = parseInt(
-          (
-              (elementInfoMunicipalityVocabulary.elementIncluded.length /
-                  argumentList.length) *
-              100
-          ).toFixed(0)
+        (
+          (elementInfoMunicipalityVocabulary.elementIncluded.length /
+            argumentList.length) *
+          100
+        ).toFixed(0),
       );
 
       const lowerCaseEurovoc = eurovocVocabulary.map((element) => {
@@ -205,16 +220,16 @@ class MunicipalityVocabulary extends Audit {
       const uniq = [...new Set([...lowerCaseEurovoc, ...lowerCaseModel])];
 
       const elementInUnionVocabulary = await areAllElementsInVocabulary(
-          argumentList,
-          uniq
+        argumentList,
+        uniq,
       );
 
       const elementInUnionVocabularyPercentage = parseInt(
-          (
-              (elementInUnionVocabulary.elementIncluded.length /
-                  argumentList.length) *
-              100
-          ).toFixed(0)
+        (
+          (elementInUnionVocabulary.elementIncluded.length /
+            argumentList.length) *
+          100
+        ).toFixed(0),
       );
 
       if (elementInfoMunicipalityVocabulary.allArgumentsInVocabulary) {
@@ -229,16 +244,22 @@ class MunicipalityVocabulary extends Audit {
       }
 
       item[0].element_in_municipality_model_percentage =
-          elementInMunicipalityModelPercentage + "%";
+        elementInMunicipalityModelPercentage + "%";
       item[0].element_in_union_percentage =
-          elementInUnionVocabularyPercentage + "%";
+        elementInUnionVocabularyPercentage + "%";
       item[0].element_not_in_municipality_vocabulary =
-          elementInfoMunicipalityVocabulary.elementNotIncluded.join(", ");
+        elementInfoMunicipalityVocabulary.elementNotIncluded.join(", ");
       item[0].element_not_in_union_vocabulary =
-          elementInUnionVocabulary.elementNotIncluded.join(", ");
+        elementInUnionVocabulary.elementNotIncluded.join(", ");
 
       this.globalResults.details.headings = headings;
-      this.globalResults.pagesItems.headings = ["Risultato", "% di argomenti presenti nell'elenco del modello", "Argomenti non presenti nell'elenco del modello", "% di argomenti presenti nell'elenco del modello o EuroVoc", "Argomenti non presenti nell'elenco del modello o EuroVoc"];
+      this.globalResults.pagesItems.headings = [
+        "Risultato",
+        "% di argomenti presenti nell'elenco del modello",
+        "Argomenti non presenti nell'elenco del modello",
+        "% di argomenti presenti nell'elenco del modello o EuroVoc",
+        "Argomenti non presenti nell'elenco del modello o EuroVoc",
+      ];
       this.globalResults.details.items = item;
       this.globalResults.pagesItems.pages = item;
       this.globalResults.score = this.score;
@@ -246,46 +267,54 @@ class MunicipalityVocabulary extends Audit {
       return {
         score: this.score,
       };
-
     }
-
   }
 
-  async getType(){
+  async getType() {
     return auditId;
   }
 
-  async returnGlobal(){
+  async returnGlobal() {
     return this.globalResults;
   }
-  
+
   async returnGlobalHTML() {
-    let status = 'fail'
-    let message = ''
+    let status = "fail";
+    let message = "";
 
     if (this.score > 0.5) {
-        status = 'pass';
-        message = this.auditData.greenResult;
+      status = "pass";
+      message = this.auditData.greenResult;
     } else if (this.score == 0.5) {
-        status = 'average';
-        message = this.auditData.yellowResult
+      status = "average";
+      message = this.auditData.yellowResult;
     } else {
-        status = 'fail';
-        message = this.auditData.redResult
+      status = "fail";
+      message = this.auditData.redResult;
     }
 
-    const reportHtml = await ejs.renderFile('src/audits/municipality_vocabulary/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null , totalPercentage : null });
-    return reportHtml
+    const reportHtml = await ejs.renderFile(
+      "src/audits/municipality_vocabulary/template.ejs",
+      {
+        ...(await this.meta()),
+        code: this.code,
+        table: this.globalResults,
+        status,
+        statusMessage: message,
+        metrics: null,
+        totalPercentage: null,
+      },
+    );
+    return reportHtml;
   }
 
   static getInstance(): Promise<MunicipalityVocabulary> {
     if (!MunicipalityVocabulary.instance) {
-      MunicipalityVocabulary.instance = new MunicipalityVocabulary('',[],[]);
+      MunicipalityVocabulary.instance = new MunicipalityVocabulary("", [], []);
     }
     return MunicipalityVocabulary.instance;
   }
-
 }
 
-export {MunicipalityVocabulary};
+export { MunicipalityVocabulary };
 export default MunicipalityVocabulary.getInstance;

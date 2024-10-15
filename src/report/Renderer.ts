@@ -1,169 +1,174 @@
-import {audits} from '../AuditManager.js';
-import * as ejs from 'ejs';
+import { audits } from "../AuditManager.js";
+import * as ejs from "ejs";
 import { mkdir, writeFile } from "fs/promises";
 import open from "open";
 import { format } from "path";
-import { VERSION } from '../version.js';
-import PageManager from '../PageManager.js';
-import {municipalityWeights, schoolWeights} from "../config/weights.js";
+import { VERSION } from "../version.js";
+import PageManager from "../PageManager.js";
+import { municipalityWeights, schoolWeights } from "../config/weights.js";
 
 const render = async () => {
-    const website = process.env.website
-    const destination = process.env.destination
-    const saveFile = process.env.saveFile
-    const view = process.env.view
-    const reportName = process.env.reportName
-    const date = formatDate(new Date())
+  const website = process.env.website;
+  const destination = process.env.destination;
+  const saveFile = process.env.saveFile;
+  const view = process.env.view;
+  const reportName = process.env.reportName;
+  const date = formatDate(new Date());
 
-    let successAudits = []
-    let failedAudits = []
-    let informativeAudits = []
-    let lighthouseIFrame = null
+  let successAudits = [];
+  let failedAudits = [];
+  let informativeAudits = [];
+  let lighthouseIFrame = null;
 
+  /** get data from report instances */
+  for (let auditId of Object.keys(audits)) {
+    const audit = (await audits[auditId]()) as any;
 
-    /** get data from report instances */
-    for(let auditId of Object.keys(audits)){
-        const audit = await audits[auditId]() as any
+    const auditMeta = await audit.meta();
+    const auditResult = audit.globalResults as any;
+    const score = auditResult.score;
+    const infoScore = auditResult.infoScore as any;
 
-        const auditMeta = await audit.meta()
-        const auditResult = audit.globalResults as any
-        const score = auditResult.score;
-        const infoScore = auditResult.infoScore as any;
-
-        if(auditResult.info || audit.info){
-            informativeAudits.push({
-                ...auditMeta,
-                auditHTML : await audit.returnGlobalHTML(),
-                status: infoScore ? '' : score > 0.5 ? 'pass' : score === 0.5 ? 'average' : 'fail'
-            })
-        }else if (score > 0.5) {
-            successAudits.push({
-                ...auditMeta,
-                status: 'pass',
-                auditHTML : await audit.returnGlobalHTML()
-            })
-        } else if (score === 0.5) {
-            successAudits.push({
-                ...auditMeta,
-                status: 'average',
-                auditHTML : await audit.returnGlobalHTML()
-            })
-        } else {
-            failedAudits.push({
-                ...auditMeta,
-                status: 'fail',
-                auditHTML : await audit.returnGlobalHTML()
-            })
-        }
-
-
-        // if (auditId == "school_accessibility" )
-        //     informativeAudits.push({
-        //         ...auditMeta,
-        //         auditHTML : await audit.returnGlobalHTML()
-        // })
-
-        /** LIGHTHOUSE AUDIT specific flow */
-        if (auditId === 'lighthouse') {
-            lighthouseIFrame = audit.reportHTML
-        }
-    
+    if (auditResult.info || audit.info) {
+      informativeAudits.push({
+        ...auditMeta,
+        auditHTML: await audit.returnGlobalHTML(),
+        status: infoScore
+          ? ""
+          : score > 0.5
+            ? "pass"
+            : score === 0.5
+              ? "average"
+              : "fail",
+      });
+    } else if (score > 0.5) {
+      successAudits.push({
+        ...auditMeta,
+        status: "pass",
+        auditHTML: await audit.returnGlobalHTML(),
+      });
+    } else if (score === 0.5) {
+      successAudits.push({
+        ...auditMeta,
+        status: "average",
+        auditHTML: await audit.returnGlobalHTML(),
+      });
+    } else {
+      failedAudits.push({
+        ...auditMeta,
+        status: "fail",
+        auditHTML: await audit.returnGlobalHTML(),
+      });
     }
 
-    //console.log(failedAudits)
-    // console.log('PASSED', successAudits)
-    // console.log('FAILED', successAudits)
-    // console.log('INFO', informativeAudits)
+    // if (auditId == "school_accessibility" )
+    //     informativeAudits.push({
+    //         ...auditMeta,
+    //         auditHTML : await audit.returnGlobalHTML()
+    // })
 
-    const reportJSON = await PageManager.getGlobalResults()
-
-    let status = 'ko'
-    if (successAudits.length > failedAudits.length) {
-        status = 'ok'
+    /** LIGHTHOUSE AUDIT specific flow */
+    if (auditId === "lighthouse") {
+      lighthouseIFrame = audit.reportHTML;
     }
+  }
 
-    successAudits = sortByWeights(successAudits);
-    failedAudits = sortByWeights(failedAudits);
+  //console.log(failedAudits)
+  // console.log('PASSED', successAudits)
+  // console.log('FAILED', successAudits)
+  // console.log('INFO', informativeAudits)
 
-    const reportHtml = await ejs.renderFile('src/report/index.ejs', {
-         crawler_version: VERSION,
-         date: date,
-         results: {
-            status: status,
-            passed_audits: successAudits.length,
-            failed_audits : failedAudits.length,
-            total_audits:  successAudits.length + failedAudits.length,
-         },
-         audits: {
-            passed: successAudits,
-            info: informativeAudits,
-            failed: failedAudits
-         },
-         url_comune: website,
-         lighthouseIFrame: lighthouseIFrame.replace(/"/g, '&quot;')
-    });   
+  const reportJSON = await PageManager.getGlobalResults();
 
-    if (saveFile == "false") {
-        return {
-            status: true,
-            data: {
-            htmlReport: reportHtml,
-            jsonReport: reportJSON,
-            },
-        };
-    }
+  let status = "ko";
+  if (successAudits.length > failedAudits.length) {
+    status = "ok";
+  }
 
-    await mkdir(destination as string, { recursive: true });
+  successAudits = sortByWeights(successAudits);
+  failedAudits = sortByWeights(failedAudits);
 
-    const htmlPath = format({
-        dir: destination,
-        name: reportName,
-        ext: ".html",
-    });
+  const reportHtml = await ejs.renderFile("src/report/index.ejs", {
+    crawler_version: VERSION,
+    date: date,
+    results: {
+      status: status,
+      passed_audits: successAudits.length,
+      failed_audits: failedAudits.length,
+      total_audits: successAudits.length + failedAudits.length,
+    },
+    audits: {
+      passed: successAudits,
+      info: informativeAudits,
+      failed: failedAudits,
+    },
+    url_comune: website,
+    lighthouseIFrame: lighthouseIFrame.replace(/"/g, "&quot;"),
+  });
 
-    const jsonPath = format({
-        dir: destination,
-        name: reportName,
-        ext: ".json",
-    });
+  if (saveFile == "false") {
+    return {
+      status: true,
+      data: {
+        htmlReport: reportHtml,
+        jsonReport: reportJSON,
+      },
+    };
+  }
 
-    await writeFile(htmlPath, reportHtml);
-    await writeFile(jsonPath, JSON.stringify(reportJSON));
+  await mkdir(destination as string, { recursive: true });
 
-    if (view && Boolean(view)) {
-        await open(htmlPath);
-    }
-  
-       return {
-         status: true,
-           data: {
-           htmlResultPath: htmlPath,
-           jsonResultPath: jsonPath,
-         },
-       };
-}
+  const htmlPath = format({
+    dir: destination,
+    name: reportName,
+    ext: ".html",
+  });
 
-const  formatDate = (date: Date): string =>{
-    const year = date.getFullYear().toString();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    
-    return `${day}/${month}/${year.slice(-2)} ${hours}:${minutes}`;
-}
+  const jsonPath = format({
+    dir: destination,
+    name: reportName,
+    ext: ".json",
+  });
 
-const sortByWeights = (audits : Array<any>) => {
-    const referenceArray = process.env["type"] === 'municipality' ? municipalityWeights : schoolWeights;
+  await writeFile(htmlPath, reportHtml);
+  await writeFile(jsonPath, JSON.stringify(reportJSON));
 
-    audits.forEach(audit => {
-        const referenceItem = referenceArray.find(el => el.id === audit.id);
-        audit['weight'] = referenceItem && referenceItem.weight ? referenceItem.weight : 1;
-    });
+  if (view && Boolean(view)) {
+    await open(htmlPath);
+  }
 
-    return audits.sort((a, b) => b.weight - a.weight);
+  return {
+    status: true,
+    data: {
+      htmlResultPath: htmlPath,
+      jsonResultPath: jsonPath,
+    },
+  };
+};
 
-}
+const formatDate = (date: Date): string => {
+  const year = date.getFullYear().toString();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
 
+  return `${day}/${month}/${year.slice(-2)} ${hours}:${minutes}`;
+};
 
-export default render
+const sortByWeights = (audits: Array<any>) => {
+  const referenceArray =
+    process.env["type"] === "municipality"
+      ? municipalityWeights
+      : schoolWeights;
+
+  audits.forEach((audit) => {
+    const referenceItem = referenceArray.find((el) => el.id === audit.id);
+    audit["weight"] =
+      referenceItem && referenceItem.weight ? referenceItem.weight : 1;
+  });
+
+  return audits.sort((a, b) => b.weight - a.weight);
+};
+
+export default render;

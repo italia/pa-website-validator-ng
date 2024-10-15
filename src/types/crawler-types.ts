@@ -1,32 +1,30 @@
-
 declare namespace crawlerTypes {
-
   interface AuditDictionary {
     greenResult: string;
-    yellowResult:string;
+    yellowResult: string;
     redResult: string;
     nonExecuted: string;
     title: string;
-    failureTitle:string;
+    failureTitle: string;
     description: string;
     subItem?: {
       greenResult?: string;
       yellowResult?: string;
       redResult?: string;
-    },
+    };
   }
   interface PageData {
     id: string;
     url: string;
     type: string;
-    redirectUrl: string | undefined
-    internal: boolean | undefined
-    gathered: boolean
-    audited: boolean
-    errors?:any[]
-    temporaryGatherer?: boolean
-    temporaryAudit?: boolean
-    scanning?: boolean
+    redirectUrl: string | undefined;
+    internal: boolean | undefined;
+    gathered: boolean;
+    audited: boolean;
+    errors?: any[];
+    temporaryGatherer?: boolean;
+    temporaryAudit?: boolean;
+    scanning?: boolean;
   }
 
   interface requestPages {

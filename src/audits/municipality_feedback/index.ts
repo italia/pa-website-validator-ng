@@ -2,330 +2,340 @@
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import {auditDictionary} from "../../storage/auditDictionary.js";
-import {
-    checkFeedbackComponent,
-} from "../../utils/municipality/utils.js";
-import {
-    errorHandling,
-} from "../../config/commonAuditsParts.js";
+import { auditDictionary } from "../../storage/auditDictionary.js";
+import { checkFeedbackComponent } from "../../utils/municipality/utils.js";
+import { errorHandling } from "../../config/commonAuditsParts.js";
 
-import {Page} from "puppeteer";
-import {Audit} from "../Audit.js";
+import { Page } from "puppeteer";
+import { Audit } from "../Audit.js";
 import * as ejs from "ejs";
 
 const auditId = "municipality-feedback-element";
 const auditData = auditDictionary[auditId];
 
 class FeedbackAudit extends Audit {
-    code = 'C.SI.2.5'
-    mainTitle = "VALUTAZIONE DELL'ESPERIENZA D'USO, CHIAREZZA DELLE PAGINE INFORMATIVE"
+  code = "C.SI.2.5";
+  mainTitle =
+    "VALUTAZIONE DELL'ESPERIENZA D'USO, CHIAREZZA DELLE PAGINE INFORMATIVE";
 
-    public globalResults: any = {
-        score: 1,
-        details: {
-            items: [],
-            type: 'table',
-            headings: [],
-            summary: ''
-        },
-        pagesInError: {
-            message: '',
-            headings: [],
-            pages: []
-        },
-        wrongPages: {
-            message: '',
-            headings: [],
-            pages: []
-        },
-        tolerancePages: {
-            message: '',
-            headings: [],
-            pages: []
-        },
-        correctPages: {
-            message: '',
-            headings: [],
-            pages: []
-        },
-        errorMessage: ''
+  public globalResults: any = {
+    score: 1,
+    details: {
+      items: [],
+      type: "table",
+      headings: [],
+      summary: "",
+    },
+    pagesInError: {
+      message: "",
+      headings: [],
+      pages: [],
+    },
+    wrongPages: {
+      message: "",
+      headings: [],
+      pages: [],
+    },
+    tolerancePages: {
+      message: "",
+      headings: [],
+      pages: [],
+    },
+    correctPages: {
+      message: "",
+      headings: [],
+      pages: [],
+    },
+    errorMessage: "",
+  };
+  private wrongItems: any = [];
+  private toleranceItems: any = [];
+  private correctItems: any = [];
+  private pagesInError: any = [];
+  private score = 1;
+  private titleSubHeadings: any = [];
+  private headings: any = [];
+
+  async meta() {
+    return {
+      id: auditId,
+      title: auditData.title,
+      failureTitle: auditData.failureTitle,
+      description: auditData.description,
+      scoreDisplayMode: this.SCORING_MODES.BINARY,
+      requiredArtifacts: ["origin"],
+      mainTitle: this.mainTitle,
+      code: this.code,
+      auditId: auditId,
     };
-    private wrongItems: any = [];
-    private toleranceItems: any = [];
-    private correctItems: any = [];
-    private pagesInError: any = [];
-    private score = 1;
-    private titleSubHeadings: any = [];
-    private headings: any = [];
+  }
 
-    async meta() {
-        return {
-            id: auditId,
-            title: auditData.title,
-            failureTitle: auditData.failureTitle,
-            description: auditData.description,
-            scoreDisplayMode: this.SCORING_MODES.BINARY,
-            requiredArtifacts: ["origin"],
-            mainTitle: this.mainTitle,
-            code: this.code,
-            auditId: auditId,
-        };
+  async auditPage(page: Page | null, url: string, error?: string) {
+    this.titleSubHeadings = ["Elementi errati o non trovati"];
+    this.headings = [
+      {
+        key: "result",
+        itemType: "text",
+        text: "Risultato totale",
+        subItemsHeading: { key: "inspected_page", itemType: "url" },
+      },
+      {
+        key: "title_errors_found",
+        itemType: "text",
+        text: "",
+        subItemsHeading: { key: "errors_found", itemType: "text" },
+      },
+    ];
+
+    if (error && !page) {
+      this.score = 0;
+
+      this.pagesInError.push({
+        inspected_page: url,
+        errors_found: error,
+      });
+
+      return {
+        score: 0,
+      };
     }
 
-    async auditPage(
-        page: Page | null,
-        url: string,
-        error?: string,
-    ) {
+    if (page) {
+      let url = page.url();
 
-        this.titleSubHeadings = ["Elementi errati o non trovati"];
-        this.headings = [
-            {
-                key: "result",
-                itemType: "text",
-                text: "Risultato totale",
-                subItemsHeading: {key: "inspected_page", itemType: "url"},
-            },
-            {
-                key: "title_errors_found",
-                itemType: "text",
-                text: "",
-                subItemsHeading: {key: "errors_found", itemType: "text"},
-            },
-        ];
+      const item = {
+        link: url,
+        errors_found: "",
+      };
+      try {
+        const feedbackComponentAnalysis = await checkFeedbackComponent(
+          url,
+          page,
+        );
 
-        if (error && !page) {
-            this.score = 0;
-
-            this.pagesInError.push({
-                inspected_page: url,
-                errors_found: error,
-            });
-
-            return {
-                score: 0,
-            }
+        if (this.score > feedbackComponentAnalysis.score) {
+          this.score = feedbackComponentAnalysis.score;
         }
 
-        if (page) {
-            let url = page.url();
-
-            const item = {
-                link: url,
-                errors_found: "",
-            };
-            try {
-                const feedbackComponentAnalysis = await checkFeedbackComponent(
-                    url,
-                    page
-                );
-
-                if (this.score > feedbackComponentAnalysis.score) {
-                    this.score = feedbackComponentAnalysis.score;
-                }
-
-                if (feedbackComponentAnalysis.errors.length > 0) {
-                    item.errors_found = feedbackComponentAnalysis.errors.join("; ");
-                }
-                switch (feedbackComponentAnalysis.score) {
-                    case 0:
-                        this.wrongItems.push(item);
-                        break;
-                    case 0.5:
-                        this.toleranceItems.push(item);
-                        break;
-                    case 1:
-                        this.correctItems.push(item);
-                        break;
-                }
-            } catch (ex) {
-                if (!(ex instanceof Error)) {
-                    throw ex;
-                }
-
-                let errorMessage = ex.message;
-                errorMessage = errorMessage.substring(
-                    errorMessage.indexOf('"') + 1,
-                    errorMessage.lastIndexOf('"')
-                );
-
-                this.pagesInError.push({
-                    link: url,
-                    errors_found: errorMessage,
-                });
-            }
-
-            return {
-                score: this.score > 0 ? 1 : 0,
-            };
+        if (feedbackComponentAnalysis.errors.length > 0) {
+          item.errors_found = feedbackComponentAnalysis.errors.join("; ");
+        }
+        switch (feedbackComponentAnalysis.score) {
+          case 0:
+            this.wrongItems.push(item);
+            break;
+          case 0.5:
+            this.toleranceItems.push(item);
+            break;
+          case 1:
+            this.correctItems.push(item);
+            break;
+        }
+      } catch (ex) {
+        if (!(ex instanceof Error)) {
+          throw ex;
         }
 
+        let errorMessage = ex.message;
+        errorMessage = errorMessage.substring(
+          errorMessage.indexOf('"') + 1,
+          errorMessage.lastIndexOf('"'),
+        );
 
+        this.pagesInError.push({
+          link: url,
+          errors_found: errorMessage,
+        });
+      }
+
+      return {
+        score: this.score > 0 ? 1 : 0,
+      };
+    }
+  }
+
+  async getType() {
+    return auditId;
+  }
+
+  async returnGlobal() {
+    this.globalResults.correctPages.pages = [];
+    this.globalResults.tolerancePages.pages = [];
+    this.globalResults.wrongPages.pages = [];
+    this.globalResults.pagesInError.pages = [];
+
+    if (this.score > 0) {
+      this.score = 1;
     }
 
-    async getType() {
-        return auditId;
+    const results = [];
+
+    if (this.pagesInError.length > 0) {
+      results.push({
+        result: errorHandling.errorMessage,
+      });
+
+      results.push({});
+
+      results.push({
+        result: errorHandling.errorColumnTitles[0],
+        title_errors_found: errorHandling.errorColumnTitles[1],
+      });
+
+      this.globalResults.pagesInError.message = errorHandling.errorMessage;
+      this.globalResults.wrongPages.headings = [
+        errorHandling.errorColumnTitles[0],
+        errorHandling.errorColumnTitles[1],
+      ];
+
+      for (const item of this.pagesInError) {
+        this.globalResults.pagesInError.pages.push(item);
+        results.push({
+          subItems: {
+            type: "subitems",
+            items: [item],
+          },
+        });
+      }
+    } else {
+      switch (this.score) {
+        case 1:
+          results.push({
+            result: auditData.greenResult,
+          });
+          break;
+        case 0.5:
+          results.push({
+            result: auditData.yellowResult,
+          });
+          break;
+        case 0:
+          results.push({
+            result: auditData.redResult,
+          });
+          break;
+      }
     }
 
-    async returnGlobal() {
-        this.globalResults.correctPages.pages = [];
-        this.globalResults.tolerancePages.pages = [];
-        this.globalResults.wrongPages.pages = [];
-        this.globalResults.pagesInError.pages = [];
+    results.push({});
 
-        if (this.score > 0) {
-            this.score = 1;
-        }
+    if (this.wrongItems.length > 0) {
+      results.push({
+        result: auditData.subItem.redResult,
+        title_errors_found: this.titleSubHeadings[0],
+      });
 
-        const results = [];
+      this.globalResults.wrongPages.headings = [
+        auditData.subItem.redResult,
+        this.titleSubHeadings[0],
+      ];
 
-        if (this.pagesInError.length > 0) {
-            results.push({
-                result: errorHandling.errorMessage,
-            });
+      for (const item of this.wrongItems) {
+        this.globalResults.wrongPages.pages.push(item);
 
-            results.push({});
-
-            results.push({
-                result: errorHandling.errorColumnTitles[0],
-                title_errors_found: errorHandling.errorColumnTitles[1],
-            });
-
-            this.globalResults.pagesInError.message = errorHandling.errorMessage
-            this.globalResults.wrongPages.headings = [errorHandling.errorColumnTitles[0], errorHandling.errorColumnTitles[1]];
-
-            for (const item of this.pagesInError) {
-                this.globalResults.pagesInError.pages.push(item);
-                results.push({
-                    subItems: {
-                        type: "subitems",
-                        items: [item],
-                    },
-                });
-            }
-        } else {
-
-            switch (this.score) {
-                case 1:
-                    results.push({
-                        result: auditData.greenResult,
-                    });
-                    break;
-                case 0.5:
-                    results.push({
-                        result: auditData.yellowResult,
-                    });
-                    break;
-                case 0:
-                    results.push({
-                        result: auditData.redResult,
-                    });
-                    break;
-            }
-        }
-
-
-        results.push({});
-
-        if (this.wrongItems.length > 0) {
-            results.push({
-                result: auditData.subItem.redResult,
-                title_errors_found: this.titleSubHeadings[0],
-            });
-
-            this.globalResults.wrongPages.headings = [auditData.subItem.redResult, this.titleSubHeadings[0]];
-
-
-            for (const item of this.wrongItems) {
-                this.globalResults.wrongPages.pages.push(item);
-
-                results.push({
-                    subItems: {
-                        type: "subitems",
-                        items: [item],
-                    },
-                });
-            }
-        }
-
-        if (this.toleranceItems.length > 0) {
-            results.push({
-                result: auditData.subItem.yellowResult,
-                title_errors_found: this.titleSubHeadings[0],
-            });
-
-            this.globalResults.tolerancePages.headings = [auditData.subItem.yellowResult, this.titleSubHeadings[0]];
-
-
-            for (const item of this.toleranceItems) {
-                this.globalResults.tolerancePages.pages.push(item);
-                results.push({
-                    subItems: {
-                        type: "subitems",
-                        items: [item],
-                    },
-                });
-            }
-        }
-
-        if (this.correctItems.length > 0) {
-            results.push({
-                result: auditData.subItem.greenResult,
-                title_errors_found: this.titleSubHeadings[0],
-            });
-
-            this.globalResults.correctPages.headings = [auditData.subItem.greenResult, this.titleSubHeadings[0]];
-
-
-            for (const item of this.correctItems) {
-                this.globalResults.correctPages.pages.push(item);
-                results.push({
-                    subItems: {
-                        type: "subitems",
-                        items: [item],
-                    },
-                });
-            }
-
-            results.push({});
-        }
-
-        this.globalResults['score'] = this.score;
-        this.globalResults['details']['items'] = results;
-        this.globalResults['errorMessage'] = this.pagesInError.length || this.wrongItems.length ? errorHandling.popupMessage : "";
-        this.globalResults['details']['headings'] = this.headings;
-
-        return this.globalResults;
+        results.push({
+          subItems: {
+            type: "subitems",
+            items: [item],
+          },
+        });
+      }
     }
 
-    static getInstance(): Promise<FeedbackAudit> {
-        if (!FeedbackAudit.instance) {
-            FeedbackAudit.instance = new FeedbackAudit('', [], []);
-        }
-        return FeedbackAudit.instance;
+    if (this.toleranceItems.length > 0) {
+      results.push({
+        result: auditData.subItem.yellowResult,
+        title_errors_found: this.titleSubHeadings[0],
+      });
+
+      this.globalResults.tolerancePages.headings = [
+        auditData.subItem.yellowResult,
+        this.titleSubHeadings[0],
+      ];
+
+      for (const item of this.toleranceItems) {
+        this.globalResults.tolerancePages.pages.push(item);
+        results.push({
+          subItems: {
+            type: "subitems",
+            items: [item],
+          },
+        });
+      }
     }
 
-    async returnGlobalHTML() {
-        let status = 'fail'
-        let message = ''
+    if (this.correctItems.length > 0) {
+      results.push({
+        result: auditData.subItem.greenResult,
+        title_errors_found: this.titleSubHeadings[0],
+      });
 
-        if (this.score > 0.5) {
-            status = 'pass';
-            message = this.auditData.greenResult;
-        } else if (this.score == 0.5) {
-            status = 'average';
-            message = this.auditData.yellowResult
-        } else {
-            status = 'fail';
-            message = this.auditData.redResult
-        }
+      this.globalResults.correctPages.headings = [
+        auditData.subItem.greenResult,
+        this.titleSubHeadings[0],
+      ];
 
-        const reportHtml = await ejs.renderFile('src/audits/municipality_feedback/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null ,  totalPercentage : null });
-        return reportHtml
+      for (const item of this.correctItems) {
+        this.globalResults.correctPages.pages.push(item);
+        results.push({
+          subItems: {
+            type: "subitems",
+            items: [item],
+          },
+        });
+      }
+
+      results.push({});
     }
 
+    this.globalResults["score"] = this.score;
+    this.globalResults["details"]["items"] = results;
+    this.globalResults["errorMessage"] =
+      this.pagesInError.length || this.wrongItems.length
+        ? errorHandling.popupMessage
+        : "";
+    this.globalResults["details"]["headings"] = this.headings;
+
+    return this.globalResults;
+  }
+
+  static getInstance(): Promise<FeedbackAudit> {
+    if (!FeedbackAudit.instance) {
+      FeedbackAudit.instance = new FeedbackAudit("", [], []);
+    }
+    return FeedbackAudit.instance;
+  }
+
+  async returnGlobalHTML() {
+    let status = "fail";
+    let message = "";
+
+    if (this.score > 0.5) {
+      status = "pass";
+      message = this.auditData.greenResult;
+    } else if (this.score == 0.5) {
+      status = "average";
+      message = this.auditData.yellowResult;
+    } else {
+      status = "fail";
+      message = this.auditData.redResult;
+    }
+
+    const reportHtml = await ejs.renderFile(
+      "src/audits/municipality_feedback/template.ejs",
+      {
+        ...(await this.meta()),
+        code: this.code,
+        table: this.globalResults,
+        status,
+        statusMessage: message,
+        metrics: null,
+        totalPercentage: null,
+      },
+    );
+    return reportHtml;
+  }
 }
 
-export {FeedbackAudit};
+export { FeedbackAudit };
 export default FeedbackAudit.getInstance;

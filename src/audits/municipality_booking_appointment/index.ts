@@ -8,16 +8,15 @@ import {
   notExecutedErrorMessage,
 } from "../../config/commonAuditsParts.js";
 import { DataElementError } from "../../utils/DataElementError.js";
-import {Page} from "puppeteer";
-import {Audit} from "../Audit.js";
-import {CheerioAPI} from "cheerio";
+import { Page } from "puppeteer";
+import { Audit } from "../Audit.js";
+import { CheerioAPI } from "cheerio";
 import * as cheerio from "cheerio";
 import * as ejs from "ejs";
 
 class BookingAppointment extends Audit {
-
-  code = 'C.SI.2.1'
-  mainTitle = 'PRENOTAZIONE APPUNTAMENTI'
+  code = "C.SI.2.1";
+  mainTitle = "PRENOTAZIONE APPUNTAMENTI";
   auditId = "municipality-booking-appointment-check";
   auditData = auditDictionary["municipality-booking-appointment-check"];
 
@@ -25,39 +24,39 @@ class BookingAppointment extends Audit {
     score: 1,
     details: {
       items: [],
-      type: 'table',
+      type: "table",
       headings: [],
-      summary: ''
+      summary: "",
     },
     pagesInError: {
-      message: '',
+      message: "",
       headings: [],
-      pages: []
+      pages: [],
     },
     wrongPages: {
-      message: '',
+      message: "",
       headings: [],
-      pages: []
+      pages: [],
     },
     tolerancePages: {
-      message: '',
+      message: "",
       headings: [],
-      pages: []
+      pages: [],
     },
     correctPages: {
-      message: '',
+      message: "",
       headings: [],
-      pages: []
+      pages: [],
     },
-    errorMessage: ''
+    errorMessage: "",
   };
   public wrongItems: any = [];
   public toleranceItems: any = [];
   public correctItems: any = [];
-  public pagesInError : any = [];
+  public pagesInError: any = [];
   public score = 1;
   private titleSubHeadings: any = [];
-  private headings : any = [];
+  private headings: any = [];
 
   async meta() {
     return {
@@ -77,7 +76,7 @@ class BookingAppointment extends Audit {
     page: Page | null,
     url: string,
     error?: string,
-    pageType?: string | null
+    pageType?: string | null,
   ) {
     this.titleSubHeadings = [
       "Componente individuato",
@@ -110,8 +109,7 @@ class BookingAppointment extends Audit {
       },
     ];
 
-    if(error && !page){
-
+    if (error && !page) {
       this.score = 0;
 
       this.pagesInError.push({
@@ -121,14 +119,13 @@ class BookingAppointment extends Audit {
 
       return {
         score: 0,
-      }
+      };
     }
-    
-    if(page){
 
-      let url = page.url()
+    if (page) {
+      let url = page.url();
 
-      if(pageType && pageType === 'services-page'){
+      if (pageType && pageType === "services-page") {
         const itemFirst = {
           link: url,
           component_exist: "Sì",
@@ -138,18 +135,17 @@ class BookingAppointment extends Audit {
         this.correctItems.push(itemFirst);
       }
 
-
       try {
         const bookingAppointmentPage = await getPages(
-            url,
-            [
-              {
-                type: "booking_appointment",
-                numberOfPages: 1,
-              },
-            ],
-            false,
-            page
+          url,
+          [
+            {
+              type: "booking_appointment",
+              numberOfPages: 1,
+            },
+          ],
+          false,
+          page,
         );
 
         if (bookingAppointmentPage.length === 0) {
@@ -159,14 +155,15 @@ class BookingAppointment extends Audit {
         if (!(ex instanceof DataElementError)) {
           throw ex;
         }
-        this.globalResults.details.items = [{ key: "result", itemType: "text", text: "Risultato" }];
+        this.globalResults.details.items = [
+          { key: "result", itemType: "text", text: "Risultato" },
+        ];
         this.globalResults.details.headings = [
           {
             result: notExecutedErrorMessage.replace("<LIST>", ex.message),
           },
         ];
         this.score = 0;
-
 
         return {
           score: 0,
@@ -175,59 +172,57 @@ class BookingAppointment extends Audit {
 
       let $: CheerioAPI | any = null;
 
-        try {
-          let data = await page.content();
-          $ = await cheerio.load(data);
-
-        } catch (ex) {
-          if (!(ex instanceof Error)) {
-            throw ex;
-          }
-          let errorMessage = ex.message;
-          errorMessage = errorMessage.substring(
-              errorMessage.indexOf('"') + 1,
-              errorMessage.lastIndexOf('"')
-          );
-          this.pagesInError.push({
-            link: url,
-            component_exist: errorMessage,
-          });
+      try {
+        let data = await page.content();
+        $ = await cheerio.load(data);
+      } catch (ex) {
+        if (!(ex instanceof Error)) {
+          throw ex;
         }
-
-        const item = {
-          link: url,
-          component_exist: "Sì",
-          in_page_url: "No",
-        };
-
-        const bookingAppointmentServicePage = await getPrimaryPageUrl(
-            url,
-            "appointment-booking"
+        let errorMessage = ex.message;
+        errorMessage = errorMessage.substring(
+          errorMessage.indexOf('"') + 1,
+          errorMessage.lastIndexOf('"'),
         );
+        this.pagesInError.push({
+          link: url,
+          component_exist: errorMessage,
+        });
+      }
 
-        if (bookingAppointmentServicePage === "") {
-          item.component_exist = "No";
-        }
+      const item = {
+        link: url,
+        component_exist: "Sì",
+        in_page_url: "No",
+      };
 
-        const inPageButton = $('[data-element="service-booking-access"]');
-        if (inPageButton.length > 0) {
-          item.in_page_url = "Sì";
-        }
+      const bookingAppointmentServicePage = await getPrimaryPageUrl(
+        url,
+        "appointment-booking",
+      );
 
-        if (bookingAppointmentServicePage === "") {
-          this.score = 0;
-          this.wrongItems.push(item);
-        }
+      if (bookingAppointmentServicePage === "") {
+        item.component_exist = "No";
+      }
 
-        this.correctItems.push(item);
+      const inPageButton = $('[data-element="service-booking-access"]');
+      if (inPageButton.length > 0) {
+        item.in_page_url = "Sì";
+      }
+
+      if (bookingAppointmentServicePage === "") {
+        this.score = 0;
+        this.wrongItems.push(item);
+      }
+
+      this.correctItems.push(item);
     }
-
   }
-  async getType(){
+  async getType() {
     return this.auditId;
   }
 
-  async returnGlobal(){
+  async returnGlobal() {
     this.globalResults.correctPages.pages = [];
     this.globalResults.tolerancePages.pages = [];
     this.globalResults.wrongPages.pages = [];
@@ -247,8 +242,11 @@ class BookingAppointment extends Audit {
         title_in_page_url: "",
       });
 
-      this.globalResults.pagesInError.message = errorHandling.errorMessage
-      this.globalResults.pagesInError.headings = [errorHandling.errorColumnTitles[0], errorHandling.errorColumnTitles[1]];
+      this.globalResults.pagesInError.message = errorHandling.errorMessage;
+      this.globalResults.pagesInError.headings = [
+        errorHandling.errorColumnTitles[0],
+        errorHandling.errorColumnTitles[1],
+      ];
 
       for (const item of this.pagesInError) {
         this.globalResults.pagesInError.pages.push(item);
@@ -283,7 +281,11 @@ class BookingAppointment extends Audit {
         title_in_page_url: this.titleSubHeadings[1],
       });
 
-      this.globalResults.wrongPages.headings = [this.auditData.subItem.redResult, this.titleSubHeadings[0], this.titleSubHeadings[1]];
+      this.globalResults.wrongPages.headings = [
+        this.auditData.subItem.redResult,
+        this.titleSubHeadings[0],
+        this.titleSubHeadings[1],
+      ];
 
       for (const item of this.wrongItems) {
         this.globalResults.wrongPages.pages.push(item);
@@ -305,11 +307,14 @@ class BookingAppointment extends Audit {
         title_in_page_url: this.titleSubHeadings[1],
       });
 
-      this.globalResults.correctPages.headings = [this.auditData.subItem.greenResult, this.titleSubHeadings[0], this.titleSubHeadings[1]];
-
+      this.globalResults.correctPages.headings = [
+        this.auditData.subItem.greenResult,
+        this.titleSubHeadings[0],
+        this.titleSubHeadings[1],
+      ];
 
       for (const item of this.correctItems) {
-        this.globalResults.correctPages.pages.push(item)
+        this.globalResults.correctPages.pages.push(item);
         results.push({
           subItems: {
             type: "subitems",
@@ -324,35 +329,46 @@ class BookingAppointment extends Audit {
     this.globalResults.score = this.score;
     this.globalResults.details.items = results;
     this.globalResults.details.headings = this.headings;
-    this.globalResults.errorMessage = this.pagesInError.length > 0 ? errorHandling.popupMessage : "";
+    this.globalResults.errorMessage =
+      this.pagesInError.length > 0 ? errorHandling.popupMessage : "";
 
     return this.globalResults;
   }
 
   static getInstance(): Promise<BookingAppointment> {
     if (!BookingAppointment.instance) {
-      BookingAppointment.instance = new BookingAppointment('',[],[]);
+      BookingAppointment.instance = new BookingAppointment("", [], []);
     }
     return BookingAppointment.instance;
   }
 
   async returnGlobalHTML() {
-    let status = 'fail'
-    let message = ''
+    let status = "fail";
+    let message = "";
 
     if (this.score > 0.5) {
-      status = 'pass';
+      status = "pass";
       message = this.auditData.greenResult;
     } else {
-      status = 'fail';
-      message = this.auditData.redResult
+      status = "fail";
+      message = this.auditData.redResult;
     }
 
-    const reportHtml = await ejs.renderFile('src/audits/municipality_booking_appointment/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null ,  totalPercentage : null });
-    return reportHtml
+    const reportHtml = await ejs.renderFile(
+      "src/audits/municipality_booking_appointment/template.ejs",
+      {
+        ...(await this.meta()),
+        code: this.code,
+        table: this.globalResults,
+        status,
+        statusMessage: message,
+        metrics: null,
+        totalPercentage: null,
+      },
+    );
+    return reportHtml;
   }
-
 }
 
-export {BookingAppointment};
+export { BookingAppointment };
 export default BookingAppointment.getInstance;

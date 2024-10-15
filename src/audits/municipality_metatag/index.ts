@@ -3,11 +3,9 @@ import { CheerioAPI } from "cheerio";
 import { ValidatorResult } from "jsonschema";
 import * as jsonschema from "jsonschema";
 import { auditDictionary } from "../../storage/auditDictionary.js";
-import {
-  errorHandling,
-} from "../../config/commonAuditsParts.js";
-import {Audit} from "../Audit.js";
-import {Page} from "puppeteer";
+import { errorHandling } from "../../config/commonAuditsParts.js";
+import { Audit } from "../Audit.js";
+import { Page } from "puppeteer";
 import * as cheerio from "cheerio";
 import * as ejs from "ejs";
 
@@ -19,47 +17,46 @@ const auditData = auditDictionary[auditId];
 const totalJSONVoices = 10;
 
 class MetatagAudit extends Audit {
-
-  code = 'R.SI.1.1'
-  mainTitle = 'METATAG'
+  code = "R.SI.1.1";
+  mainTitle = "METATAG";
 
   public globalResults: any = {
     score: 1,
     details: {
       items: [],
-      type: 'table',
+      type: "table",
       headings: [],
-      summary: ''
+      summary: "",
     },
     pagesInError: {
-      message: '',
+      message: "",
       headings: [],
-      pages: []
+      pages: [],
     },
     wrongPages: {
-      message: '',
+      message: "",
       headings: [],
-      pages: []
+      pages: [],
     },
     tolerancePages: {
-      message: '',
+      message: "",
       headings: [],
-      pages: []
+      pages: [],
     },
     correctPages: {
-      message: '',
+      message: "",
       headings: [],
-      pages: []
+      pages: [],
     },
-    errorMessage: ''
+    errorMessage: "",
   };
   public wrongItems: any = [];
   public toleranceItems: any = [];
   public correctItems: any = [];
-  public pagesInError : any = [];
+  public pagesInError: any = [];
   public score = 1;
   private titleSubHeadings: any = [];
-  private headings : any = [];
+  private headings: any = [];
 
   async meta() {
     return {
@@ -75,18 +72,14 @@ class MetatagAudit extends Audit {
     };
   }
 
-  async auditPage(
-    page: Page | null,
-    url: string,
-    error?: string
-  ) {
+  async auditPage(page: Page | null, url: string, error?: string) {
     this.titleSubHeadings = ["JSON valido", "Metatag non presenti o errati"];
     this.headings = [
       {
         key: "result",
         itemType: "text",
         text: "Risultato",
-        subItemsHeading: {key: "inspected_page", itemType: "url"},
+        subItemsHeading: { key: "inspected_page", itemType: "url" },
       },
       {
         key: "title_valid_json",
@@ -109,7 +102,6 @@ class MetatagAudit extends Audit {
     ];
 
     if (error && !page) {
-
       this.score = 0;
 
       this.pagesInError.push({
@@ -119,7 +111,7 @@ class MetatagAudit extends Audit {
 
       return {
         score: 0,
-      }
+      };
     }
 
     if (page) {
@@ -136,7 +128,6 @@ class MetatagAudit extends Audit {
       try {
         let data = await page.content();
         $ = await cheerio.load(data);
-
       } catch (ex) {
         if (!(ex instanceof Error)) {
           throw ex;
@@ -144,8 +135,8 @@ class MetatagAudit extends Audit {
 
         let errorMessage = ex.message;
         errorMessage = errorMessage.substring(
-            errorMessage.indexOf('"') + 1,
-            errorMessage.lastIndexOf('"')
+          errorMessage.indexOf('"') + 1,
+          errorMessage.lastIndexOf('"'),
         );
 
         this.pagesInError.push({
@@ -177,8 +168,8 @@ class MetatagAudit extends Audit {
       item.valid_json = "Sì";
 
       const result: ValidatorResult = jsonschema.validate(
-          parsedMetatagJSON,
-          metatadaJSONStructure
+        parsedMetatagJSON,
+        metatadaJSONStructure,
       );
       if (result.errors.length <= 0) {
         this.correctItems.push(item);
@@ -186,7 +177,7 @@ class MetatagAudit extends Audit {
         const missingJSONVoices = await getMissingVoices(result);
 
         const missingVoicesAmountPercentage = parseInt(
-            ((missingJSONVoices.length / totalJSONVoices) * 100).toFixed(0)
+          ((missingJSONVoices.length / totalJSONVoices) * 100).toFixed(0),
         );
         item.missing_keys = missingJSONVoices.join(", ");
 
@@ -229,8 +220,11 @@ class MetatagAudit extends Audit {
         title_missing_keys: "",
       });
 
-      this.globalResults.pagesInError.message = errorHandling.errorMessage
-      this.globalResults.pagesInError.headings = [errorHandling.errorColumnTitles[0], errorHandling.errorColumnTitles[1]];
+      this.globalResults.pagesInError.message = errorHandling.errorMessage;
+      this.globalResults.pagesInError.headings = [
+        errorHandling.errorColumnTitles[0],
+        errorHandling.errorColumnTitles[1],
+      ];
 
       for (const item of this.pagesInError) {
         this.globalResults.pagesInError.pages.push(item);
@@ -269,7 +263,11 @@ class MetatagAudit extends Audit {
         title_missing_keys: this.titleSubHeadings[1],
       });
 
-      this.globalResults.wrongPages.headings = [auditData.subItem.redResult, this.titleSubHeadings[0], this.titleSubHeadings[1]];
+      this.globalResults.wrongPages.headings = [
+        auditData.subItem.redResult,
+        this.titleSubHeadings[0],
+        this.titleSubHeadings[1],
+      ];
 
       for (const item of this.wrongItems) {
         this.globalResults.wrongPages.pages.push(item);
@@ -291,7 +289,11 @@ class MetatagAudit extends Audit {
         title_missing_keys: this.titleSubHeadings[1],
       });
 
-      this.globalResults.tolerancePages.headings = [auditData.subItem.yellowResult, this.titleSubHeadings[0], this.titleSubHeadings[1]]
+      this.globalResults.tolerancePages.headings = [
+        auditData.subItem.yellowResult,
+        this.titleSubHeadings[0],
+        this.titleSubHeadings[1],
+      ];
 
       for (const item of this.toleranceItems) {
         this.globalResults.tolerancePages.pages.push(item);
@@ -313,10 +315,14 @@ class MetatagAudit extends Audit {
         title_missing_keys: this.titleSubHeadings[1],
       });
 
-      this.globalResults.correctPages.headings = [auditData.subItem.greenResult, this.titleSubHeadings[0], this.titleSubHeadings[1]];
+      this.globalResults.correctPages.headings = [
+        auditData.subItem.greenResult,
+        this.titleSubHeadings[0],
+        this.titleSubHeadings[1],
+      ];
 
       for (const item of this.correctItems) {
-        this.globalResults.correctPages.pages.push(item)
+        this.globalResults.correctPages.pages.push(item);
 
         results.push({
           subItems: {
@@ -331,42 +337,53 @@ class MetatagAudit extends Audit {
 
     this.globalResults.details.headings = this.headings;
     this.globalResults.details.items = results;
-    this.globalResults.errorMessage = this.pagesInError.length > 0 ? errorHandling.popupMessage : "";
+    this.globalResults.errorMessage =
+      this.pagesInError.length > 0 ? errorHandling.popupMessage : "";
     this.globalResults.score = this.score;
 
-    return this.globalResults
+    return this.globalResults;
   }
 
   async returnGlobalHTML() {
-    let status = 'fail'
-    let message = ''
+    let status = "fail";
+    let message = "";
 
     if (this.score > 0.5) {
-      status = 'pass';
+      status = "pass";
       message = this.auditData.greenResult;
     } else if (this.score == 0.5) {
-      status = 'average';
-      message = this.auditData.yellowResult
+      status = "average";
+      message = this.auditData.yellowResult;
     } else {
-      status = 'fail';
-      message = this.auditData.redResult
+      status = "fail";
+      message = this.auditData.redResult;
     }
 
-    const reportHtml = await ejs.renderFile('src/audits/municipality_metatag/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null ,  totalPercentage : null });
-    return reportHtml
+    const reportHtml = await ejs.renderFile(
+      "src/audits/municipality_metatag/template.ejs",
+      {
+        ...(await this.meta()),
+        code: this.code,
+        table: this.globalResults,
+        status,
+        statusMessage: message,
+        metrics: null,
+        totalPercentage: null,
+      },
+    );
+    return reportHtml;
   }
 
   static getInstance(): Promise<MetatagAudit> {
     if (!MetatagAudit.instance) {
-      MetatagAudit.instance = new MetatagAudit('',[],[]);
+      MetatagAudit.instance = new MetatagAudit("", [], []);
     }
     return MetatagAudit.instance;
   }
 
-  async getType(){
+  async getType() {
     return auditId;
   }
-
 }
 
 const metatadaJSONStructure = {

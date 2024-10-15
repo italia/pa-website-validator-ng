@@ -3,7 +3,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { auditDictionary } from "../../storage/auditDictionary.js";
-import {InfoSecurityAudit} from "../informative_security/index.js";
+import { InfoSecurityAudit } from "../informative_security/index.js";
 
 class MunicipalityInfoSecurityAudit extends InfoSecurityAudit {
   auditId = "municipality-informative-security";
@@ -11,12 +11,12 @@ class MunicipalityInfoSecurityAudit extends InfoSecurityAudit {
 
   static getInstance(): Promise<MunicipalityInfoSecurityAudit> {
     if (!MunicipalityInfoSecurityAudit.instance) {
-      MunicipalityInfoSecurityAudit.instance = new MunicipalityInfoSecurityAudit('',[],[]);
+      MunicipalityInfoSecurityAudit.instance =
+        new MunicipalityInfoSecurityAudit("", [], []);
     }
     return MunicipalityInfoSecurityAudit.instance;
   }
-
 }
 
-export {MunicipalityInfoSecurityAudit};
+export { MunicipalityInfoSecurityAudit };
 export default MunicipalityInfoSecurityAudit.getInstance;

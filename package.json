@@ -4,12 +4,11 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build:main": "tsc",
+    "build": "tsc",
     "lint:check": "eslint --max-warnings 0 .",
     "type:check": "tsc --noEmit && tsc --noEmit",
     "format:check": "prettier -c .",
-    "format:write": "prettier --write \"src/**/*.ts\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "format:write": "prettier --write \"src/**/*.ts\""
   },
   "author": "",
   "license": "ISC",

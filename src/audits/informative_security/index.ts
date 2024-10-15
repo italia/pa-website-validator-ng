@@ -3,7 +3,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { auditDictionary } from "../../storage/auditDictionary.js";
-import {Audit} from "../Audit.js";
+import { Audit } from "../Audit.js";
 
 const auditId = "municipality-informative-security";
 const auditData = auditDictionary[auditId];
@@ -20,15 +20,15 @@ class InfoSecurityAudit extends Audit {
     };
   }
 
-  async auditPage(){
-    return {}
+  async auditPage() {
+    return {};
   }
 
-  async getType(){
+  async getType() {
     return this.auditId;
   }
 
-  async returnGlobal(){
+  async returnGlobal() {
     return {
       score: null,
       details: {
@@ -39,25 +39,24 @@ class InfoSecurityAudit extends Audit {
             text: "Risultato",
           },
         ],
-        headings:[
+        headings: [
           {
             result:
-                "Questo audit produce un risultato solo quando viene effettuato su un sito pubblicato online.",
+              "Questo audit produce un risultato solo quando viene effettuato su un sito pubblicato online.",
           },
         ],
-        type: 'table',
+        type: "table",
       },
-    }
+    };
   }
 
   static getInstance(): Promise<InfoSecurityAudit> {
     if (!InfoSecurityAudit.instance) {
-      InfoSecurityAudit.instance = new InfoSecurityAudit('',[],[]);
+      InfoSecurityAudit.instance = new InfoSecurityAudit("", [], []);
     }
     return InfoSecurityAudit.instance;
   }
-
 }
 
-export {InfoSecurityAudit};
+export { InfoSecurityAudit };
 export default InfoSecurityAudit.getInstance;

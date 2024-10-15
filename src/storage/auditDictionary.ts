@@ -1,5 +1,5 @@
 export const auditDictionary = {
-  "audit": {
+  audit: {
     greenResult: "",
     yellowResult: "",
     redResult: "",

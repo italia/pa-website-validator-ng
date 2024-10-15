@@ -1,11 +1,11 @@
 "use strict";
 
-import {Audit} from "../Audit.js";
+import { Audit } from "../Audit.js";
 
 class InfoCookieDomain extends Audit {
-  code = ''
-  mainTitle = '';
-  info= true
+  code = "";
+  mainTitle = "";
+  info = true;
 
   async meta() {
     return {
@@ -20,15 +20,15 @@ class InfoCookieDomain extends Audit {
     };
   }
 
-  async auditPage(){
-    return {}
+  async auditPage() {
+    return {};
   }
 
-  async getType(){
+  async getType() {
     return this.auditId;
   }
 
-  async returnGlobal(){
+  async returnGlobal() {
     return {
       score: null,
       details: {
@@ -39,25 +39,24 @@ class InfoCookieDomain extends Audit {
             text: "Risultato",
           },
         ],
-        headings:[
+        headings: [
           {
             result:
-                "Questo audit produce un risultato solo quando viene effettuato su un sito pubblicato online.",
+              "Questo audit produce un risultato solo quando viene effettuato su un sito pubblicato online.",
           },
         ],
-        type: 'table',
+        type: "table",
       },
-    }
+    };
   }
 
   static getInstance(): Promise<InfoCookieDomain> {
     if (!InfoCookieDomain.instance) {
-      InfoCookieDomain.instance = new InfoCookieDomain('',[],[]);
+      InfoCookieDomain.instance = new InfoCookieDomain("", [], []);
     }
     return InfoCookieDomain.instance;
   }
-
 }
 
-export {InfoCookieDomain};
+export { InfoCookieDomain };
 export default InfoCookieDomain.getInstance;
