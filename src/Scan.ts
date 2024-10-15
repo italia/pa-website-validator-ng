@@ -1,16 +1,13 @@
 import PageManager from "./PageManager.js";
-import { browser } from "./PuppeteerInstance.js";
-import { oldBrowser } from "./PuppeteerInstanceOld.js";
-
-import { gatherers } from "./GathererManager.js";
-import { audits } from "./AuditManager.js";
 
 import crawlerTypes from "./types/crawler-types.js";
 import PageData = crawlerTypes.PageData;
-import { config } from "./config/config.js";
+import {initializeConfig} from "./config/config.js";
 import { loadPage } from "./utils/utils.js";
 import { Page } from "puppeteer";
 import render from "./report/Renderer.js";
+import {collectAudits} from "./AuditManager.js";
+import {collectGatherers} from "./GathererManager.js";
 
 const scan = async (
   pageData: PageData,
@@ -21,6 +18,10 @@ const scan = async (
 ) => {
   let results: any;
   try {
+    const config = await initializeConfig();
+    const gatherers = await collectGatherers();
+    const audits = await collectAudits();
+
     await PageManager.setScanning(pageData.url, pageData.type, true);
     /** if no gathering or auditing for this page type skip*/
 
@@ -279,7 +280,6 @@ const scan = async (
     }
   } catch (err) {
     console.log(`SCAN error: ${err}`);
-    await browser.close();
   }
 
   if (results) {

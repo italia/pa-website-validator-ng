@@ -3,14 +3,7 @@ import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import { existsSync } from "fs";
 import { mkdir } from "fs/promises";
-import {run} from "./launchScript.js";
-
-export const logLevels = {
-  display_none: "silent",
-  display_error: "error",
-  display_info: "info",
-  display_verbose: "verbose",
-};
+import {logLevels, run} from "./launchScript.js";
 
 const parser = yargs(hideBin(process.argv))
   .usage(

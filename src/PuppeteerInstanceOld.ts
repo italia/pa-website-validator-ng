@@ -6,7 +6,7 @@ dotenv.config();
 
 let oldBrowser: any | null = null;
 
-async function initializePuppeteerOld(): Promise<void> {
+async function initializePuppeteerOld() {
   if (!oldBrowser) {
     console.error("Initializing Puppeteer Old Instance..");
 
@@ -21,6 +21,8 @@ async function initializePuppeteerOld(): Promise<void> {
         throw err;
       });
   }
+
+  return oldBrowser;
 }
 
-export { oldBrowser, initializePuppeteerOld };
+export { initializePuppeteerOld };

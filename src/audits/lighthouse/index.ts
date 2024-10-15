@@ -2,7 +2,7 @@ import { Audit } from "../Audit.js";
 
 import lighthouse from "lighthouse";
 import { Page } from "puppeteer";
-import { browser } from "../../PuppeteerInstance.js";
+import { initializePuppeteer } from "../../PuppeteerInstance.js";
 import * as ejs from "ejs";
 import municipalityOnlineConfig from "../../config/lighthouse-municipality-config-online.js";
 
@@ -36,6 +36,7 @@ class lighthouseAudit extends Audit {
 
   async auditPage(page: Page | null) {
     if (page) {
+      const browser = await initializePuppeteer();
       const browserWSEndpoint = browser.wsEndpoint();
       const { port } = new URL(browserWSEndpoint);
 

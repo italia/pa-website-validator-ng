@@ -1,5 +1,5 @@
 import { sync } from "glob";
-let audits: any | null = null;
+let audits : any = {};
 import { getAudits } from "./config/config.js";
 
 function extractFolderName(path: string) {
@@ -12,10 +12,10 @@ function extractFolderName(path: string) {
   return folderName;
 }
 
-async function collectAudits(): Promise<void> {
-  const configAudits = getAudits();
+async function collectAudits() {
+  const configAudits = await getAudits();
   try {
-    if (!audits) {
+    if (!Object.keys(audits).length) {
       const files = sync("./src/audits/**/index.ts");
 
       audits = {};
@@ -37,6 +37,8 @@ async function collectAudits(): Promise<void> {
     console.error("Error auditing modules:", error);
     throw error;
   }
+
+  return audits;
 }
 
-export { audits, collectAudits };
+export { collectAudits };

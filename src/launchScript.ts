@@ -1,13 +1,21 @@
-import {config, initializeConfig} from "./config/config.js";
-import {audits, collectAudits} from "./AuditManager.js";
+import {initializeConfig} from "./config/config.js";
+import {collectAudits} from "./AuditManager.js";
 import {collectGatherers} from "./GathererManager.js";
-import {browser, initializePuppeteer} from "./PuppeteerInstance.js";
+import { initializePuppeteer} from "./PuppeteerInstance.js";
 import PageManager from "./PageManager.js";
 import scan from "./Scan.js";
 import {Page} from "puppeteer";
 import {loadPage} from "./utils/utils.js";
-import {initializePuppeteerOld, oldBrowser} from "./PuppeteerInstanceOld.js";
-import {logLevels} from "./index.js";
+import {initializePuppeteerOld } from "./PuppeteerInstanceOld.js";
+
+
+
+export const logLevels = {
+    display_none: "silent",
+    display_error: "error",
+    display_info: "info",
+    display_verbose: "verbose",
+};
 
 async function run(
     website: string,
@@ -26,7 +34,7 @@ async function run(
     let finalResults: any;
 
     try {
-        await initializeConfig(type, scope);
+        const config = await initializeConfig(type, scope);
 
         process.env["accuracy"] = accuracy;
         process.env["logsLevel"] = logLevel;
@@ -37,11 +45,9 @@ async function run(
         }
         process.env["requestTimeout"] = requestTimeout.toString();
 
-        console.log(audits);
-
-        await collectAudits();
+        const audits = await collectAudits();
         await collectGatherers();
-        await initializePuppeteer();
+        const browser = await initializePuppeteer();
 
         process.env["accuracy"] = accuracy;
         if (numberOfServicePages) {
@@ -106,7 +112,7 @@ async function run(
             });
         }
 
-        await initializePuppeteerOld();
+        const oldBrowser = await initializePuppeteerOld();
 
         await PageManager.addPage({
             id: "homepage",

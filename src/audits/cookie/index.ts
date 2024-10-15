@@ -4,7 +4,7 @@ import { Page } from "puppeteer";
 import crawlerTypes from "../../types/crawler-types";
 import cookie = crawlerTypes.cookie;
 import { gotoRetry } from "../../utils/utils.js";
-import { oldBrowser } from "../../PuppeteerInstanceOld.js";
+import {initializePuppeteerOld} from "../../PuppeteerInstanceOld.js";
 
 class CookieAudit extends Audit {
   public globalResults: any = {
@@ -114,6 +114,7 @@ class CookieAudit extends Audit {
         const items = [];
         let score = 1;
 
+        const oldBrowser = await initializePuppeteerOld();
         const oldPage = await oldBrowser.newPage();
 
         await gotoRetry(oldPage, url, errorHandling.gotoRetryTentative);

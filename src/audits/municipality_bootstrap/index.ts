@@ -4,13 +4,11 @@
 // @ts-ignore
 import { compareVersions } from "compare-versions";
 import { auditDictionary } from "../../storage/auditDictionary.js";
-import { gotoRetry } from "../../utils/utils.js";
 import { isDrupal } from "../../utils/municipality/utils.js";
 import { cssClasses, drupalCoreClasses } from "./cssClasses.js";
 import { Page } from "puppeteer";
 import { errorHandling } from "../../config/commonAuditsParts.js";
 import { Audit } from "../Audit.js";
-import { browser } from "../../PuppeteerInstance.js";
 import * as ejs from "ejs";
 
 class BootstrapMunAudit extends Audit {

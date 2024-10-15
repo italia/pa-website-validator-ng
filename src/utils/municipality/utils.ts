@@ -1,7 +1,7 @@
 "use strict";
 import * as cheerio from "cheerio";
 import { CheerioAPI } from "cheerio";
-import puppeteer, { Page } from "puppeteer";
+import { Page } from "puppeteer";
 import { setTimeout } from "timers/promises";
 
 import {
@@ -14,14 +14,11 @@ import {
   cmsThemeRx,
   getHREFValuesDataAttribute,
   getRandomNString,
-  gotoRetry,
   getRedirectedUrl,
   isInternalUrl,
   loadPageData,
-  requestTimeout,
 } from "../utils.js";
 import { feedbackComponentStructure } from "../../storage/municipality/feedbackComponentStructure.js";
-import { errorHandling } from "../../config/commonAuditsParts.js";
 import axios from "axios";
 import { DataElementError } from "../DataElementError.js";
 import crawlerTypes from "../../types/crawler-types.js";
@@ -29,7 +26,6 @@ import requestPages = crawlerTypes.requestPages;
 import pageLink = crawlerTypes.pageLink;
 import municipalitySecondLevelPages = crawlerTypes.municipalitySecondLevelPages;
 import { LRUCache } from "lru-cache";
-import { browser } from "../../PuppeteerInstance.js";
 
 const cacheResults = new LRUCache<string, string[]>({ max: 100 });
 
@@ -507,29 +503,13 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
       i++
     ) {
       try {
-        await page.waitForNetworkIdle();
-
-        await page.evaluate(
-          async (
-            feedbackComponentStructure: any,
-            i: number,
-          ) => {
-            const button = document.querySelector(
-              `[data-element="${feedbackComponentStructure.rate.dataElement}${i}"]`,
-            ) as HTMLElement;
-
-            await new Promise((resolve: any) => setTimeout(resolve, 500));
-
-            if (button) {
-              button.click();
-            }
-
-            return true;
-          },
-          feedbackComponentStructure,
-          i,
+        const feedbackComponentRate = await page.$(
+            `[data-element="${feedbackComponentStructure.rate.dataElement + i}"]`
         );
-
+        await page.waitForNetworkIdle();
+        await feedbackComponentRate?.click({
+          delay: 1000,
+        });
         await page.waitForNetworkIdle();
       } catch (e) {
         console.log(`Errore al click per i=${i}:`, e);

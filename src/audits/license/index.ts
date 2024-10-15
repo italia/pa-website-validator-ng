@@ -2,7 +2,7 @@
 
 import { CheerioAPI } from "cheerio";
 
-import { browser } from "./../../PuppeteerInstance.js";
+import { initializePuppeteer } from "./../../PuppeteerInstance.js";
 import { buildUrl, isInternalUrl, urlExists } from "../../utils/utils.js";
 import { Page } from "puppeteer";
 
@@ -159,6 +159,7 @@ class LicenceAudit extends Audit {
         items[0].page_section = "No";
         items[0].page_contains_correct_text = "No";
 
+        const browser = await initializePuppeteer();
         const legalNotesPage = await browser.newPage(); //TODO: da verificare se fatto in questo modo è corretto, secondo me dovremmo creare un gatherer dedicato a questa tipologia di pagina
         await Gatherer.gotoRetry(
           legalNotesPage,

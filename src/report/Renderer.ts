@@ -1,4 +1,3 @@
-import { audits } from "../AuditManager.js";
 import * as ejs from "ejs";
 import { mkdir, writeFile } from "fs/promises";
 import open from "open";
@@ -6,6 +5,7 @@ import { format } from "path";
 import { VERSION } from "../version.js";
 import PageManager from "../PageManager.js";
 import { municipalityWeights, schoolWeights } from "../config/weights.js";
+import {collectAudits} from "../AuditManager.js";
 
 const render = async () => {
   const website = process.env.website;
@@ -20,6 +20,7 @@ const render = async () => {
   const informativeAudits = [];
   let lighthouseIFrame = null;
 
+  const audits = await collectAudits();
   /** get data from report instances */
   for (const auditId of Object.keys(audits)) {
     const audit = (await audits[auditId]()) as any;

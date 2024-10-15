@@ -5,7 +5,7 @@ dotenv.config();
 
 let browser: any | null = null;
 
-async function initializePuppeteer(): Promise<void> {
+async function initializePuppeteer() {
   if (!browser) {
     console.error("Initializing Puppeteer Instance..");
 
@@ -27,6 +27,8 @@ async function initializePuppeteer(): Promise<void> {
       }
     });
   }
+
+  return browser;
 }
 
-export { browser, initializePuppeteer };
+export { initializePuppeteer };

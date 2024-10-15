@@ -12,8 +12,8 @@ function extractFolderName(path: string) {
   return folderName;
 }
 
-async function collectGatherers(): Promise<void> {
-  const configGatherers = getGatherers();
+async function collectGatherers() {
+  const configGatherers = await getGatherers();
 
   try {
     if (!gatherers) {
@@ -37,6 +37,8 @@ async function collectGatherers(): Promise<void> {
     console.error("Error gathering modules:", error);
     throw error;
   }
+
+  return gatherers;
 }
 
-export { gatherers, collectGatherers };
+export { collectGatherers };

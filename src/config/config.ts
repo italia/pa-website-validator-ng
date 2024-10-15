@@ -1,3 +1,5 @@
+import {awaitArtifacts} from "lighthouse/core/gather/runner-helpers";
+
 let exportedConfig: any | null = null;
 
 const config: any = {
@@ -220,15 +222,18 @@ const config: any = {
 };
 
 async function initializeConfig(
-  siteType: string,
-  scope: string,
-): Promise<void> {
-  if (!exportedConfig) {
+  siteType?: string,
+  scope?: string,
+) {
+  if (!exportedConfig && siteType && scope) {
     exportedConfig = config[scope][siteType];
   }
+
+  return exportedConfig;
 }
 
-const getAudits = () => {
+const getAudits = async () => {
+  const exportedConfig = await initializeConfig()
   let auditIds: string[] = [];
   for (const pageTypeAudits of Object.values(exportedConfig["audits"])) {
     auditIds = [...auditIds, ...(pageTypeAudits as string[])];
@@ -236,7 +241,8 @@ const getAudits = () => {
   return auditIds;
 };
 
-const getGatherers = () => {
+const getGatherers = async () => {
+  const exportedConfig = await initializeConfig()
   let gathererIds: string[] = [];
   for (const pageTypeGatherers of Object.values(exportedConfig["gatherers"])) {
     gathererIds = [...gathererIds, ...(pageTypeGatherers as string[])];
@@ -244,4 +250,4 @@ const getGatherers = () => {
   return gathererIds;
 };
 
-export { exportedConfig as config, initializeConfig, getAudits, getGatherers };
+export { initializeConfig, getAudits, getGatherers };

@@ -2,14 +2,14 @@
 import crawlerTypes from "../types/crawler-types.js";
 import orderType = crawlerTypes.orderResult;
 import * as cheerio from "cheerio";
-import puppeteer, { HTTPResponse, Page } from "puppeteer";
+import { HTTPResponse, Page } from "puppeteer";
 import { CheerioAPI } from "cheerio";
 import axios from "axios";
 import vocabularyResult = crawlerTypes.vocabularyResult;
 import { LRUCache } from "lru-cache";
 import { MenuItem } from "../types/menuItem.js";
 import { errorHandling } from "../config/commonAuditsParts.js";
-import { browser } from "../PuppeteerInstance.js";
+import {initializePuppeteer} from "../PuppeteerInstance.js";
 
 const cache = new LRUCache<string, CheerioAPI>({ max: 1000 });
 const redirectUrlCache = new LRUCache<string, string>({ max: 1000 });
@@ -25,6 +25,7 @@ const loadPageData = async (
   }
   let data = "";
   try {
+    let browser = await initializePuppeteer();
     const page = await browser.newPage();
 
     await page.setRequestInterception(true);
@@ -72,6 +73,7 @@ const loadPageData = async (
 
 const loadPage = async (url: string): Promise<any> => {
   try {
+    let browser = await initializePuppeteer();
     const page = await browser.newPage();
 
     await page.setRequestInterception(true);
@@ -464,6 +466,7 @@ const getRedirectedUrl = async (url: string): Promise<string> => {
   let redirectedUrl = "";
 
   try {
+    const browser = await initializePuppeteer();
     const page = await browser.newPage();
 
     await page.setRequestInterception(true);
