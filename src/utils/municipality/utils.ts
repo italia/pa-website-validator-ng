@@ -511,7 +511,7 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
 
         await page.waitForNetworkIdle();
 
-        await page.evaluate(async (feedbackComponentStructure : any, i : number, urlValue: string) => {
+        await page.evaluate(async (feedbackComponentStructure : any, i : number) => {
           const button = document.querySelector(
               `[data-element="${feedbackComponentStructure.rate.dataElement}${i}"]`
           ) as HTMLElement;
@@ -580,7 +580,7 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
 
             if (existsRatingQAComponents && !checkRateComponentAssociation) {
               if (score > 0) score = 0;
-              errors.push(feedbackComponentStructure.rate.errorAssociation + 'tre');
+              errors.push(feedbackComponentStructure.rate.errorAssociation);
             }
 
             return {
@@ -595,7 +595,6 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
           ) {
             existsRatingQAComponents = false;
             checkRateComponentAssociation = false;
-            errors.push( 'non esistono' );
             if (!existsRateComponents) {
               if (score > 0.5) score = 0.5;
               errors.push(feedbackComponentStructure.rate.missingError);
@@ -612,7 +611,7 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
 
             if (existsRatingQAComponents && !checkRateComponentAssociation) {
               if (score > 0) score = 0;
-              errors.push(feedbackComponentStructure.rate.errorAssociation + 'due');
+              errors.push(feedbackComponentStructure.rate.errorAssociation);
             }
 
             return {
@@ -660,7 +659,6 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
               i <= feedbackComponentStructure.rate.positiveThreshold &&
               (feedbackPositiveVisible || !feedbackNegativeVisible)
           ) {
-            errors.push( `non matcha 1- ${feedbackPositiveVisible} ${feedbackNegativeVisible} ${feedbackNegativeRect.bottom}` );
             checkRateComponentAssociation = false;
           }
 
@@ -668,7 +666,6 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
               i > feedbackComponentStructure.rate.positiveThreshold &&
               (!feedbackPositiveVisible || feedbackNegativeVisible)
           ) {
-            errors.push( 'non matcha 2' );
             checkRateComponentAssociation = false;
           }
 
@@ -860,7 +857,7 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
 
           if (existsRatingQAComponents && !checkRateComponentAssociation) {
             if (score > 0) score = 0;
-            errors.push(feedbackComponentStructure.rate.errorAssociation + 'uno');
+            errors.push(feedbackComponentStructure.rate.errorAssociation);
           }
 
           return {
