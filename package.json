@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
+    "prepare": "tsc",
     "lint:check": "eslint --max-warnings 0 ./src",
     "lint:fix": "eslint --fix ./src",
     "type:check": "tsc --noEmit",
