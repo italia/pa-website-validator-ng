@@ -508,16 +508,24 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
       i++
     ) {
       try {
-        const feedbackComponentRate = await page.$(
-          `[data-element="${feedbackComponentStructure.rate.dataElement + i}"]`
-        );
-        await page.waitForNetworkIdle();
-        await feedbackComponentRate?.click({
-          delay: 1000,
-        });
-        await page.waitForNetworkIdle();
-      } catch (e) {
 
+        await page.evaluate(async (feedbackComponentStructure : any, i : number) => {
+          const button = document.querySelector(
+              `[data-element="${feedbackComponentStructure.rate.dataElement}${i}"]`
+          ) as HTMLElement;
+          if (!button) {
+            return false;
+          }
+          button.click();
+          return true;
+        }, feedbackComponentStructure,
+            i);
+
+        await page.waitForNetworkIdle();
+
+
+      } catch (e) {
+        console.log(`Errore al click per i=${i}:`, e);
         /* empty */
       }
 

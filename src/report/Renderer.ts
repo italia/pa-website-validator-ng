@@ -88,7 +88,7 @@ const render = async () => {
             status: status,
             passed_audits: successAudits.length,
             failed_audits : failedAudits.length,
-            total_audits:  Object.keys(audits).length,
+            total_audits:  successAudits.length + failedAudits.length,
          },
          audits: {
             passed: successAudits,
