@@ -17,11 +17,11 @@ const render = async () => {
 
   let successAudits = [];
   let failedAudits = [];
-  let informativeAudits = [];
+  const informativeAudits = [];
   let lighthouseIFrame = null;
 
   /** get data from report instances */
-  for (let auditId of Object.keys(audits)) {
+  for (const auditId of Object.keys(audits)) {
     const audit = (await audits[auditId]()) as any;
 
     const auditMeta = await audit.meta();

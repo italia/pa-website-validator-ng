@@ -25,7 +25,7 @@ class SecondLevelPagesGatherer extends Gatherer {
 
     const currentClass = this.constructor as typeof Gatherer;
 
-    let fetchedUrls: string[] = await getRandomSecondLevelPagesUrl(
+    const fetchedUrls: string[] = await getRandomSecondLevelPagesUrl(
       url,
       numberOfPages,
       page,

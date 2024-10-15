@@ -121,8 +121,8 @@ class FaqAudit extends Audit {
         },
       ];
 
-      let data = await page.content();
-      let $: CheerioAPI = await cheerio.load(data);
+      const data = await page.content();
+      const $: CheerioAPI = await cheerio.load(data);
       const privacyPolicyElement = $("footer").find('[data-element="faq"]');
       const elementObj = $(privacyPolicyElement).attr();
 

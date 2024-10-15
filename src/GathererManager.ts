@@ -17,9 +17,9 @@ async function collectGatherers(): Promise<void> {
 
   try {
     if (!gatherers) {
-      let files = sync("./src/gatherers/**/*.ts");
+      const files = sync("./src/gatherers/**/*.ts");
       gatherers = {};
-      for (let file of files) {
+      for (const file of files) {
         const moduleName = file.replace("src", "dist").replace(".ts", ".js");
         const moduleId = extractFolderName(moduleName);
 

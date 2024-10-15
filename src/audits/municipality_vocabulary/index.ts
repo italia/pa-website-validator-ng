@@ -133,7 +133,7 @@ class MunicipalityVocabulary extends Audit {
         },
       ];
 
-      let data = await page.content();
+      const data = await page.content();
       let $: CheerioAPI = await cheerio.load(data);
 
       const allArgumentsHREF = await getHREFValuesDataAttribute(

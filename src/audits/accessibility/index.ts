@@ -93,8 +93,8 @@ class A11yAudit extends Audit {
         },
       ];
 
-      let data = await page.content();
-      let $: CheerioAPI = await cheerio.load(data);
+      const data = await page.content();
+      const $: CheerioAPI = await cheerio.load(data);
 
       const accessibilityDeclarationElement = $("footer").find(
         '[data-element="accessibility-link"]',

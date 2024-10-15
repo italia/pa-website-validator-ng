@@ -34,6 +34,5 @@ export default [
       ecmaVersion: "latest",
       sourceType: "module",
     },
-    ignores: ["dist/**"],
   },
 ];

@@ -70,7 +70,7 @@ abstract class Gatherer {
       const dataElement = `[data-element="${value}"]`;
       const elementWithAtrr = await page.$(dataElement);
 
-      let elementPagesUrls: any[] = [];
+      const elementPagesUrls: any[] = [];
 
       if (!elementWithAtrr) continue;
 
@@ -269,7 +269,7 @@ abstract class Gatherer {
     const elements = await page.$$(`[data-element="${dataElement}"]`);
 
     if (elements && elements.length > 0) {
-      for (let element of elements) {
+      for (const element of elements) {
         const href = await element.getProperty("href");
         if (href) {
           const hrefValue = await href.jsonValue();
@@ -293,8 +293,8 @@ abstract class Gatherer {
       return [];
     }
 
-    let pagesUrls = [];
-    for (let pageUrl of pageElements) {
+    const pagesUrls = [];
+    for (const pageUrl of pageElements) {
       pagesUrls.push(await this.buildUrl(page.url(), pageUrl));
     }
 
@@ -311,8 +311,8 @@ abstract class Gatherer {
       return [];
     }
 
-    let pagesUrls = [];
-    for (let pageUrl of pageElements) {
+    const pagesUrls = [];
+    for (const pageUrl of pageElements) {
       pagesUrls.push(await this.buildUrl(page.url(), pageUrl));
     }
 
@@ -333,14 +333,14 @@ abstract class Gatherer {
       );
     }
 
-    let buttonUrls = [];
-    for (let element of elements) {
-      let buttonOnclick = await element.evaluate((el: HTMLElement) => {
+    const buttonUrls = [];
+    for (const element of elements) {
+      const buttonOnclick = await element.evaluate((el: HTMLElement) => {
         const onclickAttribute = el.getAttribute("onclick");
         return onclickAttribute || "";
       });
 
-      let buttonHrefAttr = await element.evaluate((el: HTMLElement) => {
+      const buttonHrefAttr = await element.evaluate((el: HTMLElement) => {
         const hrefAttribute = el.getAttribute("href");
         return hrefAttribute || "";
       });

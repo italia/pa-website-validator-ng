@@ -52,8 +52,8 @@ const getFirstLevelPages = async (
   custom: boolean,
   page: Page,
 ): Promise<pageLink[]> => {
-  let data = await page.content();
-  let $: CheerioAPI = await cheerio.load(data);
+  const data = await page.content();
+  const $: CheerioAPI = await cheerio.load(data);
   let pagesUrls: pageLink[] = [];
 
   const menuDataElements = [];
@@ -110,8 +110,8 @@ const getRandomSecondLevelPagesUrl = async (
   numberOfPages = 1,
   page: Page,
 ): Promise<string[]> => {
-  let data = await page.content();
-  let $: CheerioAPI = await cheerio.load(data);
+  const data = await page.content();
+  const $: CheerioAPI = await cheerio.load(data);
 
   let pagesUrls: string[] = [];
 
@@ -356,7 +356,7 @@ const getRandomThirdLevelPagesUrl = async (
         }
         maxCountPages = currentCountPages;
 
-        // eslint-disable-next-line no-empty
+         
       } catch (e) {
         clickButton = false;
       }

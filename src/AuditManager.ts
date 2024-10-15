@@ -16,10 +16,10 @@ async function collectAudits(): Promise<void> {
   const configAudits = getAudits();
   try {
     if (!audits) {
-      let files = sync("./src/audits/**/index.ts");
+      const files = sync("./src/audits/**/index.ts");
 
       audits = {};
-      for (let file of files) {
+      for (const file of files) {
         const moduleName = file.replace("src", "dist").replace(".ts", ".js");
         const moduleId = extractFolderName(moduleName);
 

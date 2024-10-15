@@ -79,9 +79,9 @@ class PageManager {
   }
 
   async setGlobalResults(result: any) {
-    let audits = this.globalResult.audits;
-    let newKey = Object.keys(result)[0];
-    let foundKey = Object.keys(audits).find((el) => el == newKey);
+    const audits = this.globalResult.audits;
+    const newKey = Object.keys(result)[0];
+    const foundKey = Object.keys(audits).find((el) => el == newKey);
     if (foundKey) {
       audits[foundKey] = Object.values(result)[0];
     } else {
@@ -128,35 +128,35 @@ class PageManager {
   }
 
   setAudited(url: string, pageType: string) {
-    let page = this.pagesArray.find(
+    const page = this.pagesArray.find(
       (page) => page.url === url && page.type === pageType,
     );
     if (page) page.audited = true;
   }
 
   setGathered(url: string, pageType: string) {
-    let page = this.pagesArray.find(
+    const page = this.pagesArray.find(
       (page) => page.url === url && page.type === pageType,
     );
     if (page) page.gathered = true;
   }
 
   setNotTemporaryGatherer(url: string, pageType: string) {
-    let page = this.pagesArray.find(
+    const page = this.pagesArray.find(
       (page) => page.url === url && page.type === pageType,
     );
     if (page) page.temporaryGatherer = false;
   }
 
   setNotTemporaryAudit(url: string, pageType: string) {
-    let page = this.pagesArray.find(
+    const page = this.pagesArray.find(
       (page) => page.url === url && page.type === pageType,
     );
     if (page) page.temporaryAudit = false;
   }
 
   setScanning(url: string, pageType: string, value: boolean) {
-    let page = this.pagesArray.find(
+    const page = this.pagesArray.find(
       (page) => page.url === url && page.type === pageType,
     );
     if (page) page.scanning = value;
@@ -168,7 +168,7 @@ class PageManager {
     errors: Error[],
     returnPage?: boolean,
   ): PageData | any {
-    let page = this.pagesArray.find(
+    const page = this.pagesArray.find(
       (page) => page.url === url && page.type === pageType,
     );
     if (page) page.errors = errors;

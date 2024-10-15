@@ -55,8 +55,8 @@ class eventsGatherer extends Gatherer {
       }
     }
 
-    let data = await page.content();
-    let $: CheerioAPI = await cheerio.load(data);
+    const data = await page.content();
+    const $: CheerioAPI = await cheerio.load(data);
 
     for (const page of pages) {
       let eventUrl = $(page).attr()?.href;

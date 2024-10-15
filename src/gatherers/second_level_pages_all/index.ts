@@ -25,9 +25,9 @@ class SecondLevelPagesGatherer extends Gatherer {
 
     const currentClass = this.constructor as typeof Gatherer;
 
-    let pagesToBeAnalyzed = [];
+    const pagesToBeAnalyzed = [];
 
-    let fetchedUrls: any = await getSecondLevelPages(url, false);
+    const fetchedUrls: any = await getSecondLevelPages(url, false);
 
     for (const [key, primaryMenuItem] of Object.entries(primaryMenuItems)) {
       const secondLevelPagesSection: any = fetchedUrls[key];

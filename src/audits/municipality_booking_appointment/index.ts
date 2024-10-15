@@ -123,7 +123,7 @@ class BookingAppointment extends Audit {
     }
 
     if (page) {
-      let url = page.url();
+      const url = page.url();
 
       if (pageType && pageType === "services-page") {
         const itemFirst = {
@@ -173,7 +173,7 @@ class BookingAppointment extends Audit {
       let $: CheerioAPI | any = null;
 
       try {
-        let data = await page.content();
+        const data = await page.content();
         $ = await cheerio.load(data);
       } catch (ex) {
         if (!(ex instanceof Error)) {

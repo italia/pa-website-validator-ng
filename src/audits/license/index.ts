@@ -128,8 +128,8 @@ class LicenceAudit extends Audit {
         },
       ];
 
-      let data = await page.content();
-      let $: CheerioAPI = await cheerio.load(data);
+      const data = await page.content();
+      const $: CheerioAPI = await cheerio.load(data);
 
       const dataElementLegalNotes = `[data-element="${legalNotes.dataElement}"]`;
       const legalNotesElements = $("footer").find(dataElementLegalNotes);
@@ -166,8 +166,8 @@ class LicenceAudit extends Audit {
           errorHandling.gotoRetryTentative,
         );
 
-        let data = await legalNotesPage.content();
-        let $: CheerioAPI = await cheerio.load(data);
+        const data = await legalNotesPage.content();
+        const $: CheerioAPI = await cheerio.load(data);
 
         const sectionDataElement = `[data-element="${legalNotes.section.dataElement}"]`;
         const sectionElement = $(sectionDataElement);

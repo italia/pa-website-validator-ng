@@ -63,7 +63,7 @@ class lighthouseAudit extends Audit {
       const performanceScore = runnerResult.lhr.categories.performance.score;
       const items = metricsDetails.items[0];
 
-      let metricsResult = [];
+      const metricsResult = [];
 
       // "interactive": {
       //     "id": "interactive",
@@ -76,11 +76,11 @@ class lighthouseAudit extends Audit {
       //     "displayValue": "2,6 s"
       //   },
 
-      for (let metricId of this.displayMetrics) {
+      for (const metricId of this.displayMetrics) {
         if (Object.keys(lhrAudits).includes(metricId)) {
           const metric = lhrAudits[metricId];
 
-          let score = metric.score;
+          const score = metric.score;
           let status = "pass";
           if (score * 100 < 50) {
             status = "fail";
@@ -144,7 +144,7 @@ class lighthouseAudit extends Audit {
   }
 
   async returnGlobalHTML() {
-    let message = "";
+    const message = "";
     const score = this.globalResults.score;
 
     let status = "pass";

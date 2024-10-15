@@ -120,7 +120,7 @@ class BootstrapMunAudit extends Audit {
     }
 
     if (page) {
-      let url = page.url();
+      const url = page.url();
 
       const drupalClassesCheck = await isDrupal(url);
 

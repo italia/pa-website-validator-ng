@@ -21,7 +21,7 @@ class servicesPageGatherer extends Gatherer {
 
     const currentClass = this.constructor as typeof Gatherer;
     let fetchedUrls: string[] = [];
-    for (let dataElement of currentClass.dataElements) {
+    for (const dataElement of currentClass.dataElements) {
       fetchedUrls = [
         ...fetchedUrls,
         ...((await this.getMultipleDataElementUrls(
@@ -32,7 +32,7 @@ class servicesPageGatherer extends Gatherer {
     }
 
     let servicesUrls: string[] = [];
-    for (let fetchedUrl of fetchedUrls) {
+    for (const fetchedUrl of fetchedUrls) {
       const servicePage = await loadPage(fetchedUrl);
 
       servicesUrls = [

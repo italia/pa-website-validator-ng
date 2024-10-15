@@ -109,7 +109,7 @@ class SchoolBootstrap extends Audit {
         },
       ];
 
-      let url = page.url();
+      const url = page.url();
 
       let singleResult = 0;
       const item = {

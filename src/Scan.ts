@@ -46,7 +46,7 @@ const scan = async (
 
     /** GATHERING */
     let gathererPages: any = [];
-    let gatheringErrors = [];
+    const gatheringErrors = [];
 
     if (
       !pageData.gathered ||
@@ -69,7 +69,7 @@ const scan = async (
         }
       }
 
-      for (let gathererId of config.gatherers[pageData.type]) {
+      for (const gathererId of config.gatherers[pageData.type]) {
         if (!gatherers[gathererId]) continue;
 
         const gatherer = await gatherers[gathererId]();
@@ -131,7 +131,7 @@ const scan = async (
         true,
       );
 
-      for (let gatheredPage of gathererPages) {
+      for (const gatheredPage of gathererPages) {
         await PageManager.addPage(gatheredPage);
       }
 
@@ -146,8 +146,8 @@ const scan = async (
     }
 
     /** AUDITING */
-    let auditedPages: any = [];
-    let auditingErrors = [];
+    const auditedPages: any = [];
+    const auditingErrors = [];
 
     if (!pageData.audited || (pageData.audited && pageData.temporaryAudit)) {
       let navigatingError: any;
@@ -168,7 +168,7 @@ const scan = async (
       }
 
       if (config.audits[pageData.type]) {
-        for (let auditId of config.audits[pageData.type]) {
+        for (const auditId of config.audits[pageData.type]) {
           if (auditId !== "lighthouse") {
             if (!audits[auditId]) continue;
             const audit = await audits[auditId]();

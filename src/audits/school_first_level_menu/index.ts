@@ -136,8 +136,8 @@ class SchoolFirstLevelMenuAudit extends Audit {
         wrong_order_menu_voices: "",
       });
 
-      let data = await page.content();
-      let $: CheerioAPI = await cheerio.load(data);
+      const data = await page.content();
+      const $: CheerioAPI = await cheerio.load(data);
 
       const menuDataElement = '[data-element="menu"]';
       const menuComponent = $(menuDataElement);

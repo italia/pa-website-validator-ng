@@ -135,10 +135,10 @@ class SchoolServiceAudit extends Audit {
     if (page) {
       this.totalServices++;
 
-      let url = page.url();
+      const url = page.url();
 
-      let data = await page.content();
-      let $: CheerioAPI = await cheerio.load(data);
+      const data = await page.content();
+      const $: CheerioAPI = await cheerio.load(data);
 
       const mandatoryVoices = contentTypeItemsIndex;
       const mandatoryVoicesDataElements = contentTypeItemsIndexDataElements;

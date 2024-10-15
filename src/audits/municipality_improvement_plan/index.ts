@@ -61,8 +61,8 @@ class ImprovementPlanAudit extends Audit {
     }
 
     if (page) {
-      let data = await page.content();
-      let $: CheerioAPI = await cheerio.load(data);
+      const data = await page.content();
+      const $: CheerioAPI = await cheerio.load(data);
 
       const footer = $("footer").text();
 

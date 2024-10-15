@@ -176,7 +176,7 @@ class SecondLevelAudit extends Audit {
         this.pagesItems.push(item);
       }
 
-      let data = await page.content();
+      const data = await page.content();
       let $: CheerioAPI = await cheerio.load(data);
 
       const customPrimaryMenuDataElement = `[data-element="${customPrimaryMenuItemsDataElement}"]`;

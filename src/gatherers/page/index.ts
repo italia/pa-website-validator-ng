@@ -20,7 +20,7 @@ class pageGatherer extends Gatherer {
     const currentClass = this.constructor as typeof Gatherer;
 
     let fetchedUrls: string[] = [];
-    for (let dataElement of currentClass.dataElements) {
+    for (const dataElement of currentClass.dataElements) {
       fetchedUrls = [
         ...fetchedUrls,
         ...(await this.getDataElementUrls(page, dataElement)),

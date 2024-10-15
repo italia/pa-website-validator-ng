@@ -147,8 +147,8 @@ class SchoolSecondLevelMenuAudit extends Audit {
       let totalNumberOfTitleFound = 0;
       const itemsPage: itemPage[] = [];
 
-      let data = await page.content();
-      let $: CheerioAPI = await cheerio.load(data);
+      const data = await page.content();
+      const $: CheerioAPI = await cheerio.load(data);
 
       const foundMenuElements = await getPageElementDataAttribute(
         $,

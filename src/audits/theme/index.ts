@@ -105,8 +105,8 @@ class ThemeAudit extends Audit {
         },
       ];
 
-      let data = await page.content();
-      let $: CheerioAPI = await cheerio.load(data);
+      const data = await page.content();
+      const $: CheerioAPI = await cheerio.load(data);
 
       const linkTags = $("link");
       let styleCSSUrl = "";

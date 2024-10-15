@@ -134,7 +134,7 @@ class DomainAudit extends Audit {
     }
 
     if (page) {
-      let url = page.url();
+      const url = page.url();
 
       const hostname = new URL(url).hostname.replace("www.", "");
       const item = {

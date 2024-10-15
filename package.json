@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "lint:check": "eslint --max-warnings 0 .",
-    "type:check": "tsc --noEmit && tsc --noEmit",
+    "lint:check": "eslint --max-warnings 0 ./src",
+    "lint:fix": "eslint --fix ./src",
+    "type:check": "tsc --noEmit",
     "format:check": "prettier -c .",
     "format:write": "prettier --write ."
   },

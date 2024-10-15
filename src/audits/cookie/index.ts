@@ -108,7 +108,7 @@ class CookieAudit extends Audit {
     }
 
     if (page) {
-      let url = page.url();
+      const url = page.url();
 
       try {
         const items = [];
@@ -118,7 +118,7 @@ class CookieAudit extends Audit {
 
         await gotoRetry(oldPage, url, errorHandling.gotoRetryTentative);
 
-        let cookies = await oldPage.cookies();
+        const cookies = await oldPage.cookies();
 
         await oldPage.close();
 
@@ -187,7 +187,7 @@ class CookieAudit extends Audit {
     this.globalResults.wrongPages.pages = [];
     this.globalResults.pagesInError.pages = [];
 
-    let results = [];
+    const results = [];
 
     switch (this.score) {
       case 1:

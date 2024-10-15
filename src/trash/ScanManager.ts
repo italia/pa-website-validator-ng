@@ -46,8 +46,8 @@ class ScanManager {
     const audits = config[this.type][pageData.type].audits;
 
     /** filter out audits if they've been completed - add them to audits array*/
-    let toDoAudits: string[] = [];
-    for (let auditId of audits) {
+    const toDoAudits: string[] = [];
+    for (const auditId of audits) {
       if (!this.audits.find((el) => el.id === auditId)) {
         this.audits.push({
           id: auditId,

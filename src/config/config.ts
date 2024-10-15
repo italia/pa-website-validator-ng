@@ -230,7 +230,7 @@ async function initializeConfig(
 
 const getAudits = () => {
   let auditIds: string[] = [];
-  for (let pageTypeAudits of Object.values(exportedConfig["audits"])) {
+  for (const pageTypeAudits of Object.values(exportedConfig["audits"])) {
     auditIds = [...auditIds, ...(pageTypeAudits as string[])];
   }
   return auditIds;
@@ -238,7 +238,7 @@ const getAudits = () => {
 
 const getGatherers = () => {
   let gathererIds: string[] = [];
-  for (let pageTypeGatherers of Object.values(exportedConfig["gatherers"])) {
+  for (const pageTypeGatherers of Object.values(exportedConfig["gatherers"])) {
     gathererIds = [...gathererIds, ...(pageTypeGatherers as string[])];
   }
   return gathererIds;

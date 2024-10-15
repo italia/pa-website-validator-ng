@@ -62,7 +62,7 @@ class servicesGatherer extends Gatherer {
 
         pages = foundElementsHrefs;
 
-        let currentCountPages = foundElementsHrefs.length;
+        const currentCountPages = foundElementsHrefs.length;
 
         process.env["numberOfServicesFound"] = String(currentCountPages);
 
