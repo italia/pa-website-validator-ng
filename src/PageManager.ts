@@ -10,7 +10,6 @@ class PageManager {
         audits: {}
     };
     private emitter: EventEmitter;
-    numberOfConcurrentPages = process.env["concurrentPages"] ? parseInt(process.env["concurrentPages"]) : 20;
 
     private constructor() {
         this.emitter = new EventEmitter();
@@ -25,6 +24,7 @@ class PageManager {
     }
 
     async addPage(page: PageData): Promise<void> {
+        const numberOfConcurrentPages = process.env["concurrentPages"] ? parseInt(process.env["concurrentPages"]) : 20;
         if (!this.pagesArray.find(pageEl => (pageEl.url == page.url && page.type == pageEl.type))) {
             this.pagesArray.push(page);
 
@@ -32,11 +32,11 @@ class PageManager {
 
             console.log(pages.length, 'qui');
 
-            if (pages.length <= this.numberOfConcurrentPages && this.firstAdd) {
+            if (pages.length <= numberOfConcurrentPages && this.firstAdd) {
                 await this.setScanning(page.url, page.type, true);
                 this.emitter.emit('pagesAdded', page);
 
-                if(pages.length === this.numberOfConcurrentPages){
+                if(pages.length === numberOfConcurrentPages){
                     this.firstAdd = false;
                 }
             }
@@ -48,12 +48,13 @@ class PageManager {
     }
 
     async closePage(page: PageData): Promise<void> {
+        const numberOfConcurrentPages = process.env["concurrentPages"] ? parseInt(process.env["concurrentPages"]) : 20;
         await this.setScanning(page.url, page.type, false);
         const usablePage = this.pagesArray.find(p => (!p.gathered || !p.audited || (p.gathered && p.audited && (p.temporaryGatherer || p.temporaryAudit))) && !p.scanning);
         const pages = this.pagesArray.filter(p => p.scanning);
         console.log(pages.length, 'qua');
         if(usablePage){
-            if (pages.length <= this.numberOfConcurrentPages){
+            if (pages.length <= numberOfConcurrentPages){
                 await this.setScanning(usablePage.url, usablePage.type, true);
                 this.emitter.emit('pagesClosed', {...usablePage, scanning: true});
                 this.firstAdd = true;

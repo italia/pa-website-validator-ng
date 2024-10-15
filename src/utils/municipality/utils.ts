@@ -361,7 +361,6 @@ const getRandomThirdLevelPagesUrl = async (
 
         // eslint-disable-next-line no-empty
       } catch (e) {
-        console.log("ERROR", e);
         clickButton = false;
       }
     }
@@ -456,9 +455,8 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
       let score = 1;
       const errors: string[] = [];
 
-      //Check if component is present
       const feedbackComponent = document.querySelector(
-        `[data-element="${feedbackComponentStructure.component.dataElement}"]`
+          `[data-element="${feedbackComponentStructure.component.dataElement}"]`
       );
       if (!feedbackComponent) {
         errors.push(feedbackComponentStructure.component.missingError);
@@ -471,7 +469,7 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
 
       //Check title present
       const feedbackTitleElement = feedbackComponent.querySelector(
-        `[data-element="${feedbackComponentStructure.title.dataElement}"]`
+          `[data-element="${feedbackComponentStructure.title.dataElement}"]`
       );
       if (!feedbackTitleElement) {
         if (score > 0.5) score = 0.5;
@@ -480,9 +478,9 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
 
       //Check title text
       if (
-        feedbackTitleElement &&
-        feedbackTitleElement.textContent &&
-        feedbackTitleElement.textContent.trim().toLocaleLowerCase() !==
+          feedbackTitleElement &&
+          feedbackTitleElement.textContent &&
+          feedbackTitleElement.textContent.trim().toLocaleLowerCase() !==
           feedbackComponentStructure.title.text.toLowerCase()
       ) {
         if (score > 0) score = 0;
@@ -519,7 +517,7 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
         });
         await page.waitForNetworkIdle();
       } catch (e) {
-     
+
         /* empty */
       }
 
@@ -589,8 +587,6 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
               errors.push(feedbackComponentStructure.rate.missingError);
             }
 
-            //errors.push('aaaaaaaaaa');
-
             if (existsRateComponents && !checkRateComponent) {
               if (score > 0) score = 0;
               errors.push(feedbackComponentStructure.rate.error);
@@ -647,18 +643,16 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
             feedbackNegativeRect.width > 0;
 
           if (
-            i <= feedbackComponentStructure.rate.positiveThreshold &&
-            (feedbackPositiveVisible || !feedbackNegativeVisible)
+              i <= feedbackComponentStructure.rate.positiveThreshold &&
+              (feedbackPositiveVisible || !feedbackNegativeVisible)
           ) {
-            errors.push(`errore neg ${i} ${feedbackPositiveVisible} ${feedbackRatingNegativeElement.innerHTML.toString()} ${feedbackRatingNegativeElement.offsetParent} ${feedbackNegativeStyle}`)
             checkRateComponentAssociation = false;
           }
 
           if (
-            i > feedbackComponentStructure.rate.positiveThreshold &&
-            (!feedbackPositiveVisible || feedbackNegativeVisible)
+              i > feedbackComponentStructure.rate.positiveThreshold &&
+              (!feedbackPositiveVisible || feedbackNegativeVisible)
           ) {
-            errors.push(`errore pos ${i}`)
             checkRateComponentAssociation = false;
           }
 
@@ -666,62 +660,62 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
             if (!feedbackRatingNegativeElement) {
               if (score > 0.5) score = 0.5;
               errors.push(
-                feedbackComponentStructure.negative_rating.missingError
+                  feedbackComponentStructure.negative_rating.missingError
               );
             } else {
               const feedbackRatingNegativeQuestionElement =
-                feedbackRatingNegativeElement.querySelector(
-                  `[data-element="${feedbackComponentStructure.negative_rating.question.dataElement}"]`
-                );
+                  feedbackRatingNegativeElement.querySelector(
+                      `[data-element="${feedbackComponentStructure.negative_rating.question.dataElement}"]`
+                  );
 
               if (!feedbackRatingNegativeQuestionElement) {
                 if (score > 0.5) score = 0.5;
                 errors.push(
-                  feedbackComponentStructure.negative_rating.question
-                    .missingError
+                    feedbackComponentStructure.negative_rating.question
+                        .missingError
                 );
               }
 
               if (
-                feedbackRatingNegativeQuestionElement &&
-                feedbackRatingNegativeQuestionElement.textContent &&
-                feedbackRatingNegativeQuestionElement.textContent
-                  .trim()
-                  .toLowerCase() !==
+                  feedbackRatingNegativeQuestionElement &&
+                  feedbackRatingNegativeQuestionElement.textContent &&
+                  feedbackRatingNegativeQuestionElement.textContent
+                      .trim()
+                      .toLowerCase() !==
                   feedbackComponentStructure.negative_rating.question.text.toLowerCase()
               ) {
                 if (score > 0) score = 0;
                 errors.push(
-                  feedbackComponentStructure.negative_rating.question.error
+                    feedbackComponentStructure.negative_rating.question.error
                 );
               }
 
               const feedbackRatingNegativeAnswersElements =
-                feedbackRatingNegativeElement.querySelectorAll(
-                  `[data-element="${feedbackComponentStructure.negative_rating.answers.dataElement}"]`
-                );
+                  feedbackRatingNegativeElement.querySelectorAll(
+                      `[data-element="${feedbackComponentStructure.negative_rating.answers.dataElement}"]`
+                  );
 
               if (feedbackRatingNegativeAnswersElements) {
                 const feedbackRatingNegativeAnswers: string[] = [];
 
                 for (const feedbackRatingNegativeAnswersElement of feedbackRatingNegativeAnswersElements) {
                   const feedbackAnswer =
-                    feedbackRatingNegativeAnswersElement.textContent?.trim() ??
-                    "";
+                      feedbackRatingNegativeAnswersElement.textContent?.trim() ??
+                      "";
                   feedbackRatingNegativeAnswers.push(feedbackAnswer);
                 }
 
                 const lowerCasedVocabulary =
-                  feedbackComponentStructure.negative_rating.answers.texts.map(
-                    (vocabularyElements : string) => vocabularyElements.toLowerCase()
-                  );
+                    feedbackComponentStructure.negative_rating.answers.texts.map(
+                        (vocabularyElements : string) => vocabularyElements.toLowerCase()
+                    );
 
                 let allCorrectAnswers = true;
                 for (const feedbackRatingNegativeAnswer of feedbackRatingNegativeAnswers) {
                   if (
-                    lowerCasedVocabulary.indexOf(
-                      feedbackRatingNegativeAnswer.toLowerCase()
-                    ) === -1
+                      lowerCasedVocabulary.indexOf(
+                          feedbackRatingNegativeAnswer.toLowerCase()
+                      ) === -1
                   ) {
                     allCorrectAnswers = false;
                   }
@@ -730,18 +724,18 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
                 if (!feedbackRatingNegativeAnswersElements) {
                   if (score > 0.5) score = 0.5;
                   errors.push(
-                    feedbackComponentStructure.negative_rating.answers
-                      .missingError
+                      feedbackComponentStructure.negative_rating.answers
+                          .missingError
                   );
                 }
 
                 if (
-                  feedbackRatingNegativeAnswersElements.length > 0 &&
-                  !allCorrectAnswers
+                    feedbackRatingNegativeAnswersElements.length > 0 &&
+                    !allCorrectAnswers
                 ) {
                   if (score > 0) score = 0;
                   errors.push(
-                    feedbackComponentStructure.negative_rating.answers.error
+                      feedbackComponentStructure.negative_rating.answers.error
                   );
                 }
               }
@@ -752,62 +746,62 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
             if (!feedbackRatingPositiveElement) {
               if (score > 0.5) score = 0.5;
               errors.push(
-                feedbackComponentStructure.positive_rating.missingError
+                  feedbackComponentStructure.positive_rating.missingError
               );
             } else {
               const feedbackRatingPositiveQuestionElement =
-                feedbackRatingPositiveElement.querySelector(
-                  `[data-element="${feedbackComponentStructure.positive_rating.question.dataElement}"]`
-                );
+                  feedbackRatingPositiveElement.querySelector(
+                      `[data-element="${feedbackComponentStructure.positive_rating.question.dataElement}"]`
+                  );
 
               if (!feedbackRatingPositiveQuestionElement) {
                 if (score > 0.5) score = 0.5;
                 errors.push(
-                  feedbackComponentStructure.positive_rating.question
-                    .missingError
+                    feedbackComponentStructure.positive_rating.question
+                        .missingError
                 );
               }
 
               if (
-                feedbackRatingPositiveQuestionElement &&
-                feedbackRatingPositiveQuestionElement.textContent &&
-                feedbackRatingPositiveQuestionElement.textContent
-                  .trim()
-                  .toLowerCase() !==
+                  feedbackRatingPositiveQuestionElement &&
+                  feedbackRatingPositiveQuestionElement.textContent &&
+                  feedbackRatingPositiveQuestionElement.textContent
+                      .trim()
+                      .toLowerCase() !==
                   feedbackComponentStructure.positive_rating.question.text.toLowerCase()
               ) {
                 if (score > 0) score = 0;
                 errors.push(
-                  feedbackComponentStructure.positive_rating.question.error
+                    feedbackComponentStructure.positive_rating.question.error
                 );
               }
 
               const feedbackRatingPositiveAnswersElements =
-                feedbackRatingPositiveElement.querySelectorAll(
-                  `[data-element="${feedbackComponentStructure.positive_rating.answers.dataElement}"]`
-                );
+                  feedbackRatingPositiveElement.querySelectorAll(
+                      `[data-element="${feedbackComponentStructure.positive_rating.answers.dataElement}"]`
+                  );
 
               if (feedbackRatingPositiveAnswersElements) {
                 const feedbackRatingPositiveAnswers: string[] = [];
 
                 for (const feedbackRatingPositiveAnswersElement of feedbackRatingPositiveAnswersElements) {
                   const feedbackAnswer =
-                    feedbackRatingPositiveAnswersElement.textContent?.trim() ??
-                    "";
+                      feedbackRatingPositiveAnswersElement.textContent?.trim() ??
+                      "";
                   feedbackRatingPositiveAnswers.push(feedbackAnswer);
                 }
 
                 const lowerCasedVocabulary =
-                  feedbackComponentStructure.positive_rating.answers.texts.map(
-                    (vocabularyElements : string) => vocabularyElements.toLowerCase()
-                  );
+                    feedbackComponentStructure.positive_rating.answers.texts.map(
+                        (vocabularyElements: string) => vocabularyElements.toLowerCase()
+                    );
 
                 let allCorrectAnswers = true;
                 for (const feedbackRatingPositiveAnswer of feedbackRatingPositiveAnswers) {
                   if (
-                    lowerCasedVocabulary.indexOf(
-                      feedbackRatingPositiveAnswer.toLowerCase()
-                    ) === -1
+                      lowerCasedVocabulary.indexOf(
+                          feedbackRatingPositiveAnswer.toLowerCase()
+                      ) === -1
                   ) {
                     allCorrectAnswers = false;
                   }
@@ -816,18 +810,18 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
                 if (!feedbackRatingPositiveAnswersElements) {
                   if (score > 0.5) score = 0.5;
                   errors.push(
-                    feedbackComponentStructure.positive_rating.answers
-                      .missingError
+                      feedbackComponentStructure.positive_rating.answers
+                          .missingError
                   );
                 }
 
                 if (
-                  feedbackRatingPositiveAnswersElements.length > 0 &&
-                  !allCorrectAnswers
+                    feedbackRatingPositiveAnswersElements.length > 0 &&
+                    !allCorrectAnswers
                 ) {
                   if (score > 0) score = 0;
                   errors.push(
-                    feedbackComponentStructure.positive_rating.answers.error
+                      feedbackComponentStructure.positive_rating.answers.error
                   );
                 }
               }
@@ -851,7 +845,6 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
           if (existsRatingQAComponents && !checkRateComponentAssociation) {
             if (score > 0) score = 0;
             errors.push(feedbackComponentStructure.rate.errorAssociation);
-            errors.push(`${existsRatingQAComponents} esiste, ${checkRateComponentAssociation} aaaa`);
           }
 
           return {
