@@ -5,55 +5,55 @@ import { domains } from "./allowedDomain.js";
 import { auditDictionary } from "../../storage/auditDictionary.js";
 import { urlExists } from "../../utils/utils.js";
 import { errorHandling } from "../../config/commonAuditsParts.js";
-import {Audit} from "../Audit.js";
-import {Page} from "puppeteer";
+import { Audit } from "../Audit.js";
+import { Page } from "puppeteer";
 import * as ejs from "ejs";
 
-
-
 class DomainAudit extends Audit {
-
   auditId = "municipality-domain";
-  auditData = auditDictionary[ "municipality-domain"];
-  code = 'C.SI.5.2'
-  mainTitle = 'DOMINIO ISTITUZIONALE'
-  mainDescription = 'Il sito comunale utilizza un dominio istituzionale secondo le modalità indicate nella documentazione del modello di sito comunale.'
-  minRequirement = 'il sito comunale è raggiungibile senza necessità di inserimento del sottodominio “www.” e le pagine utilizzano il sottodominio "comune." immediatamente seguito da uno dei domini utilizzabili presenti in [questa pagina](https://raw.githubusercontent.com/italia/pa-website-validator/main/src/storage/municipality/allowedDomains.ts) secondo la struttura indicata nel criterio di conformità;'
-  automaticChecks = 'ricercando specifici attributi "data-element" come spiegato nella Documentazione delle App di valutazione, viene verificato che il dominio utilizzato nelle pagine analizzate rispetti la struttura richiesta dal criterio di conformità e che le pagine siano raggiungibili senza necessità di inserimento del sottodominio "www."; '
-  failures = "Elementi di fallimento:"
+  auditData = auditDictionary["municipality-domain"];
+  code = "C.SI.5.2";
+  mainTitle = "DOMINIO ISTITUZIONALE";
+  mainDescription =
+    "Il sito comunale utilizza un dominio istituzionale secondo le modalità indicate nella documentazione del modello di sito comunale.";
+  minRequirement =
+    'il sito comunale è raggiungibile senza necessità di inserimento del sottodominio “www.” e le pagine utilizzano il sottodominio "comune." immediatamente seguito da uno dei domini utilizzabili presenti in [questa pagina](https://raw.githubusercontent.com/italia/pa-website-validator/main/src/storage/municipality/allowedDomains.ts) secondo la struttura indicata nel criterio di conformità;';
+  automaticChecks =
+    'ricercando specifici attributi "data-element" come spiegato nella Documentazione delle App di valutazione, viene verificato che il dominio utilizzato nelle pagine analizzate rispetti la struttura richiesta dal criterio di conformità e che le pagine siano raggiungibili senza necessità di inserimento del sottodominio "www."; ';
+  failures = "Elementi di fallimento:";
 
   public globalResults: any = {
     score: 1,
     details: {
       items: [],
-      type: 'table',
+      type: "table",
       headings: [],
-      summary: ''
-    },   
+      summary: "",
+    },
     pagesInError: {
-      message: '',
+      message: "",
       headings: [],
-      pages: []
-   }, 
+      pages: [],
+    },
     wrongPages: {
-      message: '',
+      message: "",
       headings: [],
-      pages: []
+      pages: [],
     },
     correctPages: {
-      message: '',
+      message: "",
       headings: [],
-      pages: []
+      pages: [],
     },
-    errorMessage: ''
+    errorMessage: "",
   };
   public wrongItems: any = [];
   public toleranceItems: any = [];
   public correctItems: any = [];
-  public pagesInError : any = [];
+  public pagesInError: any = [];
   public score = 1;
   private titleSubHeadings: any = [];
-  private headings : any = [];
+  private headings: any = [];
 
   async meta() {
     return {
@@ -62,7 +62,7 @@ class DomainAudit extends Audit {
       title: this.auditData.title,
       mainTitle: this.mainTitle,
       mainDescription: this.mainDescription,
-      minRequirement:this.minRequirement,
+      minRequirement: this.minRequirement,
       automaticChecks: this.automaticChecks,
       failures: this.failures,
       auditId: this.auditId,
@@ -77,9 +77,8 @@ class DomainAudit extends Audit {
     page: Page | null,
     url: string,
     error?: string,
-    pageType?: string | null
-  ){
-
+    pageType?: string | null,
+  ) {
     this.titleSubHeadings = [
       "Dominio utilizzato",
       'Viene usato il sottodominio "comune." seguito da un dominio istituzionale riservato',
@@ -121,7 +120,7 @@ class DomainAudit extends Audit {
       },
     ];
 
-    if (error && !page && pageType !== 'event') {
+    if (error && !page && pageType !== "event") {
       this.score = 0;
 
       this.pagesInError.push({
@@ -131,12 +130,11 @@ class DomainAudit extends Audit {
 
       return {
         score: 0,
-      }
+      };
     }
 
-    if(page){
-
-      let url = page.url();
+    if (page) {
+      const url = page.url();
 
       const hostname = new URL(url).hostname.replace("www.", "");
       const item = {
@@ -146,43 +144,46 @@ class DomainAudit extends Audit {
         www_access: "",
       };
 
-        let correctDomain = false;
-        for (const domain of domains) {
-          if ((hostname === "comune." + domain) || hostname.endsWith(".comune." + domain)) {
-            correctDomain = true;
-            item.correct_domain = "Sì";
-            break;
-          }
+      let correctDomain = false;
+      for (const domain of domains) {
+        if (
+          hostname === "comune." + domain ||
+          hostname.endsWith(".comune." + domain)
+        ) {
+          correctDomain = true;
+          item.correct_domain = "Sì";
+          break;
         }
+      }
 
-        const pageWithoutWww = new URL(url);
-        pageWithoutWww.hostname = pageWithoutWww.hostname.replace(/^www\./i, "");
-        const wwwAccess = (await urlExists(url, pageWithoutWww.href)).result;
+      const pageWithoutWww = new URL(url);
+      pageWithoutWww.hostname = pageWithoutWww.hostname.replace(/^www\./i, "");
+      const wwwAccess = (await urlExists(url, pageWithoutWww.href)).result;
 
-        item.www_access = wwwAccess ? "Sì" : "No";
+      item.www_access = wwwAccess ? "Sì" : "No";
 
-        if (correctDomain && wwwAccess) {
-          this.correctItems.push(item);
-        }else{
-          this.wrongItems.push(item);
-          this.score = 0;
-        }
+      if (correctDomain && wwwAccess) {
+        this.correctItems.push(item);
+      } else {
+        this.wrongItems.push(item);
+        this.score = 0;
+      }
     }
-    
+
     return {
       score: this.score,
     };
   }
 
-  async getType(){
+  async getType() {
     return this.auditId;
   }
 
-  async returnGlobal(){
+  async returnGlobal() {
     this.globalResults.correctPages.pages = [];
     this.globalResults.wrongPages.pages = [];
     this.globalResults.pagesInError.pages = [];
-   
+
     const results = [];
     switch (this.score) {
       case 1:
@@ -196,37 +197,39 @@ class DomainAudit extends Audit {
         });
         break;
     }
-    
 
     if (this.pagesInError.length) {
       results.push({
-          result: errorHandling.errorMessage,
+        result: errorHandling.errorMessage,
       });
 
       results.push({});
 
       results.push({
-          result: errorHandling.errorColumnTitles[0],
-          title_domain: errorHandling.errorColumnTitles[1],
-          title_correct_domain: "",
-          title_www_access: ""
+        result: errorHandling.errorColumnTitles[0],
+        title_domain: errorHandling.errorColumnTitles[1],
+        title_correct_domain: "",
+        title_www_access: "",
       });
 
-      this.globalResults.pagesInError.message = errorHandling.errorMessage
-      this.globalResults.pagesInError.headings = [errorHandling.errorColumnTitles[0], errorHandling.errorColumnTitles[1]];
+      this.globalResults.pagesInError.message = errorHandling.errorMessage;
+      this.globalResults.pagesInError.headings = [
+        errorHandling.errorColumnTitles[0],
+        errorHandling.errorColumnTitles[1],
+      ];
 
       for (const item of this.pagesInError) {
-          this.globalResults.pagesInError.pages.push(item);
+        this.globalResults.pagesInError.pages.push(item);
 
-          results.push({
-              subItems: {
-                  type: "subitems",
-                  items: [item],
-              },
-          });
+        results.push({
+          subItems: {
+            type: "subitems",
+            items: [item],
+          },
+        });
       }
-  }
-    
+    }
+
     results.push({});
 
     if (this.wrongItems.length > 0) {
@@ -236,8 +239,13 @@ class DomainAudit extends Audit {
         title_correct_domain: this.titleSubHeadings[1],
         title_www_access: this.titleSubHeadings[2],
       });
-     
-      this.globalResults.wrongPages.headings = [this.auditData.subItem.redResult, this.titleSubHeadings[0], this.titleSubHeadings[1],  this.titleSubHeadings[2]];
+
+      this.globalResults.wrongPages.headings = [
+        this.auditData.subItem.redResult,
+        this.titleSubHeadings[0],
+        this.titleSubHeadings[1],
+        this.titleSubHeadings[2],
+      ];
 
       for (const item of this.wrongItems) {
         this.globalResults.wrongPages.pages.push(item);
@@ -259,11 +267,16 @@ class DomainAudit extends Audit {
         title_correct_domain: this.titleSubHeadings[1],
         title_www_access: this.titleSubHeadings[2],
       });
-      
-      this.globalResults.correctPages.headings = [this.auditData.subItem.greenResult, this.titleSubHeadings[0], this.titleSubHeadings[1], this.titleSubHeadings[2]];
+
+      this.globalResults.correctPages.headings = [
+        this.auditData.subItem.greenResult,
+        this.titleSubHeadings[0],
+        this.titleSubHeadings[1],
+        this.titleSubHeadings[2],
+      ];
 
       for (const item of this.correctItems) {
-        this.globalResults.correctPages.pages.push(item)
+        this.globalResults.correctPages.pages.push(item);
         results.push({
           subItems: {
             type: "subitems",
@@ -281,30 +294,40 @@ class DomainAudit extends Audit {
 
     return this.globalResults;
   }
-  
+
   async returnGlobalHTML() {
-    let status = 'fail'
-    let message = ''
+    let status = "fail";
+    let message = "";
 
     if (this.globalResults.score > 0.5) {
-      status = 'pass';
+      status = "pass";
       message = this.auditData.greenResult;
     } else {
-      status = 'fail';
-      message = this.auditData.redResult
+      status = "fail";
+      message = this.auditData.redResult;
     }
 
-    const reportHtml = await ejs.renderFile('src/audits/municipality_domain_audit/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null ,totalPercentage : null });
-    return reportHtml
-}
+    const reportHtml = await ejs.renderFile(
+      "src/audits/municipality_domain_audit/template.ejs",
+      {
+        ...(await this.meta()),
+        code: this.code,
+        table: this.globalResults,
+        status,
+        statusMessage: message,
+        metrics: null,
+        totalPercentage: null,
+      },
+    );
+    return reportHtml;
+  }
 
   static getInstance(): Promise<DomainAudit> {
     if (!DomainAudit.instance) {
-      DomainAudit.instance = new DomainAudit('',[],[]);
+      DomainAudit.instance = new DomainAudit("", [], []);
     }
     return DomainAudit.instance;
   }
-
 }
 
 export { DomainAudit };

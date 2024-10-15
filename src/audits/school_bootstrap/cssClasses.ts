@@ -16,6 +16,3 @@ export const cssClasses = [
   "text-primary",
   "text-secondary",
 ];
-
-
-

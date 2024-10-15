@@ -1,14 +1,15 @@
 "use strict";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { getPageElementDataAttribute, loadPageData } from "../../utils/utils.js";
+import {
+  getPageElementDataAttribute,
+  loadPageData,
+} from "../../utils/utils.js";
 import { CheerioAPI } from "cheerio";
 import { auditDictionary } from "../../storage/auditDictionary.js";
-import {
-  errorHandling,
-} from "../../config/commonAuditsParts.js";
-import {Audit} from "../Audit.js";
-import {Page} from "puppeteer";
+import { errorHandling } from "../../config/commonAuditsParts.js";
+import { Audit } from "../Audit.js";
+import { Page } from "puppeteer";
 import * as cheerio from "cheerio";
 import * as ejs from "ejs";
 
@@ -20,38 +21,38 @@ class ContactAssistencyAudit extends Audit {
     score: 1,
     details: {
       items: [],
-      type: 'table',
+      type: "table",
       headings: [],
-      summary: ''
+      summary: "",
     },
     pagesInError: {
-      message: '',
+      message: "",
       headings: [],
-      pages: []
-   }, 
+      pages: [],
+    },
     wrongPages: {
-      message: '',
+      message: "",
       headings: [],
-      pages: []
+      pages: [],
     },
     correctPages: {
-      message: '',
+      message: "",
       headings: [],
-      pages: []
+      pages: [],
     },
-    errorMessage: ''
+    errorMessage: "",
   };
-  
-  code = 'C.SI.2.2'
-  mainTitle = 'RICHIESTA DI ASSISTENZA / CONTATTI'
+
+  code = "C.SI.2.2";
+  mainTitle = "RICHIESTA DI ASSISTENZA / CONTATTI";
 
   public wrongItems: any = [];
   public toleranceItems: any = [];
   public correctItems: any = [];
-  public pagesInError : any = [];
+  public pagesInError: any = [];
   public score = 1;
   private titleSubHeadings: any = [];
-  private headings : any = [];
+  private headings: any = [];
 
   async meta() {
     return {
@@ -67,12 +68,7 @@ class ContactAssistencyAudit extends Audit {
     };
   }
 
-  async auditPage(
-    page: Page | null,
-    url:string,
-    error?: string
-  ) {
-
+  async auditPage(page: Page | null, url: string, error?: string) {
     this.titleSubHeadings = [
       "La voce è presente nell'indice",
       "Il componente è presente in pagina",
@@ -107,8 +103,7 @@ class ContactAssistencyAudit extends Audit {
       },
     ];
 
-    if(error && !page){
-
+    if (error && !page) {
       this.score = 0;
 
       this.pagesInError.push({
@@ -118,17 +113,16 @@ class ContactAssistencyAudit extends Audit {
 
       return {
         score: 0,
-      }
+      };
     }
 
-    if(page){
-
-      let url = page.url();
+    if (page) {
+      const url = page.url();
 
       let $: CheerioAPI | any = null;
 
       try {
-        let data = await page.content();
+        const data = await page.content();
         $ = await cheerio.load(data);
       } catch (ex) {
         if (!(ex instanceof Error)) {
@@ -137,8 +131,8 @@ class ContactAssistencyAudit extends Audit {
 
         let errorMessage = ex.message;
         errorMessage = errorMessage.substring(
-            errorMessage.indexOf('"') + 1,
-            errorMessage.lastIndexOf('"')
+          errorMessage.indexOf('"') + 1,
+          errorMessage.lastIndexOf('"'),
         );
 
         this.pagesInError.push({
@@ -154,9 +148,9 @@ class ContactAssistencyAudit extends Audit {
       };
 
       const indexList = await getPageElementDataAttribute(
-          $,
-          '[data-element="page-index"]',
-          "> li > a"
+        $,
+        '[data-element="page-index"]',
+        "> li > a",
       );
 
       if (indexList.includes("Contatti")) {
@@ -182,11 +176,11 @@ class ContactAssistencyAudit extends Audit {
     }
 
     return {
-      score: this.score
-    }
+      score: this.score,
+    };
   }
 
-  async returnGlobal(){
+  async returnGlobal() {
     this.globalResults.correctPages.pages = [];
     this.globalResults.wrongPages.pages = [];
     this.globalResults.pagesInError.pages = [];
@@ -205,8 +199,11 @@ class ContactAssistencyAudit extends Audit {
         title_component_exists: "",
       });
 
-      this.globalResults.pagesInError.message = errorHandling.errorMessage
-      this.globalResults.pagesInError.headings = [errorHandling.errorColumnTitles[0], errorHandling.errorColumnTitles[1]];
+      this.globalResults.pagesInError.message = errorHandling.errorMessage;
+      this.globalResults.pagesInError.headings = [
+        errorHandling.errorColumnTitles[0],
+        errorHandling.errorColumnTitles[1],
+      ];
 
       for (const item of this.pagesInError) {
         this.globalResults.pagesInError.pages.push(item);
@@ -241,7 +238,11 @@ class ContactAssistencyAudit extends Audit {
         title_component_exists: this.titleSubHeadings[1],
       });
 
-      this.globalResults.wrongPages.headings = [auditData.subItem.redResult, this.titleSubHeadings[0], this.titleSubHeadings[1]];
+      this.globalResults.wrongPages.headings = [
+        auditData.subItem.redResult,
+        this.titleSubHeadings[0],
+        this.titleSubHeadings[1],
+      ];
 
       for (const item of this.wrongItems) {
         this.globalResults.wrongPages.pages.push(item);
@@ -263,10 +264,14 @@ class ContactAssistencyAudit extends Audit {
         title_component_exists: this.titleSubHeadings[1],
       });
 
-      this.globalResults.correctPages.headings = [auditData.subItem.greenResult, this.titleSubHeadings[0], this.titleSubHeadings[1]];
+      this.globalResults.correctPages.headings = [
+        auditData.subItem.greenResult,
+        this.titleSubHeadings[0],
+        this.titleSubHeadings[1],
+      ];
 
       for (const item of this.correctItems) {
-        this.globalResults.correctPages.pages.push(item)
+        this.globalResults.correctPages.pages.push(item);
         results.push({
           subItems: {
             type: "subitems",
@@ -281,38 +286,49 @@ class ContactAssistencyAudit extends Audit {
     this.globalResults.score = this.score;
     this.globalResults.details.items = results;
     this.globalResults.details.headings = this.headings;
-    this.globalResults.errorMessage = this.pagesInError.length > 0 ? errorHandling.popupMessage : "";
+    this.globalResults.errorMessage =
+      this.pagesInError.length > 0 ? errorHandling.popupMessage : "";
 
     return this.globalResults;
   }
 
   async returnGlobalHTML() {
-    let status = 'fail'
-    let message = ''
+    let status = "fail";
+    let message = "";
 
     if (this.globalResults.score > 0.5) {
-      status = 'pass';
+      status = "pass";
       message = this.auditData.greenResult;
     } else {
-      status = 'fail';
-      message = this.auditData.redResult
+      status = "fail";
+      message = this.auditData.redResult;
     }
 
-    const reportHtml = await ejs.renderFile('src/audits/municipality_contacts_assistency_audit/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null ,totalPercentage : null });
-    return reportHtml
-}
+    const reportHtml = await ejs.renderFile(
+      "src/audits/municipality_contacts_assistency_audit/template.ejs",
+      {
+        ...(await this.meta()),
+        code: this.code,
+        table: this.globalResults,
+        status,
+        statusMessage: message,
+        metrics: null,
+        totalPercentage: null,
+      },
+    );
+    return reportHtml;
+  }
 
-  async getType(){
+  async getType() {
     return auditId;
   }
 
   static getInstance(): Promise<ContactAssistencyAudit> {
     if (!ContactAssistencyAudit.instance) {
-      ContactAssistencyAudit.instance = new ContactAssistencyAudit('',[],[]);
+      ContactAssistencyAudit.instance = new ContactAssistencyAudit("", [], []);
     }
     return ContactAssistencyAudit.instance;
   }
-
 }
 
 export { ContactAssistencyAudit };

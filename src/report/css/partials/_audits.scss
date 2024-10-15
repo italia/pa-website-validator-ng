@@ -50,17 +50,16 @@
     }
   }
 
-  &.info{
+  &.info {
     padding-left: 18px;
 
-    .top{
+    .top {
       display: flex;
       gap: 24px;
       margin-bottom: 18px;
-      svg{
+      svg {
         position: initial;
       }
     }
   }
 }
-

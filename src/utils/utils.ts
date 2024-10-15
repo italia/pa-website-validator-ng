@@ -9,13 +9,16 @@ import vocabularyResult = crawlerTypes.vocabularyResult;
 import { LRUCache } from "lru-cache";
 import { MenuItem } from "../types/menuItem.js";
 import { errorHandling } from "../config/commonAuditsParts.js";
-import {browser} from "../PuppeteerInstance.js";
+import { browser } from "../PuppeteerInstance.js";
 
 const cache = new LRUCache<string, CheerioAPI>({ max: 1000 });
 const redirectUrlCache = new LRUCache<string, string>({ max: 1000 });
 const requestTimeout = parseInt(process.env["requestTimeout"] ?? "300000");
 
-const loadPageData = async (url: string, wait: boolean = false ): Promise<CheerioAPI> => {
+const loadPageData = async (
+  url: string,
+  wait: boolean = false,
+): Promise<CheerioAPI> => {
   const data_from_cache = cache.get(url);
   if (data_from_cache !== undefined) {
     return data_from_cache;
@@ -25,7 +28,7 @@ const loadPageData = async (url: string, wait: boolean = false ): Promise<Cheeri
     const page = await browser.newPage();
 
     await page.setRequestInterception(true);
-    page.on("request", (request : any) => {
+    page.on("request", (request: any) => {
       if (
         ["image", "imageset", "media"].indexOf(request.resourceType()) !== -1 ||
         new URL(request.url()).pathname.endsWith(".pdf")
@@ -46,7 +49,7 @@ const loadPageData = async (url: string, wait: boolean = false ): Promise<Cheeri
       redirectUrlCache.set(url, redirectedUrl);
     }
 
-    if(wait){
+    if (wait) {
       await page.waitForNetworkIdle();
     }
 
@@ -62,20 +65,20 @@ const loadPageData = async (url: string, wait: boolean = false ): Promise<Cheeri
   } catch (ex) {
     console.error(`ERROR LOAD ${url}: ${ex}`);
     throw new Error(
-      `Il test è stato interrotto perché nella prima pagina analizzata ${url} si è verificato l'errore "${ex}". Verificarne la causa e rifare il test.`
+      `Il test è stato interrotto perché nella prima pagina analizzata ${url} si è verificato l'errore "${ex}". Verificarne la causa e rifare il test.`,
     );
   }
 };
 
-const loadPage = async(url: string): Promise<any>  => {
+const loadPage = async (url: string): Promise<any> => {
   try {
     const page = await browser.newPage();
 
     await page.setRequestInterception(true);
     await page.on("request", (request: any) => {
       if (
-          ["image", "imageset", "media"].indexOf(request.resourceType()) !== -1 ||
-          new URL(request.url()).pathname.endsWith(".pdf")
+        ["image", "imageset", "media"].indexOf(request.resourceType()) !== -1 ||
+        new URL(request.url()).pathname.endsWith(".pdf")
       ) {
         request.abort();
       } else {
@@ -89,20 +92,17 @@ const loadPage = async(url: string): Promise<any>  => {
 
     await page.waitForNetworkIdle();
 
-    return page
-  } catch (ex:any
-      ) {
+    return page;
+  } catch (ex: any) {
     console.error(`ERROR LOADPAGE FUNCTION ${url}: ${ex}`);
-    throw new Error(
-        ex.message
-    );
+    throw new Error(ex.message);
   }
 };
 
 const gotoRetry = async (
   page: Page,
   url: string,
-  retryCount: number
+  retryCount: number,
 ): Promise<HTTPResponse | null> => {
   try {
     let response = await page.goto(url, {
@@ -149,7 +149,7 @@ const gotoRetry = async (
     }
 
     console.log(
-      `${url} goto tentative: ${errorHandling.gotoRetryTentative - retryCount}`
+      `${url} goto tentative: ${errorHandling.gotoRetryTentative - retryCount}`,
     );
     return await gotoRetry(page, url, retryCount - 1);
   }
@@ -158,7 +158,7 @@ const gotoRetry = async (
 const getPageElementDataAttribute = async (
   $: CheerioAPI,
   elementDataAttribute: string,
-  tag = ""
+  tag = "",
 ): Promise<string[]> => {
   const returnValues: string[] = [];
 
@@ -189,7 +189,7 @@ const getPageElementDataAttribute = async (
 const getElementHrefValuesDataAttribute = async (
   $: CheerioAPI,
   elementDataAttribute: string,
-  tag = ""
+  tag = "",
 ): Promise<Array<{ label: string; url: string }> | []> => {
   const elements = $(elementDataAttribute);
 
@@ -220,7 +220,7 @@ const getElementHrefValuesDataAttribute = async (
 
 const getHREFValuesDataAttribute = async (
   $: CheerioAPI,
-  elementDataAttribute: string
+  elementDataAttribute: string,
 ): Promise<string[]> => {
   const serviceUrls = [];
 
@@ -261,13 +261,13 @@ const toMenuItem = (str: string): MenuItem => ({
 
 const checkOrder = (
   mandatoryElements: MenuItem[],
-  foundElements: string[]
+  foundElements: string[],
 ): orderType => {
   const newMandatoryElements = mandatoryElements.filter((e) =>
-    foundElements.some((f) => e.regExp.test(f))
+    foundElements.some((f) => e.regExp.test(f)),
   );
   const newFoundElements = foundElements.filter((e) =>
-    newMandatoryElements.some((f) => f.regExp.test(e))
+    newMandatoryElements.some((f) => f.regExp.test(e)),
   );
   let numberOfElementsNotInSequence = 0;
   const elementsNotInSequence = [];
@@ -275,7 +275,7 @@ const checkOrder = (
   //The first element is always in the right order
   for (let i = 1; i < newFoundElements.length; i++) {
     const indexInMandatory = newMandatoryElements.findIndex((e) =>
-      e.regExp.test(newFoundElements[i])
+      e.regExp.test(newFoundElements[i]),
     );
     let isInSequence = true;
 
@@ -284,7 +284,7 @@ const checkOrder = (
         isInSequence = false;
       } else if (
         !newMandatoryElements[indexInMandatory + 1].regExp.test(
-          newFoundElements[i + 1]
+          newFoundElements[i + 1],
         )
       ) {
         isInSequence = false;
@@ -296,7 +296,7 @@ const checkOrder = (
         isInSequence = false;
       } else if (
         !newMandatoryElements[indexInMandatory - 1].regExp.test(
-          newFoundElements[i - 1]
+          newFoundElements[i - 1],
         )
       ) {
         isInSequence = false;
@@ -317,7 +317,7 @@ const checkOrder = (
 
 const missingMenuItems = (
   menuElements: string[],
-  mandatoryElements: MenuItem[]
+  mandatoryElements: MenuItem[],
 ): string[] =>
   mandatoryElements
     .filter((e) => menuElements.every((f) => !e.regExp.test(f)))
@@ -326,7 +326,7 @@ const missingMenuItems = (
 const urlExists = async (
   url: string,
   href: string,
-  checkHttps = false
+  checkHttps = false,
 ): Promise<{
   result: boolean;
   exception?: boolean;
@@ -389,7 +389,7 @@ const urlExists = async (
 };
 const areAllElementsInVocabulary = async (
   pageArguments: string[],
-  vocabularyElements: string[]
+  vocabularyElements: string[],
 ): Promise<vocabularyResult> => {
   let result = true;
 
@@ -398,7 +398,7 @@ const areAllElementsInVocabulary = async (
   }
 
   const lowerCasedVocabulary = vocabularyElements.map((vocabularyElements) =>
-    vocabularyElements.toLowerCase()
+    vocabularyElements.toLowerCase(),
   );
 
   const elementNotIncluded = [];
@@ -467,7 +467,7 @@ const getRedirectedUrl = async (url: string): Promise<string> => {
     const page = await browser.newPage();
 
     await page.setRequestInterception(true);
-    page.on("request", (request : any) => {
+    page.on("request", (request: any) => {
       if (
         ["image", "imageset", "media"].indexOf(request.resourceType()) !== -1 ||
         new URL(request.url()).pathname.endsWith(".pdf")
@@ -501,7 +501,7 @@ const getRedirectedUrl = async (url: string): Promise<string> => {
   } catch (ex) {
     console.error(`ERROR ${url}: ${ex}`);
     throw new Error(
-      `Il test è stato interrotto perché nella prima pagina analizzata ${url} si è verificato l'errore "${ex}". Verificarne la causa e rifare il test.`
+      `Il test è stato interrotto perché nella prima pagina analizzata ${url} si è verificato l'errore "${ex}". Verificarne la causa e rifare il test.`,
     );
   }
 

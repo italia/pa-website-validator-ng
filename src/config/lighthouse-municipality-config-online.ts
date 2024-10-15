@@ -9,15 +9,12 @@ import {
   seoAudits,
   pwaAudits,
 } from "./commonAuditsParts.js";
-import {commonGatherersFolder} from "./configFolderingConstants.js";
+import { commonGatherersFolder } from "./configFolderingConstants.js";
 
 export default {
   extends: "lighthouse:default",
   settings: {
-    onlyCategories: [
-      "performance",
-      "additionalTests",
-    ],
+    onlyCategories: ["performance", "additionalTests"],
   },
 
   passes: [

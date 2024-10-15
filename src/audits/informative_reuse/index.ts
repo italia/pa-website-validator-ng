@@ -1,11 +1,11 @@
 "use strict";
 
-import {Audit} from "../Audit.js";
+import { Audit } from "../Audit.js";
 
 class InfoReuseAudit extends Audit {
-  code = ''
-  mainTitle = ''
-  info= true
+  code = "";
+  mainTitle = "";
+  info = true;
 
   async meta() {
     return {
@@ -20,28 +20,27 @@ class InfoReuseAudit extends Audit {
     };
   }
 
-  async auditPage(){
-    return {}
+  async auditPage() {
+    return {};
   }
 
-  async getType(){
+  async getType() {
     return this.auditId;
   }
 
-  async returnGlobal(){
+  async returnGlobal() {
     return {
       score: null,
-    }
+    };
   }
 
   static getInstance(): Promise<InfoReuseAudit> {
     if (!InfoReuseAudit.instance) {
-      InfoReuseAudit.instance = new InfoReuseAudit('',[],[]);
+      InfoReuseAudit.instance = new InfoReuseAudit("", [], []);
     }
     return InfoReuseAudit.instance;
   }
-
 }
 
-export {InfoReuseAudit};
+export { InfoReuseAudit };
 export default InfoReuseAudit.getInstance;

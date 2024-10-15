@@ -7,9 +7,9 @@ import * as util from "util";
 import geoip from "geoip-lite";
 import { allowedCountries } from "../../storage/common/allowedCountries.js";
 import { auditDictionary } from "../../storage/auditDictionary.js";
-import {Page} from "puppeteer";
-import {Audit} from "../Audit.js";
-import {notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
+import { Page } from "puppeteer";
+import { Audit } from "../Audit.js";
+import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import * as ejs from "ejs";
 const auditId = "common-security-ip-location";
 const auditData = auditDictionary[auditId];
@@ -22,20 +22,20 @@ class IpLocationAudit extends Audit {
     score: 0,
     details: {
       items: [],
-      type: 'table',
+      type: "table",
       headings: [],
-      summary: ''
+      summary: "",
     },
     pagesItems: {
-      message: '',
+      message: "",
       headings: [],
       pages: [],
     },
-    errorMessage: ''
+    errorMessage: "",
   };
 
-  code = 'LOCALIZZAZIONE IP'
-  mainTitle = 'LOCALIZZAZIONE IP'
+  code = "LOCALIZZAZIONE IP";
+  mainTitle = "LOCALIZZAZIONE IP";
 
   score = 0;
 
@@ -53,23 +53,23 @@ class IpLocationAudit extends Audit {
     };
   }
 
-  async auditPage(
-      page: Page | null,
-      url: string,
-      error?:string
-  ) {
-    if(error && !page){
-
+  async auditPage(page: Page | null, url: string, error?: string) {
+    if (error && !page) {
       this.globalResults.score = 0;
       this.globalResults.details.items.push([
         {
           result: notExecutedErrorMessage.replace("<LIST>", error),
         },
       ]);
-      this.globalResults.details.headings= [{ key: "result", itemType: "text", text: "Risultato" }];
+      this.globalResults.details.headings = [
+        { key: "result", itemType: "text", text: "Risultato" },
+      ];
 
       this.globalResults.pagesItems.headings = ["Risultato"];
-      this.globalResults.pagesItems.message = notExecutedErrorMessage.replace("<LIST>", error);
+      this.globalResults.pagesItems.message = notExecutedErrorMessage.replace(
+        "<LIST>",
+        error,
+      );
       this.globalResults.pagesItems.items = [
         {
           result: this.auditData.redResult,
@@ -78,11 +78,11 @@ class IpLocationAudit extends Audit {
 
       return {
         score: 0,
-      }
+      };
     }
 
-    if(page){
-      const url = page.url()
+    if (page) {
+      const url = page.url();
       const hostname = new URL(url).hostname.replace("www.", "");
       this.score = 0;
 
@@ -91,7 +91,11 @@ class IpLocationAudit extends Audit {
         { key: "ip_city", itemType: "text", text: "Città indirizzo IP" },
         { key: "ip_country", itemType: "text", text: "Paese indirizzo IP" },
       ];
-      this.globalResults.pagesItems.headings = ["Risultato", "Città indirizzo IP", "Paese indirizzo IP"];
+      this.globalResults.pagesItems.headings = [
+        "Risultato",
+        "Città indirizzo IP",
+        "Paese indirizzo IP",
+      ];
       const items = [{ result: redResult, ip_city: "", ip_country: "" }];
 
       if (hostname) {
@@ -123,39 +127,48 @@ class IpLocationAudit extends Audit {
     }
   }
 
-  async getType(){
+  async getType() {
     return auditId;
   }
 
-  async returnGlobal(){
+  async returnGlobal() {
     return this.globalResults;
   }
 
   async returnGlobalHTML() {
-    let status = 'fail'
-    let message = ''
+    let status = "fail";
+    let message = "";
 
     if (this.globalResults.score > 0.5) {
-      status = 'pass';
+      status = "pass";
       message = this.auditData.greenResult;
     } else {
-      status = 'fail';
-      message = this.auditData.redResult
+      status = "fail";
+      message = this.auditData.redResult;
     }
 
-    const reportHtml = await ejs.renderFile('src/audits/ipLocation/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null ,  totalPercentage : null });
-    return reportHtml
+    const reportHtml = await ejs.renderFile(
+      "src/audits/ipLocation/template.ejs",
+      {
+        ...(await this.meta()),
+        code: this.code,
+        table: this.globalResults,
+        status,
+        statusMessage: message,
+        metrics: null,
+        totalPercentage: null,
+      },
+    );
+    return reportHtml;
   }
 
   static getInstance(): Promise<IpLocationAudit> {
     if (!IpLocationAudit.instance) {
-      IpLocationAudit.instance = new IpLocationAudit('',[],[]);
+      IpLocationAudit.instance = new IpLocationAudit("", [], []);
     }
     return IpLocationAudit.instance;
   }
-
 }
 
-export {IpLocationAudit};
+export { IpLocationAudit };
 export default IpLocationAudit.getInstance;
-

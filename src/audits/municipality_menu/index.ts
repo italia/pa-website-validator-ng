@@ -9,9 +9,9 @@ import {
 import { auditDictionary } from "../../storage/auditDictionary.js";
 import { MenuItem } from "../../types/menuItem.js";
 import { getFirstLevelPages } from "../../utils/municipality/utils.js";
-import {Audit} from "../Audit.js";
-import {Page} from "puppeteer";
-import {notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
+import { Audit } from "../Audit.js";
+import { Page } from "puppeteer";
+import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import * as ejs from "ejs";
 
 const auditId = "municipality-menu-structure-match-model";
@@ -22,33 +22,32 @@ const yellowResult = auditData.yellowResult;
 const redResult = auditData.redResult;
 
 class MenuAudit extends Audit {
-
   public globalResults: any = {
     score: 0,
     details: {
       items: [],
-      type: 'table',
+      type: "table",
       headings: [],
-      summary: ''
+      summary: "",
     },
     pagesItems: {
-      message: '',
+      message: "",
       headings: [],
       pages: [],
     },
     recapItems: {
-      message: '',
+      message: "",
       headings: [],
       pages: [],
     },
-    errorMessage: ''
+    errorMessage: "",
   };
 
-  code = 'C.SI.1.6';
-  mainTitle = 'VOCI DI MENÙ DI PRIMO LIVELLO'
+  code = "C.SI.1.6";
+  mainTitle = "VOCI DI MENÙ DI PRIMO LIVELLO";
 
   public score = 0;
-  private headings : any = [];
+  private headings: any = [];
   async meta() {
     return {
       id: auditId,
@@ -63,24 +62,25 @@ class MenuAudit extends Audit {
     };
   }
 
-  async auditPage(
-    page: Page | null,
-    error?: string
-  ) {
+  async auditPage(page: Page | null, error?: string) {
     if (error && !page) {
-
-      this.globalResults['score'] = 0;
-      this.globalResults['details']['items'] =  [
+      this.globalResults["score"] = 0;
+      this.globalResults["details"]["items"] = [
         {
           result: notExecutedErrorMessage.replace("<LIST>", error),
         },
       ];
-      this.globalResults['details']['type'] = 'table';
-      this.globalResults['details']['headings'] = [{key: "result", itemType: "text", text: "Risultato"}];
-      this.globalResults['details']['summary'] = '';
+      this.globalResults["details"]["type"] = "table";
+      this.globalResults["details"]["headings"] = [
+        { key: "result", itemType: "text", text: "Risultato" },
+      ];
+      this.globalResults["details"]["summary"] = "";
 
       this.globalResults.pagesItems.headings = ["Risultato"];
-      this.globalResults.pagesItems.message = notExecutedErrorMessage.replace("<LIST>", error);
+      this.globalResults.pagesItems.message = notExecutedErrorMessage.replace(
+        "<LIST>",
+        error,
+      );
       this.globalResults.pagesItems.items = [
         {
           result: this.auditData.redResult,
@@ -89,10 +89,10 @@ class MenuAudit extends Audit {
 
       return {
         score: 0,
-      }
+      };
     }
 
-    if(page){
+    if (page) {
       const url = page.url();
 
       this.headings = [
@@ -156,36 +156,41 @@ class MenuAudit extends Audit {
       }
 
       const missingMandatoryElements = missingMenuItems(
-          foundMenuElements,
-          menuItem
+        foundMenuElements,
+        menuItem,
       );
       results[0].missing_menu_voices = missingMandatoryElements.join(", ");
 
       const orderResult = checkOrder(menuItem, foundMenuElements);
       results[0].wrong_order_menu_voices =
-          orderResult.elementsNotInSequence.join(", ");
+        orderResult.elementsNotInSequence.join(", ");
 
       const containsMandatoryElementsResult =
-          missingMandatoryElements.length === 0;
+        missingMandatoryElements.length === 0;
 
       if (
-          foundMenuElements.length === 4 &&
-          containsMandatoryElementsResult &&
-          orderResult.numberOfElementsNotInSequence === 0
+        foundMenuElements.length === 4 &&
+        containsMandatoryElementsResult &&
+        orderResult.numberOfElementsNotInSequence === 0
       ) {
         this.score = 1;
         results[0].result = greenResult;
       } else if (
-          foundMenuElements.length > 4 &&
-          foundMenuElements.length < 8 &&
-          containsMandatoryElementsResult &&
-          orderResult.numberOfElementsNotInSequence === 0
+        foundMenuElements.length > 4 &&
+        foundMenuElements.length < 8 &&
+        containsMandatoryElementsResult &&
+        orderResult.numberOfElementsNotInSequence === 0
       ) {
         this.score = 0.5;
         results[0].result = yellowResult;
       }
 
-      this.globalResults.recapItems.headings = ["Risultato", "Voci del menù identificate", "Voci del menù mancanti", "Voci del menù in ordine errato"];
+      this.globalResults.recapItems.headings = [
+        "Risultato",
+        "Voci del menù identificate",
+        "Voci del menù mancanti",
+        "Voci del menù in ordine errato",
+      ];
       this.globalResults.recapItems.pages = [results[0]];
 
       results.push({});
@@ -196,8 +201,11 @@ class MenuAudit extends Audit {
         missing_menu_voices: "Pagina interna al dominio",
       });
 
-      this.globalResults.pagesItems.headings = ["Voce di menù", "Link trovato", "Pagina interna al dominio"];
-
+      this.globalResults.pagesItems.headings = [
+        "Voce di menù",
+        "Link trovato",
+        "Pagina interna al dominio",
+      ];
 
       const host = new URL(url).hostname.replace("www.", "");
       for (const page of firstLevelPages) {
@@ -228,7 +236,6 @@ class MenuAudit extends Audit {
       this.globalResults.score = this.score;
       this.globalResults.details.headings = this.headings;
       this.globalResults.details.items = results;
-
     }
 
     return {
@@ -236,32 +243,43 @@ class MenuAudit extends Audit {
     };
   }
 
-  async getType(){
+  async getType() {
     return auditId;
   }
 
   async returnGlobalHTML() {
-    let status = 'fail'
-    let message = ''
+    let status = "fail";
+    let message = "";
 
     if (this.score > 0.5) {
-      status = 'pass';
+      status = "pass";
       message = this.auditData.greenResult;
     } else if (this.score == 0.5) {
-      status = 'average';
-      message = this.auditData.yellowResult
+      status = "average";
+      message = this.auditData.yellowResult;
     } else {
-      status = 'fail';
-      message = this.auditData.redResult
+      status = "fail";
+      message = this.auditData.redResult;
     }
 
-    const reportHtml = await ejs.renderFile('src/audits/municipality_menu/template.ejs', { ...await this.meta(), code: this.code, table: this.globalResults, status, statusMessage: message, metrics: null ,  totalPercentage : null });
-    return reportHtml
+    const reportHtml = await ejs.renderFile(
+      "src/audits/municipality_menu/template.ejs",
+      {
+        ...(await this.meta()),
+        code: this.code,
+        table: this.globalResults,
+        status,
+        statusMessage: message,
+        metrics: null,
+        totalPercentage: null,
+      },
+    );
+    return reportHtml;
   }
 
   static getInstance(): Promise<MenuAudit> {
     if (!MenuAudit.instance) {
-      MenuAudit.instance = new MenuAudit('', [], []);
+      MenuAudit.instance = new MenuAudit("", [], []);
     }
     return MenuAudit.instance;
   }
