@@ -4,8 +4,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build": "tsc",
-    "prepare": "tsc",
+    "build": "rm -rf dist && tsc",
+    "prepare": "rm -rf dist && tsc",
     "lint:check": "eslint --max-warnings 0 ./src",
     "lint:fix": "eslint --fix ./src",
     "type:check": "tsc --noEmit",
@@ -16,7 +16,7 @@
   "license": "ISC",
   "description": "",
   "bin": {
-    "pa-website-validator": "dist/index.js"
+    "pa-website-validator-ng": "dist/index.js"
   },
   "devDependencies": {
     "@types/ejs": "^3.1.5",
