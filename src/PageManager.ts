@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import crawlerTypes from "./types/crawler-types";
+import crawlerTypes from "./types/crawler-types.js";
 import PageData = crawlerTypes.PageData;
 
 class PageManager {
