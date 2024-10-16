@@ -118,6 +118,36 @@ const config: any = {
           "municipality_service",
           "municipality_user_experience_evaluation",
         ],
+        "personal-area-login": [
+          "municipality_bootstrap",
+          "municipality_cookie",
+          "municipality_domain_audit",
+          "municipality_font",
+        ],
+        "first-level-page": [
+          "municipality_bootstrap",
+          "municipality_cookie",
+          "municipality_domain_audit",
+          "municipality_feedback",
+          "municipality_font",
+        ],
+        "second-level-page-all": [
+          "municipality_bootstrap",
+          "municipality_cookie",
+          "municipality_domain_audit",
+          "municipality_feedback",
+          "municipality_font",
+        ],
+
+        "appointment-booking": [
+          "municipality_domain_audit",
+          "municipality_bootstrap",
+          "municipality_cookie"
+        ],
+        event: [
+          "municipality_domain_audit",
+          "municipality_cookie"
+        ],
       },
       accuracy: {
         min: 1,
