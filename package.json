@@ -1,6 +1,6 @@
 {
-  "name": "dtd_crawler",
-  "version": "1.0.0",
+  "name": "pa-website-validator-ng",
+  "version": "0.0.2",
   "main": "index.js",
   "type": "module",
   "scripts": {
