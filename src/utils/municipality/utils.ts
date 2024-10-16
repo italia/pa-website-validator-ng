@@ -512,7 +512,6 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
         });
         await page.waitForNetworkIdle();
       } catch (e) {
-        console.log(`Errore al click per i=${i}:`, e);
         /* empty */
       }
 

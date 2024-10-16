@@ -104,7 +104,7 @@ const render = async () => {
       failed: failedAudits,
     },
     url_comune: website,
-    lighthouseIFrame: lighthouseIFrame.replace(/"/g, "&quot;"),
+    lighthouseIFrame: lighthouseIFrame
   });
 
   if (saveFile == "false") {

@@ -36,8 +36,6 @@ class PageManager {
 
       const pages = this.pagesArray.filter((p) => p.scanning);
 
-      console.log(pages.length, "qui");
-
       if (pages.length <= numberOfConcurrentPages && this.firstAdd) {
         await this.setScanning(page.url, page.type, true);
         this.emitter.emit("pagesAdded", page);
@@ -68,7 +66,6 @@ class PageManager {
         !p.scanning,
     );
     const pages = this.pagesArray.filter((p) => p.scanning);
-    console.log(pages.length, "qua");
     if (usablePage) {
       if (pages.length <= numberOfConcurrentPages) {
         await this.setScanning(usablePage.url, usablePage.type, true);

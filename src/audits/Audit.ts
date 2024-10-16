@@ -56,25 +56,17 @@ export abstract class Audit {
     let message = "";
 
     if (this.globalResults.score > 0.5) {
-      (status = "pass"), (message = this.auditData.greenResult);
+      (status = "pass");
+      (message = this.auditData.greenResult);
     } else if ((this.globalResults.score = 0.5)) {
-      (status = "average"), (message = this.auditData.yellowResult);
+      (status = "average");
+      (message = this.auditData.yellowResult);
     } else {
-      (status = "fail"), (message = this.auditData.redResult);
+      (status = "fail");
+      (message = this.auditData.redResult);
     }
 
-    const reportHtml = await ejs.renderFile(
-      "src/report/partials/audit/template.ejs",
-      {
-        ...(await this.meta()),
-        code: this.code,
-        table: this.globalResults.details,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
+    const reportHtml = '';
     return reportHtml;
   }
 
