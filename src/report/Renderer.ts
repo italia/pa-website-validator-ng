@@ -23,12 +23,12 @@ const render = async () => {
   const audits = await collectAudits();
   /** get data from report instances */
   for (const auditId of Object.keys(audits)) {
-    const audit = (await audits[auditId]()) as any;
+    const audit = await audits[auditId]();
 
     const auditMeta = await audit.meta();
-    const auditResult = audit.globalResults as any;
+    const auditResult = audit.globalResults;
     const score = auditResult.score;
-    const infoScore = auditResult.infoScore as any;
+    const infoScore = auditResult.infoScore;
 
     if (auditResult.info || audit.info) {
       informativeAudits.push({
@@ -104,7 +104,7 @@ const render = async () => {
       failed: failedAudits,
     },
     url_comune: website,
-    lighthouseIFrame: lighthouseIFrame.replace(/"/g, "&quot;"),
+    lighthouseIFrame: lighthouseIFrame?.replace(/"/g, "&quot;") ?? '',
   });
 
   if (saveFile == "false") {
@@ -157,7 +157,7 @@ const formatDate = (date: Date): string => {
   return `${day}/${month}/${year.slice(-2)} ${hours}:${minutes}`;
 };
 
-const sortByWeights = (audits: Array<any>) => {
+const sortByWeights = (audits: Record<string, unknown>[]) => {
   const referenceArray =
     process.env["type"] === "municipality"
       ? municipalityWeights
@@ -169,7 +169,9 @@ const sortByWeights = (audits: Array<any>) => {
       referenceItem && referenceItem.weight ? referenceItem.weight : 1;
   });
 
-  return audits.sort((a, b) => b.weight - a.weight);
+  return audits.sort((a, b) => {
+    return Number(a.weight) - Number(b.weight);
+  });
 };
 
 export default render;

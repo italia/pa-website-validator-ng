@@ -1,7 +1,6 @@
 import PageManager from "./PageManager.js";
 
-import crawlerTypes from "./types/crawler-types.js";
-import PageData = crawlerTypes.PageData;
+import {PageData} from "./types/crawler-types.js";
 import {initializeConfig} from "./config/config.js";
 import { loadPage } from "./utils/utils.js";
 import { Page } from "puppeteer";
@@ -86,7 +85,7 @@ const scan = async (
           if (!page && pageData.temporaryGatherer) {
             throw new Error(
               pageData && pageData.errors && pageData.errors.length
-                ? pageData.errors[0]
+                ? pageData.errors[0].toString()
                 : `Page not available for type ${pageData.type}`,
             );
           }

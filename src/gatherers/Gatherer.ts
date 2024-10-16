@@ -1,6 +1,5 @@
 import { JSHandle, Page } from "puppeteer";
-import crawlerTypes from "../types/crawler-types.js";
-import PageData = crawlerTypes.PageData;
+import {PageData} from "../types/crawler-types.js";
 import { loadPage } from "../utils/utils.js";
 
 abstract class Gatherer {
@@ -31,9 +30,9 @@ abstract class Gatherer {
     url: string,
     numberOfPages = 5,
     website: string = "",
-    page: Page,
+    page: Page | null,
   ): Promise<PageData[]> {
-    if (this.gatheredPages.length > 0) {
+    if (this.gatheredPages.length > 0 || !page) {
       return this.gatheredPages;
     }
 

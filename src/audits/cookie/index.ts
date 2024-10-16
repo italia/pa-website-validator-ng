@@ -1,8 +1,7 @@
 import { errorHandling } from "../../config/commonAuditsParts.js";
 import { Audit } from "../Audit.js";
 import { Page } from "puppeteer";
-import crawlerTypes from "../../types/crawler-types";
-import cookie = crawlerTypes.cookie;
+import {Cookie} from "../../types/crawler-types";
 import { gotoRetry } from "../../utils/utils.js";
 import {initializePuppeteerOld} from "../../PuppeteerInstanceOld.js";
 
@@ -314,7 +313,7 @@ class CookieAudit extends Audit {
 export { CookieAudit };
 export default CookieAudit.getInstance;
 
-async function checkCookieDomain(url: string, cookies: any): Promise<cookie[]> {
+async function checkCookieDomain(url: string, cookies: any): Promise<Cookie[]> {
   const returnValue = [];
 
   for (const cookie of cookies) {

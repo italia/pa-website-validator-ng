@@ -1,11 +1,9 @@
 "use strict";
-import crawlerTypes from "../types/crawler-types.js";
-import orderType = crawlerTypes.orderResult;
+import {OrderResult as OrderType, VocabularyResult} from "../types/crawler-types.js";
 import * as cheerio from "cheerio";
-import { HTTPResponse, Page } from "puppeteer";
+import { HTTPResponse, Page, HTTPRequest } from "puppeteer";
 import { CheerioAPI } from "cheerio";
 import axios from "axios";
-import vocabularyResult = crawlerTypes.vocabularyResult;
 import { LRUCache } from "lru-cache";
 import { MenuItem } from "../types/menuItem.js";
 import { errorHandling } from "../config/commonAuditsParts.js";
@@ -25,11 +23,11 @@ const loadPageData = async (
   }
   let data = "";
   try {
-    let browser = await initializePuppeteer();
+    const browser = await initializePuppeteer();
     const page = await browser.newPage();
 
     await page.setRequestInterception(true);
-    page.on("request", (request: any) => {
+    page.on("request", (request: HTTPRequest) => {
       if (
         ["image", "imageset", "media"].indexOf(request.resourceType()) !== -1 ||
         new URL(request.url()).pathname.endsWith(".pdf")
@@ -40,7 +38,7 @@ const loadPageData = async (
       }
     });
 
-    const res = await gotoRetry(page, url, errorHandling.gotoRetryTentative);
+    await gotoRetry(page, url, errorHandling.gotoRetryTentative);
 
     const redirectedUrl = await page.evaluate(async () => {
       return window.location.href;
@@ -71,13 +69,13 @@ const loadPageData = async (
   }
 };
 
-const loadPage = async (url: string): Promise<any> => {
+const loadPage = async (url: string): Promise<Page> => {
   try {
-    let browser = await initializePuppeteer();
+    const browser = await initializePuppeteer();
     const page = await browser.newPage();
 
     await page.setRequestInterception(true);
-    await page.on("request", (request: any) => {
+    await page.on("request", (request: HTTPRequest) => {
       if (
         ["image", "imageset", "media"].indexOf(request.resourceType()) !== -1 ||
         new URL(request.url()).pathname.endsWith(".pdf")
@@ -95,9 +93,14 @@ const loadPage = async (url: string): Promise<any> => {
     await page.waitForNetworkIdle();
 
     return page;
-  } catch (ex: any) {
+  } catch (ex) {
     console.error(`ERROR LOADPAGE FUNCTION ${url}: ${ex}`);
-    throw new Error(ex.message);
+
+    if(ex instanceof Error){
+      throw new Error(ex.message);
+    }else{
+      throw new Error(String(ex));
+    }
   }
 };
 
@@ -116,7 +119,7 @@ const gotoRetry = async (
       await page.evaluate(async () => {
         return window;
       });
-    } catch (e) {
+    } catch {
       try {
         response = await page.goto(url, {
           waitUntil: ["load", "networkidle0"],
@@ -131,7 +134,7 @@ const gotoRetry = async (
         await page.evaluate(async () => {
           return window;
         });
-      } catch (e) {
+      } catch {
         await page.goto(url, {
           waitUntil: ["load", "networkidle0"],
           timeout: requestTimeout,
@@ -264,7 +267,7 @@ const toMenuItem = (str: string): MenuItem => ({
 const checkOrder = (
   mandatoryElements: MenuItem[],
   foundElements: string[],
-): orderType => {
+): OrderType => {
   const newMandatoryElements = mandatoryElements.filter((e) =>
     foundElements.some((f) => e.regExp.test(f)),
   );
@@ -357,7 +360,7 @@ const urlExists = async (
         headers: { Accept: "text/html,application/xhtml+xml" },
       });
       statusCode = response.status;
-    } catch (e) {
+    } catch {
       return {
         result: false,
         exception: true,
@@ -379,9 +382,7 @@ const urlExists = async (
       reason: "",
       inspectedUrl: inspectUrl,
     };
-  } catch (ex) {
-    console.log(ex);
-
+  } catch {
     return {
       result: false,
       reason: "",
@@ -392,7 +393,7 @@ const urlExists = async (
 const areAllElementsInVocabulary = async (
   pageArguments: string[],
   vocabularyElements: string[],
-): Promise<vocabularyResult> => {
+): Promise<VocabularyResult> => {
   let result = true;
 
   if (pageArguments.length <= 0) {
@@ -470,7 +471,7 @@ const getRedirectedUrl = async (url: string): Promise<string> => {
     const page = await browser.newPage();
 
     await page.setRequestInterception(true);
-    page.on("request", (request: any) => {
+    page.on("request", (request: HTTPRequest) => {
       if (
         ["image", "imageset", "media"].indexOf(request.resourceType()) !== -1 ||
         new URL(request.url()).pathname.endsWith(".pdf")

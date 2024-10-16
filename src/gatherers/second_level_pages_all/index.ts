@@ -1,6 +1,5 @@
 import { Gatherer } from "../Gatherer.js";
-import crawlerTypes from "../../types/crawler-types.js";
-import PageData = crawlerTypes.PageData;
+import {PageData} from "../../types/crawler-types.js";
 import { Page } from "puppeteer";
 import { getSecondLevelPages } from "../../utils/municipality/utils.js";
 import { primaryMenuItems } from "../../storage/municipality/menuItems.js";

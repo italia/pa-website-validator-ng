@@ -1,10 +1,9 @@
-import crawlerTypes from "../types/crawler-types";
-import PageData = crawlerTypes.PageData;
+import {PageData, AuditDictionary} from "../types/crawler-types";
 import { Page } from "puppeteer";
 import { auditDictionary } from "../storage/auditDictionary.js";
 import * as ejs from "ejs";
 
-export abstract class Audit {
+export class Audit {
   id: string;
   gathererPageType: string[];
   auditsIds: string[];
@@ -12,9 +11,10 @@ export abstract class Audit {
   globalResults: any = {};
   code = "";
   info = false;
+  reportHTML = '';
 
   protected auditId = "audit";
-  protected auditData: crawlerTypes.AuditDictionary = auditDictionary["audit"];
+  protected auditData: AuditDictionary = auditDictionary["audit"];
 
   constructor(id: string, gathererPageType: string[], auditsIds: string[]) {
     this.id = id;
@@ -43,7 +43,7 @@ export abstract class Audit {
 
   async generateTotalResult() {}
 
-  static async getType() {
+  async getType() {
     return "";
   }
 
@@ -87,3 +87,4 @@ export abstract class Audit {
     ERROR: "error",
   };
 }
+

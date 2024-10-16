@@ -4,8 +4,7 @@ import { getPrimaryPageUrl } from "../../utils/municipality/utils.js";
 import { primaryMenuItems } from "../../storage/municipality/menuItems.js";
 import { DataElementError } from "../../utils/DataElementError.js";
 import { Gatherer } from "../Gatherer.js";
-import crawlerTypes from "../../types/crawler-types.js";
-import PageData = crawlerTypes.PageData;
+import {PageData} from "../../types/crawler-types.js";
 
 class bookingAppointmentGatherer extends pageGatherer {
   static dataElements: string[] = ["appointment-booking"];

@@ -144,7 +144,7 @@ const config: any = {
           "ipLocation",
         ],
         "services-page": ["municipality_booking_appointment"],
-        service: [
+        "service": [
           "municipality_domain_audit",
           "municipality_bootstrap",
           //"municipality_booking_appointment",
@@ -161,20 +161,20 @@ const config: any = {
           "municipality_domain_audit",
           "municipality_font",
         ],
-        "first-level-page": [
+        /*"first-level-page": [
           "municipality_bootstrap",
           // "municipality_cookie",
           "municipality_domain_audit",
-          //"municipality_feedback",
+          "municipality_feedback",
           "municipality_font",
         ],
         "second-level-page-all": [
           "municipality_bootstrap",
           //  "municipality_cookie",
           "municipality_domain_audit",
-          //"municipality_feedback",
+          "municipality_feedback",
           //"municipality_font",
-        ],
+        ],*/
 
         "appointment-booking": [
           "municipality_domain_audit",

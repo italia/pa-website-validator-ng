@@ -1,13 +1,13 @@
 import { Gatherer } from "../Gatherer.js";
-import crawlerTypes from "../../types/crawler-types.js";
-import PageData = crawlerTypes.PageData;
+import {PageData} from "../../types/crawler-types.js";
 import { setTimeout } from "timers/promises";
 import { Page } from "puppeteer";
-import { getRandomNString } from "../../utils/utils.js";
+import {getRandomNString, loadPage} from "../../utils/utils.js";
 
 class servicesGatherer extends Gatherer {
   static dataElement: string = "service-link";
   static pageType: string = "service";
+  secondPageLevel: string = "pager-link";
 
   async navigateAndFetchPages(
     url: string,
@@ -17,7 +17,7 @@ class servicesGatherer extends Gatherer {
   ): Promise<PageData[]> {
     let maxCountPages = 0;
     let clickButton = true;
-    let foundElements: any = [];
+    let foundElements = [];
     let pages: string[] = [];
     let click = false;
 
@@ -34,7 +34,7 @@ class servicesGatherer extends Gatherer {
           button.click();
           return true;
         });
-
+        
         if (!clickButton) {
           continue;
         }
@@ -52,10 +52,11 @@ class servicesGatherer extends Gatherer {
           `[data-element="${servicesGatherer.dataElement}"]`,
         );
 
-        const foundElementsHrefs: PageData[] | any = await Promise.all(
-          foundElements.map(async (el: any) => {
+        const foundElementsHrefs : string[] = await Promise.all(
+          foundElements.map(async (el) => {
             const href = await el.getProperty("href");
-            const hrefValue = await href.jsonValue();
+            const jsonValue = await href.jsonValue();
+            const hrefValue : string = String(jsonValue);
             return hrefValue;
           }),
         );
@@ -72,10 +73,50 @@ class servicesGatherer extends Gatherer {
         }
 
         maxCountPages = currentCountPages;
-      } catch (e) {
+      } catch {
         clickButton = false;
       }
     }
+
+
+    const foundSecondLevel = await page.$$(
+        `[data-element="${this.secondPageLevel}"]`,
+    );
+
+    const foundElementSecondHref: PageData[] | any = await Promise.all(
+        foundSecondLevel.map(async (el: any) => {
+          const href = await el.getProperty("href");
+          const hrefValue = await href.jsonValue();
+          return hrefValue;
+        }),
+    );
+
+    if(foundElementSecondHref.length){
+      const secondPage : Page | null = await loadPage(foundElementSecondHref[0]);
+
+      if(secondPage){
+        const foundElementsSecondLevel = await secondPage.$$(
+            `[data-element="${servicesGatherer.dataElement}"]`,
+        );
+
+        const foundElementSecondLevelHref: PageData[] | any = await Promise.all(
+            foundElementsSecondLevel.map(async (el: any) => {
+              const href = await el.getProperty("href");
+              const hrefValue = await href.jsonValue();
+              return hrefValue;
+            }),
+        );
+
+        pages = foundElementSecondLevelHref;
+        const currentCountPages = foundElementSecondLevelHref.length;
+        maxCountPages = currentCountPages;
+
+        process.env["numberOfServicesFound"] = String(currentCountPages);
+
+        await secondPage.close();
+      }
+    }
+
 
     if (!maxCountPages || (maxCountPages == 0 && click)) {
       throw new Error(
@@ -85,7 +126,7 @@ class servicesGatherer extends Gatherer {
 
     pages = await getRandomNString(pages, numberOfPages);
 
-    this.gatheredPages = pages.map((url: any) => {
+    this.gatheredPages = pages.map((url: string) => {
       return {
         url: url,
         id: "service" + Date.now(),

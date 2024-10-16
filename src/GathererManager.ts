@@ -1,6 +1,9 @@
 import { sync } from "glob";
-let gatherers: any | null = null;
+
 import { getGatherers } from "./config/config.js";
+import {Gatherer} from "./gatherers/Gatherer.js";
+
+let gatherers: Record<string, () => Promise<Gatherer>> = {};
 
 function extractFolderName(path: string) {
   const fileNameWithoutExtension = path.replace(/\.[^/.]+$/, "");
@@ -16,7 +19,7 @@ async function collectGatherers() {
   const configGatherers = await getGatherers();
 
   try {
-    if (!gatherers) {
+    if (!Object.keys(gatherers).length) {
       const files = sync("./src/gatherers/**/*.ts");
       gatherers = {};
       for (const file of files) {

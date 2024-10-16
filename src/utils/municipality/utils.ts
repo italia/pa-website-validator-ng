@@ -21,10 +21,7 @@ import {
 import { feedbackComponentStructure } from "../../storage/municipality/feedbackComponentStructure.js";
 import axios from "axios";
 import { DataElementError } from "../DataElementError.js";
-import crawlerTypes from "../../types/crawler-types.js";
-import requestPages = crawlerTypes.requestPages;
-import pageLink = crawlerTypes.pageLink;
-import municipalitySecondLevelPages = crawlerTypes.municipalitySecondLevelPages;
+import {RequestPages, PageLink, MunicipalitySecondLevelPages} from "../../types/crawler-types.js";
 import { LRUCache } from "lru-cache";
 
 const cacheResults = new LRUCache<string, string[]>({ max: 100 });
@@ -47,10 +44,10 @@ const getFirstLevelPages = async (
   url: string,
   custom: boolean,
   page: Page,
-): Promise<pageLink[]> => {
+): Promise<PageLink[]> => {
   const data = await page.content();
   const $: CheerioAPI = await cheerio.load(data);
-  let pagesUrls: pageLink[] = [];
+  let pagesUrls: PageLink[] = [];
 
   const menuDataElements = [];
 
@@ -191,9 +188,9 @@ const getRandomSecondLevelPagesUrl = async (
 const getSecondLevelPages = async (
   url: string,
   custom: boolean,
-): Promise<municipalitySecondLevelPages> => {
+): Promise<MunicipalitySecondLevelPages> => {
   const $ = await loadPageData(url);
-  const pages: municipalitySecondLevelPages = {
+  const pages: MunicipalitySecondLevelPages = {
     management: [],
     news: [],
     services: [],
@@ -354,6 +351,7 @@ const getRandomThirdLevelPagesUrl = async (
 
 
       } catch (e) {
+        console.log(e);
         clickButton = false;
       }
     }
@@ -444,7 +442,7 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
 
   try {
     returnValues = await page.evaluate(
-      async (feedbackComponentStructure: any) => {
+      async (feedbackComponentStructure) => {
         let score = 1;
         const errors: string[] = [];
 
@@ -517,7 +515,7 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
       }
 
       const feedbackReturnValue = await page.evaluate(
-        async (feedbackComponentStructure: any, i: any) => {
+        async (feedbackComponentStructure, i: number) => {
           let score = 1;
           const errors: string[] = [];
 
@@ -930,7 +928,7 @@ const isDrupal = async (url: string): Promise<boolean> => {
       try {
         const response = await axios.get(styleCSSUrl);
         CSScontent = response.data;
-      } catch (e) {
+      } catch {
         CSScontent = "";
       }
 
@@ -951,7 +949,7 @@ const isDrupal = async (url: string): Promise<boolean> => {
 
 const getPages = async (
   url: string,
-  requests: requestPages[],
+  requests: RequestPages[],
   removeExternal = true,
   page: Page,
 ): Promise<string[]> => {

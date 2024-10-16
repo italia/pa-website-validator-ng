@@ -14,9 +14,8 @@ import {
   loadPageData,
 } from "../utils.js";
 import { DataElementError } from "../DataElementError.js";
-import crawlerTypes from "../../types/crawler-types.js";
-import requestPages = crawlerTypes.requestPages;
-import pageLink = crawlerTypes.pageLink;
+import {PageLink, RequestPages} from "../../types/crawler-types.js";
+
 import { LRUCache } from "lru-cache";
 
 const cacheResults = new LRUCache<string, string[]>({ max: 100 });
@@ -49,8 +48,8 @@ const getRandomFirstLevelPagesUrl = async (
   return getRandomNString(pagesUrls, numberOfPages);
 };
 
-const getFirstLevelPages = async (url: string): Promise<pageLink[]> => {
-  const pages: pageLink[] = [];
+const getFirstLevelPages = async (url: string): Promise<PageLink[]> => {
+  const pages: PageLink[] = [];
   const $ = await loadPageData(url);
 
   for (const [, menuStructure] of Object.entries(menuItems)) {
@@ -143,8 +142,8 @@ const getRandomSecondLevelPagesUrl = async (
   return getRandomNString(pagesUrls, numberOfPages);
 };
 
-const getSecondLevelPages = async (url: string): Promise<pageLink[]> => {
-  const pagesUrls: pageLink[] = [];
+const getSecondLevelPages = async (url: string): Promise<PageLink[]> => {
+  const pagesUrls: PageLink[] = [];
   const $ = await loadPageData(url);
 
   const menuDataElements = [];
@@ -319,7 +318,7 @@ const detectLang = (entries: string[]): "it" | "de" | "lld_ga" | "lld_ba" => {
 
 const getPages = async (
   url: string,
-  requests: requestPages[],
+  requests: RequestPages[],
   removeExternal = true,
 ): Promise<string[]> => {
   let pagesUrl: string[] = [];

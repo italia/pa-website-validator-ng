@@ -79,7 +79,7 @@ try {
     console.log("[INFO] Directory created at: " + args.destination);
   }
 
-  const result = await run(
+  await run(
     args.website,
     args.type,
     args.scope,

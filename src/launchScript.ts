@@ -8,8 +8,6 @@ import {Page} from "puppeteer";
 import {loadPage} from "./utils/utils.js";
 import {initializePuppeteerOld } from "./PuppeteerInstanceOld.js";
 
-
-
 export const logLevels = {
     display_none: "silent",
     display_error: "error",
@@ -31,7 +29,7 @@ async function run(
     numberOfServicePages?: number,
     concurrentPages?: number,
 ) {
-    let finalResults: any;
+    let finalResults: Record<string, unknown> = {};
 
     try {
         const config = await initializeConfig(type, scope);
@@ -74,7 +72,7 @@ async function run(
             await scan(pageData, saveFile, destination, reportName, view);
         });
 
-        const onScriptClosedPromise = new Promise((resolve, reject) => {
+        const onScriptClosedPromise = new Promise((resolve) => {
             PageManager.onScriptClosed(async (results) => {
                 finalResults = results;
                 resolve(results);
@@ -82,17 +80,19 @@ async function run(
         });
 
         if (config.audits["homepage"].find((i: string) => i === "lighthouse")) {
-            const audit = audits["lighthouse"]();
+            const audit = await audits["lighthouse"]();
             let page: Page | null = null;
-            let navigatingError;
+            let navigatingError : string = '';
             try {
                 page = await loadPage(website);
-                if (page) {
-                    await page.waitForNetworkIdle();
-                }
             } catch (e) {
-                navigatingError = e;
+                if(e instanceof Error){
+                    navigatingError = e.message;
+                }else{
+                    String(e);
+                }
             }
+
 
             await audit.auditPage(
                 navigatingError ? null : page,

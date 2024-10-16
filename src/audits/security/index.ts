@@ -5,12 +5,10 @@ import { Page } from "puppeteer";
 
 import { Audit } from "../Audit.js";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
-import cipher = crawlerTypes.cipher;
-import cipherInfo = crawlerTypes.cipherInfo;
 import { allowedCiphers } from "./allowedCiphers.js";
 import https from "https";
 import { TLSSocket } from "tls";
-import crawlerTypes from "../../types/crawler-types.js";
+import {Cipher, CipherInfo} from "../../types/crawler-types.js";
 
 const allowedTlsVersions = ["TLSv1.2", "TLSv1.3"];
 
@@ -328,7 +326,7 @@ async function checkTLSVersion(
     tls_version: "",
   };
 
-  const cipherInfo: cipher = {
+  const cipherInfo: Cipher = {
     version: await getCipherVersion(url),
   };
 
@@ -352,7 +350,7 @@ async function checkCipherSuite(
     version: "",
   };
 
-  const cipherInfo: cipherInfo = {
+  const cipherInfo: CipherInfo = {
     version: await getCipherVersion(url),
     standardName: await getCipherStandardName(url),
   };
