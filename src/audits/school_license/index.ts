@@ -1,8 +1,10 @@
 "use strict";
 
-import { auditDictionary } from "../../storage/auditDictionary.js";
-import { LicenceAudit } from "../license/index.js";
+import {auditDictionary} from "../../storage/auditDictionary.js";
+import {LicenceAudit} from "../license/index.js";
 import * as ejs from "ejs";
+import path from "path";
+import {fileURLToPath} from "url";
 
 class SchoolLicenceAudit extends LicenceAudit {
   auditId = "school-license-and-attribution";
@@ -29,19 +31,20 @@ class SchoolLicenceAudit extends LicenceAudit {
       message = this.auditData.redResult;
     }
 
-    const reportHtml = await ejs.renderFile(
-      "src/audits/school_license/template.ejs",
-      {
-        ...(await this.meta()),
-        code: this.code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+  return await ejs.renderFile(
+        __dirname + "/template.ejs",
+        {
+            ...(await this.meta()),
+            code: this.code,
+            table: this.globalResults,
+            status,
+            statusMessage: message,
+            metrics: null,
+            totalPercentage: null,
+        },
     );
-    return reportHtml;
   }
 }
 

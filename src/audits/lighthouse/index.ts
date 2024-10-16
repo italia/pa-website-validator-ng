@@ -1,10 +1,12 @@
-import { Audit } from "../Audit.js";
+import {Audit} from "../Audit.js";
 
 import lighthouse from "lighthouse";
-import { Page } from "puppeteer";
-import { initializePuppeteer } from "../../PuppeteerInstance.js";
+import {Page} from "puppeteer";
+import {initializePuppeteer} from "../../PuppeteerInstance.js";
 import * as ejs from "ejs";
 import municipalityOnlineConfig from "../../config/lighthouse-municipality-config-online.js";
+import {fileURLToPath} from "url";
+import path from "path";
 
 class lighthouseAudit extends Audit {
   auditId = "lighthouse";
@@ -155,19 +157,21 @@ class lighthouseAudit extends Audit {
       status = "average";
     }
 
-    const reportHtml = await ejs.renderFile(
-      "src/audits/lighthouse/template.ejs",
-      {
-        ...(await this.meta()),
-        code: this.code,
-        table: this.globalResults.details,
-        status,
-        statusMessage: message,
-        metrics: this.metricsResult,
-        totalPercentage: score,
-      },
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+
+    return await ejs.renderFile(
+        __dirname + "/template.ejs",
+        {
+          ...(await this.meta()),
+          code: this.code,
+          table: this.globalResults.details,
+          status,
+          statusMessage: message,
+          metrics: this.metricsResult,
+          totalPercentage: score,
+        },
     );
-    return reportHtml;
   }
 
   static getInstance(): Promise<lighthouseAudit> {

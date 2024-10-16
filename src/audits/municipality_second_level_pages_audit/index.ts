@@ -7,20 +7,22 @@ import {
   isInternalUrl,
   loadPageData,
 } from "../../utils/utils.js";
-import { getSecondLevelPages } from "../../utils/municipality/utils.js";
-import { auditDictionary } from "../../storage/auditDictionary.js";
-import { CheerioAPI } from "cheerio";
+import {getSecondLevelPages} from "../../utils/municipality/utils.js";
+import {auditDictionary} from "../../storage/auditDictionary.js";
+import * as cheerio from "cheerio";
+import {CheerioAPI} from "cheerio";
 import {
   customPrimaryMenuItemsDataElement,
   customSecondaryMenuItemsDataElement,
   primaryMenuItems,
 } from "./menuItems.js";
-import { DataElementError } from "../../utils/DataElementError.js";
-import { Audit } from "../Audit.js";
-import { Page } from "puppeteer";
-import * as cheerio from "cheerio";
-import { errorHandling } from "../../config/commonAuditsParts.js";
+import {DataElementError} from "../../utils/DataElementError.js";
+import {Audit} from "../Audit.js";
+import {Page} from "puppeteer";
+import {errorHandling} from "../../config/commonAuditsParts.js";
 import * as ejs from "ejs";
+import path from "path";
+import {fileURLToPath} from "url";
 
 const auditId = "municipality-second-level-pages";
 const auditData = auditDictionary[auditId];
@@ -317,19 +319,20 @@ class SecondLevelAudit extends Audit {
       message = this.auditData.redResult;
     }
 
-    const reportHtml = await ejs.renderFile(
-      "src/audits/municipality_second_level_pages_audit/template.ejs",
-      {
-        ...(await this.meta()),
-        code: this.code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+    return await ejs.renderFile(
+        __dirname + "/template.ejs",
+        {
+          ...(await this.meta()),
+          code: this.code,
+          table: this.globalResults,
+          status,
+          statusMessage: message,
+          metrics: null,
+          totalPercentage: null,
+        },
     );
-    return reportHtml;
   }
 
   async getType() {

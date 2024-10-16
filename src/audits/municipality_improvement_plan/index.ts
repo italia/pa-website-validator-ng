@@ -1,9 +1,11 @@
-import { Audit } from "../Audit.js";
-import { Page } from "puppeteer";
-import { CheerioAPI } from "cheerio";
+import {Audit} from "../Audit.js";
+import {Page} from "puppeteer";
 import * as cheerio from "cheerio";
-import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
+import {CheerioAPI} from "cheerio";
+import {notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
 import * as ejs from "ejs";
+import {fileURLToPath} from "url";
+import path from "path";
 
 const auditId = "municipality-performance-improvement-plan";
 
@@ -99,19 +101,21 @@ class ImprovementPlanAudit extends Audit {
       message = this.auditData.yellowResult;
     }
 
-    const reportHtml = await ejs.renderFile(
-      "src/audits/municipality_improvement_plan/template.ejs",
-      {
-        ...(await this.meta()),
-        code: this.code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+
+    return await ejs.renderFile(
+        __dirname + "/template.ejs",
+        {
+          ...(await this.meta()),
+          code: this.code,
+          table: this.globalResults,
+          status,
+          statusMessage: message,
+          metrics: null,
+          totalPercentage: null,
+        },
     );
-    return reportHtml;
   }
 
   static getInstance(): Promise<ImprovementPlanAudit> {

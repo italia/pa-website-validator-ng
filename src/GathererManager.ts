@@ -24,7 +24,6 @@ async function collectGatherers() {
 
       const files = sync(__dirname + "/gatherers/**/*.**");
 
-      console.log("files_gatherer", files);
       gatherers = {};
       for (const file of files) {
         const moduleName = file.replace(".ts", ".js");

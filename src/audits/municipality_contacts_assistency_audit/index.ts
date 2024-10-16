@@ -1,17 +1,16 @@
 "use strict";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import {
-  getPageElementDataAttribute,
-  loadPageData,
-} from "../../utils/utils.js";
-import { CheerioAPI } from "cheerio";
-import { auditDictionary } from "../../storage/auditDictionary.js";
-import { errorHandling } from "../../config/commonAuditsParts.js";
-import { Audit } from "../Audit.js";
-import { Page } from "puppeteer";
+import {getPageElementDataAttribute, loadPageData,} from "../../utils/utils.js";
 import * as cheerio from "cheerio";
+import {CheerioAPI} from "cheerio";
+import {auditDictionary} from "../../storage/auditDictionary.js";
+import {errorHandling} from "../../config/commonAuditsParts.js";
+import {Audit} from "../Audit.js";
+import {Page} from "puppeteer";
 import * as ejs from "ejs";
+import {fileURLToPath} from "url";
+import path from "path";
 
 const auditId = "municipality-contacts-assistency";
 const auditData = auditDictionary[auditId];
@@ -303,20 +302,21 @@ class ContactAssistencyAudit extends Audit {
       status = "fail";
       message = this.auditData.redResult;
     }
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
 
-    const reportHtml = await ejs.renderFile(
-      "src/audits/municipality_contacts_assistency_audit/template.ejs",
-      {
-        ...(await this.meta()),
-        code: this.code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
+    return await ejs.renderFile(
+        __dirname + "/template.ejs",
+        {
+          ...(await this.meta()),
+          code: this.code,
+          table: this.globalResults,
+          status,
+          statusMessage: message,
+          metrics: null,
+          totalPercentage: null,
+        },
     );
-    return reportHtml;
   }
 
   async getType() {

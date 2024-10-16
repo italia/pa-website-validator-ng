@@ -1,6 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { CheerioAPI, text } from "cheerio";
+import * as cheerio from "cheerio";
+import {CheerioAPI, text} from "cheerio";
 
 import {
   checkBreadcrumb,
@@ -15,16 +16,14 @@ import {
   contentTypeItemsIndex,
   contentTypeItemsIndexDataElement,
 } from "../../storage/municipality/contentTypeItems.js";
-import { auditDictionary } from "../../storage/auditDictionary.js";
+import {auditDictionary} from "../../storage/auditDictionary.js";
 
-import {
-  errorHandling,
-  minNumberOfServices,
-} from "../../config/commonAuditsParts.js";
-import { Audit } from "../Audit.js";
-import { Page } from "puppeteer";
-import * as cheerio from "cheerio";
+import {errorHandling, minNumberOfServices,} from "../../config/commonAuditsParts.js";
+import {Audit} from "../Audit.js";
+import {Page} from "puppeteer";
 import * as ejs from "ejs";
+import path from "path";
+import {fileURLToPath} from "url";
 
 class ServiceAudit extends Audit {
   auditId = "municipality-servizi-structure-match-model";
@@ -432,19 +431,20 @@ class ServiceAudit extends Audit {
       message = this.auditData.redResult;
     }
 
-    const reportHtml = await ejs.renderFile(
-      "src/audits/municipality_service/template.ejs",
-      {
-        ...(await this.meta()),
-        code: this.code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+    return await ejs.renderFile(
+        __dirname + "/template.ejs",
+        {
+          ...(await this.meta()),
+          code: this.code,
+          table: this.globalResults,
+          status,
+          statusMessage: message,
+          metrics: null,
+          totalPercentage: null,
+        },
     );
-    return reportHtml;
   }
 
   static getInstance(): Promise<ServiceAudit> {

@@ -1,13 +1,15 @@
 "use strict";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { domains } from "./allowedDomain.js";
-import { auditDictionary } from "../../storage/auditDictionary.js";
-import { urlExists } from "../../utils/utils.js";
-import { errorHandling } from "../../config/commonAuditsParts.js";
-import { Audit } from "../Audit.js";
-import { Page } from "puppeteer";
+import {domains} from "./allowedDomain.js";
+import {auditDictionary} from "../../storage/auditDictionary.js";
+import {urlExists} from "../../utils/utils.js";
+import {errorHandling} from "../../config/commonAuditsParts.js";
+import {Audit} from "../Audit.js";
+import {Page} from "puppeteer";
 import * as ejs from "ejs";
+import {fileURLToPath} from "url";
+import path from "path";
 
 class DomainAudit extends Audit {
   auditId = "municipality-domain";
@@ -307,19 +309,21 @@ class DomainAudit extends Audit {
       message = this.auditData.redResult;
     }
 
-    const reportHtml = await ejs.renderFile(
-      "src/audits/municipality_domain_audit/template.ejs",
-      {
-        ...(await this.meta()),
-        code: this.code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+
+    return await ejs.renderFile(
+        __dirname + "/template.ejs",
+        {
+          ...(await this.meta()),
+          code: this.code,
+          table: this.globalResults,
+          status,
+          statusMessage: message,
+          metrics: null,
+          totalPercentage: null,
+        },
     );
-    return reportHtml;
   }
 
   static getInstance(): Promise<DomainAudit> {

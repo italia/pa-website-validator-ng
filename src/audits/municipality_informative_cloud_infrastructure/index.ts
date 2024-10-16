@@ -2,9 +2,11 @@
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { auditDictionary } from "../../storage/auditDictionary.js";
-import { InfoCloudAudit } from "../informative_cloud_infrastructure/index.js";
+import {auditDictionary} from "../../storage/auditDictionary.js";
+import {InfoCloudAudit} from "../informative_cloud_infrastructure/index.js";
 import * as ejs from "ejs";
+import {fileURLToPath} from "url";
+import path from "path";
 
 class MunicipalityInfoCloudAudit extends InfoCloudAudit {
   auditId = "municipality-informative-cloud-infrastructure";
@@ -24,11 +26,13 @@ class MunicipalityInfoCloudAudit extends InfoCloudAudit {
   }
 
   async returnGlobalHTML() {
-    const reportHtml = await ejs.renderFile(
-      "src/audits/municipality_informative_cloud_infrastructure/template.ejs",
-      { ...(await this.meta()), code: this.code, table: this.globalResults },
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+
+    return await ejs.renderFile(
+        __dirname + "/template.ejs",
+        {...(await this.meta()), code: this.code, table: this.globalResults},
     );
-    return reportHtml;
   }
 }
 
