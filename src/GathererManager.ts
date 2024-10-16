@@ -1,15 +1,17 @@
 import { sync } from "glob";
-let gatherers: any | null = null;
 import { getGatherers } from "./config/config.js";
+import * as process from "process";
+import { fileURLToPath } from "url";
+import path from "path";
+
+let gatherers: any | null = null;
 
 function extractFolderName(path: string) {
   const fileNameWithoutExtension = path.replace(/\.[^/.]+$/, "");
   const systemFolderSeparator =
     (process.platform as string) == "windows" ? "\\" : "/";
   const pathSegments = fileNameWithoutExtension.split(systemFolderSeparator);
-  const folderName = pathSegments[pathSegments.length - 2];
-
-  return folderName;
+  return pathSegments[pathSegments.length - 2];
 }
 
 async function collectGatherers() {
@@ -17,16 +19,18 @@ async function collectGatherers() {
 
   try {
     if (!gatherers) {
-      const files = sync("./src/gatherers/**/*.ts");
+      const __filename = fileURLToPath(import.meta.url);
+      const __dirname = path.dirname(__filename);
+
+      const files = sync(__dirname + "/gatherers/**/*.**");
+
+      console.log("files_gatherer", files);
       gatherers = {};
       for (const file of files) {
-        const moduleName = file.replace("src", "dist").replace(".ts", ".js");
+        const moduleName = file.replace(".ts", ".js");
         const moduleId = extractFolderName(moduleName);
-
         if (!configGatherers.includes(moduleId)) continue;
-
-        const module = await import("../" + moduleName);
-
+        const module = await import(moduleName);
         if (moduleId) {
           console.log("GATHERER MANAGER registered gatherer: " + moduleId);
           gatherers[moduleId] = module.default;

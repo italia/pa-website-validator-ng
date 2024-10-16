@@ -4,9 +4,7 @@ import { auditDictionary } from "../../storage/auditDictionary.js";
 import { Page } from "puppeteer";
 import * as cheerio from "cheerio";
 import { Audit } from "../Audit.js";
-import {
-  notExecutedErrorMessage,
-} from "../../config/commonAuditsParts.js";
+import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import {
   areAllElementsInVocabulary,
   getPageElementDataAttribute,

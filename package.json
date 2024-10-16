@@ -4,8 +4,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build": "rm -rf dist && tsc",
-    "prepare": "rm -rf dist && tsc",
+    "build": "rm -rf dist && tsc && cp -r src/**/*.ejs dist/",
+    "prepare": "npm run build",
     "lint:check": "eslint --max-warnings 0 ./src",
     "lint:fix": "eslint --fix ./src",
     "type:check": "tsc --noEmit",

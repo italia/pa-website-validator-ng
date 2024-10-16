@@ -351,8 +351,6 @@ const getRandomThirdLevelPagesUrl = async (
           continue;
         }
         maxCountPages = currentCountPages;
-
-
       } catch (e) {
         clickButton = false;
       }
@@ -504,7 +502,7 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
     ) {
       try {
         const feedbackComponentRate = await page.$(
-            `[data-element="${feedbackComponentStructure.rate.dataElement + i}"]`
+          `[data-element="${feedbackComponentStructure.rate.dataElement + i}"]`,
         );
         await page.waitForNetworkIdle();
         await feedbackComponentRate?.click({
@@ -562,9 +560,7 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
 
             if (existsRatingQAComponents && !checkRateComponentAssociation) {
               if (score > 0) score = 0;
-              errors.push(
-                feedbackComponentStructure.rate.errorAssociation,
-              );
+              errors.push(feedbackComponentStructure.rate.errorAssociation);
             }
 
             return {
@@ -595,9 +591,7 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
 
             if (existsRatingQAComponents && !checkRateComponentAssociation) {
               if (score > 0) score = 0;
-              errors.push(
-                feedbackComponentStructure.rate.errorAssociation,
-              );
+              errors.push(feedbackComponentStructure.rate.errorAssociation);
             }
 
             return {
@@ -845,9 +839,7 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
 
           if (existsRatingQAComponents && !checkRateComponentAssociation) {
             if (score > 0) score = 0;
-            errors.push(
-              feedbackComponentStructure.rate.errorAssociation,
-            );
+            errors.push(feedbackComponentStructure.rate.errorAssociation);
           }
 
           return {

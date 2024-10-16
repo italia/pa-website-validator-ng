@@ -5,7 +5,7 @@ import { format } from "path";
 import { VERSION } from "../version.js";
 import PageManager from "../PageManager.js";
 import { municipalityWeights, schoolWeights } from "../config/weights.js";
-import {collectAudits} from "../AuditManager.js";
+import { collectAudits } from "../AuditManager.js";
 
 const render = async () => {
   const website = process.env.website;
