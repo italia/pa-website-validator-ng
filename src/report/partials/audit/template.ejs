@@ -57,18 +57,18 @@ default:
     <%= code %> <%= message %>
   </h2>
   <div class="audit-description">
-  
-    <p><%= mainDescription  %></p>
+
+    <p> </p>
     <div class="separator"></div>
     
     <% if (!metrics) {%>
     <p>
-      <span class="h6 uppercase">Requisito minimo da rispettare:</span> 
+      <span class="h6 uppercase">Requisito minimo da rispettare:</span>
       <%= minRequirement  %>
     </p>
 
     <p>
-      <span class="h6 uppercase">Verifiche automatiche:</span> 
+      <span class="h6 uppercase">Verifiche automatiche:</span>
       <%= automaticChecks  %>
     </p>
     <div class="separator"></div>
@@ -80,12 +80,5 @@ default:
     <% if ( metrics ) { %>
       <%-  include('../metrics', { metrics, totalPercentage }) %>
     <% } %>
-
-    <!-- <p>
-      <span class="h6 uppercase">Elementi di fallimento:</span> %>
-    </p> -->
-    <!-- 
-    <% //- include('table', {table}) %>
-     -->
   </div>
 </div>

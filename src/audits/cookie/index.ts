@@ -3,7 +3,7 @@ import { Audit } from "../Audit.js";
 import { Page } from "puppeteer";
 import {Cookie} from "../../types/crawler-types";
 import { gotoRetry } from "../../utils/utils.js";
-import {initializePuppeteerOld} from "../../PuppeteerInstanceOld.js";
+import { initializePuppeteerOld } from "../../PuppeteerInstanceOld.js";
 
 class CookieAudit extends Audit {
   public globalResults: any = {

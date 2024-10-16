@@ -13,6 +13,8 @@ import { Audit } from "../Audit.js";
 import { Page } from "puppeteer";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import * as ejs from "ejs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const auditId = "municipality-menu-structure-match-model";
 const auditData = auditDictionary[auditId];
@@ -262,19 +264,17 @@ class MenuAudit extends Audit {
       message = this.auditData.redResult;
     }
 
-    const reportHtml = await ejs.renderFile(
-      "src/audits/municipality_menu/template.ejs",
-      {
-        ...(await this.meta()),
-        code: this.code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
-    return reportHtml;
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+    return await ejs.renderFile(__dirname + "/template.ejs", {
+      ...(await this.meta()),
+      code: this.code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 
   static getInstance(): Promise<MenuAudit> {

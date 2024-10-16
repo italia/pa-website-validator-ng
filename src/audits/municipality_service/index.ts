@@ -1,5 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
+import * as cheerio from "cheerio";
 import { CheerioAPI, text } from "cheerio";
 
 import {
@@ -23,8 +24,9 @@ import {
 } from "../../config/commonAuditsParts.js";
 import { Audit } from "../Audit.js";
 import { Page } from "puppeteer";
-import * as cheerio from "cheerio";
 import * as ejs from "ejs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 class ServiceAudit extends Audit {
   auditId = "municipality-servizi-structure-match-model";
@@ -432,19 +434,17 @@ class ServiceAudit extends Audit {
       message = this.auditData.redResult;
     }
 
-    const reportHtml = await ejs.renderFile(
-      "src/audits/municipality_service/template.ejs",
-      {
-        ...(await this.meta()),
-        code: this.code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
-    return reportHtml;
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+    return await ejs.renderFile(__dirname + "/template.ejs", {
+      ...(await this.meta()),
+      code: this.code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 
   static getInstance(): Promise<ServiceAudit> {

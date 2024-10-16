@@ -1,4 +1,4 @@
-import {awaitArtifacts} from "lighthouse/core/gather/runner-helpers";
+import { awaitArtifacts } from "lighthouse/core/gather/runner-helpers";
 
 let exportedConfig: any | null = null;
 
@@ -22,12 +22,8 @@ const config: any = {
           "municipality_privacy",
           "municipality_security",
           "municipality_theme",
-          "municipality_informative_accessibility",
           "municipality_informative_cloud_infrastructure",
-          "municipality_informative_cookie",
-          "municipality_informative_domain",
           "municipality_informative_reuse",
-          "municipality_informative_security",
           "ipLocation",
         ],
         "services-page": ["municipality_booking_appointment"],
@@ -36,7 +32,7 @@ const config: any = {
           "municipality_bootstrap",
           "municipality_booking_appointment",
           "municipality_contacts_assistency_audit",
-          //   "municipality_cookie",
+          "municipality_cookie",
           "municipality_font",
           "municipality_metatag",
           "municipality_service",
@@ -44,7 +40,7 @@ const config: any = {
         ],
         "first-level-page": [
           "municipality_bootstrap",
-          //    "municipality_cookie",
+          "municipality_cookie",
           "municipality_domain_audit",
           "municipality_feedback",
           "municipality_font",
@@ -52,7 +48,7 @@ const config: any = {
         ],
         "second-level-page-all": [
           "municipality_bootstrap",
-          //  "municipality_cookie",
+          "municipality_cookie",
           "municipality_domain_audit",
           "municipality_feedback",
           "municipality_font",
@@ -60,18 +56,18 @@ const config: any = {
         ],
         "personal-area-login": [
           "municipality_bootstrap",
-          //  "municipality_cookie",
+          "municipality_cookie",
           "municipality_domain_audit",
           "municipality_font",
         ],
         "appointment-booking": [
           "municipality_domain_audit",
           "municipality_bootstrap",
-          // "municipality_cookie"
+          "municipality_cookie"
         ],
         event: [
           "municipality_domain_audit",
-          //    "municipality_cookie"
+          "municipality_cookie"
         ],
       },
       accuracy: {
@@ -129,29 +125,25 @@ const config: any = {
           "municipality_domain_audit",
           "municipality_faq",
           "municipality_vocabulary",
-          //"municipality_improvement_plan",
-          //"municipality_inefficiency_report_audit",
-          //"municipality_license",
-          //"municipality_privacy",
-          // "municipality_security",
-          //"municipality_theme",
-          //"municipality_informative_accessibility",
-          //"municipality_informative_cloud_infrastructure",
-          //"municipality_informative_cookie",
-          //"municipality_informative_domain",
-          // "municipality_informative_reuse",
-          //"municipality_informative_security",
+          "municipality_improvement_plan",
+          "municipality_inefficiency_report_audit",
+          "municipality_license",
+          "municipality_privacy",
+          "municipality_security",
+          "municipality_theme",
+          "municipality_informative_cloud_infrastructure",
+          "municipality_informative_reuse",
           "ipLocation",
         ],
         "services-page": ["municipality_booking_appointment"],
-        "service": [
+        service: [
           "municipality_domain_audit",
           "municipality_bootstrap",
-          //"municipality_booking_appointment",
+          "municipality_booking_appointment",
           "municipality_contacts_assistency_audit",
           "municipality_cookie",
           "municipality_font",
-          //"municipality_metatag",
+          "municipality_metatag",
           "municipality_service",
           "municipality_user_experience_evaluation",
         ],
@@ -161,30 +153,26 @@ const config: any = {
           "municipality_domain_audit",
           "municipality_font",
         ],
-        /*"first-level-page": [
+        "first-level-page": [
           "municipality_bootstrap",
-          // "municipality_cookie",
+          "municipality_cookie",
           "municipality_domain_audit",
           "municipality_feedback",
           "municipality_font",
         ],
         "second-level-page-all": [
           "municipality_bootstrap",
-          //  "municipality_cookie",
+          "municipality_cookie",
           "municipality_domain_audit",
           "municipality_feedback",
-          //"municipality_font",
-        ],*/
-
+          "municipality_font",
+        ],
         "appointment-booking": [
           "municipality_domain_audit",
           "municipality_bootstrap",
-          // "municipality_cookie"
+          "municipality_cookie",
         ],
-        event: [
-          "municipality_domain_audit",
-          //    "municipality_cookie"
-        ],
+        event: ["municipality_domain_audit", "municipality_cookie"],
       },
       accuracy: {
         min: 1,
@@ -196,20 +184,38 @@ const config: any = {
     school: {
       gatherers: {
         homepage: [
-          // "locations_page",
-          // "school_services",
-          // "school_first_level_pages",
-          // "school_second_level_pages"
+          "locations_page",
+          "school_services",
+          "school_first_level_pages",
+          "school_second_level_pages",
         ],
-        "first-level": [],
-        "second-level": [],
-        "locations-page": [
-          // "locations"
-        ],
-        "services-page": [],
+
+        "locations-page": ["locations"],
       },
       audits: {
-        homepage: ["school_accessibility", "school_bootstrap"],
+        homepage: [
+          "lighthouse",
+          "school_accessibility",
+          "school_bootstrap",
+          "school_license",
+          "school_privacy",
+          "school_security",
+          "school_theme",
+          "school_first_level_menu",
+          "school_second_level_menu",
+          "school_vocabularies",
+          "school_informative_cloud_infrastructure",
+          "school_informative_reuse",
+        ],
+        "first-level": ["school_bootstrap", "school_cookie", "school_font"],
+        "second-level": ["school_bootstrap", "school_cookie", "school_font"],
+        service: [
+          "school_bootstrap",
+          "school_font",
+          "school_cookie",
+          "school_service",
+        ],
+        location: ["school_cookie"],
       },
       accuracy: {
         min: 1,
@@ -221,10 +227,7 @@ const config: any = {
   },
 };
 
-async function initializeConfig(
-  siteType?: string,
-  scope?: string,
-) {
+async function initializeConfig(siteType?: string, scope?: string) {
   if (!exportedConfig && siteType && scope) {
     exportedConfig = config[scope][siteType];
   }
@@ -233,7 +236,7 @@ async function initializeConfig(
 }
 
 const getAudits = async () => {
-  const exportedConfig = await initializeConfig()
+  const exportedConfig = await initializeConfig();
   let auditIds: string[] = [];
   for (const pageTypeAudits of Object.values(exportedConfig["audits"])) {
     auditIds = [...auditIds, ...(pageTypeAudits as string[])];
@@ -242,7 +245,7 @@ const getAudits = async () => {
 };
 
 const getGatherers = async () => {
-  const exportedConfig = await initializeConfig()
+  const exportedConfig = await initializeConfig();
   let gathererIds: string[] = [];
   for (const pageTypeGatherers of Object.values(exportedConfig["gatherers"])) {
     gathererIds = [...gathererIds, ...(pageTypeGatherers as string[])];

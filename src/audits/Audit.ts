@@ -2,6 +2,8 @@ import {PageData, AuditDictionary} from "../types/crawler-types";
 import { Page } from "puppeteer";
 import { auditDictionary } from "../storage/auditDictionary.js";
 import * as ejs from "ejs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 export class Audit {
   id: string;
@@ -56,15 +58,20 @@ export class Audit {
     let message = "";
 
     if (this.globalResults.score > 0.5) {
-      (status = "pass"), (message = this.auditData.greenResult);
+      (status = "pass");
+      (message = this.auditData.greenResult);
     } else if ((this.globalResults.score = 0.5)) {
-      (status = "average"), (message = this.auditData.yellowResult);
+      (status = "average");
+      (message = this.auditData.yellowResult);
     } else {
-      (status = "fail"), (message = this.auditData.redResult);
+      (status = "fail");
+      (message = this.auditData.redResult);
     }
 
-    const reportHtml = await ejs.renderFile(
-      "src/report/partials/audit/template.ejs",
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+    return await ejs.renderFile(
+      __dirname + "../report/partials/audit/template.ejs",
       {
         ...(await this.meta()),
         code: this.code,
@@ -75,7 +82,6 @@ export class Audit {
         totalPercentage: null,
       },
     );
-    return reportHtml;
   }
 
   SCORING_MODES = {
@@ -87,4 +93,3 @@ export class Audit {
     ERROR: "error",
   };
 }
-
