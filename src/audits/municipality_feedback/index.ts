@@ -9,6 +9,8 @@ import { errorHandling } from "../../config/commonAuditsParts.js";
 import { Page } from "puppeteer";
 import { Audit } from "../Audit.js";
 import * as ejs from "ejs";
+import { fileURLToPath } from "url";
+import path from "path";
 
 const auditId = "municipality-feedback-element";
 const auditData = auditDictionary[auditId];
@@ -321,19 +323,17 @@ class FeedbackAudit extends Audit {
       message = this.auditData.redResult;
     }
 
-    const reportHtml = await ejs.renderFile(
-      "src/audits/municipality_feedback/template.ejs",
-      {
-        ...(await this.meta()),
-        code: this.code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
-    return reportHtml;
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+    return await ejs.renderFile(__dirname + "/template.ejs", {
+      ...(await this.meta()),
+      code: this.code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 }
 

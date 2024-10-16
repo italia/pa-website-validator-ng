@@ -2,6 +2,8 @@ import { auditDictionary } from "../../storage/auditDictionary.js";
 import { allowedFonts } from "./allowedFonts.js";
 import { FontAudit } from "../font/index.js";
 import * as ejs from "ejs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 class SchoolFontAudit extends FontAudit {
   auditId = "school-ux-ui-consistency-fonts-check";
@@ -33,19 +35,17 @@ class SchoolFontAudit extends FontAudit {
       message = this.auditData.redResult;
     }
 
-    const reportHtml = await ejs.renderFile(
-      "src/audits/school_font/template.ejs",
-      {
-        ...(await this.meta()),
-        code: this.code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
-    return reportHtml;
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+    return await ejs.renderFile(__dirname + "/template.ejs", {
+      ...(await this.meta()),
+      code: this.code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 }
 

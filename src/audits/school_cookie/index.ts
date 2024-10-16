@@ -1,6 +1,8 @@
 import { auditDictionary } from "../../storage/auditDictionary.js";
 import { CookieAudit } from "../cookie/index.js";
 import * as ejs from "ejs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 class SchoolCookie extends CookieAudit {
   auditId = "school-legislation-cookie-domain-check";
@@ -27,19 +29,17 @@ class SchoolCookie extends CookieAudit {
       message = this.auditData.redResult;
     }
 
-    const reportHtml = await ejs.renderFile(
-      "src/audits/school_cookie/template.ejs",
-      {
-        ...(await this.meta()),
-        code: this.code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
-    return reportHtml;
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+    return await ejs.renderFile(__dirname + "/template.ejs", {
+      ...(await this.meta()),
+      code: this.code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 }
 

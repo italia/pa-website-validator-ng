@@ -9,7 +9,7 @@ import vocabularyResult = crawlerTypes.vocabularyResult;
 import { LRUCache } from "lru-cache";
 import { MenuItem } from "../types/menuItem.js";
 import { errorHandling } from "../config/commonAuditsParts.js";
-import {initializePuppeteer} from "../PuppeteerInstance.js";
+import { initializePuppeteer } from "../PuppeteerInstance.js";
 
 const cache = new LRUCache<string, CheerioAPI>({ max: 1000 });
 const redirectUrlCache = new LRUCache<string, string>({ max: 1000 });

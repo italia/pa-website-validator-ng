@@ -1,3 +1,4 @@
+import * as cheerio from "cheerio";
 import { CheerioAPI, text } from "cheerio";
 import {
   checkBreadcrumb,
@@ -14,7 +15,6 @@ import {
 } from "../../config/commonAuditsParts.js";
 import { Audit } from "../Audit.js";
 import { Page } from "puppeteer";
-import * as cheerio from "cheerio";
 import {
   contentTypeItemsBody,
   contentTypeItemsHeaders,
@@ -24,6 +24,8 @@ import {
   contentTypeItemsMetadata,
 } from "./contentTypeItems.js";
 import * as ejs from "ejs";
+import { fileURLToPath } from "url";
+import path from "path";
 
 const auditId = "school-servizi-structure-match-model";
 const auditData = auditDictionary[auditId];
@@ -450,19 +452,17 @@ class SchoolServiceAudit extends Audit {
       message = this.auditData.redResult;
     }
 
-    const reportHtml = await ejs.renderFile(
-      "src/audits/school_service/template.ejs",
-      {
-        ...(await this.meta()),
-        code: this.code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
-    return reportHtml;
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+    return await ejs.renderFile(__dirname + "/template.ejs", {
+      ...(await this.meta()),
+      code: this.code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 
   static getInstance(): Promise<SchoolServiceAudit> {

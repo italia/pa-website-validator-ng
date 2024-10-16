@@ -2,12 +2,12 @@ import PageManager from "./PageManager.js";
 
 import crawlerTypes from "./types/crawler-types.js";
 import PageData = crawlerTypes.PageData;
-import {initializeConfig} from "./config/config.js";
+import { initializeConfig } from "./config/config.js";
 import { loadPage } from "./utils/utils.js";
 import { Page } from "puppeteer";
 import render from "./report/Renderer.js";
-import {collectAudits} from "./AuditManager.js";
-import {collectGatherers} from "./GathererManager.js";
+import { collectAudits } from "./AuditManager.js";
+import { collectGatherers } from "./GathererManager.js";
 
 const scan = async (
   pageData: PageData,

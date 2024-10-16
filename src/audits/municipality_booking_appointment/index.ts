@@ -1,7 +1,7 @@
 "use strict";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { getPrimaryPageUrl, getPages } from "../../utils/municipality/utils.js";
+import { getPages, getPrimaryPageUrl } from "../../utils/municipality/utils.js";
 import { auditDictionary } from "../../storage/auditDictionary.js";
 import {
   errorHandling,
@@ -10,9 +10,11 @@ import {
 import { DataElementError } from "../../utils/DataElementError.js";
 import { Page } from "puppeteer";
 import { Audit } from "../Audit.js";
-import { CheerioAPI } from "cheerio";
 import * as cheerio from "cheerio";
+import { CheerioAPI } from "cheerio";
 import * as ejs from "ejs";
+import { fileURLToPath } from "url";
+import path from "path";
 
 class BookingAppointment extends Audit {
   code = "C.SI.2.1";
@@ -354,19 +356,17 @@ class BookingAppointment extends Audit {
       message = this.auditData.redResult;
     }
 
-    const reportHtml = await ejs.renderFile(
-      "src/audits/municipality_booking_appointment/template.ejs",
-      {
-        ...(await this.meta()),
-        code: this.code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
-    return reportHtml;
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+    return await ejs.renderFile(__dirname + "/template.ejs", {
+      ...(await this.meta()),
+      code: this.code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 }
 

@@ -1,11 +1,12 @@
 import * as ejs from "ejs";
 import { mkdir, writeFile } from "fs/promises";
 import open from "open";
-import { format } from "path";
+import path, { format } from "path";
 import { VERSION } from "../version.js";
 import PageManager from "../PageManager.js";
 import { municipalityWeights, schoolWeights } from "../config/weights.js";
-import {collectAudits} from "../AuditManager.js";
+import { collectAudits } from "../AuditManager.js";
+import { fileURLToPath } from "url";
 
 const render = async () => {
   const website = process.env.website;
@@ -89,7 +90,9 @@ const render = async () => {
   successAudits = sortByWeights(successAudits);
   failedAudits = sortByWeights(failedAudits);
 
-  const reportHtml = await ejs.renderFile("src/report/index.ejs", {
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+  const reportHtml = await ejs.renderFile(__dirname + "/index.ejs", {
     crawler_version: VERSION,
     date: date,
     results: {
