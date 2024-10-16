@@ -1,10 +1,10 @@
 "use strict";
 
-import {ThemeAudit} from "../theme/index.js";
-import {auditDictionary} from "../../storage/auditDictionary.js";
+import { ThemeAudit } from "../theme/index.js";
+import { auditDictionary } from "../../storage/auditDictionary.js";
 import * as ejs from "ejs";
 import path from "path";
-import {fileURLToPath} from "url";
+import { fileURLToPath } from "url";
 
 class MunicipalityThemeAudit extends ThemeAudit {
   auditId = "municipality-ux-ui-consistency-theme-version-check";
@@ -38,18 +38,15 @@ class MunicipalityThemeAudit extends ThemeAudit {
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-    return await ejs.renderFile(
-        __dirname + "/template.ejs",
-        {
-          ...(await this.meta()),
-          code: this.code,
-          table: this.globalResults,
-          status,
-          statusMessage: message,
-          metrics: null,
-          totalPercentage: null,
-        },
-    );
+    return await ejs.renderFile(__dirname + "/template.ejs", {
+      ...(await this.meta()),
+      code: this.code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 }
 

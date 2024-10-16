@@ -2,14 +2,14 @@
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import {auditDictionary} from "../../storage/auditDictionary.js";
-import {checkFeedbackComponent} from "../../utils/municipality/utils.js";
-import {errorHandling} from "../../config/commonAuditsParts.js";
+import { auditDictionary } from "../../storage/auditDictionary.js";
+import { checkFeedbackComponent } from "../../utils/municipality/utils.js";
+import { errorHandling } from "../../config/commonAuditsParts.js";
 
-import {Page} from "puppeteer";
-import {Audit} from "../Audit.js";
+import { Page } from "puppeteer";
+import { Audit } from "../Audit.js";
 import * as ejs from "ejs";
-import {fileURLToPath} from "url";
+import { fileURLToPath } from "url";
 import path from "path";
 
 const auditId = "municipality-feedback-element";
@@ -323,21 +323,17 @@ class FeedbackAudit extends Audit {
       message = this.auditData.redResult;
     }
 
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-    return await ejs.renderFile(
-        __dirname + "/template.ejs",
-        {
-          ...(await this.meta()),
-          code: this.code,
-          table: this.globalResults,
-          status,
-          statusMessage: message,
-          metrics: null,
-          totalPercentage: null,
-        },
-    );
+    return await ejs.renderFile(__dirname + "/template.ejs", {
+      ...(await this.meta()),
+      code: this.code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 }
 

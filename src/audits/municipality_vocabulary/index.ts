@@ -1,6 +1,9 @@
 "use strict";
 
-import {eurovocVocabulary, municipalityModelVocabulary,} from "./controlledVocabulary.js";
+import {
+  eurovocVocabulary,
+  municipalityModelVocabulary,
+} from "./controlledVocabulary.js";
 import {
   areAllElementsInVocabulary,
   buildUrl,
@@ -9,16 +12,16 @@ import {
   isInternalUrl,
   loadPageData,
 } from "../../utils/utils.js";
-import {auditDictionary} from "../../storage/auditDictionary.js";
-import {notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
-import {Audit} from "../Audit.js";
+import { auditDictionary } from "../../storage/auditDictionary.js";
+import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
+import { Audit } from "../Audit.js";
 
 import * as cheerio from "cheerio";
-import {CheerioAPI} from "cheerio";
-import {Page} from "puppeteer";
+import { CheerioAPI } from "cheerio";
+import { Page } from "puppeteer";
 import * as ejs from "ejs";
 import path from "path";
-import {fileURLToPath} from "url";
+import { fileURLToPath } from "url";
 
 const auditId = "municipality-controlled-vocabularies";
 const auditData = auditDictionary[auditId];
@@ -294,18 +297,15 @@ class MunicipalityVocabulary extends Audit {
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-    return await ejs.renderFile(
-        __dirname + "/template.ejs",
-        {
-          ...(await this.meta()),
-          code: this.code,
-          table: this.globalResults,
-          status,
-          statusMessage: message,
-          metrics: null,
-          totalPercentage: null,
-        },
-    );
+    return await ejs.renderFile(__dirname + "/template.ejs", {
+      ...(await this.meta()),
+      code: this.code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 
   static getInstance(): Promise<MunicipalityVocabulary> {

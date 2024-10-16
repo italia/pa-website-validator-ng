@@ -17,8 +17,7 @@ async function collectAudits() {
   const configAudits = await getAudits();
   try {
     if (!Object.keys(audits).length) {
-      const __filename = fileURLToPath(import.meta.url);
-      const __dirname = path.dirname(__filename);
+      const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
       const files = sync(__dirname + "/audits/**/index.**");
 

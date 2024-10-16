@@ -2,11 +2,11 @@
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import {auditDictionary} from "../../storage/auditDictionary.js";
-import {InfoReuseAudit} from "../informative_reuse/index.js";
+import { auditDictionary } from "../../storage/auditDictionary.js";
+import { InfoReuseAudit } from "../informative_reuse/index.js";
 import * as ejs from "ejs";
 import path from "path";
-import {fileURLToPath} from "url";
+import { fileURLToPath } from "url";
 
 class MunicipalityInfoReuseAudit extends InfoReuseAudit {
   auditId = "municipality-informative-reuse";
@@ -28,10 +28,11 @@ class MunicipalityInfoReuseAudit extends InfoReuseAudit {
   async returnGlobalHTML() {
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-    return await ejs.renderFile(
-        __dirname + "/template.ejs",
-        {...(await this.meta()), code: this.code, table: this.globalResults},
-    );
+    return await ejs.renderFile(__dirname + "/template.ejs", {
+      ...(await this.meta()),
+      code: this.code,
+      table: this.globalResults,
+    });
   }
 }
 

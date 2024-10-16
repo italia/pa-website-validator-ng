@@ -2,11 +2,11 @@
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import {auditDictionary} from "../../storage/auditDictionary.js";
-import {InfoCloudAudit} from "../informative_cloud_infrastructure/index.js";
+import { auditDictionary } from "../../storage/auditDictionary.js";
+import { InfoCloudAudit } from "../informative_cloud_infrastructure/index.js";
 import * as ejs from "ejs";
 import path from "path";
-import {fileURLToPath} from "url";
+import { fileURLToPath } from "url";
 
 class SchoolInfoCloudAudit extends InfoCloudAudit {
   auditId = "school-informative-cloud-infrastructure";
@@ -24,10 +24,11 @@ class SchoolInfoCloudAudit extends InfoCloudAudit {
   async returnGlobalHTML() {
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-    return await ejs.renderFile(
-        __dirname + "/template.ejs",
-        {...(await this.meta()), code: this.code, table: this.globalResults},
-    );
+    return await ejs.renderFile(__dirname + "/template.ejs", {
+      ...(await this.meta()),
+      code: this.code,
+      table: this.globalResults,
+    });
   }
 }
 

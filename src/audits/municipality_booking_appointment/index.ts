@@ -1,16 +1,19 @@
 "use strict";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import {getPages, getPrimaryPageUrl} from "../../utils/municipality/utils.js";
-import {auditDictionary} from "../../storage/auditDictionary.js";
-import {errorHandling, notExecutedErrorMessage,} from "../../config/commonAuditsParts.js";
-import {DataElementError} from "../../utils/DataElementError.js";
-import {Page} from "puppeteer";
-import {Audit} from "../Audit.js";
+import { getPages, getPrimaryPageUrl } from "../../utils/municipality/utils.js";
+import { auditDictionary } from "../../storage/auditDictionary.js";
+import {
+  errorHandling,
+  notExecutedErrorMessage,
+} from "../../config/commonAuditsParts.js";
+import { DataElementError } from "../../utils/DataElementError.js";
+import { Page } from "puppeteer";
+import { Audit } from "../Audit.js";
 import * as cheerio from "cheerio";
-import {CheerioAPI} from "cheerio";
+import { CheerioAPI } from "cheerio";
 import * as ejs from "ejs";
-import {fileURLToPath} from "url";
+import { fileURLToPath } from "url";
 import path from "path";
 
 class BookingAppointment extends Audit {
@@ -353,21 +356,17 @@ class BookingAppointment extends Audit {
       message = this.auditData.redResult;
     }
 
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-    return await ejs.renderFile(
-        __dirname + "/template.ejs",
-        {
-          ...(await this.meta()),
-          code: this.code,
-          table: this.globalResults,
-          status,
-          statusMessage: message,
-          metrics: null,
-          totalPercentage: null,
-        },
-    );
+    return await ejs.renderFile(__dirname + "/template.ejs", {
+      ...(await this.meta()),
+      code: this.code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 }
 

@@ -1,9 +1,9 @@
 "use strict";
 
-import {auditDictionary} from "../../storage/auditDictionary.js";
-import {A11yAudit} from "../accessibility/index.js";
+import { auditDictionary } from "../../storage/auditDictionary.js";
+import { A11yAudit } from "../accessibility/index.js";
 import * as ejs from "ejs";
-import {fileURLToPath} from "url";
+import { fileURLToPath } from "url";
 import path from "path";
 
 class SchoolA11yAudit extends A11yAudit {
@@ -66,21 +66,17 @@ class SchoolA11yAudit extends A11yAudit {
       message = this.auditData.redResult;
     }
 
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-    return await ejs.renderFile(
-        __dirname + "/template.ejs",
-        {
-          ...(await this.meta()),
-          code: this.code,
-          table: this.globalResults,
-          status,
-          statusMessage: message,
-          metrics: null,
-          totalPercentage: null,
-        },
-    );
+    return await ejs.renderFile(__dirname + "/template.ejs", {
+      ...(await this.meta()),
+      code: this.code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 
   static getInstance(): Promise<SchoolA11yAudit> {

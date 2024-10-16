@@ -1,9 +1,9 @@
 import crawlerTypes from "../types/crawler-types";
-import {Page} from "puppeteer";
-import {auditDictionary} from "../storage/auditDictionary.js";
+import { Page } from "puppeteer";
+import { auditDictionary } from "../storage/auditDictionary.js";
 import * as ejs from "ejs";
 import path from "path";
-import {fileURLToPath} from "url";
+import { fileURLToPath } from "url";
 import PageData = crawlerTypes.PageData;
 
 export abstract class Audit {
@@ -68,16 +68,16 @@ export abstract class Audit {
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
     return await ejs.renderFile(
-        __dirname + "../report/partials/audit/template.ejs",
-        {
-          ...(await this.meta()),
-          code: this.code,
-          table: this.globalResults.details,
-          status,
-          statusMessage: message,
-          metrics: null,
-          totalPercentage: null,
-        },
+      __dirname + "../report/partials/audit/template.ejs",
+      {
+        ...(await this.meta()),
+        code: this.code,
+        table: this.globalResults.details,
+        status,
+        statusMessage: message,
+        metrics: null,
+        totalPercentage: null,
+      },
     );
   }
 

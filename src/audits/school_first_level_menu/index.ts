@@ -1,19 +1,24 @@
 "use strict";
 
 import * as cheerio from "cheerio";
-import {CheerioAPI} from "cheerio";
+import { CheerioAPI } from "cheerio";
 
-import {checkOrder, getPageElementDataAttribute, getRedirectedUrl, missingMenuItems,} from "../../utils/utils.js";
-import {Page} from "puppeteer";
+import {
+  checkOrder,
+  getPageElementDataAttribute,
+  getRedirectedUrl,
+  missingMenuItems,
+} from "../../utils/utils.js";
+import { Page } from "puppeteer";
 
-import {Audit} from "../Audit.js";
-import {notExecutedErrorMessage} from "../../config/commonAuditsParts.js";
-import {detectLang, getFirstLevelPages} from "../../utils/school/utils.js";
-import {MenuItem, primaryMenuItems} from "./menuItem.js";
-import {auditDictionary} from "../../storage/auditDictionary.js";
+import { Audit } from "../Audit.js";
+import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
+import { detectLang, getFirstLevelPages } from "../../utils/school/utils.js";
+import { MenuItem, primaryMenuItems } from "./menuItem.js";
+import { auditDictionary } from "../../storage/auditDictionary.js";
 import * as ejs from "ejs";
 import path from "path";
-import {fileURLToPath} from "url";
+import { fileURLToPath } from "url";
 
 class SchoolFirstLevelMenuAudit extends Audit {
   public globalResults: any = {
@@ -294,18 +299,15 @@ class SchoolFirstLevelMenuAudit extends Audit {
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-    return await ejs.renderFile(
-        __dirname + "/template.ejs",
-        {
-          ...(await this.meta()),
-          code: this.code,
-          table: this.globalResults,
-          status,
-          statusMessage: message,
-          metrics: null,
-          totalPercentage: null,
-        },
-    );
+    return await ejs.renderFile(__dirname + "/template.ejs", {
+      ...(await this.meta()),
+      code: this.code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 
   static getInstance(): Promise<SchoolFirstLevelMenuAudit> {

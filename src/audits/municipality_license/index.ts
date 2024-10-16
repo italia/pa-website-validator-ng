@@ -1,10 +1,10 @@
 "use strict";
 
-import {auditDictionary} from "../../storage/auditDictionary.js";
-import {LicenceAudit} from "../license/index.js";
+import { auditDictionary } from "../../storage/auditDictionary.js";
+import { LicenceAudit } from "../license/index.js";
 import * as ejs from "ejs";
 import path from "path";
-import {fileURLToPath} from "url";
+import { fileURLToPath } from "url";
 
 class MunicipalityLicenceAudit extends LicenceAudit {
   auditId = "municipality-license-and-attribution";
@@ -37,18 +37,15 @@ class MunicipalityLicenceAudit extends LicenceAudit {
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-  return await ejs.renderFile(
-        __dirname + "/template.ejs",
-        {
-            ...(await this.meta()),
-            code: this.code,
-            table: this.globalResults,
-            status,
-            statusMessage: message,
-            metrics: null,
-            totalPercentage: null,
-        },
-    );
+    return await ejs.renderFile(__dirname + "/template.ejs", {
+      ...(await this.meta()),
+      code: this.code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 }
 
