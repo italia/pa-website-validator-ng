@@ -8,8 +8,8 @@ class firstLevelPageGatherer extends Gatherer {
 
   async navigateAndFetchPages(
     url: string,
-    numberOfPages = 5,
-    website = "",
+    numberOfPages : number,
+    website : string,
     page: Page,
   ): Promise<PageData[]> {
     if (this.gatheredPages.length > 0) {
@@ -42,7 +42,7 @@ class firstLevelPageGatherer extends Gatherer {
     return this.gatheredPages;
   }
 
-  static getInstance(): Promise<firstLevelPageGatherer> {
+  static getInstance(): firstLevelPageGatherer {
     if (!firstLevelPageGatherer.instance) {
       firstLevelPageGatherer.instance = new firstLevelPageGatherer("");
     }

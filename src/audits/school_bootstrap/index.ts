@@ -1,6 +1,6 @@
 import { auditDictionary } from "../../storage/auditDictionary.js";
 import { errorHandling } from "../../config/commonAuditsParts.js";
-import { Audit } from "../Audit.js";
+import {Audit, GlobalResultsMulti} from "../Audit.js";
 import { Page } from "puppeteer";
 import { compareVersions } from "compare-versions";
 import { cssClasses } from "./cssClasses.js";
@@ -15,12 +15,11 @@ class SchoolBootstrap extends Audit {
   code = "C.SC.1.2";
   mainTitle = "LIBRERIA DI ELEMENTI DI INTERFACCIA";
 
-  public globalResults: any = {
+  public globalResults: GlobalResultsMulti = {
     score: 1,
     details: {
       items: [],
       type: "table",
-      headings: [],
       summary: "",
     },
     pagesInError: {
@@ -40,12 +39,12 @@ class SchoolBootstrap extends Audit {
     },
     errorMessage: "",
   };
-  public wrongItems: any = [];
-  public correctItems: any = [];
-  public pagesInError: any = [];
+
+  public wrongItems: Record<string, unknown>[] = [];
+  public correctItems: Record<string, unknown>[] = [];
+  public pagesInError: Record<string, unknown>[] = [];
   public score = 1;
-  private titleSubHeadings: any = [];
-  private headings: any = [];
+  private titleSubHeadings: string[] = [];
 
   async meta() {
     return {
@@ -83,33 +82,6 @@ class SchoolBootstrap extends Audit {
       ];
 
       const subResults = ["Nessuna", "Almeno una"];
-
-      this.headings = [
-        {
-          key: "result",
-          itemType: "text",
-          text: "Risultato totale",
-          subItemsHeading: { key: "inspected_page", itemType: "url" },
-        },
-        {
-          key: "title_library_name",
-          itemType: "text",
-          text: "",
-          subItemsHeading: { key: "library_name", itemType: "text" },
-        },
-        {
-          key: "title_library_version",
-          itemType: "text",
-          text: "",
-          subItemsHeading: { key: "library_version", itemType: "text" },
-        },
-        {
-          key: "title_classes_found",
-          itemType: "text",
-          text: "",
-          subItemsHeading: { key: "classes_found", itemType: "text" },
-        },
-      ];
 
       const url = page.url();
 
@@ -336,7 +308,6 @@ class SchoolBootstrap extends Audit {
     this.globalResults.errorMessage =
       this.pagesInError.length > 0 ? errorHandling.popupMessage : "";
     this.globalResults.details.items = results;
-    this.globalResults.details.headings = this.headings;
     this.globalResults.score = this.score;
     this.globalResults.id = this.auditId;
 

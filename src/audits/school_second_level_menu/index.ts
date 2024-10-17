@@ -9,7 +9,7 @@ import {
 } from "../../utils/utils.js";
 import { Page } from "puppeteer";
 
-import { Audit } from "../Audit.js";
+import {Audit, GlobalResults} from "../Audit.js";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import { detectLang, getSecondLevelPages } from "../../utils/school/utils.js";
 
@@ -30,12 +30,11 @@ interface itemPage {
 }
 
 class SchoolSecondLevelMenuAudit extends Audit {
-  public globalResults: any = {
+  public globalResults: GlobalResults = {
     score: 0,
     details: {
       items: [],
       type: "table",
-      headings: [],
       summary: "",
     },
     pagesItems: {
@@ -51,7 +50,6 @@ class SchoolSecondLevelMenuAudit extends Audit {
     errorMessage: "",
   };
 
-  private headings: any = [];
   auditId = "school-menu-scuola-second-level-structure-match-model";
   auditData =
     auditDictionary["school-menu-scuola-second-level-structure-match-model"];
@@ -75,21 +73,13 @@ class SchoolSecondLevelMenuAudit extends Audit {
   async auditPage(page: Page | null, url: string, error?: string) {
     if (error && !page) {
       this.globalResults.score = 0;
-      this.globalResults.details.items.push([
-        {
-          result: notExecutedErrorMessage.replace("<LIST>", error),
-        },
-      ]);
-      this.globalResults.details.headings = [
-        { key: "result", itemType: "text", text: "Risultato" },
-      ];
 
       this.globalResults.pagesItems.headings = ["Risultato"];
       this.globalResults.pagesItems.message = notExecutedErrorMessage.replace(
         "<LIST>",
         error,
       );
-      this.globalResults.pagesItems.items = [
+      this.globalResults.pagesItems.pages = [
         {
           result: this.auditData.redResult,
         },
@@ -102,41 +92,6 @@ class SchoolSecondLevelMenuAudit extends Audit {
 
     if (page) {
       const url = page.url();
-
-      this.headings = [
-        {
-          key: "result",
-          itemType: "text",
-          text: "Risultato",
-          subItemsHeading: {
-            key: "menu_voice",
-            itemType: "text",
-          },
-        },
-        {
-          key: "correct_voices_percentage",
-          itemType: "text",
-          text: "% di voci corrette tra quelle usate",
-          subItemsHeading: {
-            key: "inspected_page",
-            itemType: "url",
-          },
-        },
-        {
-          key: "correct_voices",
-          itemType: "text",
-          text: "Voci corrette identificate",
-          subItemsHeading: {
-            key: "external",
-            itemType: "text",
-          },
-        },
-        {
-          key: "wrong_voices",
-          itemType: "text",
-          text: "Voci aggiuntive trovate",
-        },
-      ];
 
       const results = [];
       results.push({
@@ -281,15 +236,17 @@ class SchoolSecondLevelMenuAudit extends Audit {
         presentVoicesPercentage.toString() + "%";
       results[0].wrong_voices = wrongTitleFound;
 
-      this.globalResults.recapItems.headings = [
-        "Risultato",
-        "% di voci corrette tra quelle usate",
-        "Voci corrette identificate",
-        "Voci aggiuntive trovate",
-      ];
-      this.globalResults.recapItems.pages = [results[0]];
+      if(this.globalResults.recapItems){
+        this.globalResults.recapItems.headings = [
+          "Risultato",
+          "% di voci corrette tra quelle usate",
+          "Voci corrette identificate",
+          "Voci aggiuntive trovate",
+        ];
+        this.globalResults.recapItems.pages = [results[0]];
+      }
 
-      const secondLevelPages = await getSecondLevelPages(url); //TODO: questo metodo utilizza una nuova istanza di puppeteer
+      const secondLevelPages = await getSecondLevelPages(url);
 
       results.push({});
 
@@ -333,7 +290,6 @@ class SchoolSecondLevelMenuAudit extends Audit {
 
       this.globalResults.score = score;
       this.globalResults.details.items = results;
-      this.globalResults.details.headings = this.headings;
       this.globalResults.id = this.auditId;
 
       return {

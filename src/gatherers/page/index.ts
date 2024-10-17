@@ -10,8 +10,8 @@ class pageGatherer extends Gatherer {
 
   async navigateAndFetchPages(
     url: string,
-    numberOfPages = 5,
-    website = "",
+    numberOfPages : number,
+    website : string,
     page: Page,
   ): Promise<PageData[]> {
     if (this.gatheredPages.length > 0) return this.gatheredPages;
@@ -26,7 +26,7 @@ class pageGatherer extends Gatherer {
       ];
     }
 
-    this.gatheredPages = fetchedUrls.map((url: any) => {
+    this.gatheredPages = fetchedUrls.map((url: string) => {
       return {
         url: url,
         id: currentClass.pageType + Date.now(),
@@ -41,7 +41,7 @@ class pageGatherer extends Gatherer {
     return this.gatheredPages;
   }
 
-  static getInstance(): Promise<pageGatherer> {
+  static getInstance(): pageGatherer {
     if (!pageGatherer.instance) {
       pageGatherer.instance = new pageGatherer("", requestTimeout);
     }

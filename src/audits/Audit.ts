@@ -5,31 +5,98 @@ import * as ejs from "ejs";
 import path from "path";
 import { fileURLToPath } from "url";
 
-export class Audit {
+export interface GlobalResults {
+  score: number;
+  details: {
+    items: Record<string, unknown>[];
+    type: string;
+    summary: string;
+  };
+  pagesItems: {
+    message: string;
+    headings: string[];
+    pages: Record<string, unknown>[];
+  };
+  recapItems?: {
+    message: string,
+    headings: string[],
+    pages: Record<string, unknown>[],
+  },
+  errorMessage: string;
+  info?: boolean;
+  infoScore?: boolean;
+  id?: string;
+}
+
+export interface GlobalResultsMulti {
+  score: number;
+  details: {
+    items: Record<string, unknown>[];
+    type: string;
+    summary: string;
+  };
+  pagesInError: {
+    message: string,
+    headings: string[];
+    pages: Record<string, unknown>[];
+  },
+  wrongPages: {
+    message: string,
+    headings: string[];
+    pages: Record<string, unknown>[];
+  },
+  tolerancePages?: {
+    message: string,
+    headings: string[];
+    pages: Record<string, unknown>[];
+  },
+  correctPages: {
+    message: string,
+    headings: string[];
+    pages: Record<string, unknown>[];
+  },
+  errorMessage: string;
+  info?: boolean;
+  infoScore?: boolean;
+  id?: string;
+}
+
+abstract class Audit {
   id: string;
-  gathererPageType: string[];
-  auditsIds: string[];
-  protected static instance: any;
-  globalResults: any = {};
+  protected static instance: Audit;
+  globalResults: GlobalResults | GlobalResultsMulti = {
+    score: 0,
+    details:  {
+      items: [],
+      type: "table",
+      summary: "",
+    },
+    pagesItems: {
+      message: "",
+      headings: [],
+      pages: [],
+    },
+    errorMessage: "",
+    id: '',
+  };
   code = "";
   info = false;
   reportHTML = '';
+  minVersion = "";
+  mainTitle = "";
 
   protected auditId = "audit";
   protected auditData: AuditDictionary = auditDictionary["audit"];
 
-  constructor(id: string, gathererPageType: string[], auditsIds: string[]) {
-    this.id = id;
-    this.gathererPageType = gathererPageType;
-    this.auditsIds = auditsIds;
-  }
+  constructor() {}
 
   async auditPage(
     page: Page | null,
-    url: string = "",
+    url: string,
     error?: string,
     pageType?: string | null,
-  ): Promise<any> {
+  ) : Promise<unknown> {
+    console.log(page, url, error, pageType)
     return {};
   }
 
@@ -37,20 +104,12 @@ export class Audit {
     return {};
   }
 
-  async addError() {}
-
-  async execute(page: PageData) {
-    return page;
-  }
-
-  async generateTotalResult() {}
-
   async getType() {
     return "";
   }
 
   async returnGlobal() {
-    return this.globalResults;
+    return {};
   }
 
   async returnGlobalHTML() {
@@ -60,7 +119,7 @@ export class Audit {
     if (this.globalResults.score > 0.5) {
       (status = "pass");
       (message = this.auditData.greenResult);
-    } else if ((this.globalResults.score = 0.5)) {
+    } else if ((this.globalResults.score === 0.5)) {
       (status = "average");
       (message = this.auditData.yellowResult);
     } else {
@@ -93,3 +152,5 @@ export class Audit {
     ERROR: "error",
   };
 }
+
+export {Audit}

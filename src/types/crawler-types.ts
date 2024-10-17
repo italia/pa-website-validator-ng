@@ -21,7 +21,7 @@ export interface PageData {
   internal: boolean | undefined;
   gathered: boolean;
   audited: boolean;
-  errors?: Error[] | string[];
+  errors?: string[];
   temporaryGatherer?: boolean;
   temporaryAudit?: boolean;
   scanning?: boolean;

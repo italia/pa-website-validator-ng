@@ -8,8 +8,8 @@ class locationsGatherer extends Gatherer {
 
   async navigateAndFetchPages(
     url: string,
-    numberOfPages = 5,
-    website = "",
+    numberOfPages : number,
+    website : string,
     page: Page,
   ): Promise<PageData[]> {
     if (this.gatheredPages.length > 0) return this.gatheredPages;
@@ -23,11 +23,11 @@ class locationsGatherer extends Gatherer {
         ...((await this.getMultipleDataElementUrls(
           page,
           dataElement,
-        )) as any[]),
+        )) as string[]),
       ];
     }
 
-    this.gatheredPages = fetchedUrls.map((url: any) => {
+    this.gatheredPages = fetchedUrls.map((url: string) => {
       return {
         url: url,
         id: currentClass.pageType + Date.now(),
@@ -42,7 +42,7 @@ class locationsGatherer extends Gatherer {
     return this.gatheredPages;
   }
 
-  static getInstance(): Promise<locationsGatherer> {
+  static getInstance(): locationsGatherer {
     if (!locationsGatherer.instance) {
       locationsGatherer.instance = new locationsGatherer("");
     }

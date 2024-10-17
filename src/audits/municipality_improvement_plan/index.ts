@@ -1,4 +1,4 @@
-import { Audit } from "../Audit.js";
+import {Audit, GlobalResults} from "../Audit.js";
 import { Page } from "puppeteer";
 import * as cheerio from "cheerio";
 import { CheerioAPI } from "cheerio";
@@ -14,12 +14,11 @@ const improvementPlan = /piano di miglioramento del sito/i;
 class ImprovementPlanAudit extends Audit {
   public score = 0;
 
-  public globalResults: any = {
+  public globalResults: GlobalResults = {
     score: 0,
     details: {
       items: [],
       type: "table",
-      headings: [],
       summary: "",
     },
     pagesItems: {
@@ -52,9 +51,6 @@ class ImprovementPlanAudit extends Audit {
         },
       ];
       this.globalResults["details"]["type"] = "table";
-      this.globalResults["details"]["headings"] = [
-        { key: "result", itemType: "text", text: "Risultato" },
-      ];
       this.globalResults["details"]["summary"] = "";
 
       return {

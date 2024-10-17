@@ -10,8 +10,8 @@ class servicesPageGatherer extends Gatherer {
 
   async navigateAndFetchPages(
     url: string,
-    numberOfPages = 5,
-    website = "",
+    numberOfPages : number,
+    website : string,
     page: Page,
   ): Promise<PageData[]> {
     if (this.gatheredPages.length > 0) {
@@ -59,7 +59,7 @@ class servicesPageGatherer extends Gatherer {
     return this.gatheredPages;
   }
 
-  static getInstance(): Promise<servicesPageGatherer> {
+  static getInstance(): servicesPageGatherer {
     if (!servicesPageGatherer.instance) {
       servicesPageGatherer.instance = new servicesPageGatherer("");
     }

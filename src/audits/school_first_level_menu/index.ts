@@ -11,7 +11,7 @@ import {
 } from "../../utils/utils.js";
 import { Page } from "puppeteer";
 
-import { Audit } from "../Audit.js";
+import {Audit, GlobalResults} from "../Audit.js";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import { detectLang, getFirstLevelPages } from "../../utils/school/utils.js";
 import { MenuItem, primaryMenuItems } from "./menuItem.js";
@@ -21,12 +21,11 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 class SchoolFirstLevelMenuAudit extends Audit {
-  public globalResults: any = {
+  public globalResults: GlobalResults = {
     score: 0,
     details: {
       items: [],
       type: "table",
-      headings: [],
       summary: "",
     },
     pagesItems: {
@@ -42,7 +41,6 @@ class SchoolFirstLevelMenuAudit extends Audit {
     errorMessage: "",
   };
 
-  private headings: any = [];
   auditId = "school-menu-structure-match-model";
   auditData = auditDictionary["school-menu-structure-match-model"];
   code = "C.SC.1.4";
@@ -65,21 +63,13 @@ class SchoolFirstLevelMenuAudit extends Audit {
   async auditPage(page: Page | null, url: string, error?: string) {
     if (error && !page) {
       this.globalResults.score = 0;
-      this.globalResults.details.items.push([
-        {
-          result: notExecutedErrorMessage.replace("<LIST>", error),
-        },
-      ]);
-      this.globalResults.details.headings = [
-        { key: "result", itemType: "text", text: "Risultato" },
-      ];
 
       this.globalResults.pagesItems.headings = ["Risultato"];
       this.globalResults.pagesItems.message = notExecutedErrorMessage.replace(
         "<LIST>",
         error,
       );
-      this.globalResults.pagesItems.items = [
+      this.globalResults.pagesItems.pages = [
         {
           result: this.auditData.redResult,
         },
@@ -92,41 +82,6 @@ class SchoolFirstLevelMenuAudit extends Audit {
 
     if (page) {
       const url = page.url();
-
-      this.headings = [
-        {
-          key: "result",
-          itemType: "text",
-          text: "Risultato",
-          subItemsHeading: {
-            key: "menu_voice",
-            itemType: "text",
-          },
-        },
-        {
-          key: "found_menu_voices",
-          itemType: "text",
-          text: "Voci del menù identificate",
-          subItemsHeading: {
-            key: "inspected_page",
-            itemType: "url",
-          },
-        },
-        {
-          key: "missing_menu_voices",
-          itemType: "text",
-          text: "Voci obbligatorie del menù mancanti",
-          subItemsHeading: {
-            key: "external",
-            itemType: "text",
-          },
-        },
-        {
-          key: "wrong_order_menu_voices",
-          itemType: "text",
-          text: "Voci del menù nell'ordine errato",
-        },
-      ];
 
       let score = 0;
 
@@ -144,6 +99,13 @@ class SchoolFirstLevelMenuAudit extends Audit {
       const menuDataElement = '[data-element="menu"]';
       const menuComponent = $(menuDataElement);
       if (menuComponent.length === 0) {
+        this.globalResults.pagesItems.headings = ["Risultato"];
+        this.globalResults.pagesItems.pages = [
+          {
+            result: this.auditData.nonExecuted,
+          },
+        ];
+
         return {
           score: 0,
           details: {
@@ -153,7 +115,6 @@ class SchoolFirstLevelMenuAudit extends Audit {
               },
             ],
             type: "table",
-            headings: [{ key: "result", itemType: "text", text: "Risultato" }],
             summary: "",
           },
         };
@@ -213,13 +174,16 @@ class SchoolFirstLevelMenuAudit extends Audit {
         results[0].result = this.auditData.yellowResult;
       }
 
-      this.globalResults.recapItems.headings = [
-        "Risultato",
-        "Voci del menù identificate",
-        "Voci obbligatorie del menù mancanti",
-        "Voci del menù in ordine errato",
-      ];
-      this.globalResults.recapItems.pages = [results[0]];
+      if(this.globalResults.recapItems){
+        this.globalResults.recapItems.headings = [
+          "Risultato",
+          "Voci del menù identificate",
+          "Voci obbligatorie del menù mancanti",
+          "Voci del menù in ordine errato",
+        ];
+        this.globalResults.recapItems.pages = [results[0]];
+      }
+
 
       const firstLevelPages = await getFirstLevelPages(url);
 
@@ -265,7 +229,6 @@ class SchoolFirstLevelMenuAudit extends Audit {
 
       this.globalResults.score = score;
       this.globalResults.details.items = results;
-      this.globalResults.details.headings = this.headings;
       this.globalResults.id = this.auditId;
 
       return {

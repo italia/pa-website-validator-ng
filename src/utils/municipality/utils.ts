@@ -182,6 +182,8 @@ const getRandomSecondLevelPagesUrl = async (
     }
   }
 
+  console.log(numberOfPages);
+
   return getRandomNString(pagesUrls, numberOfPages);
 };
 
@@ -294,9 +296,7 @@ const getSecondLevelPages = async (
           throw new DataElementError(dataElementSecondary);
         }
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        pages[key] = secondPages;
+        pages[key as keyof MunicipalitySecondLevelPages] = secondPages;
       }
     }
   }
@@ -507,7 +507,7 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
           delay: 1000,
         });
         await page.waitForNetworkIdle();
-      } catch (e) {
+      } catch  {
         /* empty */
       }
 

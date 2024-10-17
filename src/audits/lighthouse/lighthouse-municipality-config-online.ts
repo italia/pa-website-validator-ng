@@ -1,17 +1,8 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import defaultConfig from "lighthouse/lighthouse-core/config/default-config.js";
+import {commonGatherersFolder} from "../../config/configFolderingConstants";
+import {groups, accessibilityAudits, bestPracticeAudits, seoAudits, pwaAudits} from "../../config/commonAuditsParts";
 
-import {
-  groups,
-  accessibilityAudits,
-  bestPracticeAudits,
-  seoAudits,
-  pwaAudits,
-} from "./commonAuditsParts.js";
-import { commonGatherersFolder } from "./configFolderingConstants.js";
 
-export default {
+module.exports = {
   extends: "lighthouse:default",
   settings: {
     onlyCategories: ["performance", "additionalTests"],

@@ -5,7 +5,7 @@ import * as jsonschema from "jsonschema";
 import { ValidatorResult } from "jsonschema";
 import { auditDictionary } from "../../storage/auditDictionary.js";
 import { errorHandling } from "../../config/commonAuditsParts.js";
-import { Audit } from "../Audit.js";
+import {Audit, GlobalResultsMulti} from "../Audit.js";
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
 import path from "path";
@@ -22,12 +22,11 @@ class MetatagAudit extends Audit {
   code = "R.SI.1.1";
   mainTitle = "METATAG";
 
-  public globalResults: any = {
+  public globalResults: GlobalResultsMulti = {
     score: 1,
     details: {
       items: [],
       type: "table",
-      headings: [],
       summary: "",
     },
     pagesInError: {
@@ -52,13 +51,13 @@ class MetatagAudit extends Audit {
     },
     errorMessage: "",
   };
-  public wrongItems: any = [];
-  public toleranceItems: any = [];
-  public correctItems: any = [];
-  public pagesInError: any = [];
+
+  public wrongItems: Record<string, unknown>[] = [];
+  public toleranceItems: Record<string, unknown>[] = [];
+  public correctItems: Record<string, unknown>[] = [];
+  public pagesInError: Record<string, unknown>[] = [];
   public score = 1;
-  private titleSubHeadings: any = [];
-  private headings: any = [];
+  private titleSubHeadings: string[] = [];
 
   async meta() {
     return {
@@ -76,32 +75,6 @@ class MetatagAudit extends Audit {
 
   async auditPage(page: Page | null, url: string, error?: string) {
     this.titleSubHeadings = ["JSON valido", "Metatag non presenti o errati"];
-    this.headings = [
-      {
-        key: "result",
-        itemType: "text",
-        text: "Risultato",
-        subItemsHeading: { key: "inspected_page", itemType: "url" },
-      },
-      {
-        key: "title_valid_json",
-        itemType: "text",
-        text: "",
-        subItemsHeading: {
-          key: "valid_json",
-          itemType: "text",
-        },
-      },
-      {
-        key: "title_missing_keys",
-        itemType: "text",
-        text: "",
-        subItemsHeading: {
-          key: "missing_keys",
-          itemType: "text",
-        },
-      },
-    ];
 
     if (error && !page) {
       this.score = 0;
@@ -119,7 +92,7 @@ class MetatagAudit extends Audit {
     if (page) {
       const url = page.url();
 
-      let $: CheerioAPI | any = null;
+      let $: CheerioAPI = cheerio.load('<html><body></body></html>');
 
       const item = {
         link: url,
@@ -160,7 +133,7 @@ class MetatagAudit extends Audit {
       let parsedMetatagJSON = {};
       try {
         parsedMetatagJSON = JSON.parse(metatagJSON.toString());
-      } catch (e) {
+      } catch {
         if (this.score > 0) {
           this.score = 0;
         }
@@ -204,7 +177,9 @@ class MetatagAudit extends Audit {
 
   async returnGlobal() {
     this.globalResults.correctPages.pages = [];
-    this.globalResults.tolerancePages.pages = [];
+    if(this.globalResults.tolerancePages){
+      this.globalResults.tolerancePages.pages = [];
+    }
     this.globalResults.wrongPages.pages = [];
     this.globalResults.pagesInError.pages = [];
 
@@ -290,21 +265,22 @@ class MetatagAudit extends Audit {
         title_valid_json: this.titleSubHeadings[0],
         title_missing_keys: this.titleSubHeadings[1],
       });
+      if(this.globalResults.tolerancePages){
+        this.globalResults.tolerancePages.headings = [
+          auditData.subItem.yellowResult,
+          this.titleSubHeadings[0],
+          this.titleSubHeadings[1],
+        ];
 
-      this.globalResults.tolerancePages.headings = [
-        auditData.subItem.yellowResult,
-        this.titleSubHeadings[0],
-        this.titleSubHeadings[1],
-      ];
-
-      for (const item of this.toleranceItems) {
-        this.globalResults.tolerancePages.pages.push(item);
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
+        for (const item of this.toleranceItems) {
+          this.globalResults.tolerancePages.pages.push(item);
+          results.push({
+            subItems: {
+              type: "subitems",
+              items: [item],
+            },
+          });
+        }
       }
 
       results.push({});
@@ -337,7 +313,6 @@ class MetatagAudit extends Audit {
       results.push({});
     }
 
-    this.globalResults.details.headings = this.headings;
     this.globalResults.details.items = results;
     this.globalResults.errorMessage =
       this.pagesInError.length > 0 ? errorHandling.popupMessage : "";

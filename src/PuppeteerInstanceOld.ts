@@ -1,10 +1,10 @@
 "use strict";
-import puppeteer from "puppeteer";
+import puppeteer, {Browser} from "puppeteer";
 import process from "process";
 import * as dotenv from "dotenv";
 dotenv.config();
 
-let oldBrowser: any | null = null;
+let oldBrowser: Browser | null = null;
 
 async function initializePuppeteerOld() {
   if (!oldBrowser) {
@@ -18,7 +18,7 @@ async function initializePuppeteerOld() {
       })
       .catch((err) => {
         console.error("Failed to launch Puppeteer old version:", err);
-        throw err;
+        return null
       });
   }
 

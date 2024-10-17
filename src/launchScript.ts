@@ -66,11 +66,11 @@ async function run(
     process.env["type"] = type;
     //register method to the event 'page-added'
     PageManager.onPagesAdded(async (pageData) => {
-      await scan(pageData, saveFile, destination, reportName, view);
+      await scan(pageData);
     });
 
     PageManager.onPagesClosed(async (pageData) => {
-      await scan(pageData, saveFile, destination, reportName, view);
+      await scan(pageData);
     });
 
     const onScriptClosedPromise = new Promise((resolve) => {
@@ -81,7 +81,7 @@ async function run(
     });
 
     if (config.audits["homepage"].find((i: string) => i === "lighthouse")) {
-      const audit = audits["lighthouse"]();
+      const audit = await audits["lighthouse"]();
       let page: Page | null = null;
       let navigatingError;
       try {
@@ -129,10 +129,14 @@ async function run(
 
     await onScriptClosedPromise;
 
-    console.error("closing puppeteer");
-    await browser.close();
-    console.error("closing puppeteer old");
-    await oldBrowser.close();
+    if(browser){
+      console.error("closing puppeteer");
+      await browser.close();
+    }
+    if(oldBrowser){
+      console.error("closing puppeteer old");
+      await oldBrowser.close();
+    }
 
     return finalResults;
   } catch (err) {

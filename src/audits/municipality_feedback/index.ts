@@ -7,7 +7,7 @@ import { checkFeedbackComponent } from "../../utils/municipality/utils.js";
 import { errorHandling } from "../../config/commonAuditsParts.js";
 
 import { Page } from "puppeteer";
-import { Audit } from "../Audit.js";
+import {Audit, GlobalResultsMulti} from "../Audit.js";
 import * as ejs from "ejs";
 import { fileURLToPath } from "url";
 import path from "path";
@@ -20,12 +20,11 @@ class FeedbackAudit extends Audit {
   mainTitle =
     "VALUTAZIONE DELL'ESPERIENZA D'USO, CHIAREZZA DELLE PAGINE INFORMATIVE";
 
-  public globalResults: any = {
+  public globalResults: GlobalResultsMulti = {
     score: 1,
     details: {
       items: [],
       type: "table",
-      headings: [],
       summary: "",
     },
     pagesInError: {
@@ -50,13 +49,14 @@ class FeedbackAudit extends Audit {
     },
     errorMessage: "",
   };
-  private wrongItems: any = [];
-  private toleranceItems: any = [];
-  private correctItems: any = [];
-  private pagesInError: any = [];
+
+  public wrongItems: Record<string, unknown>[] = [];
+  public toleranceItems: Record<string, unknown>[] = [];
+  public correctItems: Record<string, unknown>[] = [];
+  public pagesInError: Record<string, unknown>[] = [];
   private score = 1;
-  private titleSubHeadings: any = [];
-  private headings: any = [];
+  private titleSubHeadings: string[] = [];
+
 
   async meta() {
     return {
@@ -74,20 +74,6 @@ class FeedbackAudit extends Audit {
 
   async auditPage(page: Page | null, url: string, error?: string) {
     this.titleSubHeadings = ["Elementi errati o non trovati"];
-    this.headings = [
-      {
-        key: "result",
-        itemType: "text",
-        text: "Risultato totale",
-        subItemsHeading: { key: "inspected_page", itemType: "url" },
-      },
-      {
-        key: "title_errors_found",
-        itemType: "text",
-        text: "",
-        subItemsHeading: { key: "errors_found", itemType: "text" },
-      },
-    ];
 
     if (error && !page) {
       this.score = 0;
@@ -162,7 +148,9 @@ class FeedbackAudit extends Audit {
 
   async returnGlobal() {
     this.globalResults.correctPages.pages = [];
-    this.globalResults.tolerancePages.pages = [];
+    if(this.globalResults.tolerancePages){
+      this.globalResults.tolerancePages.pages = [];
+    }
     this.globalResults.wrongPages.pages = [];
     this.globalResults.pagesInError.pages = [];
 
@@ -250,19 +238,21 @@ class FeedbackAudit extends Audit {
         title_errors_found: this.titleSubHeadings[0],
       });
 
-      this.globalResults.tolerancePages.headings = [
-        auditData.subItem.yellowResult,
-        this.titleSubHeadings[0],
-      ];
+      if(this.globalResults.tolerancePages){
+        this.globalResults.tolerancePages.headings = [
+          auditData.subItem.yellowResult,
+          this.titleSubHeadings[0],
+        ];
 
-      for (const item of this.toleranceItems) {
-        this.globalResults.tolerancePages.pages.push(item);
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
+        for (const item of this.toleranceItems) {
+          this.globalResults.tolerancePages.pages.push(item);
+          results.push({
+            subItems: {
+              type: "subitems",
+              items: [item],
+            },
+          });
+        }
       }
     }
 
@@ -296,7 +286,6 @@ class FeedbackAudit extends Audit {
       this.pagesInError.length || this.wrongItems.length
         ? errorHandling.popupMessage
         : "";
-    this.globalResults["details"]["headings"] = this.headings;
 
     return this.globalResults;
   }

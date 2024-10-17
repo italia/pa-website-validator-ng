@@ -1,8 +1,12 @@
-import { awaitArtifacts } from "lighthouse/core/gather/runner-helpers";
+interface ConfigInterface  {
+      gatherers: Record<string, string[]>,
+      audits: Record<string, string[]>,
+      accuracy: Record<string, number>
+}
 
-let exportedConfig: any | null = null;
+let exportedConfig: ConfigInterface;
 
-const config: any = {
+const config = {
   local: {
     municipality: {
       gatherers: {
@@ -157,14 +161,14 @@ const config: any = {
           "municipality_bootstrap",
           "municipality_cookie",
           "municipality_domain_audit",
-          "municipality_feedback",
+          //"municipality_feedback",
           "municipality_font",
         ],
         "second-level-page-all": [
           "municipality_bootstrap",
           "municipality_cookie",
           "municipality_domain_audit",
-          "municipality_feedback",
+          //"municipality_feedback",
           "municipality_font",
         ],
         "appointment-booking": [
@@ -229,16 +233,18 @@ const config: any = {
 
 async function initializeConfig(siteType?: string, scope?: string) {
   if (!exportedConfig && siteType && scope) {
-    exportedConfig = config[scope][siteType];
+    if (!exportedConfig && siteType && (siteType === 'municipality' || siteType === 'local') && (scope === 'local' || scope === 'online') && scope) {
+      exportedConfig = config[scope as keyof typeof config][siteType as keyof typeof config.online];
+    }
   }
 
   return exportedConfig;
 }
 
 const getAudits = async () => {
-  const exportedConfig = await initializeConfig();
+  const exportedConfig : ConfigInterface = await initializeConfig();
   let auditIds: string[] = [];
-  for (const pageTypeAudits of Object.values(exportedConfig["audits"])) {
+  for (const pageTypeAudits of Object.values(exportedConfig.audits)) {
     auditIds = [...auditIds, ...(pageTypeAudits as string[])];
   }
   return auditIds;
@@ -247,7 +253,7 @@ const getAudits = async () => {
 const getGatherers = async () => {
   const exportedConfig = await initializeConfig();
   let gathererIds: string[] = [];
-  for (const pageTypeGatherers of Object.values(exportedConfig["gatherers"])) {
+  for (const pageTypeGatherers of Object.values(exportedConfig.gatherers)) {
     gathererIds = [...gathererIds, ...(pageTypeGatherers as string[])];
   }
   return gathererIds;

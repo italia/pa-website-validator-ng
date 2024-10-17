@@ -4,7 +4,7 @@ class locationsPageGatherer extends pageGatherer {
   static dataElements: string[] = ["school-locations"];
   static pageType: string = "locations-page";
 
-  static getInstance(): Promise<locationsPageGatherer> {
+  static getInstance(): locationsPageGatherer {
     if (!locationsPageGatherer.instance) {
       locationsPageGatherer.instance = new locationsPageGatherer("");
     }

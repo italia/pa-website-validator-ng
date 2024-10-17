@@ -1,13 +1,12 @@
 import { Gatherer } from "../Gatherer.js";
-import {PageData} from "../../types/crawler-types.js";
-import { Page } from "puppeteer";
+import {MunicipalitySecondLevelPages, PageData, PageLink} from "../../types/crawler-types.js";
 import { getSecondLevelPages } from "../../utils/municipality/utils.js";
 import { primaryMenuItems } from "../../storage/municipality/menuItems.js";
 
 class SecondLevelPagesGatherer extends Gatherer {
   static pageType: string = "second-level-page-all";
 
-  static getInstance(): Promise<SecondLevelPagesGatherer> {
+  static getInstance(): SecondLevelPagesGatherer {
     if (!SecondLevelPagesGatherer.instance) {
       SecondLevelPagesGatherer.instance = new SecondLevelPagesGatherer("");
     }
@@ -16,9 +15,6 @@ class SecondLevelPagesGatherer extends Gatherer {
 
   async navigateAndFetchPages(
     url: string,
-    numberOfPages = 5,
-    website: "",
-    page: Page,
   ): Promise<PageData[]> {
     if (this.gatheredPages.length > 0) return this.gatheredPages;
 
@@ -26,10 +22,10 @@ class SecondLevelPagesGatherer extends Gatherer {
 
     const pagesToBeAnalyzed = [];
 
-    const fetchedUrls: any = await getSecondLevelPages(url, false);
+    const fetchedUrls : MunicipalitySecondLevelPages = await getSecondLevelPages(url, false);
 
     for (const [key, primaryMenuItem] of Object.entries(primaryMenuItems)) {
-      const secondLevelPagesSection: any = fetchedUrls[key];
+      const secondLevelPagesSection : PageLink[] = fetchedUrls[key as keyof MunicipalitySecondLevelPages];
       for (const page of secondLevelPagesSection) {
         if (primaryMenuItem.dictionary.includes(page.linkName.toLowerCase())) {
           pagesToBeAnalyzed.push(page.linkUrl);
@@ -37,7 +33,7 @@ class SecondLevelPagesGatherer extends Gatherer {
       }
     }
 
-    this.gatheredPages = pagesToBeAnalyzed.map((url: any) => {
+    this.gatheredPages = pagesToBeAnalyzed.map((url: string) => {
       return {
         url: url,
         id: currentClass.pageType + Date.now(),

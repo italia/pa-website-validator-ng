@@ -8,7 +8,7 @@ import geoip from "geoip-lite";
 import { allowedCountries } from "../../storage/common/allowedCountries.js";
 import { auditDictionary } from "../../storage/auditDictionary.js";
 import { Page } from "puppeteer";
-import { Audit } from "../Audit.js";
+import {Audit, GlobalResults} from "../Audit.js";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import * as ejs from "ejs";
 import { fileURLToPath } from "url";
@@ -21,12 +21,11 @@ const greenResult = auditData.greenResult;
 const redResult = auditData.redResult;
 
 class IpLocationAudit extends Audit {
-  public globalResults: any = {
+  public globalResults: GlobalResults = {
     score: 0,
     details: {
       items: [],
       type: "table",
-      headings: [],
       summary: "",
     },
     pagesItems: {
@@ -59,21 +58,18 @@ class IpLocationAudit extends Audit {
   async auditPage(page: Page | null, url: string, error?: string) {
     if (error && !page) {
       this.globalResults.score = 0;
-      this.globalResults.details.items.push([
+      this.globalResults.details.items.push(
         {
           result: notExecutedErrorMessage.replace("<LIST>", error),
         },
-      ]);
-      this.globalResults.details.headings = [
-        { key: "result", itemType: "text", text: "Risultato" },
-      ];
+      );
 
       this.globalResults.pagesItems.headings = ["Risultato"];
       this.globalResults.pagesItems.message = notExecutedErrorMessage.replace(
         "<LIST>",
         error,
       );
-      this.globalResults.pagesItems.items = [
+      this.globalResults.pagesItems.pages = [
         {
           result: this.auditData.redResult,
         },
@@ -89,11 +85,6 @@ class IpLocationAudit extends Audit {
       const hostname = new URL(url).hostname.replace("www.", "");
       this.score = 0;
 
-      this.globalResults.details.headings = [
-        { key: "result", itemType: "text", text: "Risultato" },
-        { key: "ip_city", itemType: "text", text: "Città indirizzo IP" },
-        { key: "ip_country", itemType: "text", text: "Paese indirizzo IP" },
-      ];
       this.globalResults.pagesItems.headings = [
         "Risultato",
         "Città indirizzo IP",
@@ -163,11 +154,11 @@ class IpLocationAudit extends Audit {
     });
   }
 
-  static getInstance(): Promise<IpLocationAudit> {
+  static getInstance(): IpLocationAudit {
     if (!IpLocationAudit.instance) {
-      IpLocationAudit.instance = new IpLocationAudit("", [], []);
+      IpLocationAudit.instance = new IpLocationAudit();
     }
-    return IpLocationAudit.instance;
+    return <IpLocationAudit>IpLocationAudit.instance;
   }
 }
 

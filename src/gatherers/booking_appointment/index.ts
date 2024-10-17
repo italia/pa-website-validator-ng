@@ -1,30 +1,22 @@
-import { pageGatherer } from "../page/index.js";
-import { Page } from "puppeteer";
 import { getPrimaryPageUrl } from "../../utils/municipality/utils.js";
 import { primaryMenuItems } from "../../storage/municipality/menuItems.js";
 import { DataElementError } from "../../utils/DataElementError.js";
 import { Gatherer } from "../Gatherer.js";
 import {PageData} from "../../types/crawler-types.js";
 
-class bookingAppointmentGatherer extends pageGatherer {
+class bookingAppointmentGatherer extends Gatherer {
   static dataElements: string[] = ["appointment-booking"];
   static pageType: string = "appointment-booking";
 
-  static getInstance(): Promise<bookingAppointmentGatherer> {
+  static getInstance(): bookingAppointmentGatherer {
     if (!bookingAppointmentGatherer.instance) {
-      bookingAppointmentGatherer.instance = new bookingAppointmentGatherer(
-        "",
-        3000,
-      );
+      bookingAppointmentGatherer.instance = new bookingAppointmentGatherer("");
     }
     return bookingAppointmentGatherer.instance;
   }
 
   async navigateAndFetchPages(
     url: string,
-    numberOfPages = 5,
-    website: "",
-    page: Page,
   ): Promise<PageData[]> {
     const currentClass = this.constructor as typeof Gatherer;
 
@@ -44,7 +36,7 @@ class bookingAppointmentGatherer extends pageGatherer {
       throw new DataElementError("appointment-booking");
     }
 
-    this.gatheredPages = [bookingAppointmentPage].map((url: any) => {
+    this.gatheredPages = [bookingAppointmentPage].map((url: string) => {
       return {
         url: url,
         id: currentClass.pageType + Date.now(),

@@ -7,7 +7,6 @@ import {getRandomNString, loadPage} from "../../utils/utils.js";
 class servicesGatherer extends Gatherer {
   static dataElement: string = "service-link";
   static pageType: string = "service";
-  secondPageLevel: string = "pager-link";
 
   async navigateAndFetchPages(
     url: string,
@@ -20,6 +19,7 @@ class servicesGatherer extends Gatherer {
     let foundElements = [];
     let pages: string[] = [];
     let click = false;
+    const secondPageLevel: string = "pager-link";
 
     while (clickButton) {
       try {
@@ -80,13 +80,14 @@ class servicesGatherer extends Gatherer {
 
 
     const foundSecondLevel = await page.$$(
-        `[data-element="${this.secondPageLevel}"]`,
+        `[data-element="${secondPageLevel}"]`,
     );
 
-    const foundElementSecondHref: PageData[] | any = await Promise.all(
-        foundSecondLevel.map(async (el: any) => {
+    const foundElementSecondHref : string[] = await Promise.all(
+        foundSecondLevel.map(async (el) => {
           const href = await el.getProperty("href");
-          const hrefValue = await href.jsonValue();
+          const jsonValue = await href.jsonValue();
+          const hrefValue : string = String(jsonValue);
           return hrefValue;
         }),
     );
@@ -99,10 +100,11 @@ class servicesGatherer extends Gatherer {
             `[data-element="${servicesGatherer.dataElement}"]`,
         );
 
-        const foundElementSecondLevelHref: PageData[] | any = await Promise.all(
-            foundElementsSecondLevel.map(async (el: any) => {
+        const foundElementSecondLevelHref : string[] = await Promise.all(
+            foundElementsSecondLevel.map(async (el) => {
               const href = await el.getProperty("href");
-              const hrefValue = await href.jsonValue();
+              const jsonValue = await href.jsonValue();
+              const hrefValue : string = String(jsonValue);
               return hrefValue;
             }),
         );
@@ -141,9 +143,9 @@ class servicesGatherer extends Gatherer {
     return this.gatheredPages;
   }
 
-  static getInstance(): Promise<servicesGatherer> {
+  static getInstance(): servicesGatherer {
     if (!servicesGatherer.instance) {
-      servicesGatherer.instance = new servicesGatherer("", 3000);
+      servicesGatherer.instance = new servicesGatherer("");
     }
     return servicesGatherer.instance;
   }

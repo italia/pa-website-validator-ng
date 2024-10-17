@@ -4,7 +4,7 @@ class servicesPageGatherer extends pageGatherer {
   static dataElements: string[] = ["all-services"];
   static pageType: string = "services-page";
 
-  static getInstance(): Promise<servicesPageGatherer> {
+  static getInstance(): servicesPageGatherer {
     if (!servicesPageGatherer.instance) {
       servicesPageGatherer.instance = new servicesPageGatherer("");
     }

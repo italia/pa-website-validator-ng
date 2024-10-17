@@ -19,7 +19,7 @@ async function collectGatherers() {
   const configGatherers = await getGatherers();
 
   try {
-    if (!!Object.keys(gatherers).length) {
+    if (!Object.keys(gatherers).length) {
       const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
       const files = sync(__dirname + "/gatherers/**/*.**");

@@ -4,7 +4,7 @@ class viverePageGatherer extends pageGatherer {
   static dataElements: string[] = ["live"];
   static pageType: string = "vivere-page";
 
-  static getInstance(): Promise<viverePageGatherer> {
+  static getInstance(): viverePageGatherer {
     if (!viverePageGatherer.instance) {
       viverePageGatherer.instance = new viverePageGatherer("", 3000);
     }

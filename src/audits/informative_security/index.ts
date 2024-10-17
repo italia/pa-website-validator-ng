@@ -1,12 +1,6 @@
 "use strict";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { auditDictionary } from "../../storage/auditDictionary.js";
 import { Audit } from "../Audit.js";
-
-const auditId = "municipality-informative-security";
-const auditData = auditDictionary[auditId];
 
 class InfoSecurityAudit extends Audit {
   async meta() {

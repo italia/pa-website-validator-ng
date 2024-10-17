@@ -4,7 +4,7 @@ import * as cheerio from "cheerio";
 import { CheerioAPI } from "cheerio";
 import { urlExists } from "../../utils/utils.js";
 import { auditDictionary } from "../../storage/auditDictionary.js";
-import { Audit } from "../Audit.js";
+import {Audit, GlobalResults} from "../Audit.js";
 import { Page } from "puppeteer";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import * as ejs from "ejs";
@@ -18,12 +18,11 @@ const yellowResult = auditData.yellowResult;
 const redResult = auditData.redResult;
 
 class FaqAudit extends Audit {
-  public globalResults: any = {
+  public globalResults: GlobalResults = {
     score: 0,
     details: {
       items: [],
       type: "table",
-      headings: [],
       summary: "",
     },
     pagesItems: {
@@ -37,12 +36,7 @@ class FaqAudit extends Audit {
   code = "C.SI.2.3";
   mainTitle = "RICHIESTA DI ASSISTENZA / DOMANDE FREQUENTI";
 
-  public wrongItems: any = [];
-  public toleranceItems: any = [];
-  public correctItems: any = [];
-  public pagesInError: any = [];
   public score = 0;
-  private headings: any = [];
 
   async meta() {
     return {
@@ -68,16 +62,13 @@ class FaqAudit extends Audit {
       this.globalResults.details.items.push({
         result: notExecutedErrorMessage.replace("<LIST>", error),
       });
-      this.globalResults.details.headings = [
-        { key: "result", itemType: "text", text: "Risultato" },
-      ];
 
       this.globalResults.pagesItems.headings = ["Risultato"];
       this.globalResults.pagesItems.message = notExecutedErrorMessage.replace(
         "<LIST>",
         error,
       );
-      this.globalResults.pagesItems.items = [
+      this.globalResults.pagesItems.pages = [
         {
           result: this.auditData.redResult,
         },
@@ -91,27 +82,11 @@ class FaqAudit extends Audit {
     if (page) {
       const url = page.url();
 
-      this.headings = [
-        {
-          key: "result",
-          itemType: "text",
-          text: "Risultato",
-        },
-        {
-          key: "link_name",
-          itemType: "text",
-          text: "Testo del link",
-        },
-        {
-          key: "link_destination",
-          itemType: "text",
-          text: "Pagina di destinazione",
-        },
-        {
-          key: "existing_page",
-          itemType: "text",
-          text: "Pagina esistente",
-        },
+      this.globalResults.pagesItems.headings = [
+        "Risultato",
+        "Testo del link",
+        "Pagina di destinazione",
+        "Pagina esistente",
       ];
 
       const items = [
@@ -144,13 +119,6 @@ class FaqAudit extends Audit {
         if (!checkUrl.result) {
           this.globalResults.details.items = items;
           this.globalResults.pagesItems.pages = items;
-          this.globalResults.details.headings = this.headings;
-          this.globalResults.pagesItems.headings = [
-            "Risultato",
-            "Testo del link",
-            "Pagina di destinazione",
-            "Pagina esistente",
-          ];
 
           this.globalResults.score = 0;
           this.score = 0;
@@ -166,13 +134,6 @@ class FaqAudit extends Audit {
           items[0].result = yellowResult;
           this.globalResults.details.items = items;
           this.globalResults.pagesItems.pages = items;
-          this.globalResults.details.headings = this.headings;
-          this.globalResults.pagesItems.headings = [
-            "Risultato",
-            "Testo del link",
-            "Pagina di destinazione",
-            "Pagina esistente",
-          ];
           this.globalResults.score = 0.5;
           this.score = 0.5;
           return {
@@ -183,13 +144,6 @@ class FaqAudit extends Audit {
         items[0].result = greenResult;
         this.globalResults.details.items = items;
         this.globalResults.pagesItems.pages = items;
-        this.globalResults.details.headings = this.headings;
-        this.globalResults.pagesItems.headings = [
-          "Risultato",
-          "Testo del link",
-          "Pagina di destinazione",
-          "Pagina esistente",
-        ];
         this.globalResults.score = 1;
         this.score = 1;
       }

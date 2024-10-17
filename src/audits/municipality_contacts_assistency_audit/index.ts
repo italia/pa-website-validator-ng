@@ -3,13 +3,12 @@
 // @ts-ignore
 import {
   getPageElementDataAttribute,
-  loadPageData,
 } from "../../utils/utils.js";
 import * as cheerio from "cheerio";
 import { CheerioAPI } from "cheerio";
 import { auditDictionary } from "../../storage/auditDictionary.js";
 import { errorHandling } from "../../config/commonAuditsParts.js";
-import { Audit } from "../Audit.js";
+import {Audit, GlobalResultsMulti} from "../Audit.js";
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
 import { fileURLToPath } from "url";
@@ -19,12 +18,11 @@ const auditId = "municipality-contacts-assistency";
 const auditData = auditDictionary[auditId];
 
 class ContactAssistencyAudit extends Audit {
-  public globalResults: any = {
+  public globalResults: GlobalResultsMulti = {
     score: 1,
     details: {
       items: [],
       type: "table",
-      headings: [],
       summary: "",
     },
     pagesInError: {
@@ -48,13 +46,11 @@ class ContactAssistencyAudit extends Audit {
   code = "C.SI.2.2";
   mainTitle = "RICHIESTA DI ASSISTENZA / CONTATTI";
 
-  public wrongItems: any = [];
-  public toleranceItems: any = [];
-  public correctItems: any = [];
-  public pagesInError: any = [];
+  public wrongItems: Record<string, unknown>[] = [];
+  public correctItems: Record<string, unknown>[] = [];
+  public pagesInError: Record<string, unknown>[] = [];
   public score = 1;
-  private titleSubHeadings: any = [];
-  private headings: any = [];
+  private titleSubHeadings: string[] = [];
 
   async meta() {
     return {
@@ -75,35 +71,6 @@ class ContactAssistencyAudit extends Audit {
       "La voce è presente nell'indice",
       "Il componente è presente in pagina",
     ];
-    this.headings = [
-      {
-        key: "result",
-        itemType: "text",
-        text: "Risultato",
-        subItemsHeading: {
-          key: "inspected_page",
-          itemType: "url",
-        },
-      },
-      {
-        key: "title_in_index",
-        itemType: "text",
-        text: "",
-        subItemsHeading: {
-          key: "in_index",
-          itemType: "text",
-        },
-      },
-      {
-        key: "title_component_exists",
-        itemType: "text",
-        text: "",
-        subItemsHeading: {
-          key: "component_exists",
-          itemType: "text",
-        },
-      },
-    ];
 
     if (error && !page) {
       this.score = 0;
@@ -121,7 +88,7 @@ class ContactAssistencyAudit extends Audit {
     if (page) {
       const url = page.url();
 
-      let $: CheerioAPI | any = null;
+      let $: CheerioAPI = cheerio.load('<html><body></body></html>');
 
       try {
         const data = await page.content();
@@ -287,7 +254,6 @@ class ContactAssistencyAudit extends Audit {
 
     this.globalResults.score = this.score;
     this.globalResults.details.items = results;
-    this.globalResults.details.headings = this.headings;
     this.globalResults.errorMessage =
       this.pagesInError.length > 0 ? errorHandling.popupMessage : "";
 

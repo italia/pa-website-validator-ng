@@ -1,10 +1,9 @@
-import { Audit } from "../Audit.js";
+import {Audit, GlobalResults} from "../Audit.js";
 
-import lighthouse from "lighthouse";
+import lighthouse, {Flags, RunnerResult} from "lighthouse";
 import { Page } from "puppeteer";
 import { initializePuppeteer } from "../../PuppeteerInstance.js";
 import * as ejs from "ejs";
-import municipalityOnlineConfig from "../../config/lighthouse-municipality-config-online.js";
 import { fileURLToPath } from "url";
 import path from "path";
 
@@ -25,13 +24,17 @@ class lighthouseAudit extends Audit {
   reportJSON = {};
   reportHTML = "";
 
-  public globalResults: any = {
+  public globalResults: GlobalResults = {
     score: 1,
     details: {
       items: [],
       type: "table",
-      headings: [],
       summary: "",
+    },
+    pagesItems: {
+      message: "",
+      headings: [],
+      pages: [],
     },
     errorMessage: "",
   };
@@ -42,72 +45,64 @@ class lighthouseAudit extends Audit {
       const browserWSEndpoint = browser.wsEndpoint();
       const { port } = new URL(browserWSEndpoint);
 
-      const options = {
-        logLevel: process.env["logsLevel"],
+      const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+      const options : Flags = {
+        logLevel: process.env["logsLevel"] as 'info' | 'error' | 'silent' || 'info',
         output: ["html", "json"],
-        port: port,
-        municipalityOnlineConfig,
+        port: parseInt(port),
         maxWaitForLoad: 300000,
         locale: "it",
+        configPath: `${__dirname}/lighthouse-municipality-config-online.js`,
       };
 
       const url = page.url();
       await page.goto(url, { waitUntil: "domcontentloaded" });
-      const runnerResult = await this.runLighthouse(url, options);
+      const runnerResult : RunnerResult | undefined = await this.runLighthouse(url, options);
 
-      if (runnerResult.report.length < 2) {
-        throw new Error("Missing JSON or HTML report");
-      }
-
-      const metrics = runnerResult.lhr.audits.metrics;
-      const lhrAudits = runnerResult.lhr.audits;
-      const metricsScore = metrics.score;
-      const metricsDetails = metrics.details;
-      const performanceScore = runnerResult.lhr.categories.performance.score;
-      const items = metricsDetails.items[0];
-
-      const metricsResult = [];
-
-      // "interactive": {
-      //     "id": "interactive",
-      //     "title": "Time to Interactive",
-      //     "description": "La metrica Tempo all'interattività indica il tempo necessario affinché la pagina diventi completamente interattiva. [Ulteriori informazioni](https://web.dev/interactive/).",
-      //     "score": 0.98,
-      //     "scoreDisplayMode": "numeric",
-      //     "numericValue": 2575.035,
-      //     "numericUnit": "millisecond",
-      //     "displayValue": "2,6 s"
-      //   },
-
-      for (const metricId of this.displayMetrics) {
-        if (Object.keys(lhrAudits).includes(metricId)) {
-          const metric = lhrAudits[metricId];
-
-          const score = metric.score;
-          let status = "pass";
-          if (score * 100 < 50) {
-            status = "fail";
-          } else if (score * 100 < 90) {
-            status = "average";
-          }
-
-          metricsResult.push({
-            status: status,
-            title: metric.title,
-            result: metric.displayValue,
-            description: metric.description,
-          });
+      if(runnerResult) {
+        if (runnerResult.report.length < 2) {
+          throw new Error("Missing JSON or HTML report");
         }
+
+        const lhrAudits = runnerResult.lhr.audits;
+
+        const performanceScore = runnerResult.lhr.categories.performance.score;
+
+        const metricsResult = [];
+
+        for (const metricId of this.displayMetrics) {
+          if (Object.keys(lhrAudits).includes(metricId)) {
+            const metric = lhrAudits[metricId];
+
+            const score = metric.score;
+            let status = "fail";
+            if(score){
+              if (score * 100 > 90) {
+                status = "pass";
+              } else if (score * 100 > 50) {
+                status = "average";
+              }
+            }
+
+            metricsResult.push({
+              status: status,
+              title: metric.title,
+              result: metric.displayValue,
+              description: metric.description,
+            });
+          }
+        }
+
+        this.globalResults.score = performanceScore ? performanceScore : 0;
+        this.metricsResult = metricsResult;
+        this.reportHTML = runnerResult.report[0];
+        this.reportJSON = runnerResult.report[1];
+
+        this.globalResults.details.items = JSON.parse(
+            runnerResult.report[1],
+        ).audits;
       }
-
-      this.globalResults.score = performanceScore;
-      this.metricsResult = metricsResult;
-      this.reportHTML = runnerResult.report[0];
-      this.reportJSON = runnerResult.report[1];
-
-      this.globalResults.details.items = JSON.parse(
-        runnerResult.report[1],
-      ).audits;
 
       return;
     }
@@ -133,7 +128,7 @@ class lighthouseAudit extends Audit {
     return this.globalResults;
   }
 
-  async runLighthouse(url: string, options: any): Promise<any> {
+  async runLighthouse(url: string, options : Flags): Promise<RunnerResult | undefined> {
     try {
       return await lighthouse(url, options);
     } catch (error) {
@@ -170,11 +165,11 @@ class lighthouseAudit extends Audit {
     });
   }
 
-  static getInstance(): Promise<lighthouseAudit> {
+  static getInstance(): lighthouseAudit {
     if (!lighthouseAudit.instance) {
-      lighthouseAudit.instance = new lighthouseAudit("", [], []);
+      lighthouseAudit.instance = new lighthouseAudit();
     }
-    return lighthouseAudit.instance;
+    return <lighthouseAudit>lighthouseAudit.instance;
   }
 }
 

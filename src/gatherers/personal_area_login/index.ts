@@ -4,7 +4,7 @@ class personalAreaPageGatherer extends pageGatherer {
   static dataElements: string[] = ["personal-area-login"];
   static pageType: string = "personal-area-login";
 
-  static getInstance(): Promise<personalAreaPageGatherer> {
+  static getInstance(): personalAreaPageGatherer {
     if (!personalAreaPageGatherer.instance) {
       personalAreaPageGatherer.instance = new personalAreaPageGatherer(
         "",

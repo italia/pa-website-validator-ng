@@ -1,17 +1,16 @@
 import { errorHandling } from "../../config/commonAuditsParts.js";
-import { Audit } from "../Audit.js";
+import {Audit, GlobalResultsMulti} from "../Audit.js";
 import { Page } from "puppeteer";
 import { allowedFonts } from "./allowedFonts.js";
 
 type BadElement = [string[], boolean]; // First value is element snippet, second is whether it is tolerable
 
 class FontAudit extends Audit {
-  public globalResults: any = {
+  public globalResults: GlobalResultsMulti = {
     score: 1,
     details: {
       items: [],
       type: "table",
-      headings: [],
       summary: "",
     },
     pagesInError: {
@@ -36,13 +35,12 @@ class FontAudit extends Audit {
     },
     errorMessage: "",
   };
-  public wrongItems: any = [];
-  public toleranceItems: any = [];
-  public correctItems: any = [];
-  public pagesInError: any = [];
+  public wrongItems: Record<string, unknown>[] = [];
+  public toleranceItems: Record<string, unknown>[] = [];
+  public correctItems: Record<string, unknown>[] = [];
+  public pagesInError: Record<string, unknown>[] = [];
   public score = 1;
-  private titleSubHeadings: any = [];
-  private headings: any = [];
+  private titleSubHeadings: string[] = [];
 
   static allowedFonts = allowedFonts;
   code = "";
@@ -66,27 +64,6 @@ class FontAudit extends Audit {
     this.titleSubHeadings = [
       "Numero di <h> o <p> con font errati",
       "Font errati individuati",
-    ];
-
-    this.headings = [
-      {
-        key: "result",
-        itemType: "text",
-        text: "Risultato",
-        subItemsHeading: { key: "inspected_page", itemType: "url" },
-      },
-      {
-        key: "title_wrong_number_elements",
-        itemType: "text",
-        text: "",
-        subItemsHeading: { key: "wrong_number_elements", itemType: "text" },
-      },
-      {
-        key: "title_wrong_fonts",
-        itemType: "text",
-        text: "",
-        subItemsHeading: { key: "wrong_fonts", itemType: "text" },
-      },
     ];
 
     if (error && !page) {
@@ -205,7 +182,9 @@ class FontAudit extends Audit {
 
   async returnGlobal() {
     this.globalResults.correctPages.pages = [];
-    this.globalResults.tolerancePages.pages = [];
+    if(this.globalResults.tolerancePages){
+      this.globalResults.tolerancePages.pages = [];
+    }
     this.globalResults.wrongPages.pages = [];
     this.globalResults.pagesInError.pages = [];
     const results = [];
@@ -295,21 +274,25 @@ class FontAudit extends Audit {
         title_wrong_fonts: this.titleSubHeadings[1],
       });
 
-      this.globalResults.wrongPages.headings = [
-        this.auditData?.subItem?.yellowResult ?? "",
-        this.titleSubHeadings[0],
-        this.titleSubHeadings[1],
-      ];
+      if(this.globalResults.tolerancePages){
+        this.globalResults.tolerancePages.headings = [
+          this.auditData?.subItem?.yellowResult ?? "",
+          this.titleSubHeadings[0],
+          this.titleSubHeadings[1],
+        ];
 
-      for (const item of this.toleranceItems) {
-        this.globalResults.tolerancePages.pages.push(item);
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
+        for (const item of this.toleranceItems) {
+          this.globalResults.tolerancePages.pages.push(item);
+          results.push({
+            subItems: {
+              type: "subitems",
+              items: [item],
+            },
+          });
+        }
       }
+
+
 
       results.push({});
     }
@@ -344,7 +327,6 @@ class FontAudit extends Audit {
     this.globalResults.errorMessage =
       this.pagesInError.length > 0 ? errorHandling.popupMessage : "";
     this.globalResults.details.items = results;
-    this.globalResults.details.headings = this.headings;
     this.globalResults.score = this.score;
     this.globalResults.id = this.auditId;
 

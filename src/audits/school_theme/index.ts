@@ -13,11 +13,11 @@ class SchoolThemeAudit extends ThemeAudit {
   code = "C.SI.1.4";
   mainTitle = "UTILIZZO DI TEMI PER CMS";
 
-  static getInstance(): Promise<SchoolThemeAudit> {
+  static getInstance(): SchoolThemeAudit {
     if (!SchoolThemeAudit.instance) {
-      SchoolThemeAudit.instance = new SchoolThemeAudit("", [], []);
+      SchoolThemeAudit.instance = new SchoolThemeAudit();
     }
-    return SchoolThemeAudit.instance;
+    return <SchoolThemeAudit>SchoolThemeAudit.instance;
   }
 
   async returnGlobalHTML() {

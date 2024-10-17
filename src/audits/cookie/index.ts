@@ -1,17 +1,16 @@
 import { errorHandling } from "../../config/commonAuditsParts.js";
-import { Audit } from "../Audit.js";
-import { Page } from "puppeteer";
+import {Audit, GlobalResultsMulti} from "../Audit.js";
+import {Browser, Page, Cookie as CookieProtocol} from "puppeteer";
 import {Cookie} from "../../types/crawler-types";
 import { gotoRetry } from "../../utils/utils.js";
 import { initializePuppeteerOld } from "../../PuppeteerInstanceOld.js";
 
 class CookieAudit extends Audit {
-  public globalResults: any = {
+  public globalResults: GlobalResultsMulti = {
     score: 1,
     details: {
       items: [],
       type: "table",
-      headings: [],
       summary: "",
     },
     pagesInError: {
@@ -31,12 +30,12 @@ class CookieAudit extends Audit {
     },
     errorMessage: "",
   };
-  public wrongItems: any = [];
-  public correctItems: any = [];
-  public pagesInError: any = [];
+  public wrongItems: Record<string, unknown>[] = [];
+  public correctItems: Record<string, unknown>[] = [];
+  public pagesInError: Record<string, unknown>[] = [];
   public score = 1;
-  private titleSubHeadings: any = [];
-  private headings: any = [];
+  private titleSubHeadings: string[] = [];
+
   code = "";
   mainTitle = "";
 
@@ -66,33 +65,6 @@ class CookieAudit extends Audit {
       "Valore del cookie",
     ];
 
-    this.headings = [
-      {
-        key: "result",
-        itemType: "text",
-        text: "Risultato totale",
-        subItemsHeading: { key: "inspected_page", itemType: "url" },
-      },
-      {
-        key: "title_cookie_domain",
-        itemType: "text",
-        text: "",
-        subItemsHeading: { key: "cookie_domain", itemType: "text" },
-      },
-      {
-        key: "title_cookie_name",
-        itemType: "text",
-        text: "",
-        subItemsHeading: { key: "cookie_name", itemType: "text" },
-      },
-      {
-        key: "title_cookie_value",
-        itemType: "text",
-        text: "",
-        subItemsHeading: { key: "cookie_value", itemType: "text" },
-      },
-    ];
-
     if (error && !page && pageType !== "event") {
       this.score = 0;
 
@@ -113,45 +85,50 @@ class CookieAudit extends Audit {
         const items = [];
         let score = 1;
 
-        const oldBrowser = await initializePuppeteerOld();
-        const oldPage = await oldBrowser.newPage();
+        const oldBrowser : Browser | null = await initializePuppeteerOld();
 
-        await gotoRetry(oldPage, url, errorHandling.gotoRetryTentative);
+        if(oldBrowser){
+          const oldPage = await oldBrowser.newPage();
 
-        const cookies = await oldPage.cookies();
+          await gotoRetry(oldPage, url, errorHandling.gotoRetryTentative);
 
-        await oldPage.close();
+          const cookies : CookieProtocol[] = await oldPage.cookies();
 
-        const resultCookies = await checkCookieDomain(url, cookies);
+          await oldPage.close();
 
-        for (const resultCookie of resultCookies) {
-          if (!resultCookie.is_correct) {
-            score = 0;
+          const resultCookies = await checkCookieDomain(url, cookies);
+
+          for (const resultCookie of resultCookies) {
+            if (!resultCookie.is_correct) {
+              score = 0;
+            }
+
+            items.push(resultCookie);
           }
 
-          items.push(resultCookie);
-        }
-
-        if (score < this.score) {
-          this.score = score;
-        }
-
-        for (const item of items) {
-          if (item.is_correct) {
-            this.correctItems.push({
-              link: item.link,
-              cookie_domain: item.cookie_domain,
-              cookie_name: item.cookie_name,
-              cookie_value: item.cookie_value,
-            });
-          } else {
-            this.wrongItems.push({
-              link: item.link,
-              cookie_domain: item.cookie_domain,
-              cookie_name: item.cookie_name,
-              cookie_value: item.cookie_value,
-            });
+          if (score < this.score) {
+            this.score = score;
           }
+
+          for (const item of items) {
+            if (item.is_correct) {
+              this.correctItems.push({
+                link: item.link,
+                cookie_domain: item.cookie_domain,
+                cookie_name: item.cookie_name,
+                cookie_value: item.cookie_value,
+              });
+            } else {
+              this.wrongItems.push({
+                link: item.link,
+                cookie_domain: item.cookie_domain,
+                cookie_name: item.cookie_name,
+                cookie_value: item.cookie_value,
+              });
+            }
+          }
+        }else{
+          throw new Error('Non è stato possibile aprire Puppeteer');
         }
       } catch (ex) {
         if (!(ex instanceof Error)) {
@@ -295,7 +272,6 @@ class CookieAudit extends Audit {
     this.globalResults.errorMessage =
       this.pagesInError.length > 0 ? errorHandling.popupMessage : "";
     this.globalResults.details.items = results;
-    this.globalResults.details.headings = this.headings;
     this.globalResults.score = this.score;
     this.globalResults.id = this.auditId;
 
@@ -313,7 +289,7 @@ class CookieAudit extends Audit {
 export { CookieAudit };
 export default CookieAudit.getInstance;
 
-async function checkCookieDomain(url: string, cookies: any): Promise<Cookie[]> {
+async function checkCookieDomain(url: string, cookies : CookieProtocol[]): Promise<Cookie[]> {
   const returnValue = [];
 
   for (const cookie of cookies) {

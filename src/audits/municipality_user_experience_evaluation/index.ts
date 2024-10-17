@@ -3,7 +3,7 @@
 import { auditDictionary } from "../../storage/auditDictionary.js";
 import { checkFeedbackComponent } from "../../utils/municipality/utils.js";
 import { errorHandling } from "../../config/commonAuditsParts.js";
-import { Audit } from "../Audit.js";
+import {Audit, GlobalResultsMulti} from "../Audit.js";
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
 import path from "path";
@@ -13,12 +13,11 @@ const auditId = "municipality-user-experience-evaluation";
 const auditData = auditDictionary[auditId];
 
 class UserExperienceEvaluationAudit extends Audit {
-  public globalResults: any = {
+  public globalResults: GlobalResultsMulti = {
     score: 1,
     details: {
       items: [],
       type: "table",
-      headings: [],
       summary: "",
     },
     pagesInError: {
@@ -48,13 +47,12 @@ class UserExperienceEvaluationAudit extends Audit {
   mainTitle =
     "VALUTAZIONE DELL’ESPERIENZA D’USO, CHIAREZZA INFORMATIVA DELLA SCHEDA DI SERVIZIO";
 
-  public wrongItems: any = [];
-  public toleranceItems: any = [];
-  public correctItems: any = [];
-  public pagesInError: any = [];
+  public wrongItems: Record<string, unknown>[] = [];
+  public correctItems: Record<string, unknown>[] = [];
+  public pagesInError: Record<string, unknown>[] = [];
+  public toleranceItems: Record<string, unknown>[] = [];
   public score = 1;
-  private titleSubHeadings: any = [];
-  private headings: any = [];
+  private titleSubHeadings: string[] = [];
 
   async meta() {
     return {
@@ -72,20 +70,6 @@ class UserExperienceEvaluationAudit extends Audit {
 
   async auditPage(page: Page | null, url: string, error?: string) {
     this.titleSubHeadings = ["Elementi errati o non trovati"];
-    this.headings = [
-      {
-        key: "result",
-        itemType: "text",
-        text: "Risultato totale",
-        subItemsHeading: { key: "inspected_page", itemType: "url" },
-      },
-      {
-        key: "title_errors_found",
-        itemType: "text",
-        text: "",
-        subItemsHeading: { key: "errors_found", itemType: "text" },
-      },
-    ];
 
     if (error && !page) {
       this.score = 0;
@@ -155,8 +139,10 @@ class UserExperienceEvaluationAudit extends Audit {
   }
 
   async returnGlobal() {
-    this.globalResults.correctPages.pages = [];
-    this.globalResults.tolerancePages.pages = [];
+    this.globalResults.correctPages.pages = []
+    if(this.globalResults.tolerancePages){
+      this.globalResults.tolerancePages.pages = [];
+    }
     this.globalResults.wrongPages.pages = [];
     this.globalResults.pagesInError.pages = [];
 
@@ -237,20 +223,23 @@ class UserExperienceEvaluationAudit extends Audit {
         title_errors_found: this.titleSubHeadings[0],
       });
 
-      this.globalResults.tolerancePages.headings = [
-        auditData.subItem.yellowResult,
-        this.titleSubHeadings[0],
-      ];
+      if(this.globalResults.tolerancePages){
+        this.globalResults.tolerancePages.headings = [
+          auditData.subItem.yellowResult,
+          this.titleSubHeadings[0],
+        ];
 
-      for (const item of this.toleranceItems) {
-        this.globalResults.tolerancePages.pages.push(item);
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
+        for (const item of this.toleranceItems) {
+          this.globalResults.tolerancePages.pages.push(item);
+          results.push({
+            subItems: {
+              type: "subitems",
+              items: [item],
+            },
+          });
+        }
       }
+
     }
 
     if (this.correctItems.length > 0) {
@@ -277,7 +266,6 @@ class UserExperienceEvaluationAudit extends Audit {
       results.push({});
     }
 
-    this.globalResults.details.headings = this.headings;
     this.globalResults.details.items = results;
     this.globalResults.errorMessage =
       this.pagesInError.length > 0 ? errorHandling.popupMessage : "";

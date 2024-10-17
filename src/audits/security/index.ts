@@ -3,7 +3,7 @@
 import * as sslCertificate from "get-ssl-certificate";
 import { Page } from "puppeteer";
 
-import { Audit } from "../Audit.js";
+import {Audit, GlobalResults} from "../Audit.js";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import { allowedCiphers } from "./allowedCiphers.js";
 import https from "https";
@@ -23,12 +23,11 @@ const errorLogging = [
 ];
 
 class SecurityAudit extends Audit {
-  public globalResults: any = {
+  public globalResults: GlobalResults = {
     score: 0,
     details: {
       items: [],
       type: "table",
-      headings: [],
       summary: "",
     },
     pagesItems: {
@@ -42,7 +41,6 @@ class SecurityAudit extends Audit {
   code = "";
   mainTitle = "";
 
-  private headings: any = [];
 
   async meta() {
     return {
@@ -61,20 +59,18 @@ class SecurityAudit extends Audit {
   async auditPage(page: Page | null, error?: string) {
     if (error && !page) {
       this.globalResults.score = 0;
-      this.globalResults.details.items.push([
+      this.globalResults.details.items.push(
         {
           result: notExecutedErrorMessage.replace("<LIST>", error),
         },
-      ]);
-      this.globalResults.details.headings = [
-        { key: "result", itemType: "text", text: "Risultato" },
-      ];
+      );
+
       this.globalResults.pagesItems.headings = ["Risultato"];
       this.globalResults.pagesItems.message = notExecutedErrorMessage.replace(
         "<LIST>",
         error,
       );
-      this.globalResults.pagesItems.items = [
+      this.globalResults.pagesItems.pages = [
         {
           result: this.auditData.redResult,
         },
@@ -90,27 +86,6 @@ class SecurityAudit extends Audit {
 
       const greenResult = this.auditData.greenResult.replace("[url]", url);
       const redResult = this.auditData.redResult.replace("[url]", url);
-
-      this.headings = [
-        { key: "result", itemType: "text", text: "Risultato" },
-        {
-          key: "protocol",
-          itemType: "text",
-          text: "Protocollo usato dal dominio",
-        },
-        {
-          key: "certificate_validation",
-          itemType: "text",
-          text: "Validità del certificato",
-        },
-        { key: "tls_version", itemType: "text", text: "Versione TLS" },
-        { key: "cipher_suite", itemType: "text", text: "Suite di cifratura" },
-        {
-          key: "redirect_to_https",
-          itemType: "text",
-          text: "La pagina effettua redirect da http a https",
-        },
-      ];
 
       const item = [
         {
@@ -133,7 +108,6 @@ class SecurityAudit extends Audit {
           details: {
             items: item,
             type: "table",
-            headings: this.headings,
             summary: "",
           },
         };
@@ -157,7 +131,7 @@ class SecurityAudit extends Audit {
         certificate = await checkCertificateValidation(url);
         tls = await checkTLSVersion(url);
         cipherSuite = await checkCipherSuite(url);
-      } catch (e) {
+      } catch {
         item[0].protocol = protocol;
         item[0].result = redResult + " Certificato non trovato";
         return {
@@ -165,7 +139,6 @@ class SecurityAudit extends Audit {
           details: {
             items: item,
             type: "table",
-            headings: this.headings,
             summary: "",
           },
         };
@@ -237,7 +210,6 @@ class SecurityAudit extends Audit {
 
       this.globalResults.score = score;
       this.globalResults.details.items = item;
-      this.globalResults.details.headings = this.headings;
       this.globalResults.id = this.auditId;
 
       this.globalResults.pagesItems.pages = item;
@@ -264,7 +236,7 @@ class SecurityAudit extends Audit {
     return this.globalResults;
   }
 
-  static getInstance(): Promise<SecurityAudit> {
+  static getInstance(): SecurityAudit {
     if (!SecurityAudit.instance) {
       SecurityAudit.instance = new SecurityAudit("", [], []);
     }

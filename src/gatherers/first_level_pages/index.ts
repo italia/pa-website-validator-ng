@@ -7,7 +7,7 @@ class firstLevelPagesGatherer extends Gatherer {
   static dataElements: string[] = ["custom-submenu"];
   static pageType: string = "first-level-page";
 
-  static getInstance(): Promise<firstLevelPagesGatherer> {
+  static getInstance(): firstLevelPagesGatherer {
     if (!firstLevelPagesGatherer.instance) {
       firstLevelPagesGatherer.instance = new firstLevelPagesGatherer("");
     }
@@ -30,7 +30,7 @@ class firstLevelPagesGatherer extends Gatherer {
       page,
     );
 
-    this.gatheredPages = fetchedUrls.map((url: any) => {
+    this.gatheredPages = fetchedUrls.map((url: string) => {
       return {
         url: url,
         id: currentClass.pageType + Date.now(),

@@ -1,9 +1,9 @@
 "use strict";
-import puppeteer from "puppeteer";
+import puppeteer, {Browser} from "puppeteer";
 import * as dotenv from "dotenv";
 dotenv.config();
 
-let browser: any | null = null;
+let browser: Browser | null | void = null;
 
 async function initializePuppeteer() {
   if (!browser) {
@@ -19,11 +19,11 @@ async function initializePuppeteer() {
         throw err;
       });
 
-    browser.on("targetcreated", async (target: any) => {
+    browser.on("targetcreated", async (target) => {
       if (target.type() === "page") {
         const page = await target.page();
 
-        page.setDefaultTimeout(300000);
+        page?.setDefaultTimeout(300000);
       }
     });
   }

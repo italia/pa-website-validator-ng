@@ -5,11 +5,10 @@ import { getPages, getPrimaryPageUrl } from "../../utils/municipality/utils.js";
 import { auditDictionary } from "../../storage/auditDictionary.js";
 import {
   errorHandling,
-  notExecutedErrorMessage,
 } from "../../config/commonAuditsParts.js";
 import { DataElementError } from "../../utils/DataElementError.js";
 import { Page } from "puppeteer";
-import { Audit } from "../Audit.js";
+import {Audit, GlobalResultsMulti} from "../Audit.js";
 import * as cheerio from "cheerio";
 import { CheerioAPI } from "cheerio";
 import * as ejs from "ejs";
@@ -22,12 +21,11 @@ class BookingAppointment extends Audit {
   auditId = "municipality-booking-appointment-check";
   auditData = auditDictionary["municipality-booking-appointment-check"];
 
-  public globalResults: any = {
+  public globalResults: GlobalResultsMulti = {
     score: 1,
     details: {
       items: [],
       type: "table",
-      headings: [],
       summary: "",
     },
     pagesInError: {
@@ -52,13 +50,12 @@ class BookingAppointment extends Audit {
     },
     errorMessage: "",
   };
-  public wrongItems: any = [];
-  public toleranceItems: any = [];
-  public correctItems: any = [];
-  public pagesInError: any = [];
+  public wrongItems: Record<string, unknown>[] = [];
+  public correctItems: Record<string, unknown>[] = [];
+  public toleranceItems: Record<string, unknown>[] = [];
+  public pagesInError: Record<string, unknown>[] = [];
   public score = 1;
-  private titleSubHeadings: any = [];
-  private headings: any = [];
+  private titleSubHeadings: string[] = [];
 
   async meta() {
     return {
@@ -83,32 +80,6 @@ class BookingAppointment extends Audit {
     this.titleSubHeadings = [
       "Componente individuato",
       'Nella sezione "Accedi al servizio" della scheda servizio è presente il pulsante di prenotazione appuntamento',
-    ];
-    this.headings = [
-      {
-        key: "result",
-        itemType: "text",
-        text: "Risultato",
-        subItemsHeading: { key: "link", itemType: "url" },
-      },
-      {
-        key: "title_component_exist",
-        itemType: "text",
-        text: "",
-        subItemsHeading: {
-          key: "component_exist",
-          itemType: "text",
-        },
-      },
-      {
-        key: "title_in_page_url",
-        itemType: "text",
-        text: "",
-        subItemsHeading: {
-          key: "in_page_url",
-          itemType: "text",
-        },
-      },
     ];
 
     if (error && !page) {
@@ -157,14 +128,6 @@ class BookingAppointment extends Audit {
         if (!(ex instanceof DataElementError)) {
           throw ex;
         }
-        this.globalResults.details.items = [
-          { key: "result", itemType: "text", text: "Risultato" },
-        ];
-        this.globalResults.details.headings = [
-          {
-            result: notExecutedErrorMessage.replace("<LIST>", ex.message),
-          },
-        ];
         this.score = 0;
 
         return {
@@ -172,7 +135,7 @@ class BookingAppointment extends Audit {
         };
       }
 
-      let $: CheerioAPI | any = null;
+      let $: CheerioAPI = cheerio.load('<html><body></body></html>');
 
       try {
         const data = await page.content();
@@ -226,7 +189,9 @@ class BookingAppointment extends Audit {
 
   async returnGlobal() {
     this.globalResults.correctPages.pages = [];
-    this.globalResults.tolerancePages.pages = [];
+    if(this.globalResults.tolerancePages){
+      this.globalResults.tolerancePages.pages = [];
+    }
     this.globalResults.wrongPages.pages = [];
     this.globalResults.pagesInError.pages = [];
 
@@ -330,7 +295,6 @@ class BookingAppointment extends Audit {
 
     this.globalResults.score = this.score;
     this.globalResults.details.items = results;
-    this.globalResults.details.headings = this.headings;
     this.globalResults.errorMessage =
       this.pagesInError.length > 0 ? errorHandling.popupMessage : "";
 

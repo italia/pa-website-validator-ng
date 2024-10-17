@@ -13,7 +13,7 @@ import {
   errorHandling,
   minNumberOfServices,
 } from "../../config/commonAuditsParts.js";
-import { Audit } from "../Audit.js";
+import {Audit, GlobalResultsMulti} from "../Audit.js";
 import { Page } from "puppeteer";
 import {
   contentTypeItemsBody,
@@ -31,12 +31,11 @@ const auditId = "school-servizi-structure-match-model";
 const auditData = auditDictionary[auditId];
 
 class SchoolServiceAudit extends Audit {
-  public globalResults: any = {
+  public globalResults: GlobalResultsMulti = {
     score: 1,
     details: {
       items: [],
       type: "table",
-      headings: [],
       summary: "",
     },
     pagesInError: {
@@ -65,13 +64,12 @@ class SchoolServiceAudit extends Audit {
   code = "R.SC.1.2";
   mainTitle = "SCHEDE INFORMATIVE DI SERVIZIO";
 
-  public wrongItems: any = [];
-  public toleranceItems: any = [];
-  public correctItems: any = [];
-  public pagesInError: any = [];
+  public wrongItems: Record<string, unknown>[] = [];
+  public correctItems: Record<string, unknown>[] = [];
+  public pagesInError: Record<string, unknown>[] = [];
+  public toleranceItems: Record<string, unknown>[] = [];
   public score = 1;
-  private titleSubHeadings: any = [];
-  private headings: any = [];
+  private titleSubHeadings: string[] = [];
   totalServices = 0;
 
   async meta() {
@@ -92,32 +90,6 @@ class SchoolServiceAudit extends Audit {
     this.titleSubHeadings = [
       "Voci mancanti o senza contenuto",
       "Voci che non rispettano l'ordine richiesto",
-    ];
-    this.headings = [
-      {
-        key: "result",
-        itemType: "text",
-        text: "Risultato",
-        subItemsHeading: { key: "inspected_page", itemType: "url" },
-      },
-      {
-        key: "title_missing_elements",
-        itemType: "text",
-        text: "",
-        subItemsHeading: {
-          key: "missing_elements",
-          itemType: "text",
-        },
-      },
-      {
-        key: "title_wrong_order_elements",
-        itemType: "text",
-        text: "",
-        subItemsHeading: {
-          key: "wrong_order_elements",
-          itemType: "text",
-        },
-      },
     ];
 
     if (error && !page) {
@@ -291,7 +263,9 @@ class SchoolServiceAudit extends Audit {
 
   async returnGlobal() {
     this.globalResults.correctPages.pages = [];
-    this.globalResults.tolerancePages.pages = [];
+    if(this.globalResults.tolerancePages){
+      this.globalResults.tolerancePages.pages = [];
+    }
     this.globalResults.wrongPages.pages = [];
     this.globalResults.pagesInError.pages = [];
 
@@ -383,21 +357,24 @@ class SchoolServiceAudit extends Audit {
         title_missing_elements: this.titleSubHeadings[0],
         title_wrong_order_elements: this.titleSubHeadings[1],
       });
-      this.globalResults.tolerancePages.headings = [
-        auditData.subItem.yellowResult,
-        this.titleSubHeadings[0],
-        this.titleSubHeadings[1],
-      ];
+      if(this.globalResults.tolerancePages){
+        this.globalResults.tolerancePages.headings = [
+          auditData.subItem.yellowResult,
+          this.titleSubHeadings[0],
+          this.titleSubHeadings[1],
+        ];
 
-      for (const item of this.toleranceItems) {
-        this.globalResults.tolerancePages.pages.push(item);
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
+        for (const item of this.toleranceItems) {
+          this.globalResults.tolerancePages.pages.push(item);
+          results.push({
+            subItems: {
+              type: "subitems",
+              items: [item],
+            },
+          });
+        }
       }
+
 
       results.push({});
     }
@@ -430,7 +407,6 @@ class SchoolServiceAudit extends Audit {
     this.globalResults.errorMessage =
       this.pagesInError.length > 0 ? errorHandling.popupMessage : "";
     this.globalResults.details.items = results;
-    this.globalResults.details.headings = this.headings;
     this.globalResults.score = this.score;
     this.globalResults.id = this.auditId;
 

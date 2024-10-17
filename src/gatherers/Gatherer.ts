@@ -1,4 +1,4 @@
-import { JSHandle, Page } from "puppeteer";
+import {ElementHandle, JSHandle, Page} from "puppeteer";
 import {PageData} from "../types/crawler-types.js";
 import { loadPage } from "../utils/utils.js";
 
@@ -6,7 +6,7 @@ abstract class Gatherer {
   id: string;
   timeout: number;
   gatheredPages: PageData[];
-  protected static instance: any;
+  protected static instance : Gatherer;
   static pageType: string;
   static dataElements: string[];
 
@@ -28,15 +28,15 @@ abstract class Gatherer {
 
   async navigateAndFetchPages(
     url: string,
-    numberOfPages = 5,
-    website: string = "",
-    page: Page | null,
+    numberOfPages?: number,
+    website?: string,
+    page?: Page | null,
   ): Promise<PageData[]> {
     if (this.gatheredPages.length > 0 || !page) {
       return this.gatheredPages;
     }
 
-    const randomPagesUrl = await this.getRandomPagesUrl(url, numberOfPages);
+    const randomPagesUrl = await this.getRandomPagesUrl(url);
 
     const currentClass = this.constructor as typeof Gatherer;
     this.gatheredPages = randomPagesUrl.map((url) => {
@@ -54,7 +54,7 @@ abstract class Gatherer {
     return this.gatheredPages;
   }
 
-  async getRandomPagesUrl(url: string, numberOfPages = 1): Promise<string[]> {
+  async getRandomPagesUrl(url: string): Promise<string[]> {
     let pagesUrls: string[] = [];
     const page = await loadPage(url);
 
@@ -69,14 +69,14 @@ abstract class Gatherer {
       const dataElement = `[data-element="${value}"]`;
       const elementWithAtrr = await page.$(dataElement);
 
-      const elementPagesUrls: any[] = [];
+      const elementPagesUrls: string[] = [];
 
       if (!elementWithAtrr) continue;
 
       const elements = await elementWithAtrr.$$eval(
         "li > a",
-        (links: any[]) => {
-          return links.map((link: any) => ({
+        (links) => {
+          return links.map((link) => ({
             href: link.href,
             textContent: link.textContent,
           }));
@@ -109,7 +109,6 @@ abstract class Gatherer {
       pagesUrls = [...pagesUrls, ...new Set(elementPagesUrls)];
     }
 
-    //return this.getRandomNString(pagesUrls, numberOfPages);
     return pagesUrls;
   }
 
@@ -117,7 +116,7 @@ abstract class Gatherer {
     page: Page,
     url: string,
     retryCount: number,
-  ): Promise<any | null> {
+  ): Promise<unknown | null> {
     try {
       console.log(`${url} goto tentative:  ${retryCount} inizio`);
 
@@ -130,7 +129,7 @@ abstract class Gatherer {
         await page.evaluate(async () => {
           return window;
         });
-      } catch (e) {
+      } catch {
         console.log("context destroyed 1");
         try {
           response = await page.goto(url, {
@@ -146,7 +145,7 @@ abstract class Gatherer {
           await page.evaluate(async () => {
             return window;
           });
-        } catch (e) {
+        } catch {
           console.log("context destroyed 2");
           await page.goto(url, {
             waitUntil: ["load", "networkidle0"],
@@ -175,15 +174,15 @@ abstract class Gatherer {
     page: Page,
     elementDataAttribute: string,
     property: string = "href",
-  ): Promise<any[]> {
-    const urls = [];
+  ): Promise<string[]> {
+    const urls : string[] = [];
     const element = await page.$(elementDataAttribute);
 
     if (element) {
       const href = await element.getProperty(property);
       if (href) {
         const hrefValue = await href.jsonValue();
-        urls.push(hrefValue);
+        urls.push(String(hrefValue));
       } else {
         console.log("The element does not have an href attribute");
         throw new Error("The element does not have an href attribute");
@@ -206,7 +205,6 @@ abstract class Gatherer {
     const children = await jsHandle.getProperties();
     const childElements = [];
 
-    console.log(children);
     for (const property of children.values()) {
       const element = property.asElement();
       if (element) {
@@ -321,10 +319,9 @@ abstract class Gatherer {
   async getButtonValuesDataAttribute(
     page: Page,
     elementDataAttribute: string,
-  ): Promise<any[]> {
+  ): Promise<string[]> {
     const url = page.url();
-    const urls = [];
-    const elements: any = await page.$$(elementDataAttribute);
+    const elements: ElementHandle<Element>[] = await page.$$(elementDataAttribute);
 
     if (!elements || elements.length === 0) {
       throw new Error(
@@ -334,12 +331,12 @@ abstract class Gatherer {
 
     const buttonUrls = [];
     for (const element of elements) {
-      const buttonOnclick = await element.evaluate((el: HTMLElement) => {
+      const buttonOnclick = await element.evaluate((el) => {
         const onclickAttribute = el.getAttribute("onclick");
         return onclickAttribute || "";
       });
 
-      const buttonHrefAttr = await element.evaluate((el: HTMLElement) => {
+      const buttonHrefAttr = await element.evaluate((el) => {
         const hrefAttribute = el.getAttribute("href");
         return hrefAttribute || "";
       });

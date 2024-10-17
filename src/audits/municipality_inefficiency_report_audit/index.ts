@@ -7,7 +7,7 @@ import { buildUrl, isInternalUrl, urlExists } from "../../utils/utils.js";
 import { auditDictionary } from "../../storage/auditDictionary.js";
 import isEmail from "validator/lib/isEmail.js";
 import { Page } from "puppeteer";
-import { Audit } from "../Audit.js";
+import {Audit, GlobalResults} from "../Audit.js";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import * as ejs from "ejs";
 import { fileURLToPath } from "url";
@@ -17,12 +17,11 @@ const auditId = "municipality-inefficiency-report";
 const auditData = auditDictionary[auditId];
 
 class InefficiencyAudit extends Audit {
-  public globalResults: any = {
+  public globalResults: GlobalResults = {
     score: 0,
     details: {
       items: [],
       type: "table",
-      headings: [],
       summary: "",
     },
     pagesItems: {
@@ -37,7 +36,6 @@ class InefficiencyAudit extends Audit {
   mainTitle = "SEGNALAZIONE DISSERVIZIO";
 
   public score = 0;
-  private headings: any = [];
 
   async meta() {
     return {
@@ -55,24 +53,22 @@ class InefficiencyAudit extends Audit {
 
   async auditPage(page: Page | null, error?: string) {
     if (error && !page) {
-      this.globalResults["score"] = 0;
-      this.globalResults["details"]["items"] = [
+      this.globalResults.score = 0;
+      this.globalResults.details.items = [
         {
           result: notExecutedErrorMessage.replace("<LIST>", error),
         },
       ];
-      this.globalResults["details"]["type"] = "table";
-      this.globalResults["details"]["headings"] = [
-        { key: "result", itemType: "text", text: "Risultato" },
-      ];
-      this.globalResults["details"]["summary"] = "";
+      this.globalResults.details.type = "table";
+
+      this.globalResults.details.summary = "";
 
       this.globalResults.pagesItems.headings = ["Risultato"];
       this.globalResults.pagesItems.message = notExecutedErrorMessage.replace(
         "<LIST>",
         error,
       );
-      this.globalResults.pagesItems.items = [
+      this.globalResults.pagesItems.pages = [
         {
           result: this.auditData.redResult,
         },
@@ -85,34 +81,6 @@ class InefficiencyAudit extends Audit {
 
     if (page) {
       const url = page.url();
-
-      this.headings = [
-        {
-          key: "result",
-          itemType: "text",
-          text: "Risultato",
-        },
-        {
-          key: "link_name",
-          itemType: "text",
-          text: "Testo del link",
-        },
-        {
-          key: "link_destination",
-          itemType: "url",
-          text: "Pagina di destinazione",
-        },
-        {
-          key: "existing_page",
-          itemType: "text",
-          text: "Pagina esistente",
-        },
-        {
-          key: "is_service",
-          itemType: "text",
-          text: "Viene usato il servizio dedicato",
-        },
-      ];
 
       this.globalResults.pagesItems.headings = [
         "Risultato",
@@ -164,7 +132,6 @@ class InefficiencyAudit extends Audit {
 
           if (!checkUrl.result) {
             this.score = 0;
-            this.globalResults.details.headings = this.headings;
             this.globalResults.details.items = items;
             this.globalResults.score = 0;
 
@@ -190,7 +157,6 @@ class InefficiencyAudit extends Audit {
         ) {
           items[0].result = auditData.yellowResult;
           this.score = 0.5;
-          this.globalResults.details.headings = this.headings;
           this.globalResults.details.items = items;
           this.globalResults.score = 0.5;
 
@@ -204,7 +170,6 @@ class InefficiencyAudit extends Audit {
         items[0].result = auditData.greenResult;
 
         this.score = 1;
-        this.globalResults.details.headings = this.headings;
         this.globalResults.details.items = items;
         this.globalResults.score = 1;
 

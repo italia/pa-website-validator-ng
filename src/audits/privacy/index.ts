@@ -5,17 +5,16 @@ import { CheerioAPI } from "cheerio";
 import { urlExists } from "../../utils/utils.js";
 import { Page } from "puppeteer";
 
-import { Audit } from "../Audit.js";
+import {Audit, GlobalResults} from "../Audit.js";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import * as cheerio from "cheerio";
 
 class PrivacyAudit extends Audit {
-  public globalResults: any = {
+  public globalResults: GlobalResults = {
     score: 0,
     details: {
       items: [],
       type: "table",
-      headings: [],
       summary: "",
     },
     pagesItems: {
@@ -26,7 +25,6 @@ class PrivacyAudit extends Audit {
     errorMessage: "",
   };
 
-  private headings: any = [];
   code = "";
   mainTitle = "";
 
@@ -45,53 +43,16 @@ class PrivacyAudit extends Audit {
   }
 
   async auditPage(page: Page | null, url: string, error?: string) {
-    //TODO: secondo me dovremmo creare un gatherer per questa tipologia di pagina e qui fare solo il controllo sulla pagina
-
-    this.headings = [
-      {
-        key: "result",
-        itemType: "text",
-        text: "Risultato",
-      },
-      {
-        key: "link_name",
-        itemType: "text",
-        text: "Testo del link",
-      },
-      {
-        key: "link_destination",
-        itemType: "url",
-        text: "Pagina di destinazione del link",
-      },
-      {
-        key: "existing_page",
-        itemType: "text",
-        text: "Pagina esistente",
-      },
-      {
-        key: "secure_page",
-        itemType: "text",
-        text: "Pagina sicura",
-      },
-    ];
 
     if (error && !page) {
       this.globalResults.score = 0;
-      this.globalResults.details.items.push([
-        {
-          result: notExecutedErrorMessage.replace("<LIST>", error),
-        },
-      ]);
-      this.globalResults.details.headings = [
-        { key: "result", itemType: "text", text: "Risultato" },
-      ];
 
       this.globalResults.pagesItems.headings = ["Risultato"];
       this.globalResults.pagesItems.message = notExecutedErrorMessage.replace(
         "<LIST>",
         error,
       );
-      this.globalResults.pagesItems.items = [
+      this.globalResults.pagesItems.pages = [
         {
           result: this.auditData.redResult,
         },
@@ -147,7 +108,6 @@ class PrivacyAudit extends Audit {
 
       this.globalResults.score = score;
       this.globalResults.details.items = items;
-      this.globalResults.details.headings = this.headings;
       this.globalResults.id = this.auditId;
 
       this.globalResults.pagesItems.pages = items;

@@ -5,7 +5,7 @@ import { CheerioAPI } from "cheerio";
 import { buildUrl, isInternalUrl } from "../../utils/utils.js";
 import { Page } from "puppeteer";
 
-import { Audit } from "../Audit.js";
+import {Audit, GlobalResults} from "../Audit.js";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import * as cheerio from "cheerio";
 import { compareVersions } from "compare-versions";
@@ -13,12 +13,11 @@ import axios from "axios";
 import { cmsThemeRx } from "./cmsThemeRx.js";
 
 class ThemeAudit extends Audit {
-  public globalResults: any = {
+  public globalResults : GlobalResults = {
     score: 0,
-    details: {
+    details:  {
       items: [],
       type: "table",
-      headings: [],
       summary: "",
     },
     pagesItems: {
@@ -27,9 +26,9 @@ class ThemeAudit extends Audit {
       pages: [],
     },
     errorMessage: "",
+    id: '',
   };
 
-  private headings: any = [];
   protected minVersion = "1.0.0";
   code = "";
   mainTitle = "";
@@ -51,20 +50,18 @@ class ThemeAudit extends Audit {
   async auditPage(page: Page | null, error?: string) {
     if (error && !page) {
       this.globalResults.score = 0;
-      this.globalResults.details.items.push([
+      this.globalResults.details.items.push(
         {
           result: notExecutedErrorMessage.replace("<LIST>", error),
         },
-      ]);
-      this.globalResults.details.headings = [
-        { key: "result", itemType: "text", text: "Risultato" },
-      ];
+      );
+
       this.globalResults.pagesItems.headings = ["Risultato"];
       this.globalResults.pagesItems.message = notExecutedErrorMessage.replace(
         "<LIST>",
         error,
       );
-      this.globalResults.pagesItems.items = [
+      this.globalResults.pagesItems.pages = [
         {
           result: this.auditData.redResult,
         },
@@ -77,24 +74,6 @@ class ThemeAudit extends Audit {
 
     if (page) {
       const url = page.url();
-
-      this.headings = [
-        {
-          key: "result",
-          itemType: "text",
-          text: "Risultato",
-        },
-        {
-          key: "cms_name",
-          itemType: "text",
-          text: "Tema CMS del modello in uso",
-        },
-        {
-          key: "theme_version",
-          itemType: "text",
-          text: "Versione del tema CMS in uso",
-        },
-      ];
 
       let score = 0.5;
       const items = [
@@ -128,7 +107,7 @@ class ThemeAudit extends Audit {
           try {
             const response = await axios.get(styleCSSUrl);
             CSSContent = typeof response.data === "string" ? response.data : "";
-          } catch (e) {
+          } catch {
             CSSContent = "";
           }
 
@@ -155,7 +134,6 @@ class ThemeAudit extends Audit {
 
       this.globalResults.score = score;
       this.globalResults.details.items = items;
-      this.globalResults.details.headings = this.headings;
       this.globalResults.id = this.auditId;
 
       this.globalResults.pagesItems.pages = items;
@@ -179,11 +157,11 @@ class ThemeAudit extends Audit {
     return this.globalResults;
   }
 
-  static getInstance(): Promise<ThemeAudit> {
+  static getInstance(): ThemeAudit{
     if (!ThemeAudit.instance) {
-      ThemeAudit.instance = new ThemeAudit("", [], []);
+      ThemeAudit.instance = new ThemeAudit();
     }
-    return ThemeAudit.instance;
+    return <ThemeAudit>ThemeAudit.instance;
   }
 }
 

@@ -1,13 +1,11 @@
 import { Gatherer } from "../Gatherer.js";
 import {PageData} from "../../types/crawler-types.js";
-import { Page } from "puppeteer";
+import {ElementHandle, Page} from "puppeteer";
 import {
   buildUrl,
   getRandomNString,
   isInternalUrl,
 } from "../../utils/utils.js";
-import * as cheerio from "cheerio";
-import { CheerioAPI } from "cheerio";
 
 class eventsGatherer extends Gatherer {
   static dataElements = ["event-link"];
@@ -16,20 +14,20 @@ class eventsGatherer extends Gatherer {
 
   async navigateAndFetchPages(
     url: string,
-    numberOfPages = 5,
-    website = "",
+    numberOfPages : number,
+    website : string,
     page: Page,
   ): Promise<PageData[]> {
     const currentClass = this.constructor as typeof Gatherer;
 
     let maxCountPages = 0;
-    let clickButton: any = true;
-    let pages: any[] = [];
+    let clickButton = true;
+    let pages : ElementHandle<Element>[] = [];
     let eventsPageUrls: string[] = [];
 
     while (clickButton) {
       try {
-        clickButton = await page.$('[data-element="load-other-cards"]');
+        clickButton = !!(await page.$('[data-element="load-other-cards"]'));
         console.log("BUTTON FOUND", clickButton);
         if (!clickButton) {
           continue;
@@ -48,17 +46,13 @@ class eventsGatherer extends Gatherer {
         }
 
         maxCountPages = currentCountPages;
-      } catch (e) {
-        console.log("CATCH???");
+      } catch {
         clickButton = false;
       }
     }
 
-    const data = await page.content();
-    const $: CheerioAPI = await cheerio.load(data);
-
     for (const page of pages) {
-      let eventUrl = $(page).attr()?.href;
+      let eventUrl = await page.evaluate(el => el.getAttribute('href'));
       if (eventUrl && eventUrl !== "#" && eventUrl !== "") {
         if ((await isInternalUrl(eventUrl)) && !eventUrl.includes(url)) {
           eventUrl = await buildUrl(url, eventUrl);
@@ -75,7 +69,7 @@ class eventsGatherer extends Gatherer {
 
     eventsPageUrls = await getRandomNString(eventsPageUrls, numberOfPages);
 
-    this.gatheredPages = eventsPageUrls.map((url: any) => {
+    this.gatheredPages = eventsPageUrls.map((url: string) => {
       return {
         url: url,
         id: currentClass.pageType + Date.now(),
@@ -90,7 +84,7 @@ class eventsGatherer extends Gatherer {
     return this.gatheredPages;
   }
 
-  static getInstance(): Promise<eventsGatherer> {
+  static getInstance(): eventsGatherer {
     if (!eventsGatherer.instance) {
       eventsGatherer.instance = new eventsGatherer("", 3000);
     }

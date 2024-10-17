@@ -5,7 +5,7 @@ import { CheerioAPI } from "cheerio";
 import { getAllPageHTML, urlExists } from "../../utils/utils.js";
 import { Page } from "puppeteer";
 
-import { Audit } from "../Audit.js";
+import {Audit, GlobalResults} from "../Audit.js";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import * as cheerio from "cheerio";
 
@@ -13,12 +13,11 @@ class A11yAudit extends Audit {
   mainTitle = "";
   code = "";
 
-  public globalResults: any = {
+  public globalResults: GlobalResults = {
     score: 0,
     details: {
       items: [],
       type: "table",
-      headings: [],
       summary: "",
     },
     pagesItems: {
@@ -29,7 +28,6 @@ class A11yAudit extends Audit {
     errorMessage: "",
   };
 
-  private headings: any = [];
 
   async meta() {
     return {
@@ -51,16 +49,13 @@ class A11yAudit extends Audit {
       this.globalResults.details.items.push({
         result: notExecutedErrorMessage.replace("<LIST>", error),
       });
-      this.globalResults.details.headings = [
-        { key: "result", itemType: "text", text: "Risultato" },
-      ];
 
       this.globalResults.pagesItems.headings = ["Risultato"];
       this.globalResults.pagesItems.message = notExecutedErrorMessage.replace(
         "<LIST>",
         error,
       );
-      this.globalResults.pagesItems.items = [
+      this.globalResults.pagesItems.pages = [
         {
           result: this.auditData.redResult,
         },
@@ -73,15 +68,15 @@ class A11yAudit extends Audit {
 
     if (page) {
       const url = page.url();
-
-      this.headings = [
+      this.globalResults.pagesItems.headings = [
         "Risultato",
         "Testo del link",
         "Pagina di destinazione del link",
         "Pagina esistente",
         "La pagina contiene l'url del sito di origine",
         "È dichiarata la conformità alle specifiche WCAG 2.1",
-      ];
+      ]
+
       const items = [
         {
           result: this.auditData.redResult,
@@ -118,9 +113,6 @@ class A11yAudit extends Audit {
         if (!checkUrl.result) {
           this.globalResults.score = 0;
           this.globalResults.details.items = items;
-          this.globalResults.details.headings = this.headings;
-
-          this.globalResults.pagesItems.headings = this.headings;
           this.globalResults.pagesItems.pages = items;
 
           return {
@@ -135,8 +127,6 @@ class A11yAudit extends Audit {
         if (!href.includes("https://form.agid.gov.it/view/")) {
           this.globalResults.score = 0;
           this.globalResults.details.items = items;
-          this.globalResults.details.headings = this.headings;
-          this.globalResults.pagesItems.headings = this.headings;
           this.globalResults.pagesItems.pages = items;
 
           return {
@@ -150,8 +140,6 @@ class A11yAudit extends Audit {
         if (!privacyPageHTML.match(new RegExp(domain, "i"))) {
           this.globalResults.score = 0;
           this.globalResults.details.items = items;
-          this.globalResults.details.headings = this.headings;
-          this.globalResults.pagesItems.headings = this.headings;
           this.globalResults.pagesItems.pages = items;
 
           return {
@@ -167,8 +155,6 @@ class A11yAudit extends Audit {
         ) {
           this.globalResults.score = 0;
           this.globalResults.details.items = items;
-          this.globalResults.details.headings = this.headings;
-          this.globalResults.pagesItems.headings = this.headings;
           this.globalResults.pagesItems.pages = items;
 
           return {
@@ -183,10 +169,7 @@ class A11yAudit extends Audit {
       }
 
       this.globalResults.details.items = items;
-      this.globalResults.details.headings = this.headings;
       this.globalResults.id = this.auditId;
-
-      this.globalResults.pagesItems.headings = this.headings;
       this.globalResults.pagesItems.pages = items;
 
       return {

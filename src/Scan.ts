@@ -10,12 +10,8 @@ import { collectGatherers } from "./GathererManager.js";
 
 const scan = async (
   pageData: PageData,
-  saveFile = true,
-  destination = "",
-  reportName = "",
-  view = false,
 ) => {
-  let results: any;
+  let results: Record<string, unknown> = {};
   try {
     const config = await initializeConfig();
     const gatherers = await collectGatherers();
@@ -35,18 +31,21 @@ const scan = async (
     if (!config.audits[pageData.type]) {
       PageManager.setAudited(pageData.url, pageData.type);
       PageManager.setNotTemporaryAudit(pageData.url, pageData.type);
-      pageData = PageManager.getPageByUrl(pageData.url, pageData.type);
     }
 
     if (!config.gatherers[pageData.type]) {
       PageManager.setGathered(pageData.url, pageData.type);
       PageManager.setNotTemporaryGatherer(pageData.url, pageData.type);
-      pageData = PageManager.getPageByUrl(pageData.url, pageData.type);
+    }
+    const pageTemp : PageData | undefined = PageManager.getPageByUrl(pageData.url, pageData.type);
+
+    if(pageTemp){
+      pageData = pageTemp;
     }
 
     /** GATHERING */
-    let gathererPages: any = [];
-    const gatheringErrors = [];
+    let gathererPages: PageData[] = [];
+    const gatheringErrors : string[] = [];
 
     if (
       !pageData.gathered ||
@@ -55,7 +54,7 @@ const scan = async (
       console.log(
         ` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Gathering start`,
       );
-      let navigatingError: any;
+      let navigatingError: string | unknown = '';
 
       let page: Page | null = null;
       if (!pageData.temporaryGatherer) {
@@ -92,7 +91,7 @@ const scan = async (
 
           if (navigatingError) {
             console.log("navigating Error gatherer =", navigatingError);
-            throw new Error(navigatingError);
+            throw new Error(String(navigatingError));
           }
 
           const fetchedPages = await gatherer.navigateAndFetchPages(
@@ -102,11 +101,10 @@ const scan = async (
             page,
           );
           gathererPages = [...gathererPages, ...fetchedPages];
-        } catch (e: any) {
+        } catch (e : unknown) {
           console.log(
             ` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: ERROR`,
           );
-          console.log(e.message);
 
           await PageManager.addPage({
             id: "",
@@ -116,20 +114,25 @@ const scan = async (
             internal: false,
             gathered: true,
             audited: true,
-            errors: [e.message],
+            errors: [ e instanceof Error ? e.message : String(e)],
             temporaryGatherer: true,
             temporaryAudit: true,
           });
-          gatheringErrors.push(e);
+          gatheringErrors.push(e instanceof Error ? e.message : String(e));
         }
       }
 
-      pageData = await PageManager.setErrors(
-        pageData.url,
-        pageData.type,
-        gatheringErrors,
-        true,
-      );
+
+      const pageTemp : PageData | undefined = await PageManager.setErrors(
+          pageData.url,
+          pageData.type,
+          gatheringErrors,
+          true,
+      )
+
+      if(pageTemp){
+        pageData = pageTemp;
+      }
 
       for (const gatheredPage of gathererPages) {
         await PageManager.addPage(gatheredPage);
@@ -146,11 +149,10 @@ const scan = async (
     }
 
     /** AUDITING */
-    const auditedPages: any = [];
     const auditingErrors = [];
 
     if (!pageData.audited || (pageData.audited && pageData.temporaryAudit)) {
-      let navigatingError: any;
+      let navigatingError: string = '';
 
       let page: Page | null = null;
       console.log(
@@ -163,7 +165,7 @@ const scan = async (
             await page.waitForNetworkIdle();
           }
         } catch (e) {
-          navigatingError = e;
+          navigatingError = e instanceof Error ? e.message : String(e);
         }
       }
 
@@ -195,13 +197,12 @@ const scan = async (
               await PageManager.setGlobalResults({
                 [auditType]: { ...result, ...meta },
               });
-            } catch (e: any) {
+            } catch (e) {
               console.log(
                 ` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: ERROR`,
               );
-              console.log(e.message);
 
-              auditingErrors.push(e);
+              auditingErrors.push(e instanceof Error ? e.message : String(e));
             }
           }
         }

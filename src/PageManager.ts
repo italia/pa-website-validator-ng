@@ -1,11 +1,14 @@
 import { EventEmitter } from "events";
 import {PageData} from "./types/crawler-types.js";
 
+interface Results {
+  audits: Record<string, unknown>
+}
 class PageManager {
   private static instance: PageManager;
   private pagesArray: PageData[] = [];
   private firstAdd = true;
-  private globalResult: any = {
+  private globalResult : Results = {
     audits: {},
   };
   private emitter: EventEmitter;
@@ -46,7 +49,7 @@ class PageManager {
     }
   }
 
-  async closeScript(results: any): Promise<void> {
+  async closeScript(results: Record<string, unknown>): Promise<void> {
     this.emitter.emit("scriptClosed", results);
   }
 
@@ -74,7 +77,7 @@ class PageManager {
     }
   }
 
-  async setGlobalResults(result: any) {
+  async setGlobalResults(result : Record<string, unknown>) {
     const audits = this.globalResult.audits;
     const newKey = Object.keys(result)[0];
     const foundKey = Object.keys(audits).find((el) => el == newKey);
@@ -102,7 +105,7 @@ class PageManager {
     this.emitter.on("pagesClosed", callback);
   }
 
-  async onScriptClosed(callback: (results: any) => void) {
+  async onScriptClosed(callback: (results : Record<string, unknown>) => void) {
     this.emitter.on("scriptClosed", callback);
   }
 
@@ -110,13 +113,10 @@ class PageManager {
     return this.pagesArray.find((page) => page.id === id);
   }
 
-  getPageByUrl(url: string, pageType: string): PageData | any {
-    if (this.pagesArray && this.pagesArray.length) {
+  getPageByUrl(url: string, pageType: string): PageData | undefined {
       return this.pagesArray.find(
-        (page) => page.url === url && page.type === pageType,
+        (page : PageData) => page.url === url && page.type === pageType,
       );
-    }
-    return;
   }
 
   getAllPages(): PageData[] {
@@ -161,9 +161,9 @@ class PageManager {
   setErrors(
     url: string,
     pageType: string,
-    errors: Error[],
+    errors: string[],
     returnPage?: boolean,
-  ): PageData | any {
+  ): PageData | undefined {
     const page = this.pagesArray.find(
       (page) => page.url === url && page.type === pageType,
     );
@@ -172,6 +172,8 @@ class PageManager {
     if (returnPage) {
       return page;
     }
+
+    return;
   }
 
   hasRemainingPages() {

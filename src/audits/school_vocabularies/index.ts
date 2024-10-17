@@ -1,9 +1,9 @@
 "use strict";
 
 import { auditDictionary } from "../../storage/auditDictionary.js";
-import { Page } from "puppeteer";
+import { Page, ElementHandle } from "puppeteer";
 import * as cheerio from "cheerio";
-import { Audit } from "../Audit.js";
+import {Audit, GlobalResults} from "../Audit.js";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import {
   areAllElementsInVocabulary,
@@ -15,12 +15,11 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 class SchoolVocabularies extends Audit {
-  public globalResults: any = {
+  public globalResults: GlobalResults = {
     score: 0,
     details: {
       items: [],
       type: "table",
-      headings: [],
       summary: "",
     },
     pagesItems: {
@@ -31,7 +30,6 @@ class SchoolVocabularies extends Audit {
     errorMessage: "",
   };
 
-  private headings: any = [];
   auditId = "school-controlled-vocabularies";
   auditData = auditDictionary["school-controlled-vocabularies"];
   code = "R.SC.1.1";
@@ -54,21 +52,12 @@ class SchoolVocabularies extends Audit {
   async auditPage(page: Page | null, url: string, error?: string) {
     if (error && !page) {
       this.globalResults.score = 0;
-      this.globalResults.details.items.push([
-        {
-          result: notExecutedErrorMessage.replace("<LIST>", error),
-        },
-      ]);
-      this.globalResults.details.headings = [
-        { key: "result", itemType: "text", text: "Risultato" },
-      ];
-
       this.globalResults.pagesItems.headings = ["Risultato"];
       this.globalResults.pagesItems.message = notExecutedErrorMessage.replace(
         "<LIST>",
         error,
       );
-      this.globalResults.pagesItems.items = [
+      this.globalResults.pagesItems.pages = [
         {
           result: this.auditData.redResult,
         },
@@ -82,20 +71,6 @@ class SchoolVocabularies extends Audit {
     if (page) {
       const url = page.url();
 
-      this.headings = [
-        { key: "result", itemType: "text", text: "Risultato" },
-        {
-          key: "element_in_school_model_percentage",
-          itemType: "text",
-          text: "% di argomenti presenti nell'elenco del modello",
-        },
-        {
-          key: "element_not_in_school_model",
-          itemType: "text",
-          text: "Argomenti non presenti nell'elenco del modello",
-        },
-      ];
-
       const item = [
         {
           result: this.auditData.redResult,
@@ -107,16 +82,19 @@ class SchoolVocabularies extends Audit {
       let argumentsElements: string[] = [];
       try {
         argumentsElements = await getArgumentsElements(url, page);
-      } catch (e) {
+      } catch {
+          this.globalResults.score = 0;
+          this.globalResults.pagesItems.pages = [
+              {
+                  result: notExecutedErrorMessage.replace("<LIST>", "all-topics"),
+              }
+          ];
+          this.globalResults.pagesItems.headings = ['Risultato'];
+
         return {
           score: 0,
           details: {
-            items: [
-              {
-                result: notExecutedErrorMessage.replace("<LIST>", "all-topics"),
-              },
-            ],
-            type: "table",
+              type: "table",
             headings: [{ key: "result", itemType: "text", text: "Risultato" }],
             summary: "",
           },
@@ -124,14 +102,17 @@ class SchoolVocabularies extends Audit {
       }
 
       if (argumentsElements.length <= 0) {
+          this.globalResults.score = 0;
+          this.globalResults.pagesItems.pages = [
+              {
+                  result: notExecutedErrorMessage.replace("<LIST>", "all-topics"),
+              }
+          ];
+          this.globalResults.pagesItems.headings = ['Risultato'];
+
         return {
           score: 0,
           details: {
-            items: [
-              {
-                result: notExecutedErrorMessage.replace("<LIST>", "all-topics"),
-              },
-            ],
             type: "table",
             headings: [{ key: "result", itemType: "text", text: "Risultato" }],
             summary: "",
@@ -172,7 +153,6 @@ class SchoolVocabularies extends Audit {
       this.globalResults.score = score;
       this.globalResults.details.items = item;
       this.globalResults.pagesItems.pages = item;
-      this.globalResults.details.headings = this.headings;
       this.globalResults.pagesItems.headings = [
         "Risultato",
         "% di argomenti presenti nell'elenco del modello",
@@ -243,16 +223,26 @@ async function getArgumentsElements(
     await page.waitForSelector('[data-element="search-modal-button"]');
 
     await page.$eval(
-      '[data-element="search-modal-button"]',
-      (el: any) => (el.value = "scuola"),
+        '[data-element="search-modal-input"]',
+        (el: Element) => {
+          if (el instanceof HTMLInputElement) {
+            el.value = "scuola";
+          } else {
+            console.warn("L'elemento selezionato non è un input.");
+          }
+        }
     );
 
-    const button = await page.$('[data-element="search-submit"]');
+    const button: ElementHandle<Element> | null = await page.$('[data-element="search-submit"]');
+
     if (!button) {
       return elements;
     }
 
-    await button?.evaluate((b: any) => b.click());
+    await button.evaluate((b) => {
+      const buttonElement = b as HTMLButtonElement;
+      buttonElement.click();
+    });
 
     await page.waitForSelector('[data-element="all-topics"]');
 

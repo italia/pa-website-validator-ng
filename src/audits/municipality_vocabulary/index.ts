@@ -14,7 +14,7 @@ import {
 } from "../../utils/utils.js";
 import { auditDictionary } from "../../storage/auditDictionary.js";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
-import { Audit } from "../Audit.js";
+import {Audit, GlobalResults} from "../Audit.js";
 
 import * as cheerio from "cheerio";
 import { CheerioAPI } from "cheerio";
@@ -31,12 +31,11 @@ const yellowResult = auditData.yellowResult;
 const redResult = auditData.redResult;
 
 class MunicipalityVocabulary extends Audit {
-  public globalResults: any = {
+  public globalResults: GlobalResults = {
     score: 0,
     details: {
       items: [],
       type: "table",
-      headings: [],
       summary: "",
     },
     pagesItems: {
@@ -69,28 +68,17 @@ class MunicipalityVocabulary extends Audit {
   async auditPage(page: Page | null, url: string, error?: string) {
     if (error && !page) {
       this.globalResults.score = 0;
-      this.globalResults.details.items.push([
-        {
-          result: notExecutedErrorMessage.replace("<LIST>", error),
-        },
-      ]);
-      this.globalResults.details.headings = [
-        { key: "result", itemType: "text", text: "Risultato" },
-      ];
-
-      this.globalResults.details.headings = [
-        { key: "result", itemType: "text", text: "Risultato" },
-      ];
 
       this.globalResults.pagesItems.headings = ["Risultato"];
       this.globalResults.pagesItems.message = notExecutedErrorMessage.replace(
         "<LIST>",
         error,
       );
-      this.globalResults.pagesItems.items = [
+
+        this.globalResults.pagesItems.pages = [
         {
           result: this.auditData.redResult,
-        },
+        }
       ];
 
       return {
@@ -101,28 +89,12 @@ class MunicipalityVocabulary extends Audit {
     if (page) {
       const url = page.url();
 
-      const headings = [
-        { key: "result", itemType: "text", text: "Risultato" },
-        {
-          key: "element_in_municipality_model_percentage",
-          itemType: "text",
-          text: "% di argomenti presenti nell'elenco del modello",
-        },
-        {
-          key: "element_not_in_municipality_vocabulary",
-          itemType: "text",
-          text: "Argomenti non presenti nell'elenco del modello",
-        },
-        {
-          key: "element_in_union_percentage",
-          itemType: "text",
-          text: "% di argomenti presenti nell'elenco del modello o EuroVoc",
-        },
-        {
-          key: "element_not_in_union_vocabulary",
-          itemType: "text",
-          text: "Argomenti non presenti nell'elenco del modello o EuroVoc",
-        },
+      this.globalResults.pagesItems.headings = [
+        "Risultato",
+        "% di argomenti presenti nell'elenco del modello",
+        "Argomenti non presenti nell'elenco del modello",
+        "% di argomenti presenti nell'elenco del modello o EuroVoc",
+        "Argomenti non presenti nell'elenco del modello o EuroVoc",
       ];
 
       const item = [
@@ -148,14 +120,7 @@ class MunicipalityVocabulary extends Audit {
           "<LIST>",
           "`all-topics",
         );
-        this.globalResults.details.headings = headings;
-        this.globalResults.pagesItems.headings = [
-          "Risultato",
-          "% di argomenti presenti nell'elenco del modello",
-          "Argomenti non presenti nell'elenco del modello",
-          "% di argomenti presenti nell'elenco del modello o EuroVoc",
-          "Argomenti non presenti nell'elenco del modello o EuroVoc",
-        ];
+
         this.globalResults.details.items = item;
         this.globalResults.pagesItems.pages = item;
         this.globalResults.score = 0;
@@ -181,14 +146,6 @@ class MunicipalityVocabulary extends Audit {
       );
 
       if (argumentList.length === 0) {
-        this.globalResults.details.headings = headings;
-        this.globalResults.pagesItems.headings = [
-          "Risultato",
-          "% di argomenti presenti nell'elenco del modello",
-          "Argomenti non presenti nell'elenco del modello",
-          "% di argomenti presenti nell'elenco del modello o EuroVoc",
-          "Argomenti non presenti nell'elenco del modello o EuroVoc",
-        ];
         this.globalResults.details.items = item;
         this.globalResults.pagesItems.pages = item;
         this.globalResults.score = 0;
@@ -254,14 +211,6 @@ class MunicipalityVocabulary extends Audit {
       item[0].element_not_in_union_vocabulary =
         elementInUnionVocabulary.elementNotIncluded.join(", ");
 
-      this.globalResults.details.headings = headings;
-      this.globalResults.pagesItems.headings = [
-        "Risultato",
-        "% di argomenti presenti nell'elenco del modello",
-        "Argomenti non presenti nell'elenco del modello",
-        "% di argomenti presenti nell'elenco del modello o EuroVoc",
-        "Argomenti non presenti nell'elenco del modello o EuroVoc",
-      ];
       this.globalResults.details.items = item;
       this.globalResults.pagesItems.pages = item;
       this.globalResults.score = this.score;

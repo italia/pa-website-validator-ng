@@ -9,7 +9,7 @@ import {
 import { auditDictionary } from "../../storage/auditDictionary.js";
 import { MenuItem } from "../../types/menuItem.js";
 import { getFirstLevelPages } from "../../utils/municipality/utils.js";
-import { Audit } from "../Audit.js";
+import {Audit, GlobalResults} from "../Audit.js";
 import { Page } from "puppeteer";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import * as ejs from "ejs";
@@ -24,12 +24,11 @@ const yellowResult = auditData.yellowResult;
 const redResult = auditData.redResult;
 
 class MenuAudit extends Audit {
-  public globalResults: any = {
+  public globalResults: GlobalResults = {
     score: 0,
     details: {
       items: [],
       type: "table",
-      headings: [],
       summary: "",
     },
     pagesItems: {
@@ -49,7 +48,6 @@ class MenuAudit extends Audit {
   mainTitle = "VOCI DI MENÙ DI PRIMO LIVELLO";
 
   public score = 0;
-  private headings: any = [];
   async meta() {
     return {
       id: auditId,
@@ -66,28 +64,29 @@ class MenuAudit extends Audit {
 
   async auditPage(page: Page | null, error?: string) {
     if (error && !page) {
-      this.globalResults["score"] = 0;
-      this.globalResults["details"]["items"] = [
+      this.globalResults.score = 0;
+      this.globalResults.details.items = [
         {
           result: notExecutedErrorMessage.replace("<LIST>", error),
         },
       ];
-      this.globalResults["details"]["type"] = "table";
-      this.globalResults["details"]["headings"] = [
-        { key: "result", itemType: "text", text: "Risultato" },
-      ];
-      this.globalResults["details"]["summary"] = "";
+      this.globalResults.details.type = "table";
+      this.globalResults.details.summary = "";
 
-      this.globalResults.pagesItems.headings = ["Risultato"];
-      this.globalResults.pagesItems.message = notExecutedErrorMessage.replace(
-        "<LIST>",
-        error,
-      );
-      this.globalResults.pagesItems.items = [
-        {
-          result: this.auditData.redResult,
-        },
-      ];
+
+        this.globalResults.pagesItems.headings = ["Risultato"];
+        this.globalResults.pagesItems.message = notExecutedErrorMessage.replace(
+            "<LIST>",
+            error,
+        );
+        this.globalResults.pagesItems.pages = [
+          {
+            result: this.auditData.redResult,
+          },
+        ];
+
+
+
 
       return {
         score: 0,
@@ -96,41 +95,6 @@ class MenuAudit extends Audit {
 
     if (page) {
       const url = page.url();
-
-      this.headings = [
-        {
-          key: "result",
-          itemType: "text",
-          text: "Risultato",
-          subItemsHeading: {
-            key: "menu_voice",
-            itemType: "text",
-          },
-        },
-        {
-          key: "found_menu_voices",
-          itemType: "text",
-          text: "Voci del menù identificate",
-          subItemsHeading: {
-            key: "inspected_page",
-            itemType: "url",
-          },
-        },
-        {
-          key: "missing_menu_voices",
-          itemType: "text",
-          text: "Voci del menù mancanti",
-          subItemsHeading: {
-            key: "external",
-            itemType: "text",
-          },
-        },
-        {
-          key: "wrong_order_menu_voices",
-          itemType: "text",
-          text: "Voci del menù in ordine errato",
-        },
-      ];
 
       const results = [];
       results.push({
@@ -187,13 +151,16 @@ class MenuAudit extends Audit {
         results[0].result = yellowResult;
       }
 
-      this.globalResults.recapItems.headings = [
-        "Risultato",
-        "Voci del menù identificate",
-        "Voci del menù mancanti",
-        "Voci del menù in ordine errato",
-      ];
-      this.globalResults.recapItems.pages = [results[0]];
+      if(this.globalResults.recapItems){
+        this.globalResults.recapItems.headings = [
+          "Risultato",
+          "Voci del menù identificate",
+          "Voci del menù mancanti",
+          "Voci del menù in ordine errato",
+        ];
+
+        this.globalResults.recapItems.pages = [results[0]];
+      }
 
       results.push({});
 
@@ -236,7 +203,6 @@ class MenuAudit extends Audit {
       }
 
       this.globalResults.score = this.score;
-      this.globalResults.details.headings = this.headings;
       this.globalResults.details.items = results;
     }
 

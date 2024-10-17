@@ -17,12 +17,13 @@ import {
   primaryMenuItems,
 } from "./menuItems.js";
 import { DataElementError } from "../../utils/DataElementError.js";
-import { Audit } from "../Audit.js";
+import {Audit, GlobalResults} from "../Audit.js";
 import { Page } from "puppeteer";
 import { errorHandling } from "../../config/commonAuditsParts.js";
 import * as ejs from "ejs";
 import path from "path";
 import { fileURLToPath } from "url";
+import {MunicipalitySecondLevelPages} from "../../types/crawler-types.js";
 
 const auditId = "municipality-second-level-pages";
 const auditData = auditDictionary[auditId];
@@ -37,12 +38,11 @@ class SecondLevelAudit extends Audit {
   code = "C.SI.1.7";
   mainTitle = "TITOLI DELLE PAGINE DI SECONDO LIVELLO ";
 
-  public globalResults: any = {
+  public globalResults: GlobalResults = {
     score: 0,
     details: {
       items: [],
       type: "table",
-      headings: [],
       summary: "",
     },
     pagesItems: {
@@ -53,10 +53,15 @@ class SecondLevelAudit extends Audit {
     errorMessage: "",
   };
 
-  public pagesInError: any = [];
+  public pagesInError: Record<string, unknown>[] = [];
   public score = 0;
-  private headings: any = [];
-  private secondLevelPages: any = [];
+  private secondLevelPages: MunicipalitySecondLevelPages = {
+    management: [],
+    news: [],
+    services: [],
+    live: [],
+    custom: [],
+  };
   private pagesItems: itemPage[] = [];
   private errorVoices: string[] = [];
   private totalNumberOfTitleFound = 0;
@@ -75,40 +80,6 @@ class SecondLevelAudit extends Audit {
   }
 
   async auditPage(page: Page | null, url: string, error: string) {
-    this.headings = [
-      {
-        key: "result",
-        itemType: "text",
-        text: "Risultato",
-        subItemsHeading: {
-          key: "menu_voice",
-          itemType: "text",
-        },
-      },
-      {
-        key: "correct_title_percentage",
-        itemType: "text",
-        text: "% di titoli corretti tra quelli usati",
-        subItemsHeading: {
-          key: "inspected_page",
-          itemType: "url",
-        },
-      },
-      {
-        key: "correct_title_found",
-        itemType: "text",
-        text: "Titoli corretti identificati",
-        subItemsHeading: {
-          key: "external",
-          itemType: "text",
-        },
-      },
-      {
-        key: "wrong_title_found",
-        itemType: "text",
-        text: "Titoli aggiuntivi trovati",
-      },
-    ];
 
     if (error && !page) {
       this.score = 0;
@@ -127,8 +98,6 @@ class SecondLevelAudit extends Audit {
       const url = page.url();
 
       try {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         this.secondLevelPages = await getSecondLevelPages(url, true);
       } catch (ex) {
         if (!(ex instanceof DataElementError)) {
@@ -220,7 +189,7 @@ class SecondLevelAudit extends Audit {
 
   async returnGlobal() {
     const results = [];
-    this.globalResults.pagesItems = [];
+    this.globalResults.pagesItems.pages = [];
 
     if (this.pagesInError.length) {
       this.globalResults.pagesItems.message = errorHandling.errorMessage;
@@ -228,7 +197,7 @@ class SecondLevelAudit extends Audit {
         errorHandling.errorColumnTitles[0],
         errorHandling.errorColumnTitles[1],
       ];
-      this.pagesInError.forEach((p: any) => {
+      this.pagesInError.forEach((p: Record<string,unknown>) => {
         this.globalResults.pagesItems.pages.push(p);
       });
     }
@@ -289,7 +258,6 @@ class SecondLevelAudit extends Audit {
     results[0].correct_title_found = correctTitleFound;
     results[0].wrong_title_found = wrongTitleFound;
 
-    this.globalResults.details.headings = this.headings;
     this.globalResults.details.items = results;
     this.globalResults.score = this.score;
 

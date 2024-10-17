@@ -5,7 +5,7 @@ import { domains } from "./allowedDomain.js";
 import { auditDictionary } from "../../storage/auditDictionary.js";
 import { urlExists } from "../../utils/utils.js";
 import { errorHandling } from "../../config/commonAuditsParts.js";
-import { Audit } from "../Audit.js";
+import {Audit, GlobalResultsMulti} from "../Audit.js";
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
 import { fileURLToPath } from "url";
@@ -24,12 +24,11 @@ class DomainAudit extends Audit {
     'ricercando specifici attributi "data-element" come spiegato nella Documentazione delle App di valutazione, viene verificato che il dominio utilizzato nelle pagine analizzate rispetti la struttura richiesta dal criterio di conformità e che le pagine siano raggiungibili senza necessità di inserimento del sottodominio "www."; ';
   failures = "Elementi di fallimento:";
 
-  public globalResults: any = {
+  public globalResults: GlobalResultsMulti = {
     score: 1,
     details: {
       items: [],
       type: "table",
-      headings: [],
       summary: "",
     },
     pagesInError: {
@@ -49,13 +48,12 @@ class DomainAudit extends Audit {
     },
     errorMessage: "",
   };
-  public wrongItems: any = [];
-  public toleranceItems: any = [];
-  public correctItems: any = [];
-  public pagesInError: any = [];
+
+  public wrongItems: Record<string, unknown>[] = [];
+  public correctItems: Record<string, unknown>[] = [];
+  public pagesInError: Record<string, unknown>[] = [];
   public score = 1;
-  private titleSubHeadings: any = [];
-  private headings: any = [];
+  private titleSubHeadings: string[] = [];
 
   async meta() {
     return {
@@ -85,41 +83,6 @@ class DomainAudit extends Audit {
       "Dominio utilizzato",
       'Viene usato il sottodominio "comune." seguito da un dominio istituzionale riservato',
       'Sito raggiungibile senza "www."',
-    ];
-    this.headings = [
-      {
-        key: "result",
-        itemType: "text",
-        text: "Risultato",
-        subItemsHeading: { key: "inspected_page", itemType: "url" },
-      },
-      {
-        key: "title_domain",
-        itemType: "text",
-        text: "",
-        subItemsHeading: {
-          key: "domain",
-          itemType: "text",
-        },
-      },
-      {
-        key: "title_correct_domain",
-        itemType: "text",
-        text: "",
-        subItemsHeading: {
-          key: "correct_domain",
-          itemType: "text",
-        },
-      },
-      {
-        key: "title_www_access",
-        itemType: "text",
-        text: "",
-        subItemsHeading: {
-          key: "www_access",
-          itemType: "text",
-        },
-      },
     ];
 
     if (error && !page && pageType !== "event") {
@@ -291,7 +254,6 @@ class DomainAudit extends Audit {
     }
 
     this.globalResults.details.items = results;
-    this.globalResults.details.headings = this.headings;
     this.globalResults.score = this.score;
 
     return this.globalResults;

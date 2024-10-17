@@ -8,8 +8,8 @@ class eventsPageGatherer extends Gatherer {
 
   async navigateAndFetchPages(
     url: string,
-    numberOfPages = 5,
-    website = "",
+    numberOfPages : number,
+    website : string,
     page: Page,
   ): Promise<PageData[]> {
     if (this.gatheredPages.length > 0) return this.gatheredPages;
@@ -24,9 +24,9 @@ class eventsPageGatherer extends Gatherer {
       ];
     }
 
-    this.gatheredPages = fetchedUrls.map((urlItem: any) => {
+    this.gatheredPages = fetchedUrls.map((url: string) => {
       return {
-        url: urlItem,
+        url: url,
         id: currentClass.pageType + Date.now(),
         type: currentClass.pageType,
         gathered: false,
@@ -39,7 +39,7 @@ class eventsPageGatherer extends Gatherer {
     return this.gatheredPages;
   }
 
-  static getInstance(): Promise<eventsPageGatherer> {
+  static getInstance(): eventsPageGatherer {
     if (!eventsPageGatherer.instance) {
       eventsPageGatherer.instance = new eventsPageGatherer("", 3000);
     }

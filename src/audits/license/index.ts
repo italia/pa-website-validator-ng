@@ -6,7 +6,7 @@ import { initializePuppeteer } from "./../../PuppeteerInstance.js";
 import { buildUrl, isInternalUrl, urlExists } from "../../utils/utils.js";
 import { Page } from "puppeteer";
 
-import { Audit } from "../Audit.js";
+import {Audit, GlobalResults} from "../Audit.js";
 import {
   errorHandling,
   notExecutedErrorMessage,
@@ -19,12 +19,11 @@ class LicenceAudit extends Audit {
   code = "";
   mainTitle = "";
 
-  public globalResults: any = {
+  public globalResults: GlobalResults = {
     score: 0,
     details: {
       items: [],
       type: "table",
-      headings: [],
       summary: "",
     },
     pagesItems: {
@@ -34,8 +33,6 @@ class LicenceAudit extends Audit {
     },
     errorMessage: "",
   };
-
-  private headings: any = [];
 
   async meta() {
     return {
@@ -57,16 +54,13 @@ class LicenceAudit extends Audit {
       this.globalResults.details.items.push({
         result: notExecutedErrorMessage.replace("<LIST>", error),
       });
-      this.globalResults.details.headings = [
-        { key: "result", itemType: "text", text: "Risultato" },
-      ];
 
       this.globalResults.pagesItems.headings = ["Risultato"];
       this.globalResults.pagesItems.message = notExecutedErrorMessage.replace(
         "<LIST>",
         error,
       );
-      this.globalResults.pagesItems.items = [
+      this.globalResults.pagesItems.pages = [
         {
           result: this.auditData.redResult,
         },
@@ -79,34 +73,6 @@ class LicenceAudit extends Audit {
 
     if (page) {
       const url = page.url();
-
-      this.headings = [
-        {
-          key: "result",
-          itemType: "text",
-          text: "Risultato",
-        },
-        {
-          key: "link_name",
-          itemType: "text",
-          text: "Testo del link",
-        },
-        {
-          key: "link_destination",
-          itemType: "url",
-          text: "Pagina di destinazione del link",
-        },
-        {
-          key: "page_section",
-          itemType: "text",
-          text: "Il titolo della sezione è corretto",
-        },
-        {
-          key: "page_contains_correct_text",
-          itemType: "text",
-          text: "La dicitura è corretta",
-        },
-      ];
 
       this.globalResults.pagesItems.headings = [
         "Risultato",
@@ -149,7 +115,6 @@ class LicenceAudit extends Audit {
             details: {
               items: items,
               type: "table",
-              headings: this.headings,
               summary: "",
             },
           };
@@ -208,7 +173,6 @@ class LicenceAudit extends Audit {
 
       this.globalResults.score = score;
       this.globalResults.details.items = items;
-      this.globalResults.details.headings = this.headings;
       this.globalResults.id = this.auditId;
       this.globalResults.pagesItems.pages = items;
 

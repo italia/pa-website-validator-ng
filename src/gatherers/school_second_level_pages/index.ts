@@ -9,7 +9,7 @@ class secondLevelPagesGatherer extends Gatherer {
     "services-submenu",
   ];
 
-  static getInstance(): Promise<secondLevelPagesGatherer> {
+  static getInstance(): secondLevelPagesGatherer {
     if (!secondLevelPagesGatherer.instance) {
       secondLevelPagesGatherer.instance = new secondLevelPagesGatherer(
         "",

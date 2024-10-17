@@ -7,7 +7,7 @@ class SecondLevelPagesGatherer extends Gatherer {
   static dataElements: string[] = ["custom-submenu"];
   static pageType: string = "second-level-page";
 
-  static getInstance(): Promise<SecondLevelPagesGatherer> {
+  static getInstance(): SecondLevelPagesGatherer {
     if (!SecondLevelPagesGatherer.instance) {
       SecondLevelPagesGatherer.instance = new SecondLevelPagesGatherer("");
     }
@@ -30,7 +30,7 @@ class SecondLevelPagesGatherer extends Gatherer {
       page,
     );
 
-    this.gatheredPages = fetchedUrls.map((url: any) => {
+    this.gatheredPages = fetchedUrls.map((url: string) => {
       return {
         url: url,
         id: currentClass.pageType + Date.now(),
