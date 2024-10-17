@@ -1,4 +1,4 @@
-import {PageData, AuditDictionary} from "../types/crawler-types";
+import {AuditDictionary} from "../types/crawler-types";
 import { Page } from "puppeteer";
 import { auditDictionary } from "../storage/auditDictionary.js";
 import * as ejs from "ejs";
@@ -62,7 +62,6 @@ export interface GlobalResultsMulti {
 }
 
 abstract class Audit {
-  id: string;
   protected static instance: Audit;
   globalResults: GlobalResults | GlobalResultsMulti = {
     score: 0,
@@ -82,7 +81,7 @@ abstract class Audit {
   code = "";
   info = false;
   reportHTML = '';
-  minVersion = "";
+  protected minVersion = "";
   mainTitle = "";
 
   protected auditId = "audit";
