@@ -441,11 +441,11 @@ class SchoolServiceAudit extends Audit {
     });
   }
 
-  static getInstance(): Promise<SchoolServiceAudit> {
+  static getInstance(): SchoolServiceAudit {
     if (!SchoolServiceAudit.instance) {
-      SchoolServiceAudit.instance = new SchoolServiceAudit("", [], []);
+      SchoolServiceAudit.instance = new SchoolServiceAudit;
     }
-    return SchoolServiceAudit.instance;
+    return <SchoolServiceAudit>SchoolServiceAudit.instance;
   }
 }
 

@@ -12,11 +12,11 @@ class SchoolLicenceAudit extends LicenceAudit {
   code = "R.SC.2.2";
   mainTitle = "LICENZA E ATTRIBUZIONE";
 
-  static getInstance(): Promise<SchoolLicenceAudit> {
+  static getInstance(): SchoolLicenceAudit {
     if (!SchoolLicenceAudit.instance) {
-      SchoolLicenceAudit.instance = new SchoolLicenceAudit("", [], []);
+      SchoolLicenceAudit.instance = new SchoolLicenceAudit();
     }
-    return SchoolLicenceAudit.instance;
+    return <SchoolLicenceAudit>SchoolLicenceAudit.instance;
   }
 
   async returnGlobalHTML() {

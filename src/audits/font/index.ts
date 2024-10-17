@@ -333,11 +333,11 @@ class FontAudit extends Audit {
     return this.globalResults;
   }
 
-  static getInstance(): Promise<FontAudit> {
+  static getInstance(): FontAudit {
     if (!FontAudit.instance) {
-      FontAudit.instance = new FontAudit("", [], []);
+      FontAudit.instance = new FontAudit();
     }
-    return FontAudit.instance;
+    return <FontAudit>FontAudit.instance;
   }
 }
 

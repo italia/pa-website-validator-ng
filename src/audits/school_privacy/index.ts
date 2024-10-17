@@ -12,11 +12,11 @@ class SchoolPrivacyAudit extends PrivacyAudit {
   code = "C.SC.2.1";
   mainTitle = "INFORMATIVA PRIVACY";
 
-  static getInstance(): Promise<SchoolPrivacyAudit> {
+  static getInstance(): SchoolPrivacyAudit {
     if (!SchoolPrivacyAudit.instance) {
-      SchoolPrivacyAudit.instance = new SchoolPrivacyAudit("", [], []);
+      SchoolPrivacyAudit.instance = new SchoolPrivacyAudit();
     }
-    return SchoolPrivacyAudit.instance;
+    return <SchoolPrivacyAudit>SchoolPrivacyAudit.instance;
   }
 
   async returnGlobalHTML() {

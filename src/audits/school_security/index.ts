@@ -12,11 +12,11 @@ class SchoolSecurityAudit extends SecurityAudit {
   code = "C.SC.3.1";
   mainTitle = "CERTIFICATO HTTPS";
 
-  static getInstance(): Promise<SchoolSecurityAudit> {
+  static getInstance(): SchoolSecurityAudit {
     if (!SchoolSecurityAudit.instance) {
-      SchoolSecurityAudit.instance = new SchoolSecurityAudit("", [], []);
+      SchoolSecurityAudit.instance = new SchoolSecurityAudit();
     }
-    return SchoolSecurityAudit.instance;
+    return <SchoolSecurityAudit>SchoolSecurityAudit.instance;
   }
 
   async returnGlobalHTML() {

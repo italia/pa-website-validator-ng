@@ -349,11 +349,11 @@ class MetatagAudit extends Audit {
     });
   }
 
-  static getInstance(): Promise<MetatagAudit> {
+  static getInstance(): MetatagAudit{
     if (!MetatagAudit.instance) {
-      MetatagAudit.instance = new MetatagAudit("", [], []);
+      MetatagAudit.instance = new MetatagAudit();
     }
-    return MetatagAudit.instance;
+    return <MetatagAudit>MetatagAudit.instance;
   }
 
   async getType() {

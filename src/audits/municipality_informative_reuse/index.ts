@@ -14,15 +14,11 @@ class MunicipalityInfoReuseAudit extends InfoReuseAudit {
   mainTitle = "RIUSO";
   code = "R.SI.2.2";
 
-  static getInstance(): Promise<MunicipalityInfoReuseAudit> {
+  static getInstance(): MunicipalityInfoReuseAudit {
     if (!MunicipalityInfoReuseAudit.instance) {
-      MunicipalityInfoReuseAudit.instance = new MunicipalityInfoReuseAudit(
-        "",
-        [],
-        [],
-      );
+      MunicipalityInfoReuseAudit.instance = new MunicipalityInfoReuseAudit();
     }
-    return MunicipalityInfoReuseAudit.instance;
+    return <MunicipalityInfoReuseAudit>MunicipalityInfoReuseAudit.instance;
   }
 
   async returnGlobalHTML() {

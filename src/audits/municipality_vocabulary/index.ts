@@ -257,11 +257,11 @@ class MunicipalityVocabulary extends Audit {
     });
   }
 
-  static getInstance(): Promise<MunicipalityVocabulary> {
+  static getInstance(): MunicipalityVocabulary {
     if (!MunicipalityVocabulary.instance) {
-      MunicipalityVocabulary.instance = new MunicipalityVocabulary("", [], []);
+      MunicipalityVocabulary.instance = new MunicipalityVocabulary();
     }
-    return MunicipalityVocabulary.instance;
+    return <MunicipalityVocabulary>MunicipalityVocabulary.instance;
   }
 }
 

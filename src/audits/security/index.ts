@@ -238,9 +238,9 @@ class SecurityAudit extends Audit {
 
   static getInstance(): SecurityAudit {
     if (!SecurityAudit.instance) {
-      SecurityAudit.instance = new SecurityAudit("", [], []);
+      SecurityAudit.instance = new SecurityAudit();
     }
-    return SecurityAudit.instance;
+    return <SecurityAudit>SecurityAudit.instance;
   }
 }
 

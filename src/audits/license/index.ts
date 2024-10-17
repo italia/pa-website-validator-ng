@@ -186,11 +186,11 @@ class LicenceAudit extends Audit {
     return this.auditId;
   }
 
-  static getInstance(): Promise<LicenceAudit> {
+  static getInstance(): LicenceAudit {
     if (!LicenceAudit.instance) {
-      LicenceAudit.instance = new LicenceAudit("", [], []);
+      LicenceAudit.instance = new LicenceAudit();
     }
-    return LicenceAudit.instance;
+    return <LicenceAudit>LicenceAudit.instance;
   }
 }
 

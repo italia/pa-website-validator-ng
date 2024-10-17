@@ -422,11 +422,11 @@ class ServiceAudit extends Audit {
     });
   }
 
-  static getInstance(): Promise<ServiceAudit> {
+  static getInstance(): ServiceAudit {
     if (!ServiceAudit.instance) {
-      ServiceAudit.instance = new ServiceAudit("", [], []);
+      ServiceAudit.instance = new ServiceAudit();
     }
-    return ServiceAudit.instance;
+    return <ServiceAudit>ServiceAudit.instance;
   }
 }
 

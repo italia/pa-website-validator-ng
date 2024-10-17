@@ -14,11 +14,11 @@ class MunicipalityThemeAudit extends ThemeAudit {
   mainTitle = "UTILIZZO DI TEMI PER CMS";
 
   minVersion = "1.0.0";
-  static getInstance(): Promise<MunicipalityThemeAudit> {
+  static getInstance(): MunicipalityThemeAudit {
     if (!MunicipalityThemeAudit.instance) {
-      MunicipalityThemeAudit.instance = new MunicipalityThemeAudit("", [], []);
+      MunicipalityThemeAudit.instance = new MunicipalityThemeAudit();
     }
-    return MunicipalityThemeAudit.instance;
+    return <MunicipalityThemeAudit>MunicipalityThemeAudit.instance;
   }
 
   async returnGlobalHTML() {

@@ -289,11 +289,11 @@ class ContactAssistencyAudit extends Audit {
     return auditId;
   }
 
-  static getInstance(): Promise<ContactAssistencyAudit> {
+  static getInstance(): ContactAssistencyAudit {
     if (!ContactAssistencyAudit.instance) {
-      ContactAssistencyAudit.instance = new ContactAssistencyAudit("", [], []);
+      ContactAssistencyAudit.instance = new ContactAssistencyAudit();
     }
-    return ContactAssistencyAudit.instance;
+    return <ContactAssistencyAudit>ContactAssistencyAudit.instance;
   }
 }
 

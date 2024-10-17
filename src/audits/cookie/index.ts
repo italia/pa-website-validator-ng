@@ -278,11 +278,11 @@ class CookieAudit extends Audit {
     return this.globalResults;
   }
 
-  static getInstance(): Promise<CookieAudit> {
+  static getInstance(): CookieAudit {
     if (!CookieAudit.instance) {
-      CookieAudit.instance = new CookieAudit("", [], []);
+      CookieAudit.instance = new CookieAudit();
     }
-    return CookieAudit.instance;
+    return <CookieAudit>CookieAudit.instance;
   }
 }
 

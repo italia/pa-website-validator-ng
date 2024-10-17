@@ -367,11 +367,11 @@ class BootstrapMunAudit extends Audit {
     return this.auditId;
   }
 
-  static getInstance(): Promise<BootstrapMunAudit> {
+  static getInstance(): BootstrapMunAudit {
     if (!BootstrapMunAudit.instance) {
-      BootstrapMunAudit.instance = new BootstrapMunAudit("", [], []);
+      BootstrapMunAudit.instance = new BootstrapMunAudit();
     }
-    return BootstrapMunAudit.instance;
+    return <BootstrapMunAudit>BootstrapMunAudit.instance;
   }
 }
 

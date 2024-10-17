@@ -13,11 +13,11 @@ class SchoolFontAudit extends FontAudit {
 
   static allowedFonts = allowedFonts;
 
-  static getInstance(): Promise<SchoolFontAudit> {
+  static getInstance(): SchoolFontAudit {
     if (!SchoolFontAudit.instance) {
-      SchoolFontAudit.instance = new SchoolFontAudit("", [], []);
+      SchoolFontAudit.instance = new SchoolFontAudit();
     }
-    return SchoolFontAudit.instance;
+    return <SchoolFontAudit>SchoolFontAudit.instance;
   }
 
   async returnGlobalHTML() {

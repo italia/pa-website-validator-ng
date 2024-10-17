@@ -284,11 +284,11 @@ class DomainAudit extends Audit {
     });
   }
 
-  static getInstance(): Promise<DomainAudit> {
+  static getInstance(): DomainAudit {
     if (!DomainAudit.instance) {
-      DomainAudit.instance = new DomainAudit("", [], []);
+      DomainAudit.instance = new DomainAudit();
     }
-    return DomainAudit.instance;
+    return <DomainAudit>DomainAudit.instance;
   }
 }
 

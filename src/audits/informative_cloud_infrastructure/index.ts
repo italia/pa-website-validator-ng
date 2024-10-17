@@ -32,11 +32,11 @@ class InfoCloudAudit extends Audit {
     };
   }
 
-  static getInstance(): Promise<InfoCloudAudit> {
+  static getInstance(): InfoCloudAudit {
     if (!InfoCloudAudit.instance) {
-      InfoCloudAudit.instance = new InfoCloudAudit("", [], []);
+      InfoCloudAudit.instance = new InfoCloudAudit();
     }
-    return InfoCloudAudit.instance;
+    return <InfoCloudAudit>InfoCloudAudit.instance;
   }
 }
 

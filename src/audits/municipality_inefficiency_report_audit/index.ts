@@ -214,11 +214,11 @@ class InefficiencyAudit extends Audit {
     });
   }
 
-  static getInstance(): Promise<InefficiencyAudit> {
+  static getInstance(): InefficiencyAudit {
     if (!InefficiencyAudit.instance) {
-      InefficiencyAudit.instance = new InefficiencyAudit("", [], []);
+      InefficiencyAudit.instance = new InefficiencyAudit();
     }
-    return InefficiencyAudit.instance;
+    return <InefficiencyAudit>InefficiencyAudit.instance;
   }
 }
 

@@ -14,11 +14,11 @@ class SchoolInfoCloudAudit extends InfoCloudAudit {
   mainTitle = "INFRASTRUTTURE CLOUD";
   code = "R.SC.2.3";
 
-  static getInstance(): Promise<SchoolInfoCloudAudit> {
+  static getInstance(): SchoolInfoCloudAudit {
     if (!SchoolInfoCloudAudit.instance) {
-      SchoolInfoCloudAudit.instance = new SchoolInfoCloudAudit("", [], []);
+      SchoolInfoCloudAudit.instance = new SchoolInfoCloudAudit();
     }
-    return SchoolInfoCloudAudit.instance;
+    return <SchoolInfoCloudAudit>SchoolInfoCloudAudit.instance;
   }
 
   async returnGlobalHTML() {

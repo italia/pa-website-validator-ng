@@ -243,11 +243,11 @@ class MenuAudit extends Audit {
     });
   }
 
-  static getInstance(): Promise<MenuAudit> {
+  static getInstance(): MenuAudit {
     if (!MenuAudit.instance) {
-      MenuAudit.instance = new MenuAudit("", [], []);
+      MenuAudit.instance = new MenuAudit();
     }
-    return MenuAudit.instance;
+    return <MenuAudit>MenuAudit.instance;
   }
 }
 

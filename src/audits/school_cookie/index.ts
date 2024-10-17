@@ -10,11 +10,11 @@ class SchoolCookie extends CookieAudit {
   code = "C.SC.2.3";
   mainTitle = "COOKIE";
 
-  static getInstance(): Promise<SchoolCookie> {
+  static getInstance(): SchoolCookie {
     if (!SchoolCookie.instance) {
-      SchoolCookie.instance = new SchoolCookie("", [], []);
+      SchoolCookie.instance = new SchoolCookie();
     }
-    return SchoolCookie.instance;
+    return <SchoolCookie>SchoolCookie.instance;
   }
 
   async returnGlobalHTML() {

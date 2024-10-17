@@ -14,15 +14,11 @@ class MunicipalityInfoCloudAudit extends InfoCloudAudit {
   mainTitle = "INFRASTRUTTURE CLOUD";
   code = "R.SI.2.1";
 
-  static getInstance(): Promise<MunicipalityInfoCloudAudit> {
+  static getInstance(): MunicipalityInfoCloudAudit {
     if (!MunicipalityInfoCloudAudit.instance) {
-      MunicipalityInfoCloudAudit.instance = new MunicipalityInfoCloudAudit(
-        "",
-        [],
-        [],
-      );
+      MunicipalityInfoCloudAudit.instance = new MunicipalityInfoCloudAudit();
     }
-    return MunicipalityInfoCloudAudit.instance;
+    return <MunicipalityInfoCloudAudit>MunicipalityInfoCloudAudit.instance;
   }
 
   async returnGlobalHTML() {

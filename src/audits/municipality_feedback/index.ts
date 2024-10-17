@@ -290,11 +290,11 @@ class FeedbackAudit extends Audit {
     return this.globalResults;
   }
 
-  static getInstance(): Promise<FeedbackAudit> {
+  static getInstance(): FeedbackAudit {
     if (!FeedbackAudit.instance) {
-      FeedbackAudit.instance = new FeedbackAudit("", [], []);
+      FeedbackAudit.instance = new FeedbackAudit();
     }
-    return FeedbackAudit.instance;
+    return <FeedbackAudit>FeedbackAudit.instance;
   }
 
   async returnGlobalHTML() {

@@ -13,11 +13,11 @@ class MunicipalityFontAudit extends FontAudit {
 
   static allowedFonts = allowedFonts;
 
-  static getInstance(): Promise<MunicipalityFontAudit> {
+  static getInstance(): MunicipalityFontAudit {
     if (!MunicipalityFontAudit.instance) {
-      MunicipalityFontAudit.instance = new MunicipalityFontAudit("", [], []);
+      MunicipalityFontAudit.instance = new MunicipalityFontAudit();
     }
-    return MunicipalityFontAudit.instance;
+    return <MunicipalityFontAudit>MunicipalityFontAudit.instance;
   }
 
   async returnGlobalHTML() {

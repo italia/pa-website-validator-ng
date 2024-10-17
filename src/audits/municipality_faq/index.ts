@@ -182,11 +182,11 @@ class FaqAudit extends Audit {
     });
   }
 
-  static getInstance(): Promise<FaqAudit> {
+  static getInstance(): FaqAudit {
     if (!FaqAudit.instance) {
-      FaqAudit.instance = new FaqAudit("", [], []);
+      FaqAudit.instance = new FaqAudit();
     }
-    return FaqAudit.instance;
+    return <FaqAudit>FaqAudit.instance;
   }
 }
 

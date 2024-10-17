@@ -339,11 +339,11 @@ class SchoolBootstrap extends Audit {
     });
   }
 
-  static getInstance(): Promise<SchoolBootstrap> {
+  static getInstance(): SchoolBootstrap {
     if (!SchoolBootstrap.instance) {
-      SchoolBootstrap.instance = new SchoolBootstrap("", [], []);
+      SchoolBootstrap.instance = new SchoolBootstrap();
     }
-    return SchoolBootstrap.instance;
+    return <SchoolBootstrap>SchoolBootstrap.instance;
   }
 }
 

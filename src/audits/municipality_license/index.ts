@@ -12,15 +12,11 @@ class MunicipalityLicenceAudit extends LicenceAudit {
   code = "C.SI.3.4";
   mainTitle = "LICENZA E ATTRIBUZIONE";
 
-  static getInstance(): Promise<MunicipalityLicenceAudit> {
+  static getInstance(): MunicipalityLicenceAudit {
     if (!MunicipalityLicenceAudit.instance) {
-      MunicipalityLicenceAudit.instance = new MunicipalityLicenceAudit(
-        "",
-        [],
-        [],
-      );
+      MunicipalityLicenceAudit.instance = new MunicipalityLicenceAudit();
     }
-    return MunicipalityLicenceAudit.instance;
+    return <MunicipalityLicenceAudit>MunicipalityLicenceAudit.instance;
   }
 
   async returnGlobalHTML() {

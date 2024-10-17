@@ -43,11 +43,11 @@ class MunicipalityA11yAudit extends A11yAudit {
     });
   }
 
-  static getInstance(): Promise<MunicipalityA11yAudit> {
+  static getInstance(): MunicipalityA11yAudit {
     if (!MunicipalityA11yAudit.instance) {
-      MunicipalityA11yAudit.instance = new MunicipalityA11yAudit("", [], []);
+      MunicipalityA11yAudit.instance = new MunicipalityA11yAudit();
     }
-    return MunicipalityA11yAudit.instance;
+    return <MunicipalityA11yAudit>MunicipalityA11yAudit.instance;
   }
 }
 

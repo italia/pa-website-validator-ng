@@ -12,15 +12,11 @@ class MunicipalityPrivacyAudit extends PrivacyAudit {
   code = "C.SI.3.3";
   mainTitle = "INFORMATIVA PRIVACY";
 
-  static getInstance(): Promise<MunicipalityPrivacyAudit> {
+  static getInstance(): MunicipalityPrivacyAudit {
     if (!MunicipalityPrivacyAudit.instance) {
-      MunicipalityPrivacyAudit.instance = new MunicipalityPrivacyAudit(
-        "",
-        [],
-        [],
-      );
+      MunicipalityPrivacyAudit.instance = new MunicipalityPrivacyAudit();
     }
-    return MunicipalityPrivacyAudit.instance;
+    return <MunicipalityPrivacyAudit>MunicipalityPrivacyAudit.instance;
   }
 
   async returnGlobalHTML() {

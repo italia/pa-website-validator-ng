@@ -302,12 +302,12 @@ class UserExperienceEvaluationAudit extends Audit {
     });
   }
 
-  static getInstance(): Promise<UserExperienceEvaluationAudit> {
+  static getInstance(): UserExperienceEvaluationAudit {
     if (!UserExperienceEvaluationAudit.instance) {
       UserExperienceEvaluationAudit.instance =
-        new UserExperienceEvaluationAudit("", [], []);
+        new UserExperienceEvaluationAudit();
     }
-    return UserExperienceEvaluationAudit.instance;
+    return <UserExperienceEvaluationAudit>UserExperienceEvaluationAudit.instance;
   }
 
   async getType() {

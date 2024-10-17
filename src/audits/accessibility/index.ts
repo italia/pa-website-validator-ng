@@ -182,11 +182,11 @@ class A11yAudit extends Audit {
     return this.auditId;
   }
 
-  static getInstance(): Promise<A11yAudit> {
+  static getInstance(): A11yAudit {
     if (!A11yAudit.instance) {
-      A11yAudit.instance = new A11yAudit("", [], []);
+      A11yAudit.instance = new A11yAudit();
     }
-    return A11yAudit.instance;
+    return <A11yAudit>A11yAudit.instance;
   }
 }
 

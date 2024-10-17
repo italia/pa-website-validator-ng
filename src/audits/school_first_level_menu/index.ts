@@ -273,15 +273,11 @@ class SchoolFirstLevelMenuAudit extends Audit {
     });
   }
 
-  static getInstance(): Promise<SchoolFirstLevelMenuAudit> {
+  static getInstance(): SchoolFirstLevelMenuAudit {
     if (!SchoolFirstLevelMenuAudit.instance) {
-      SchoolFirstLevelMenuAudit.instance = new SchoolFirstLevelMenuAudit(
-        "",
-        [],
-        [],
-      );
+      SchoolFirstLevelMenuAudit.instance = new SchoolFirstLevelMenuAudit();
     }
-    return SchoolFirstLevelMenuAudit.instance;
+    return <SchoolFirstLevelMenuAudit>SchoolFirstLevelMenuAudit.instance;
   }
 }
 

@@ -133,11 +133,11 @@ class PrivacyAudit extends Audit {
     return this.globalResults;
   }
 
-  static getInstance(): Promise<PrivacyAudit> {
+  static getInstance(): PrivacyAudit {
     if (!PrivacyAudit.instance) {
-      PrivacyAudit.instance = new PrivacyAudit("", [], []);
+      PrivacyAudit.instance = new PrivacyAudit();
     }
-    return PrivacyAudit.instance;
+    return <PrivacyAudit>PrivacyAudit.instance;
   }
 }
 

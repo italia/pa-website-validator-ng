@@ -10,11 +10,11 @@ class MunicipalityCookie extends CookieAudit {
   code = "C.SI.3.1";
   mainTitle = "COOKIE";
 
-  static getInstance(): Promise<MunicipalityCookie> {
+  static getInstance(): MunicipalityCookie {
     if (!MunicipalityCookie.instance) {
-      MunicipalityCookie.instance = new MunicipalityCookie("", [], []);
+      MunicipalityCookie.instance = new MunicipalityCookie();
     }
-    return MunicipalityCookie.instance;
+    return <MunicipalityCookie>MunicipalityCookie.instance;
   }
 
   async returnGlobalHTML() {

@@ -301,11 +301,11 @@ class BookingAppointment extends Audit {
     return this.globalResults;
   }
 
-  static getInstance(): Promise<BookingAppointment> {
+  static getInstance(): BookingAppointment {
     if (!BookingAppointment.instance) {
-      BookingAppointment.instance = new BookingAppointment("", [], []);
+      BookingAppointment.instance = new BookingAppointment();
     }
-    return BookingAppointment.instance;
+    return <BookingAppointment>BookingAppointment.instance;
   }
 
   async returnGlobalHTML() {

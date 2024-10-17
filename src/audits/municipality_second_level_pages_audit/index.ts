@@ -304,11 +304,11 @@ class SecondLevelAudit extends Audit {
     return auditId;
   }
 
-  static getInstance(): Promise<SecondLevelAudit> {
+  static getInstance(): SecondLevelAudit {
     if (!SecondLevelAudit.instance) {
-      SecondLevelAudit.instance = new SecondLevelAudit("", [], []);
+      SecondLevelAudit.instance = new SecondLevelAudit();
     }
-    return SecondLevelAudit.instance;
+    return <SecondLevelAudit>SecondLevelAudit.instance;
   }
 }
 

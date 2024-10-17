@@ -12,15 +12,11 @@ class MunicipalitySecurityAudit extends SecurityAudit {
   code = "C.SI.5.1";
   mainTitle = "CERTIFICATO HTTPS";
 
-  static getInstance(): Promise<MunicipalitySecurityAudit> {
+  static getInstance(): MunicipalitySecurityAudit {
     if (!MunicipalitySecurityAudit.instance) {
-      MunicipalitySecurityAudit.instance = new MunicipalitySecurityAudit(
-        "",
-        [],
-        [],
-      );
+      MunicipalitySecurityAudit.instance = new MunicipalitySecurityAudit();
     }
-    return MunicipalitySecurityAudit.instance;
+    return <MunicipalitySecurityAudit>MunicipalitySecurityAudit.instance;
   }
 
   async returnGlobalHTML() {

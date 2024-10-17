@@ -34,11 +34,11 @@ class InfoReuseAudit extends Audit {
     };
   }
 
-  static getInstance(): Promise<InfoReuseAudit> {
+  static getInstance(): InfoReuseAudit {
     if (!InfoReuseAudit.instance) {
-      InfoReuseAudit.instance = new InfoReuseAudit("", [], []);
+      InfoReuseAudit.instance = new InfoReuseAudit();
     }
-    return InfoReuseAudit.instance;
+    return <InfoReuseAudit>InfoReuseAudit.instance;
   }
 }
 

@@ -14,11 +14,11 @@ class SchoolInfoReuseAudit extends InfoReuseAudit {
   mainTitle = "RIUSO";
   code = "R.SC.2.1";
 
-  static getInstance(): Promise<SchoolInfoReuseAudit> {
+  static getInstance(): SchoolInfoReuseAudit {
     if (!SchoolInfoReuseAudit.instance) {
-      SchoolInfoReuseAudit.instance = new SchoolInfoReuseAudit("", [], []);
+      SchoolInfoReuseAudit.instance = new SchoolInfoReuseAudit();
     }
-    return SchoolInfoReuseAudit.instance;
+    return <SchoolInfoReuseAudit>SchoolInfoReuseAudit.instance;
   }
 
   async returnGlobalHTML() {

@@ -202,11 +202,11 @@ class SchoolVocabularies extends Audit {
     });
   }
 
-  static getInstance(): Promise<SchoolVocabularies> {
+  static getInstance(): SchoolVocabularies {
     if (!SchoolVocabularies.instance) {
-      SchoolVocabularies.instance = new SchoolVocabularies("", [], []);
+      SchoolVocabularies.instance = new SchoolVocabularies();
     }
-    return SchoolVocabularies.instance;
+    return <SchoolVocabularies>SchoolVocabularies.instance;
   }
 }
 

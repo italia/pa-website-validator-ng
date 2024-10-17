@@ -79,11 +79,11 @@ class SchoolA11yAudit extends A11yAudit {
     });
   }
 
-  static getInstance(): Promise<SchoolA11yAudit> {
+  static getInstance(): SchoolA11yAudit {
     if (!SchoolA11yAudit.instance) {
-      SchoolA11yAudit.instance = new SchoolA11yAudit("", [], []);
+      SchoolA11yAudit.instance = new SchoolA11yAudit();
     }
-    return SchoolA11yAudit.instance;
+    return <SchoolA11yAudit>SchoolA11yAudit.instance;
   }
 }
 

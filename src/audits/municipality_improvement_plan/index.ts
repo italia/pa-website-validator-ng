@@ -110,11 +110,11 @@ class ImprovementPlanAudit extends Audit {
     });
   }
 
-  static getInstance(): Promise<ImprovementPlanAudit> {
+  static getInstance(): ImprovementPlanAudit {
     if (!ImprovementPlanAudit.instance) {
-      ImprovementPlanAudit.instance = new ImprovementPlanAudit("", [], []);
+      ImprovementPlanAudit.instance = new ImprovementPlanAudit();
     }
-    return ImprovementPlanAudit.instance;
+    return <ImprovementPlanAudit>ImprovementPlanAudit.instance;
   }
 }
 
