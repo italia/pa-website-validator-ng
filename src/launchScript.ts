@@ -2,6 +2,7 @@ import { initializeConfig } from "./config/config.js";
 import { collectAudits } from "./AuditManager.js";
 import { collectGatherers } from "./GathererManager.js";
 import { initializePuppeteer } from "./PuppeteerInstance.js";
+import version from "./version.js";
 import PageManager from "./PageManager.js";
 import scan from "./Scan.js";
 import { Page } from "puppeteer";

@@ -2,7 +2,7 @@ import * as ejs from "ejs";
 import { mkdir, writeFile } from "fs/promises";
 import open from "open";
 import path, { format } from "path";
-import { VERSION } from "../version.js";
+import VERSION from "../version.js";
 import PageManager from "../PageManager.js";
 import { municipalityWeights, schoolWeights } from "../config/weights.js";
 import { collectAudits } from "../AuditManager.js";
