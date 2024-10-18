@@ -6,7 +6,6 @@ import * as dns from "dns";
 import * as util from "util";
 import geoip from "geoip-lite";
 import { allowedCountries } from "../../storage/common/allowedCountries.js";
-import { auditDictionary } from "../../storage/auditDictionary.js";
 import { Page } from "puppeteer";
 import {Audit, GlobalResults} from "../Audit.js";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
@@ -15,10 +14,9 @@ import { fileURLToPath } from "url";
 import path from "path";
 
 const auditId = "common-security-ip-location";
-const auditData = auditDictionary[auditId];
 
-const greenResult = auditData.greenResult;
-const redResult = auditData.redResult;
+const greenResult ="L'hosting è su territorio europeo.";
+const redResult = "L'hosting non è su territorio europeo.";
 
 class IpLocationAudit extends Audit {
   public globalResults: GlobalResults = {
@@ -44,11 +42,7 @@ class IpLocationAudit extends Audit {
   async meta() {
     return {
       id: auditId,
-      title: auditData.title,
-      failureTitle: auditData.failureTitle,
-      description: auditData.description,
-      scoreDisplayMode: this.SCORING_MODES.BINARY,
-      requiredArtifacts: ["hostname"],
+      title: "LOCALIZZAZIONE IP - Il sito deve essere ospitato su datacenter localizzati su territorio europeo.",
       code: this.code,
       mainTitle: this.mainTitle,
       auditId: auditId,
@@ -71,7 +65,7 @@ class IpLocationAudit extends Audit {
       );
       this.globalResults.pagesItems.pages = [
         {
-          result: this.auditData.redResult,
+          result: redResult,
         },
       ];
 
@@ -135,10 +129,10 @@ class IpLocationAudit extends Audit {
 
     if (this.globalResults.score > 0.5) {
       status = "pass";
-      message = this.auditData.greenResult;
+      message = greenResult;
     } else {
       status = "fail";
-      message = this.auditData.redResult;
+      message = redResult;
     }
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
