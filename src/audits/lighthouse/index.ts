@@ -114,13 +114,10 @@ class lighthouseAudit extends Audit {
     return {
       code: this.code,
       id: this.auditId,
-      title: this.auditData.title,
+      title: this.title,
       mainTitle: this.mainTitle,
       auditId: this.auditId,
-      failureTitle: this.auditData.failureTitle,
-      description: this.auditData.description,
-      scoreDisplayMode: this.SCORING_MODES.BINARY,
-      requiredArtifacts: ["origin"],
+      
     };
   }
 

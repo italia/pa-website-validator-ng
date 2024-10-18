@@ -38,18 +38,16 @@ class CookieAudit extends Audit {
 
   code = "";
   mainTitle = "";
+  title = ""; 
 
   async meta() {
     return {
       code: this.code,
       id: this.auditId,
-      title: this.auditData.title,
+      title: this.title,
       mainTitle: this.mainTitle,
       auditId: this.auditId,
-      failureTitle: this.auditData.failureTitle,
-      description: this.auditData.description,
-      scoreDisplayMode: this.SCORING_MODES.NUMERIC,
-      requiredArtifacts: ["origin"],
+      
     };
   }
 
@@ -169,12 +167,12 @@ class CookieAudit extends Audit {
     switch (this.score) {
       case 1:
         results.push({
-          result: this.auditData.greenResult,
+          result: this.greenResult,
         });
         break;
       case 0:
         results.push({
-          result: this.auditData.redResult,
+          result: this.redResult,
         });
         break;
     }
@@ -215,14 +213,14 @@ class CookieAudit extends Audit {
 
     if (this.wrongItems.length > 0) {
       results.push({
-        result: this.auditData?.subItem?.redResult ?? "",
+        result: this.subItem?.redResult ?? "",
         title_cookie_domain: this.titleSubHeadings[0],
         title_cookie_name: this.titleSubHeadings[1],
         title_cookie_value: this.titleSubHeadings[2],
       });
 
       this.globalResults.wrongPages.headings = [
-        this.auditData?.subItem?.redResult ?? "",
+        this.subItem?.redResult ?? "",
         this.titleSubHeadings[0],
         this.titleSubHeadings[1],
         this.titleSubHeadings[2],
@@ -243,14 +241,14 @@ class CookieAudit extends Audit {
 
     if (this.correctItems.length > 0) {
       results.push({
-        result: this.auditData?.subItem?.greenResult ?? "",
+        result: this.subItem?.greenResult ?? "",
         title_cookie_domain: this.titleSubHeadings[0],
         title_cookie_name: this.titleSubHeadings[1],
         title_cookie_value: this.titleSubHeadings[2],
       });
 
       this.globalResults.correctPages.headings = [
-        this.auditData?.subItem?.greenResult ?? "",
+        this.subItem?.greenResult ?? "",
         this.titleSubHeadings[0],
         this.titleSubHeadings[1],
         this.titleSubHeadings[2],

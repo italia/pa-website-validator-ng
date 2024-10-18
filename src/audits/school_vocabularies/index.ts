@@ -1,6 +1,5 @@
 "use strict";
 
-import { auditDictionary } from "../../storage/auditDictionary.js";
 import { Page, ElementHandle } from "puppeteer";
 import * as cheerio from "cheerio";
 import {Audit, GlobalResults} from "../Audit.js";
@@ -31,18 +30,17 @@ class SchoolVocabularies extends Audit {
   };
 
   auditId = "school-controlled-vocabularies";
-  auditData = auditDictionary["school-controlled-vocabularies"];
+  greenResult = "Tutti gli argomenti appartengono all’elenco di voci del modello e l'elenco degli argomenti è presente nella pagina dei risultati di ricerca.";
+  yellowResult = "Almeno il 50% degli argomenti appartengono all'elenco di voci del modello e l'elenco degli argomenti è presente nella pagina dei risultati di ricerca.";
+  redResult = "Meno del 50% degli argomenti appartengono alle voci del modello o l'elenco degli argomenti non è presente nella pagina dei risultati di ricerca.";
+  title ="R.SC.1.1 - VOCABOLARI CONTROLLATI - Il sito della scuola deve utilizzare argomenti forniti dal modello di sito scuola.";
   code = "R.SC.1.1";
   mainTitle = "VOCABOLARI CONTROLLATI";
 
   async meta() {
     return {
       id: this.auditId,
-      title: this.auditData.title,
-      failureTitle: this.auditData.failureTitle,
-      description: this.auditData.description,
-      scoreDisplayMode: this.SCORING_MODES.NUMERIC,
-      requiredArtifacts: ["origin"],
+      title: this.title,
       code: this.code,
       mainTitle: this.mainTitle,
       auditId: this.auditId,
@@ -59,7 +57,7 @@ class SchoolVocabularies extends Audit {
       );
       this.globalResults.pagesItems.pages = [
         {
-          result: this.auditData.redResult,
+          result: this.redResult,
         },
       ];
 
@@ -73,7 +71,7 @@ class SchoolVocabularies extends Audit {
 
       const item = [
         {
-          result: this.auditData.redResult,
+          result: this.redResult,
           element_in_school_model_percentage: "",
           element_not_in_school_model: "",
         },
@@ -136,10 +134,10 @@ class SchoolVocabularies extends Audit {
 
       let score = 0;
       if (schoolModelCheck.allArgumentsInVocabulary) {
-        item[0].result = this.auditData.greenResult;
+        item[0].result = this.greenResult;
         score = 1;
       } else if (numberOfElementsNotInScuoleModelPercentage <= 50) {
-        item[0].result = this.auditData.yellowResult;
+        item[0].result = this.yellowResult;
         score = 0.5;
       }
 
@@ -180,13 +178,13 @@ class SchoolVocabularies extends Audit {
 
     if (this.globalResults.score > 0.5) {
       status = "pass";
-      message = this.auditData.greenResult;
+      message = this.greenResult;
     } else if (this.globalResults.score == 0.5) {
       status = "average";
-      message = this.auditData.yellowResult;
+      message = this.yellowResult;
     } else {
       status = "fail";
-      message = this.auditData.redResult;
+      message = this.redResult;
     }
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));

@@ -1,6 +1,5 @@
 "use strict";
 
-import { auditDictionary } from "../../storage/auditDictionary.js";
 import { LicenceAudit } from "../license/index.js";
 import * as ejs from "ejs";
 import path from "path";
@@ -8,7 +7,10 @@ import { fileURLToPath } from "url";
 
 class SchoolLicenceAudit extends LicenceAudit {
   auditId = "school-license-and-attribution";
-  auditData = auditDictionary["school-license-and-attribution"];
+  greenResult = "La dicitura sulla licenza dei contenuti è presente nella pagina delle note legali raggiungibile dal footer.";
+  yellowResult = "";
+  redResult = "La dicitura sulla licenza dei contenuti è errata o non presente nella pagina delle note legali o questa non è raggiungibile dal footer.";
+  title = "R.SC.2.2 - LICENZA E ATTRIBUZIONE - Il sito della scuola deve pubblicare dati, documenti e informazioni con licenza aperta (es. CC-BY 4.0).";
   code = "R.SC.2.2";
   mainTitle = "LICENZA E ATTRIBUZIONE";
 
@@ -25,10 +27,10 @@ class SchoolLicenceAudit extends LicenceAudit {
 
     if (this.globalResults.score > 0.5) {
       status = "pass";
-      message = this.auditData.greenResult;
+      message = this.greenResult;
     } else {
       status = "fail";
-      message = this.auditData.redResult;
+      message = this.redResult;
     }
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));

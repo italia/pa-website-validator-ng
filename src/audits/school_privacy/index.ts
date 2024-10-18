@@ -1,6 +1,5 @@
 "use strict";
 
-import { auditDictionary } from "../../storage/auditDictionary.js";
 import { PrivacyAudit } from "../privacy/index.js";
 import * as ejs from "ejs";
 import { fileURLToPath } from "url";
@@ -8,7 +7,10 @@ import path from "path";
 
 class SchoolPrivacyAudit extends PrivacyAudit {
   auditId = "school-legislation-privacy-is-present";
-  auditData = auditDictionary["school-legislation-privacy-is-present"];
+  greenResult = "Il link è nel footer e invia a una pagina esistente e sicura.";
+  yellowResult = "";
+  redResult = "Il link non è nel footer o non invia a una pagina esistente o sicura.";
+  title = "C.SC.2.1 - INFORMATIVA PRIVACY - Il sito della scuola deve presentare l'informativa sul trattamento dei dati personali, secondo quanto previsto dalla normativa vigente.";
   code = "C.SC.2.1";
   mainTitle = "INFORMATIVA PRIVACY";
 
@@ -25,10 +27,10 @@ class SchoolPrivacyAudit extends PrivacyAudit {
 
     if (this.globalResults.score > 0.5) {
       status = "pass";
-      message = this.auditData.greenResult;
+      message = this.greenResult;
     } else {
       status = "fail";
-      message = this.auditData.redResult;
+      message = this.redResult;
     }
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));

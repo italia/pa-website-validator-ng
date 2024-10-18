@@ -12,7 +12,6 @@ import {
   isInternalUrl,
   loadPageData,
 } from "../../utils/utils.js";
-import { auditDictionary } from "../../storage/auditDictionary.js";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import {Audit, GlobalResults} from "../Audit.js";
 
@@ -24,11 +23,12 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 const auditId = "municipality-controlled-vocabularies";
-const auditData = auditDictionary[auditId];
-
-const greenResult = auditData.greenResult;
-const yellowResult = auditData.yellowResult;
-const redResult = auditData.redResult;
+const code = "C.SI.1.5";
+const mainTitle = "VOCABOLARI CONTROLLATI";
+const title = "C.SI.1.5 - VOCABOLARI CONTROLLATI - Il sito comunale deve utilizzare argomenti forniti dal modello di sito comunale ovvero quelli appartenenti al vocabolario controllato europeo EuroVoc.";
+const greenResult = "Tutti gli argomenti appartengono all’elenco di voci del modello e l'elenco degli argomenti è presente nella pagina indicata.";
+const yellowResult = "Almeno il 50% degli argomenti appartengono all'elenco di voci del modello o al vocabolario EuroVoc e l'elenco degli argomenti è presente nella pagina indicata.";
+const redResult = "Meno del 50% degli argomenti appartengono alle voci del modello Comuni o al vocabolario EuroVoc o l'elenco degli argomenti non è presente nella pagina indicata.";
 
 class MunicipalityVocabulary extends Audit {
   public globalResults: GlobalResults = {
@@ -54,13 +54,9 @@ class MunicipalityVocabulary extends Audit {
   async meta() {
     return {
       id: auditId,
-      title: auditData.title,
-      failureTitle: auditData.failureTitle,
-      description: auditData.description,
-      scoreDisplayMode: this.SCORING_MODES.NUMERIC,
-      requiredArtifacts: ["origin"],
-      code: this.code,
-      mainTitle: this.mainTitle,
+      title: title,
+      code: code,
+      mainTitle: mainTitle,
       auditId: auditId,
     };
   }
@@ -77,7 +73,7 @@ class MunicipalityVocabulary extends Audit {
 
         this.globalResults.pagesItems.pages = [
         {
-          result: this.auditData.redResult,
+          result: redResult,
         }
       ];
 
@@ -235,20 +231,20 @@ class MunicipalityVocabulary extends Audit {
 
     if (this.score > 0.5) {
       status = "pass";
-      message = this.auditData.greenResult;
+      message = greenResult;
     } else if (this.score == 0.5) {
       status = "average";
-      message = this.auditData.yellowResult;
+      message = yellowResult;
     } else {
       status = "fail";
-      message = this.auditData.redResult;
+      message = redResult;
     }
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
     return await ejs.renderFile(__dirname + "/template.ejs", {
       ...(await this.meta()),
-      code: this.code,
+      code: code,
       table: this.globalResults,
       status,
       statusMessage: message,

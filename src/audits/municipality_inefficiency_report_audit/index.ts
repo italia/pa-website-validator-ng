@@ -4,7 +4,6 @@
 import * as cheerio from "cheerio";
 import { CheerioAPI } from "cheerio";
 import { buildUrl, isInternalUrl, urlExists } from "../../utils/utils.js";
-import { auditDictionary } from "../../storage/auditDictionary.js";
 import isEmail from "validator/lib/isEmail.js";
 import { Page } from "puppeteer";
 import {Audit, GlobalResults} from "../Audit.js";
@@ -14,7 +13,12 @@ import { fileURLToPath } from "url";
 import path from "path";
 
 const auditId = "municipality-inefficiency-report";
-const auditData = auditDictionary[auditId];
+const code = "C.SI.2.4";
+const mainTitle = "SEGNALAZIONE DISSERVIZIO";
+const greenResult = "Il link è nel footer, la pagina di destinazione esiste e la label è nominata correttamente.";
+const yellowResult = "Il link è nel footer, la pagina di destinazione esiste ma la label non è nominata correttamente.";
+const redResult = "Il link non è nel footer o la pagina di destinazione è inesistente.";
+const title = "C.SI.2.4 - SEGNALAZIONE DISSERVIZIO - Il sito comunale deve fornire al cittadino la possibilità di segnalare un disservizio, tramite email o servizio dedicato.";
 
 class InefficiencyAudit extends Audit {
   public globalResults: GlobalResults = {
@@ -32,21 +36,15 @@ class InefficiencyAudit extends Audit {
     errorMessage: "",
   };
 
-  code = "C.SI.2.4";
-  mainTitle = "SEGNALAZIONE DISSERVIZIO";
-
+  
   public score = 0;
 
   async meta() {
     return {
       id: auditId,
-      title: auditData.title,
-      failureTitle: auditData.failureTitle,
-      description: auditData.description,
-      scoreDisplayMode: this.SCORING_MODES.NUMERIC,
-      requiredArtifacts: ["origin"],
-      code: this.code,
-      mainTitle: this.mainTitle,
+      title: title,
+      code: code,
+      mainTitle: mainTitle,
       auditId: auditId,
     };
   }
@@ -70,7 +68,7 @@ class InefficiencyAudit extends Audit {
       );
       this.globalResults.pagesItems.pages = [
         {
-          result: this.auditData.redResult,
+          result: redResult,
         },
       ];
 
@@ -92,7 +90,7 @@ class InefficiencyAudit extends Audit {
 
       const items = [
         {
-          result: auditData.redResult,
+          result: redResult,
           link_name: "",
           link: "",
           existing_page: "No",
@@ -155,7 +153,7 @@ class InefficiencyAudit extends Audit {
           label !== "segnala disservizio" &&
           label !== "segnalazione disservizio"
         ) {
-          items[0].result = auditData.yellowResult;
+          items[0].result = yellowResult;
           this.score = 0.5;
           this.globalResults.details.items = items;
           this.globalResults.score = 0.5;
@@ -167,7 +165,7 @@ class InefficiencyAudit extends Audit {
           };
         }
 
-        items[0].result = auditData.greenResult;
+        items[0].result = greenResult;
 
         this.score = 1;
         this.globalResults.details.items = items;
@@ -192,20 +190,20 @@ class InefficiencyAudit extends Audit {
 
     if (this.score > 0.5) {
       status = "pass";
-      message = this.auditData.greenResult;
+      message = greenResult;
     } else if (this.score == 0.5) {
       status = "average";
-      message = this.auditData.yellowResult;
+      message = yellowResult;
     } else {
       status = "fail";
-      message = this.auditData.redResult;
+      message = redResult;
     }
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
     return await ejs.renderFile(__dirname + "/template.ejs", {
       ...(await this.meta()),
-      code: this.code,
+      code: code,
       table: this.globalResults,
       status,
       statusMessage: message,

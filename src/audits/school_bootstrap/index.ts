@@ -1,4 +1,4 @@
-import { auditDictionary } from "../../storage/auditDictionary.js";
+
 import { errorHandling } from "../../config/commonAuditsParts.js";
 import {Audit, GlobalResultsMulti} from "../Audit.js";
 import { Page } from "puppeteer";
@@ -9,12 +9,22 @@ import { fileURLToPath } from "url";
 import path from "path";
 
 const auditId = "school-ux-ui-consistency-bootstrap-italia-double-check";
-const auditData = auditDictionary[auditId];
+const greenResult = "In tutte le pagine analizzate la libreria Bootstrap Italia è presente e in uso in una versione idonea.";
+const yellowResult = "";
+const redResult = "In almeno una delle pagine analizzate la libreria Bootstrap Italia non è presente, o non è in uso o ne viene utilizzata una versione datata.";
+const subItem = {
+      greenResult:
+        "Pagine che utilizzano la libreria Bootstrap Italia in una versione idonea e utilizzano almeno una delle classi CSS indicate: ",
+      yellowResult: "",
+      redResult:
+        "Pagine che non utilizzano la libreria Bootstrap Italia in una versione idonea o non utilizzano nessuna delle classi CSS indicate: ",
+    };
+const title = "C.SC.1.2 - LIBRERIA DI ELEMENTI DI INTERFACCIA - Il sito della scuola deve utilizzare la libreria Bootstrap Italia in una versione più recente di 1.6.";
+const code = "C.SC.1.2";
+const mainTitle = "LIBRERIA DI ELEMENTI DI INTERFACCIA";
 
 class SchoolBootstrap extends Audit {
-  code = "C.SC.1.2";
-  mainTitle = "LIBRERIA DI ELEMENTI DI INTERFACCIA";
-
+  
   public globalResults: GlobalResultsMulti = {
     score: 1,
     details: {
@@ -49,13 +59,10 @@ class SchoolBootstrap extends Audit {
   async meta() {
     return {
       id: auditId,
-      title: auditData.title,
-      failureTitle: auditData.failureTitle,
-      mainTitle: this.mainTitle,
-      code: this.code,
-      description: auditData.description,
-      scoreDisplayMode: this.SCORING_MODES.BINARY,
-      requiredArtifacts: ["origin"],
+      title: title,
+      mainTitle: mainTitle,
+      code: code,
+      
     };
   }
 
@@ -203,12 +210,12 @@ class SchoolBootstrap extends Audit {
     switch (this.score) {
       case 1:
         this.globalResults["details"]["items"].push({
-          result: auditData.greenResult,
+          result: greenResult,
         });
         break;
       case 0:
         this.globalResults["details"]["items"].push({
-          result: auditData.redResult,
+          result: redResult,
         });
         break;
     }
@@ -249,14 +256,14 @@ class SchoolBootstrap extends Audit {
 
     if (this.wrongItems.length > 0) {
       results.push({
-        result: auditData.subItem.redResult,
+        result: subItem.redResult,
         title_library_name: this.titleSubHeadings[0],
         title_library_version: this.titleSubHeadings[1],
         title_classes_found: this.titleSubHeadings[2],
       });
 
       this.globalResults.wrongPages.headings = [
-        auditData.subItem.redResult,
+        subItem.redResult,
         this.titleSubHeadings[0],
         this.titleSubHeadings[1],
         this.titleSubHeadings[2],
@@ -278,14 +285,14 @@ class SchoolBootstrap extends Audit {
 
     if (this.correctItems.length > 0) {
       results.push({
-        result: auditData.subItem.greenResult,
+        result: subItem.greenResult,
         title_library_name: this.titleSubHeadings[0],
         title_library_version: this.titleSubHeadings[1],
         title_classes_found: this.titleSubHeadings[2],
       });
 
       this.globalResults.correctPages.headings = [
-        auditData.subItem.greenResult,
+        subItem.greenResult,
         this.titleSubHeadings[0],
         this.titleSubHeadings[1],
         this.titleSubHeadings[2],
@@ -306,7 +313,7 @@ class SchoolBootstrap extends Audit {
     }
 
     this.globalResults.errorMessage =
-      this.pagesInError.length > 0 ? errorHandling.popupMessage : "";
+    this.pagesInError.length > 0 ? errorHandling.popupMessage : "";
     this.globalResults.details.items = results;
     this.globalResults.score = this.score;
     this.globalResults.id = this.auditId;
@@ -320,17 +327,17 @@ class SchoolBootstrap extends Audit {
 
     if (this.globalResults.score > 0.5) {
       status = "pass";
-      message = this.auditData.greenResult;
+      message = greenResult;
     } else {
       status = "fail";
-      message = this.auditData.redResult;
+      message = redResult;
     }
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
     return await ejs.renderFile(__dirname + "/template.ejs", {
       ...(await this.meta()),
-      code: this.code,
+      code: code,
       table: this.globalResults,
       status,
       statusMessage: message,

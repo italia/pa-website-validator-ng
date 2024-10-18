@@ -12,8 +12,6 @@ import { Page } from "puppeteer";
 import {Audit, GlobalResults} from "../Audit.js";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import { detectLang, getSecondLevelPages } from "../../utils/school/utils.js";
-
-import { auditDictionary } from "../../storage/auditDictionary.js";
 import {
   customPrimaryMenuItemsDataElement,
   menuItems,
@@ -51,19 +49,18 @@ class SchoolSecondLevelMenuAudit extends Audit {
   };
 
   auditId = "school-menu-scuola-second-level-structure-match-model";
-  auditData =
-    auditDictionary["school-menu-scuola-second-level-structure-match-model"];
+  greenResult = "Tutte le voci usate sono corrette e inviano a pagine interne al dominio della scuola.";
+  yellowResult = "Almeno il 30% delle voci usate sono corrette e tutte le voci inviano a pagine interne al dominio della scuola.";
+  redResult = "Meno del 30% delle voci sono corrette o sono presenti voci che inviano a pagine esterne al dominio della scuola.";
+  nonExecuted = "Uno o più data-element necessari per condurre il test non sono stati trovati. Verifica il capitolo sui Requisiti tecnici nella Documentazione delle App di valutazione per risolvere il problema.";
+  title = "C.SC.1.5 - VOCI DI MENÙ DI SECONDO LIVELLO - Il sito presenta le voci di menù di secondo livello come descritto nella documentazione del modello di sito della scuola.";
   code = "C.SC.1.5";
   mainTitle = "VOCI DI MENÙ DI SECONDO LIVELLO";
 
   async meta() {
     return {
       id: this.auditId,
-      title: this.auditData.title,
-      failureTitle: this.auditData.failureTitle,
-      description: this.auditData.description,
-      scoreDisplayMode: this.SCORING_MODES.NUMERIC,
-      requiredArtifacts: ["origin"],
+      title: this.title,
       code: this.code,
       mainTitle: this.mainTitle,
       auditId: this.auditId,
@@ -81,7 +78,7 @@ class SchoolSecondLevelMenuAudit extends Audit {
       );
       this.globalResults.pagesItems.pages = [
         {
-          result: this.auditData.redResult,
+          result: this.redResult,
         },
       ];
 
@@ -95,7 +92,7 @@ class SchoolSecondLevelMenuAudit extends Audit {
 
       const results = [];
       results.push({
-        result: this.auditData.redResult,
+        result: this.redResult,
         correct_voices_percentage: "",
         correct_voices: "",
         wrong_voices: "",
@@ -144,7 +141,7 @@ class SchoolSecondLevelMenuAudit extends Audit {
             details: {
               items: [
                 {
-                  result: this.auditData.nonExecuted,
+                  result: this.nonExecuted,
                 },
               ],
               type: "table",
@@ -225,10 +222,10 @@ class SchoolSecondLevelMenuAudit extends Audit {
       let score = 0;
       if (presentVoicesPercentage >= 30 && presentVoicesPercentage < 100) {
         score = 0.5;
-        results[0].result = this.auditData.yellowResult;
+        results[0].result = this.yellowResult;
       } else if (presentVoicesPercentage === 100) {
         score = 1;
-        results[0].result = this.auditData.greenResult;
+        results[0].result = this.greenResult;
       }
 
       results[0].correct_voices = correctTitleFound;
@@ -312,13 +309,13 @@ class SchoolSecondLevelMenuAudit extends Audit {
 
     if (this.globalResults.score > 0.5) {
       status = "pass";
-      message = this.auditData.greenResult;
+      message = this.greenResult;
     } else if (this.globalResults.score == 0.5) {
       status = "average";
-      message = this.auditData.yellowResult;
+      message = this.yellowResult;
     } else {
       status = "fail";
-      message = this.auditData.redResult;
+      message = this.redResult;
     }
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));

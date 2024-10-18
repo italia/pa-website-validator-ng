@@ -1,14 +1,16 @@
 "use strict";
 
 import { ThemeAudit } from "../theme/index.js";
-import { auditDictionary } from "../../storage/auditDictionary.js";
 import * as ejs from "ejs";
 import path from "path";
 import { fileURLToPath } from "url";
 
 class SchoolThemeAudit extends ThemeAudit {
   auditId = "school-ux-ui-consistency-theme-version-check";
-  auditData = auditDictionary["school-ux-ui-consistency-theme-version-check"];
+  greenResult = "Il sito utilizza una versione uguale o superiore alla 2.0 del tema CMS del modello.";
+  yellowResult = "Il sito non utilizza il tema CMS del modello.";
+  redResult = "Il sito non utilizza una versione uguale o superiore alla 2.0 del tema CMS del modello.";
+  title = "C.SC.1.3 - UTILIZZO DI TEMI PER CMS - Nel caso in cui il sito utilizzi un tema messo a disposizione nella documentazione del modello di sito della scuola, lo utilizza nella versione 2.0 o successive.";
   minVersion = "2.0.0";
   code = "C.SI.1.4";
   mainTitle = "UTILIZZO DI TEMI PER CMS";
@@ -26,13 +28,13 @@ class SchoolThemeAudit extends ThemeAudit {
 
     if (this.globalResults.score > 0.5) {
       status = "pass";
-      message = this.auditData.greenResult;
+      message = this.greenResult;
     } else if (this.globalResults.score == 0.5) {
       status = "average";
-      message = this.auditData.yellowResult;
+      message = this.yellowResult;
     } else {
       status = "fail";
-      message = this.auditData.redResult;
+      message = this.redResult;
     }
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));

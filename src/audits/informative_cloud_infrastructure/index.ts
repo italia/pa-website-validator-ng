@@ -4,17 +4,16 @@ import { Audit } from "../Audit.js";
 class InfoCloudAudit extends Audit {
   code = "";
   mainTitle = "";
+  title = "";
   info = true;
+  
   async meta() {
     return {
       id: this.auditId,
-      title: this.auditData.title,
+      title: this.title,
       code: this.code,
       mainTitle: this.mainTitle,
-      failureTitle: this.auditData.failureTitle,
-      description: this.auditData.description,
-      scoreDisplayMode: this.SCORING_MODES.BINARY,
-      requiredArtifacts: ["origin"],
+     
     };
   }
 

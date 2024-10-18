@@ -1,6 +1,5 @@
 "use strict";
 
-import { auditDictionary } from "../../storage/auditDictionary.js";
 import { checkFeedbackComponent } from "../../utils/municipality/utils.js";
 import { errorHandling } from "../../config/commonAuditsParts.js";
 import {Audit, GlobalResultsMulti} from "../Audit.js";
@@ -10,7 +9,24 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 const auditId = "municipality-user-experience-evaluation";
-const auditData = auditDictionary[auditId];
+const code = "C.SI.2.6";
+const mainTitle =
+    "VALUTAZIONE DELL’ESPERIENZA D’USO, CHIAREZZA INFORMATIVA DELLA SCHEDA DI SERVIZIO";
+const greenResult =
+    "In tutte le pagine analizzate il componente è presente e rispetta le caratteristiche richieste.";
+const yellowResult =
+    "In tutte le pagine analizzate il componente è presente ma potrebbe non rispettare tutte le caratteristiche richieste.";
+const redResult =
+    "In almeno una delle pagine analizzate il componente non è presente o non rispetta le caratteristiche richieste.";
+const subItem = {
+    greenResult:
+      "Pagine nelle quali il componente è presente e rispetta le caratteristiche richieste:",
+    yellowResult:
+      "Pagine nelle quali il componente è presente ma potrebbe non rispettare tutte le caratteristiche richieste:",
+    redResult:
+      "Pagine nelle quali il componente non è presente o non rispetta le caratteristiche richieste:",
+};
+const title = "C.SI.2.6 - VALUTAZIONE DELL’ESPERIENZA D’USO, CHIAREZZA INFORMATIVA DELLA SCHEDA DI SERVIZIO - Il sito comunale deve permettere la valutazione della chiarezza informativa per ogni scheda di servizio secondo le modalità indicate nella documentazione del modello di sito comunale.";    
 
 class UserExperienceEvaluationAudit extends Audit {
   public globalResults: GlobalResultsMulti = {
@@ -43,10 +59,7 @@ class UserExperienceEvaluationAudit extends Audit {
     errorMessage: "",
   };
 
-  code = "C.SI.2.6";
-  mainTitle =
-    "VALUTAZIONE DELL’ESPERIENZA D’USO, CHIAREZZA INFORMATIVA DELLA SCHEDA DI SERVIZIO";
-
+  
   public wrongItems: Record<string, unknown>[] = [];
   public correctItems: Record<string, unknown>[] = [];
   public pagesInError: Record<string, unknown>[] = [];
@@ -57,13 +70,9 @@ class UserExperienceEvaluationAudit extends Audit {
   async meta() {
     return {
       id: auditId,
-      title: auditData.title,
-      failureTitle: auditData.failureTitle,
-      description: auditData.description,
-      scoreDisplayMode: this.SCORING_MODES.BINARY,
-      requiredArtifacts: ["origin"],
-      code: this.code,
-      mainTitle: this.mainTitle,
+      title: title,
+      code: code,
+      mainTitle: mainTitle,
       auditId: auditId,
     };
   }
@@ -178,17 +187,17 @@ class UserExperienceEvaluationAudit extends Audit {
       switch (this.score) {
         case 1:
           results.push({
-            result: auditData.greenResult,
+            result: greenResult,
           });
           break;
         case 0.5:
           results.push({
-            result: auditData.yellowResult,
+            result: yellowResult,
           });
           break;
         case 0:
           results.push({
-            result: auditData.redResult,
+            result: redResult,
           });
           break;
       }
@@ -198,11 +207,11 @@ class UserExperienceEvaluationAudit extends Audit {
 
     if (this.wrongItems.length > 0) {
       results.push({
-        result: auditData.subItem.redResult,
+        result: subItem.redResult,
         title_errors_found: this.titleSubHeadings[0],
       });
       this.globalResults.wrongPages.headings = [
-        auditData.subItem.redResult,
+        subItem.redResult,
         this.titleSubHeadings[0],
       ];
 
@@ -219,13 +228,13 @@ class UserExperienceEvaluationAudit extends Audit {
 
     if (this.toleranceItems.length > 0) {
       results.push({
-        result: auditData.subItem.yellowResult,
+        result: subItem.yellowResult,
         title_errors_found: this.titleSubHeadings[0],
       });
 
       if(this.globalResults.tolerancePages){
         this.globalResults.tolerancePages.headings = [
-          auditData.subItem.yellowResult,
+          subItem.yellowResult,
           this.titleSubHeadings[0],
         ];
 
@@ -244,12 +253,12 @@ class UserExperienceEvaluationAudit extends Audit {
 
     if (this.correctItems.length > 0) {
       results.push({
-        result: auditData.subItem.greenResult,
+        result: subItem.greenResult,
         title_errors_found: this.titleSubHeadings[0],
       });
 
       this.globalResults.correctPages.headings = [
-        auditData.subItem.greenResult,
+        subItem.greenResult,
         this.titleSubHeadings[0],
       ];
 
@@ -280,20 +289,20 @@ class UserExperienceEvaluationAudit extends Audit {
 
     if (this.score > 0.5) {
       status = "pass";
-      message = this.auditData.greenResult;
+      message = greenResult;
     } else if (this.score == 0.5) {
       status = "average";
-      message = this.auditData.yellowResult;
+      message = yellowResult;
     } else {
       status = "fail";
-      message = this.auditData.redResult;
+      message = redResult;
     }
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
     return await ejs.renderFile(__dirname + "/template.ejs", {
       ...(await this.meta()),
-      code: this.code,
+      code: code,
       table: this.globalResults,
       status,
       statusMessage: message,

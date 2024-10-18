@@ -6,7 +6,6 @@ import {
   getRedirectedUrl,
   missingMenuItems,
 } from "../../utils/utils.js";
-import { auditDictionary } from "../../storage/auditDictionary.js";
 import { MenuItem } from "../../types/menuItem.js";
 import { getFirstLevelPages } from "../../utils/municipality/utils.js";
 import {Audit, GlobalResults} from "../Audit.js";
@@ -17,11 +16,13 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 const auditId = "municipality-menu-structure-match-model";
-const auditData = auditDictionary[auditId];
+const greenResult = "Le voci del menù obbligatorie sono corrette, nell'ordine giusto e inviano a pagine interne al dominio del Comune.";
+const yellowResult = "Le voci del menù obbligatorie e il loro ordine è corretto ma sono presenti fino a 3 voci aggiuntive. Tutte le voci inviano a pagine interne al dominio del Comune.";
+const redResult = "Almeno una delle voci obbligatorie è assente o inesatta e/o le voci obbligatorie sono in ordine errato e/o sono presenti 8 o più voci nel menù del sito e/o sono presenti voci che inviano a pagine esterne al dominio del Comune.";
+const title = "C.SI.1.6 - VOCI DI MENÙ DI PRIMO LIVELLO - Il sito comunale deve presentare tutte le voci di menù di primo livello, nell'esatto ordine descritto dalla documentazione del modello di sito comunale.";
+const code = "C.SI.1.6";
+const mainTitle = "VOCI DI MENÙ DI PRIMO LIVELLO";
 
-const greenResult = auditData.greenResult;
-const yellowResult = auditData.yellowResult;
-const redResult = auditData.redResult;
 
 class MenuAudit extends Audit {
   public globalResults: GlobalResults = {
@@ -44,20 +45,14 @@ class MenuAudit extends Audit {
     errorMessage: "",
   };
 
-  code = "C.SI.1.6";
-  mainTitle = "VOCI DI MENÙ DI PRIMO LIVELLO";
-
+  
   public score = 0;
   async meta() {
     return {
       id: auditId,
-      title: auditData.title,
-      failureTitle: auditData.failureTitle,
-      description: auditData.description,
-      scoreDisplayMode: this.SCORING_MODES.NUMERIC,
-      requiredArtifacts: ["origin"],
-      code: this.code,
-      mainTitle: this.mainTitle,
+      title: title,
+      code: code,
+      mainTitle: mainTitle,
       auditId: auditId,
     };
   }
@@ -81,7 +76,7 @@ class MenuAudit extends Audit {
         );
         this.globalResults.pagesItems.pages = [
           {
-            result: this.auditData.redResult,
+            result: redResult,
           },
         ];
 
@@ -221,20 +216,20 @@ class MenuAudit extends Audit {
 
     if (this.score > 0.5) {
       status = "pass";
-      message = this.auditData.greenResult;
+      message = greenResult;
     } else if (this.score == 0.5) {
       status = "average";
-      message = this.auditData.yellowResult;
+      message = yellowResult;
     } else {
       status = "fail";
-      message = this.auditData.redResult;
+      message = redResult;
     }
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
     return await ejs.renderFile(__dirname + "/template.ejs", {
       ...(await this.meta()),
-      code: this.code,
+      code: code,
       table: this.globalResults,
       status,
       statusMessage: message,

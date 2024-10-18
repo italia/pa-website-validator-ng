@@ -27,15 +27,12 @@ class PrivacyAudit extends Audit {
 
   code = "";
   mainTitle = "";
+  title = "";
 
   async meta() {
     return {
       id: this.auditId,
-      title: this.auditData.title,
-      failureTitle: this.auditData.failureTitle,
-      description: this.auditData.description,
-      scoreDisplayMode: this.SCORING_MODES.NUMERIC,
-      requiredArtifacts: ["origin"],
+      title: this.title,
       code: this.code,
       mainTitle: this.mainTitle,
       auditId: this.auditId,
@@ -54,7 +51,7 @@ class PrivacyAudit extends Audit {
       );
       this.globalResults.pagesItems.pages = [
         {
-          result: this.auditData.redResult,
+          result: this.redResult,
         },
       ];
 
@@ -70,7 +67,7 @@ class PrivacyAudit extends Audit {
 
       const items = [
         {
-          result: this.auditData.redResult,
+          result: this.redResult,
           link_name: "",
           link: "",
           existing_page: "No",
@@ -99,7 +96,7 @@ class PrivacyAudit extends Audit {
         items[0].link = checkUrlHttps.inspectedUrl;
 
         if (checkUrlHttps.result) {
-          items[0].result = this.auditData.greenResult;
+          items[0].result = this.greenResult;
           items[0].existing_page = "Sì";
           items[0].secure_page = "Sì";
           score = 1;
