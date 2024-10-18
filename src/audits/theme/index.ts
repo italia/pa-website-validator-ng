@@ -5,7 +5,7 @@ import { CheerioAPI } from "cheerio";
 import { buildUrl, isInternalUrl } from "../../utils/utils.js";
 import { Page } from "puppeteer";
 
-import {Audit, GlobalResults} from "../Audit.js";
+import { Audit, GlobalResults } from "../Audit.js";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import * as cheerio from "cheerio";
 import { compareVersions } from "compare-versions";
@@ -13,9 +13,9 @@ import axios from "axios";
 import { cmsThemeRx } from "./cmsThemeRx.js";
 
 class ThemeAudit extends Audit {
-  public globalResults : GlobalResults = {
+  public globalResults: GlobalResults = {
     score: 0,
-    details:  {
+    details: {
       items: [],
       type: "table",
       summary: "",
@@ -26,7 +26,7 @@ class ThemeAudit extends Audit {
       pages: [],
     },
     errorMessage: "",
-    id: '',
+    id: "",
   };
 
   protected minVersion = "1.0.0";
@@ -151,7 +151,7 @@ class ThemeAudit extends Audit {
     return this.globalResults;
   }
 
-  static getInstance(): ThemeAudit{
+  static getInstance(): ThemeAudit {
     if (!ThemeAudit.instance) {
       ThemeAudit.instance = new ThemeAudit();
     }

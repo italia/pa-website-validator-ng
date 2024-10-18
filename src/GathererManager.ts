@@ -3,7 +3,7 @@ import { getGatherers } from "./config/config.js";
 import * as process from "process";
 import { fileURLToPath } from "url";
 import path from "path";
-import {Gatherer} from "./gatherers/Gatherer.js";
+import { Gatherer } from "./gatherers/Gatherer.js";
 
 let gatherers: Record<string, () => Promise<Gatherer>> = {};
 

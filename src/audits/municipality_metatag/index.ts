@@ -4,7 +4,7 @@ import { CheerioAPI } from "cheerio";
 import * as jsonschema from "jsonschema";
 import { ValidatorResult } from "jsonschema";
 import { errorHandling } from "../../config/commonAuditsParts.js";
-import {Audit, GlobalResultsMulti} from "../Audit.js";
+import { Audit, GlobalResultsMulti } from "../Audit.js";
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
 import path from "path";
@@ -13,25 +13,28 @@ import { fileURLToPath } from "url";
 const auditId = "municipality-metatag";
 const code = "R.SI.1.1";
 const mainTitle = "METATAG";
-const greenResult = "In tutte le schede servizio analizzate tutti i metatag richiesti sono presenti e corretti.";
-const yellowResult = "In almeno una delle schede servizio analizzate non tutti i metatag richiesti sono presenti e corretti.";
-const redResult = "In almeno una delle schede servizio analizzate meno del 50% dei metatag richiesti sono presenti e corretti.";
+const greenResult =
+  "In tutte le schede servizio analizzate tutti i metatag richiesti sono presenti e corretti.";
+const yellowResult =
+  "In almeno una delle schede servizio analizzate non tutti i metatag richiesti sono presenti e corretti.";
+const redResult =
+  "In almeno una delle schede servizio analizzate meno del 50% dei metatag richiesti sono presenti e corretti.";
 const subItem = {
-    greenResult:
-      "Pagine nelle quali tutti i metatag richiesti sono presenti e corretti:",
-    yellowResult:
-      "Pagine nelle quali almeno il 50% dei metatag richiesti sono presenti e corretti:",
-    redResult:
-      "Pagine nelle quali meno del 50% dei metatag richiesti sono presenti e corretti:",
+  greenResult:
+    "Pagine nelle quali tutti i metatag richiesti sono presenti e corretti:",
+  yellowResult:
+    "Pagine nelle quali almeno il 50% dei metatag richiesti sono presenti e corretti:",
+  redResult:
+    "Pagine nelle quali meno del 50% dei metatag richiesti sono presenti e corretti:",
 };
-const title = "R.SI.1.1 - METATAG - Nel sito comunale, le voci della scheda servizio devono presentare i metatag descritti dal modello, in base agli standard internazionali.";
+const title =
+  "R.SI.1.1 - METATAG - Nel sito comunale, le voci della scheda servizio devono presentare i metatag descritti dal modello, in base agli standard internazionali.";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const totalJSONVoices = 10;
 
 class MetatagAudit extends Audit {
-  
   public globalResults: GlobalResultsMulti = {
     score: 1,
     details: {
@@ -60,7 +63,7 @@ class MetatagAudit extends Audit {
       pages: [],
     },
     errorMessage: "",
-    info: true
+    info: true,
   };
 
   public wrongItems: Record<string, unknown>[] = [];
@@ -99,7 +102,7 @@ class MetatagAudit extends Audit {
     if (page) {
       const url = page.url();
 
-      let $: CheerioAPI = cheerio.load('<html><body></body></html>');
+      let $: CheerioAPI = cheerio.load("<html><body></body></html>");
 
       const item = {
         link: url,
@@ -184,7 +187,7 @@ class MetatagAudit extends Audit {
 
   async returnGlobal() {
     this.globalResults.correctPages.pages = [];
-    if(this.globalResults.tolerancePages){
+    if (this.globalResults.tolerancePages) {
       this.globalResults.tolerancePages.pages = [];
     }
     this.globalResults.wrongPages.pages = [];
@@ -230,12 +233,12 @@ class MetatagAudit extends Audit {
           break;
         case 0.5:
           results.push({
-            result:yellowResult,
+            result: yellowResult,
           });
           break;
         case 0:
           results.push({
-            result:redResult,
+            result: redResult,
           });
           break;
       }
@@ -274,7 +277,7 @@ class MetatagAudit extends Audit {
         title_valid_json: this.titleSubHeadings[0],
         title_missing_keys: this.titleSubHeadings[1],
       });
-      if(this.globalResults.tolerancePages){
+      if (this.globalResults.tolerancePages) {
         this.globalResults.tolerancePages.headings = [
           subItem.yellowResult,
           this.titleSubHeadings[0],
@@ -358,7 +361,7 @@ class MetatagAudit extends Audit {
     });
   }
 
-  static getInstance(): MetatagAudit{
+  static getInstance(): MetatagAudit {
     if (!MetatagAudit.instance) {
       MetatagAudit.instance = new MetatagAudit();
     }

@@ -7,7 +7,7 @@ import { isDrupal } from "../../utils/municipality/utils.js";
 import { cssClasses, drupalCoreClasses } from "./cssClasses.js";
 import { Page } from "puppeteer";
 import { errorHandling } from "../../config/commonAuditsParts.js";
-import {Audit, GlobalResultsMulti} from "../Audit.js";
+import { Audit, GlobalResultsMulti } from "../Audit.js";
 import * as ejs from "ejs";
 import { fileURLToPath } from "url";
 import path from "path";
@@ -16,15 +16,20 @@ class BootstrapMunAudit extends Audit {
   auditId = "municipality-ux-ui-consistency-bootstrap-italia-double-check";
   code = "C.SI.1.2";
   mainTitle = "LIBRERIA DI ELEMENTI DI INTERFACCIA";
-  title = "C.SI.1.2 - LIBRERIA DI ELEMENTI DI INTERFACCIA - Il sito comunale deve utilizzare la libreria Bootstrap Italia.";
-  greenResult = "In tutte le pagine analizzate la libreria Bootstrap Italia è presente in una versione idonea ed è in uso come richiesto.";
+  title =
+    "C.SI.1.2 - LIBRERIA DI ELEMENTI DI INTERFACCIA - Il sito comunale deve utilizzare la libreria Bootstrap Italia.";
+  greenResult =
+    "In tutte le pagine analizzate la libreria Bootstrap Italia è presente in una versione idonea ed è in uso come richiesto.";
   yellowResult = "";
-  redResult = "In almeno una delle pagine analizzate la libreria Bootstrap Italia non è presente, o non è in uso come richiesto o ne viene utilizzata una versione datata.";
+  redResult =
+    "In almeno una delle pagine analizzate la libreria Bootstrap Italia non è presente, o non è in uso come richiesto o ne viene utilizzata una versione datata.";
   subItem = {
-      greenResult: "Pagine che utilizzano la libreria in una versione idonea e nelle quali almeno il 30% delle classi CSS uniche appartiene a Bootstrap Italia:",
-      yellowResult: "",
-      redResult:"Pagine che non utilizzano la libreria in una versione idonea o nelle quali meno del 30% delle classi CSS uniche appartiene a Bootstrap Italia:",
-    };
+    greenResult:
+      "Pagine che utilizzano la libreria in una versione idonea e nelle quali almeno il 30% delle classi CSS uniche appartiene a Bootstrap Italia:",
+    yellowResult: "",
+    redResult:
+      "Pagine che non utilizzano la libreria in una versione idonea o nelle quali meno del 30% delle classi CSS uniche appartiene a Bootstrap Italia:",
+  };
 
   public globalResults: GlobalResultsMulti = {
     score: 1,
@@ -64,7 +69,6 @@ class BootstrapMunAudit extends Audit {
       title: this.title,
       mainTitle: this.mainTitle,
       auditId: this.auditId,
-     
     };
   }
 

@@ -4,7 +4,7 @@
 import { domains } from "./allowedDomain.js";
 import { urlExists } from "../../utils/utils.js";
 import { errorHandling } from "../../config/commonAuditsParts.js";
-import {Audit, GlobalResultsMulti} from "../Audit.js";
+import { Audit, GlobalResultsMulti } from "../Audit.js";
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
 import { fileURLToPath } from "url";
@@ -14,17 +14,20 @@ class DomainAudit extends Audit {
   auditId = "municipality-domain";
   code = "C.SI.5.2";
   mainTitle = "DOMINIO ISTITUZIONALE";
-  title = "C.SI.5.2 - DOMINIO ISTITUZIONALE - Il sito comunale utilizza un dominio istituzionale secondo le modalità indicate nella documentazione del modello di sito comunale.";
-  greenResult = 'Tutte le pagine analizzate sono raggiungibili senza che sia necessario inserire "www." e il dominio utilizzato è corretto.'; 
-  redResult = 'Almeno una delle pagine analizzate non è raggiungibile senza inserire "www." o il dominio utilizzato è errato.';
+  title =
+    "C.SI.5.2 - DOMINIO ISTITUZIONALE - Il sito comunale utilizza un dominio istituzionale secondo le modalità indicate nella documentazione del modello di sito comunale.";
+  greenResult =
+    'Tutte le pagine analizzate sono raggiungibili senza che sia necessario inserire "www." e il dominio utilizzato è corretto.';
+  redResult =
+    'Almeno una delle pagine analizzate non è raggiungibile senza inserire "www." o il dominio utilizzato è errato.';
   subItem = {
-      greenResult:
-        'Pagine raggiungibili senza che sia necessario inserire "www." e nelle quali il dominio utilizzato è corretto:',
-      yellowResult: "",  
-      redResult:
-        'Pagine non raggiungibili senza inserire "www." o nelle quali il dominio utilizzato è errato:',
+    greenResult:
+      'Pagine raggiungibili senza che sia necessario inserire "www." e nelle quali il dominio utilizzato è corretto:',
+    yellowResult: "",
+    redResult:
+      'Pagine non raggiungibili senza inserire "www." o nelle quali il dominio utilizzato è errato:',
   };
-    
+
   public globalResults: GlobalResultsMulti = {
     score: 1,
     details: {
@@ -63,7 +66,6 @@ class DomainAudit extends Audit {
       title: this.title,
       mainTitle: this.mainTitle,
       auditId: this.auditId,
-      
     };
   }
 

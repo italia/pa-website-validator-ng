@@ -12,7 +12,7 @@ import {
   errorHandling,
   minNumberOfServices,
 } from "../../config/commonAuditsParts.js";
-import {Audit, GlobalResultsMulti} from "../Audit.js";
+import { Audit, GlobalResultsMulti } from "../Audit.js";
 import { Page } from "puppeteer";
 import {
   contentTypeItemsBody,
@@ -27,9 +27,12 @@ import { fileURLToPath } from "url";
 import path from "path";
 
 const auditId = "school-servizi-structure-match-model";
-const greenResult = "In tutte le pagine analizzate tutte le voci obbligatorie e i relativi contenuti sono presenti e, dove richiesto, sono nell'ordine corretto.";
-const yellowResult = "In almeno una delle pagine analizzate fino a 2 voci obbligatorie o i relativi contenuti non sono presenti o 1 voce non è nell'ordine corretto.";
-const redResult = "In almeno una delle pagine analizzate più di 2 voci obbligatorie o i relativi contenuti non sono presenti o più di 1 voce non è nell'ordine corretto.";
+const greenResult =
+  "In tutte le pagine analizzate tutte le voci obbligatorie e i relativi contenuti sono presenti e, dove richiesto, sono nell'ordine corretto.";
+const yellowResult =
+  "In almeno una delle pagine analizzate fino a 2 voci obbligatorie o i relativi contenuti non sono presenti o 1 voce non è nell'ordine corretto.";
+const redResult =
+  "In almeno una delle pagine analizzate più di 2 voci obbligatorie o i relativi contenuti non sono presenti o più di 1 voce non è nell'ordine corretto.";
 const subItem = {
   greenResult:
     "Pagine nelle quali tutte le voci obbligatorie e i relativi contenuti sono presenti e, dove richiesto, sono nell'ordine corretto:",
@@ -38,7 +41,8 @@ const subItem = {
   redResult:
     "Pagine nelle quali più di 2 voci obbligatorie o i relativi contenuti non sono presenti o più di 1 voce non è nell'ordine corretto:",
 };
-const title = "R.SC.1.2 - SCHEDE INFORMATIVE DI SERVIZIO - Tutte le schede informative dei servizi devono mostrare le voci segnalate come obbligatorie all'interno dell'architettura dell'informazione, nell'ordine segnalato dal modello.";
+const title =
+  "R.SC.1.2 - SCHEDE INFORMATIVE DI SERVIZIO - Tutte le schede informative dei servizi devono mostrare le voci segnalate come obbligatorie all'interno dell'architettura dell'informazione, nell'ordine segnalato dal modello.";
 const code = "R.SC.1.2";
 const mainTitle = "SCHEDE INFORMATIVE DI SERVIZIO";
 
@@ -269,7 +273,7 @@ class SchoolServiceAudit extends Audit {
 
   async returnGlobal() {
     this.globalResults.correctPages.pages = [];
-    if(this.globalResults.tolerancePages){
+    if (this.globalResults.tolerancePages) {
       this.globalResults.tolerancePages.pages = [];
     }
     this.globalResults.wrongPages.pages = [];
@@ -365,7 +369,7 @@ class SchoolServiceAudit extends Audit {
         title_missing_elements: this.titleSubHeadings[0],
         title_wrong_order_elements: this.titleSubHeadings[1],
       });
-      if(this.globalResults.tolerancePages){
+      if (this.globalResults.tolerancePages) {
         this.globalResults.tolerancePages.headings = [
           subItem.yellowResult,
           this.titleSubHeadings[0],
@@ -382,7 +386,6 @@ class SchoolServiceAudit extends Audit {
           });
         }
       }
-
 
       results.push({});
     }
@@ -451,7 +454,7 @@ class SchoolServiceAudit extends Audit {
 
   static getInstance(): SchoolServiceAudit {
     if (!SchoolServiceAudit.instance) {
-      SchoolServiceAudit.instance = new SchoolServiceAudit;
+      SchoolServiceAudit.instance = new SchoolServiceAudit();
     }
     return <SchoolServiceAudit>SchoolServiceAudit.instance;
   }

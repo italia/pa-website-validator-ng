@@ -1,4 +1,3 @@
-
 import { allowedFonts } from "./allowedFonts.js";
 import { FontAudit } from "../font/index.js";
 import * as ejs from "ejs";
@@ -7,9 +6,12 @@ import path from "path";
 
 class MunicipalityFontAudit extends FontAudit {
   auditId = "municipality-ux-ui-consistency-fonts-check";
-  greenResult = "In tutte le pagine analizzate vengono utilizzati i font come richiesto.";
-  yellowResult = "In almeno una delle pagine analizzate sono presenti <h> o <p> che includono altri font oltre a quelli richiesti.";
-  redResult = "In almeno una delle pagine analizzate sono presenti <h> o <p> che non utilizzano i font come richiesto.";
+  greenResult =
+    "In tutte le pagine analizzate vengono utilizzati i font come richiesto.";
+  yellowResult =
+    "In almeno una delle pagine analizzate sono presenti <h> o <p> che includono altri font oltre a quelli richiesti.";
+  redResult =
+    "In almeno una delle pagine analizzate sono presenti <h> o <p> che non utilizzano i font come richiesto.";
   subItem = {
     greenResult:
       "Pagine analizzate nelle quali vengono utilizzati i font come richiesto:",
@@ -18,7 +20,8 @@ class MunicipalityFontAudit extends FontAudit {
     redResult:
       "Pagine analizzate nelle quali sono presenti <h> o <p> che non utilizzano i font come richiesto:",
   };
-  title = "C.SI.1.1 - COERENZA DELL'UTILIZZO DEI FONT (librerie di caratteri) - Il sito comunale deve utilizzare i font indicati dalla documentazione del modello di sito comunale.";
+  title =
+    "C.SI.1.1 - COERENZA DELL'UTILIZZO DEI FONT (librerie di caratteri) - Il sito comunale deve utilizzare i font indicati dalla documentazione del modello di sito comunale.";
   code = "C.SI.1.1";
   mainTitle = "COERENZA DELL'UTILIZZO DEI FONT (librerie di caratteri)";
 

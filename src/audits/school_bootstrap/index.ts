@@ -1,6 +1,5 @@
-
 import { errorHandling } from "../../config/commonAuditsParts.js";
-import {Audit, GlobalResultsMulti} from "../Audit.js";
+import { Audit, GlobalResultsMulti } from "../Audit.js";
 import { Page } from "puppeteer";
 import { compareVersions } from "compare-versions";
 import { cssClasses } from "./cssClasses.js";
@@ -9,21 +8,23 @@ import { fileURLToPath } from "url";
 import path from "path";
 
 const auditId = "school-ux-ui-consistency-bootstrap-italia-double-check";
-const greenResult = "In tutte le pagine analizzate la libreria Bootstrap Italia è presente e in uso in una versione idonea.";
-const redResult = "In almeno una delle pagine analizzate la libreria Bootstrap Italia non è presente, o non è in uso o ne viene utilizzata una versione datata.";
+const greenResult =
+  "In tutte le pagine analizzate la libreria Bootstrap Italia è presente e in uso in una versione idonea.";
+const redResult =
+  "In almeno una delle pagine analizzate la libreria Bootstrap Italia non è presente, o non è in uso o ne viene utilizzata una versione datata.";
 const subItem = {
-      greenResult:
-        "Pagine che utilizzano la libreria Bootstrap Italia in una versione idonea e utilizzano almeno una delle classi CSS indicate: ",
-      yellowResult: "",
-      redResult:
-        "Pagine che non utilizzano la libreria Bootstrap Italia in una versione idonea o non utilizzano nessuna delle classi CSS indicate: ",
-    };
-const title = "C.SC.1.2 - LIBRERIA DI ELEMENTI DI INTERFACCIA - Il sito della scuola deve utilizzare la libreria Bootstrap Italia in una versione più recente di 1.6.";
+  greenResult:
+    "Pagine che utilizzano la libreria Bootstrap Italia in una versione idonea e utilizzano almeno una delle classi CSS indicate: ",
+  yellowResult: "",
+  redResult:
+    "Pagine che non utilizzano la libreria Bootstrap Italia in una versione idonea o non utilizzano nessuna delle classi CSS indicate: ",
+};
+const title =
+  "C.SC.1.2 - LIBRERIA DI ELEMENTI DI INTERFACCIA - Il sito della scuola deve utilizzare la libreria Bootstrap Italia in una versione più recente di 1.6.";
 const code = "C.SC.1.2";
 const mainTitle = "LIBRERIA DI ELEMENTI DI INTERFACCIA";
 
 class SchoolBootstrap extends Audit {
-  
   public globalResults: GlobalResultsMulti = {
     score: 1,
     details: {
@@ -61,7 +62,6 @@ class SchoolBootstrap extends Audit {
       title: title,
       mainTitle: mainTitle,
       code: code,
-      
     };
   }
 
@@ -314,7 +314,7 @@ class SchoolBootstrap extends Audit {
     }
 
     this.globalResults.errorMessage =
-    this.pagesInError.length > 0 ? errorHandling.popupMessage : "";
+      this.pagesInError.length > 0 ? errorHandling.popupMessage : "";
     this.globalResults.details.items = results;
     this.globalResults.score = this.score;
     this.globalResults.id = this.auditId;

@@ -1,5 +1,8 @@
 "use strict";
-import {OrderResult as OrderType, VocabularyResult} from "../types/crawler-types.js";
+import {
+  OrderResult as OrderType,
+  VocabularyResult,
+} from "../types/crawler-types.js";
 import * as cheerio from "cheerio";
 import { HTTPResponse, Page, HTTPRequest } from "puppeteer";
 import { CheerioAPI } from "cheerio";
@@ -96,9 +99,9 @@ const loadPage = async (url: string): Promise<Page> => {
   } catch (ex) {
     console.error(`ERROR LOADPAGE FUNCTION ${url}: ${ex}`);
 
-    if(ex instanceof Error){
+    if (ex instanceof Error) {
       throw new Error(ex.message);
-    }else{
+    } else {
       throw new Error(String(ex));
     }
   }

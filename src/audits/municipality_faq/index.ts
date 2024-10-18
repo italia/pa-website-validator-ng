@@ -3,7 +3,7 @@
 import * as cheerio from "cheerio";
 import { CheerioAPI } from "cheerio";
 import { urlExists } from "../../utils/utils.js";
-import {Audit, GlobalResults} from "../Audit.js";
+import { Audit, GlobalResults } from "../Audit.js";
 import { Page } from "puppeteer";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import * as ejs from "ejs";
@@ -13,11 +13,14 @@ import path from "path";
 const auditId = "municipality-faq-is-present";
 const code = "C.SI.2.3";
 const mainTitle = "RICHIESTA DI ASSISTENZA / DOMANDE FREQUENTI";
-const title =  "C.SI.2.3 - RICHIESTA DI ASSISTENZA / DOMANDE FREQUENTI - Il sito comunale deve contenere una sezione per le domande più frequenti (FAQ).";
-const greenResult = "Il link è nel footer, la pagina di destinazione esiste e la label è nominata correttamente.";
-const yellowResult = "Il link è nel footer, la pagina di destinazione esiste ma la label non è nominata correttamente.";
-const redResult = "Il link non è nel footer o la pagina di destinazione è inesistente.";
-
+const title =
+  "C.SI.2.3 - RICHIESTA DI ASSISTENZA / DOMANDE FREQUENTI - Il sito comunale deve contenere una sezione per le domande più frequenti (FAQ).";
+const greenResult =
+  "Il link è nel footer, la pagina di destinazione esiste e la label è nominata correttamente.";
+const yellowResult =
+  "Il link è nel footer, la pagina di destinazione esiste ma la label non è nominata correttamente.";
+const redResult =
+  "Il link non è nel footer o la pagina di destinazione è inesistente.";
 
 class FaqAudit extends Audit {
   public globalResults: GlobalResults = {

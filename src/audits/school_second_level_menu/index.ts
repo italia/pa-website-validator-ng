@@ -9,7 +9,7 @@ import {
 } from "../../utils/utils.js";
 import { Page } from "puppeteer";
 
-import {Audit, GlobalResults} from "../Audit.js";
+import { Audit, GlobalResults } from "../Audit.js";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import { detectLang, getSecondLevelPages } from "../../utils/school/utils.js";
 import {
@@ -49,11 +49,16 @@ class SchoolSecondLevelMenuAudit extends Audit {
   };
 
   auditId = "school-menu-scuola-second-level-structure-match-model";
-  greenResult = "Tutte le voci usate sono corrette e inviano a pagine interne al dominio della scuola.";
-  yellowResult = "Almeno il 30% delle voci usate sono corrette e tutte le voci inviano a pagine interne al dominio della scuola.";
-  redResult = "Meno del 30% delle voci sono corrette o sono presenti voci che inviano a pagine esterne al dominio della scuola.";
-  nonExecuted = "Uno o più data-element necessari per condurre il test non sono stati trovati. Verifica il capitolo sui Requisiti tecnici nella Documentazione delle App di valutazione per risolvere il problema.";
-  title = "C.SC.1.5 - VOCI DI MENÙ DI SECONDO LIVELLO - Il sito presenta le voci di menù di secondo livello come descritto nella documentazione del modello di sito della scuola.";
+  greenResult =
+    "Tutte le voci usate sono corrette e inviano a pagine interne al dominio della scuola.";
+  yellowResult =
+    "Almeno il 30% delle voci usate sono corrette e tutte le voci inviano a pagine interne al dominio della scuola.";
+  redResult =
+    "Meno del 30% delle voci sono corrette o sono presenti voci che inviano a pagine esterne al dominio della scuola.";
+  nonExecuted =
+    "Uno o più data-element necessari per condurre il test non sono stati trovati. Verifica il capitolo sui Requisiti tecnici nella Documentazione delle App di valutazione per risolvere il problema.";
+  title =
+    "C.SC.1.5 - VOCI DI MENÙ DI SECONDO LIVELLO - Il sito presenta le voci di menù di secondo livello come descritto nella documentazione del modello di sito della scuola.";
   code = "C.SC.1.5";
   mainTitle = "VOCI DI MENÙ DI SECONDO LIVELLO";
 
@@ -235,7 +240,7 @@ class SchoolSecondLevelMenuAudit extends Audit {
         presentVoicesPercentage.toString() + "%";
       results[0].wrong_voices = wrongTitleFound;
 
-      if(this.globalResults.recapItems){
+      if (this.globalResults.recapItems) {
         this.globalResults.recapItems.headings = [
           "Risultato",
           "% di voci corrette tra quelle usate",

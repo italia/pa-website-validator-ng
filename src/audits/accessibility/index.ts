@@ -5,7 +5,7 @@ import { CheerioAPI } from "cheerio";
 import { getAllPageHTML, urlExists } from "../../utils/utils.js";
 import { Page } from "puppeteer";
 
-import {Audit, GlobalResults} from "../Audit.js";
+import { Audit, GlobalResults } from "../Audit.js";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import * as cheerio from "cheerio";
 
@@ -13,7 +13,6 @@ class A11yAudit extends Audit {
   mainTitle = "";
   code = "";
   title = "";
-  
 
   public globalResults: GlobalResults = {
     score: 0,
@@ -37,7 +36,6 @@ class A11yAudit extends Audit {
       title: this.title,
       mainTitle: this.mainTitle,
       auditId: this.auditId,
-      
     };
   }
 
@@ -75,7 +73,7 @@ class A11yAudit extends Audit {
         "Pagina esistente",
         "La pagina contiene l'url del sito di origine",
         "È dichiarata la conformità alle specifiche WCAG 2.1",
-      ]
+      ];
 
       const items = [
         {

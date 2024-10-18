@@ -1,4 +1,3 @@
-
 import { CookieAudit } from "../cookie/index.js";
 import * as ejs from "ejs";
 import path from "path";
@@ -8,16 +7,18 @@ class SchoolCookie extends CookieAudit {
   auditId = "school-legislation-cookie-domain-check";
   code = "C.SC.2.3";
   mainTitle = "COOKIE";
-  greenResult = "In tutte le pagine analizzate sono stati rilevati solo cookie idonei.";
+  greenResult =
+    "In tutte le pagine analizzate sono stati rilevati solo cookie idonei.";
   yellowResult = "";
-  redResult = "In almeno una delle pagine analizzate sono stati rilevati cookie non idonei.";
+  redResult =
+    "In almeno una delle pagine analizzate sono stati rilevati cookie non idonei.";
   subItem = {
     greenResult: "Pagine nelle quali sono stati rilevati solo cookie idonei:",
     yellowResult: "",
     redResult: "Pagine nelle quali sono stati rilevati cookie non idonei:",
   };
-  title = "C.SC.2.3 - COOKIE - Il sito della scuola deve presentare cookie tecnici in linea con la normativa vigente.";
-
+  title =
+    "C.SC.2.3 - COOKIE - Il sito della scuola deve presentare cookie tecnici in linea con la normativa vigente.";
 
   static getInstance(): SchoolCookie {
     if (!SchoolCookie.instance) {

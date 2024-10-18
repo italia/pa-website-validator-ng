@@ -9,10 +9,13 @@ class SchoolLicenceAudit extends LicenceAudit {
   info = true;
 
   auditId = "school-license-and-attribution";
-  greenResult = "La dicitura sulla licenza dei contenuti è presente nella pagina delle note legali raggiungibile dal footer.";
+  greenResult =
+    "La dicitura sulla licenza dei contenuti è presente nella pagina delle note legali raggiungibile dal footer.";
   yellowResult = "";
-  redResult = "La dicitura sulla licenza dei contenuti è errata o non presente nella pagina delle note legali o questa non è raggiungibile dal footer.";
-  title = "R.SC.2.2 - LICENZA E ATTRIBUZIONE - Il sito della scuola deve pubblicare dati, documenti e informazioni con licenza aperta (es. CC-BY 4.0).";
+  redResult =
+    "La dicitura sulla licenza dei contenuti è errata o non presente nella pagina delle note legali o questa non è raggiungibile dal footer.";
+  title =
+    "R.SC.2.2 - LICENZA E ATTRIBUZIONE - Il sito della scuola deve pubblicare dati, documenti e informazioni con licenza aperta (es. CC-BY 4.0).";
   code = "R.SC.2.2";
   mainTitle = "LICENZA E ATTRIBUZIONE";
 

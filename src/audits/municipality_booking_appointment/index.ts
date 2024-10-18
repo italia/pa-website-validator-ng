@@ -2,12 +2,10 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { getPages, getPrimaryPageUrl } from "../../utils/municipality/utils.js";
-import {
-  errorHandling,
-} from "../../config/commonAuditsParts.js";
+import { errorHandling } from "../../config/commonAuditsParts.js";
 import { DataElementError } from "../../utils/DataElementError.js";
 import { Page } from "puppeteer";
-import {Audit, GlobalResultsMulti} from "../Audit.js";
+import { Audit, GlobalResultsMulti } from "../Audit.js";
 import * as cheerio from "cheerio";
 import { CheerioAPI } from "cheerio";
 import * as ejs from "ejs";
@@ -18,7 +16,8 @@ class BookingAppointment extends Audit {
   code = "C.SI.2.1";
   mainTitle = "PRENOTAZIONE APPUNTAMENTI";
   auditId = "municipality-booking-appointment-check";
-  title = "C.SI.2.1 - PRENOTAZIONE APPUNTAMENTI - Il sito comunale deve consentire di prenotare un appuntamento presso lo sportello di competenza"
+  title =
+    "C.SI.2.1 - PRENOTAZIONE APPUNTAMENTI - Il sito comunale deve consentire di prenotare un appuntamento presso lo sportello di competenza";
   greenResult = "Il componente è presente in tutte le pagine analizzate.";
   yellowResult = "";
   redResult = "Il componente non è presente in tutte le pagine analizzate.";
@@ -26,7 +25,7 @@ class BookingAppointment extends Audit {
     greenResult: "Pagine nelle quali è presente il componente:",
     yellowResult: "",
     redResult: "Pagine nelle quali non è presente il componente:",
-  }; 
+  };
 
   public globalResults: GlobalResultsMulti = {
     score: 1,
@@ -71,7 +70,6 @@ class BookingAppointment extends Audit {
       title: this.title,
       mainTitle: this.mainTitle,
       auditId: this.auditId,
-
     };
   }
 
@@ -139,7 +137,7 @@ class BookingAppointment extends Audit {
         };
       }
 
-      let $: CheerioAPI = cheerio.load('<html><body></body></html>');
+      let $: CheerioAPI = cheerio.load("<html><body></body></html>");
 
       try {
         const data = await page.content();
@@ -193,7 +191,7 @@ class BookingAppointment extends Audit {
 
   async returnGlobal() {
     this.globalResults.correctPages.pages = [];
-    if(this.globalResults.tolerancePages){
+    if (this.globalResults.tolerancePages) {
       this.globalResults.tolerancePages.pages = [];
     }
     this.globalResults.wrongPages.pages = [];

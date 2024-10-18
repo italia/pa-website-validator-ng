@@ -20,27 +20,31 @@ import {
   errorHandling,
   minNumberOfServices,
 } from "../../config/commonAuditsParts.js";
-import {Audit, GlobalResultsMulti} from "../Audit.js";
+import { Audit, GlobalResultsMulti } from "../Audit.js";
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
 import path from "path";
 import { fileURLToPath } from "url";
 
 class ServiceAudit extends Audit {
-  auditId = "municipality-servizi-structure-match-model";  
+  auditId = "municipality-servizi-structure-match-model";
   code = "C.SI.1.3";
   mainTitle = "SCHEDE INFORMATIVE DI SERVIZIO PER IL CITTADINO";
-  title = "C.SI.1.3 - SCHEDE INFORMATIVE DI SERVIZIO PER IL CITTADINO - Tutte le schede informative dei servizi per il cittadino devono mostrare le voci segnalate come obbligatorie all'interno dell'architettura dell'informazione, nell'ordine segnalato dal modello.";
-  greenResult = "Sono presenti almeno 10 schede servizio e in tutte le pagine analizzate tutte le voci obbligatorie e i relativi contenuti sono presenti e, dove richiesto, sono nell'ordine corretto.";
-  yellowResult = "Sono presenti almeno 10 schede servizio e in almeno una delle pagine analizzate fino a 2 voci obbligatorie o i relativi contenuti non sono presenti o 1 voce non è nell'ordine corretto.";
-  redResult = "Non sono presenti almeno 10 schede servizio o in almeno una delle pagine analizzate più di 2 voci obbligatorie o i relativi contenuti non sono presenti o più di 1 voce non è nell'ordine corretto.";
+  title =
+    "C.SI.1.3 - SCHEDE INFORMATIVE DI SERVIZIO PER IL CITTADINO - Tutte le schede informative dei servizi per il cittadino devono mostrare le voci segnalate come obbligatorie all'interno dell'architettura dell'informazione, nell'ordine segnalato dal modello.";
+  greenResult =
+    "Sono presenti almeno 10 schede servizio e in tutte le pagine analizzate tutte le voci obbligatorie e i relativi contenuti sono presenti e, dove richiesto, sono nell'ordine corretto.";
+  yellowResult =
+    "Sono presenti almeno 10 schede servizio e in almeno una delle pagine analizzate fino a 2 voci obbligatorie o i relativi contenuti non sono presenti o 1 voce non è nell'ordine corretto.";
+  redResult =
+    "Non sono presenti almeno 10 schede servizio o in almeno una delle pagine analizzate più di 2 voci obbligatorie o i relativi contenuti non sono presenti o più di 1 voce non è nell'ordine corretto.";
   subItem = {
-      greenResult:
-        "Pagine nelle quali tutte le voci obbligatorie e i relativi contenuti sono presenti e, dove richiesto, sono nell'ordine corretto:",
-      yellowResult:
-        "Pagine nelle quali fino a 2 voci obbligatorie o i relativi contenuti non sono presenti o 1 voce non è nell'ordine corretto:",
-      redResult:
-        "Pagine nelle quali più di 2 voci obbligatorie o i relativi contenuti non sono presenti o più di 1 voce non è nell'ordine corretto:",
+    greenResult:
+      "Pagine nelle quali tutte le voci obbligatorie e i relativi contenuti sono presenti e, dove richiesto, sono nell'ordine corretto:",
+    yellowResult:
+      "Pagine nelle quali fino a 2 voci obbligatorie o i relativi contenuti non sono presenti o 1 voce non è nell'ordine corretto:",
+    redResult:
+      "Pagine nelle quali più di 2 voci obbligatorie o i relativi contenuti non sono presenti o più di 1 voce non è nell'ordine corretto:",
   };
 
   public globalResults: GlobalResultsMulti = {
@@ -88,7 +92,6 @@ class ServiceAudit extends Audit {
       title: this.title,
       mainTitle: this.mainTitle,
       auditId: this.auditId,
-      
     };
   }
 
@@ -248,7 +251,7 @@ class ServiceAudit extends Audit {
 
   async returnGlobal() {
     this.globalResults.correctPages.pages = [];
-    if(this.globalResults.tolerancePages){
+    if (this.globalResults.tolerancePages) {
       this.globalResults.tolerancePages.pages = [];
     }
     this.globalResults.wrongPages.pages = [];
@@ -280,7 +283,6 @@ class ServiceAudit extends Audit {
 
     if (this.pagesInError.length) {
       this.globalResults.error = true;
-
 
       results.push({
         result: errorHandling.errorMessage,
@@ -347,7 +349,7 @@ class ServiceAudit extends Audit {
         title_wrong_order_elements: this.titleSubHeadings[1],
       });
 
-      if(this.globalResults.tolerancePages){
+      if (this.globalResults.tolerancePages) {
         this.globalResults.tolerancePages.headings = [
           this.subItem.yellowResult,
           this.titleSubHeadings[0],

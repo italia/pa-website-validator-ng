@@ -12,7 +12,8 @@ class MunicipalityInfoCloudAudit extends InfoCloudAudit {
   auditId = "municipality-informative-cloud-infrastructure";
   mainTitle = "INFRASTRUTTURE CLOUD";
   code = "R.SI.2.1";
-  title = "R.SI.2.1 - INFRASTRUTTURE CLOUD - Il sito comunale deve essere ospitato su infrastrutture qualificate ai sensi della normativa vigente";
+  title =
+    "R.SI.2.1 - INFRASTRUTTURE CLOUD - Il sito comunale deve essere ospitato su infrastrutture qualificate ai sensi della normativa vigente";
 
   static getInstance(): MunicipalityInfoCloudAudit {
     if (!MunicipalityInfoCloudAudit.instance) {

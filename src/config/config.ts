@@ -1,7 +1,7 @@
-interface ConfigInterface  {
-      gatherers: Record<string, string[]>,
-      audits: Record<string, string[]>,
-      accuracy: Record<string, number>
+interface ConfigInterface {
+  gatherers: Record<string, string[]>;
+  audits: Record<string, string[]>;
+  accuracy: Record<string, number>;
 }
 
 let exportedConfig: ConfigInterface;
@@ -67,12 +67,9 @@ const config = {
         "appointment-booking": [
           "municipality_domain_audit",
           "municipality_bootstrap",
-          "municipality_cookie"
+          "municipality_cookie",
         ],
-        event: [
-          "municipality_domain_audit",
-          "municipality_cookie"
-        ],
+        event: ["municipality_domain_audit", "municipality_cookie"],
       },
       accuracy: {
         min: 1,
@@ -139,7 +136,7 @@ const config = {
           "municipality_informative_reuse",
           "municipality_menu",
           "ipLocation",
-          "municipality_second_level_pages_audit"
+          "municipality_second_level_pages_audit",
         ],
         "services-page": ["municipality_booking_appointment"],
         service: [
@@ -235,8 +232,17 @@ const config = {
 
 async function initializeConfig(siteType?: string, scope?: string) {
   if (!exportedConfig && siteType && scope) {
-    if (!exportedConfig && siteType && (siteType === 'school' || siteType === 'municipality') && (scope === 'local' || scope === 'online') && scope) {
-      exportedConfig = config[scope as keyof typeof config][siteType as keyof typeof config.online];
+    if (
+      !exportedConfig &&
+      siteType &&
+      (siteType === "school" || siteType === "municipality") &&
+      (scope === "local" || scope === "online") &&
+      scope
+    ) {
+      exportedConfig =
+        config[scope as keyof typeof config][
+          siteType as keyof typeof config.online
+        ];
     }
   }
 
@@ -244,7 +250,7 @@ async function initializeConfig(siteType?: string, scope?: string) {
 }
 
 const getAudits = async () => {
-  const exportedConfig : ConfigInterface = await initializeConfig();
+  const exportedConfig: ConfigInterface = await initializeConfig();
   let auditIds: string[] = [];
   for (const pageTypeAudits of Object.values(exportedConfig.audits)) {
     auditIds = [...auditIds, ...(pageTypeAudits as string[])];

@@ -6,7 +6,7 @@ import { initializePuppeteer } from "./../../PuppeteerInstance.js";
 import { buildUrl, isInternalUrl, urlExists } from "../../utils/utils.js";
 import { Page } from "puppeteer";
 
-import {Audit, GlobalResults} from "../Audit.js";
+import { Audit, GlobalResults } from "../Audit.js";
 import {
   errorHandling,
   notExecutedErrorMessage,
@@ -105,7 +105,6 @@ class LicenceAudit extends Audit {
 
         const checkUrl = await urlExists(url, pageUrl);
         if (!checkUrl.result) {
-
           this.globalResults.score = 0;
           this.globalResults.id = this.auditId;
           this.globalResults.pagesItems.pages = items;

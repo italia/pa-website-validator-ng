@@ -1,6 +1,6 @@
 import { Gatherer } from "../Gatherer.js";
-import {PageData} from "../../types/crawler-types.js";
-import {ElementHandle, Page} from "puppeteer";
+import { PageData } from "../../types/crawler-types.js";
+import { ElementHandle, Page } from "puppeteer";
 import {
   buildUrl,
   getRandomNString,
@@ -14,15 +14,15 @@ class eventsGatherer extends Gatherer {
 
   async navigateAndFetchPages(
     url: string,
-    numberOfPages : number,
-    website : string,
+    numberOfPages: number,
+    website: string,
     page: Page,
   ): Promise<PageData[]> {
     const currentClass = this.constructor as typeof Gatherer;
 
     let maxCountPages = 0;
     let clickButton = true;
-    let pages : ElementHandle<Element>[] = [];
+    let pages: ElementHandle<Element>[] = [];
     let eventsPageUrls: string[] = [];
 
     while (clickButton) {
@@ -52,7 +52,7 @@ class eventsGatherer extends Gatherer {
     }
 
     for (const page of pages) {
-      let eventUrl = await page.evaluate(el => el.getAttribute('href'));
+      let eventUrl = await page.evaluate((el) => el.getAttribute("href"));
       if (eventUrl && eventUrl !== "#" && eventUrl !== "") {
         if ((await isInternalUrl(eventUrl)) && !eventUrl.includes(url)) {
           eventUrl = await buildUrl(url, eventUrl);

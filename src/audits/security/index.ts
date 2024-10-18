@@ -3,12 +3,12 @@
 import * as sslCertificate from "get-ssl-certificate";
 import { Page } from "puppeteer";
 
-import {Audit, GlobalResults} from "../Audit.js";
+import { Audit, GlobalResults } from "../Audit.js";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import { allowedCiphers } from "./allowedCiphers.js";
 import https from "https";
 import { TLSSocket } from "tls";
-import {Cipher, CipherInfo} from "../../types/crawler-types.js";
+import { Cipher, CipherInfo } from "../../types/crawler-types.js";
 
 const allowedTlsVersions = ["TLSv1.2", "TLSv1.3"];
 
@@ -41,7 +41,6 @@ class SecurityAudit extends Audit {
   code = "";
   mainTitle = "";
   title = "";
-
 
   async meta() {
     return {

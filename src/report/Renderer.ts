@@ -25,7 +25,7 @@ const render = async () => {
   const audits = await collectAudits();
   /** get data from report instances */
   for (const auditId of Object.keys(audits)) {
-    if(auditId !== 'municipality_improvement_plan'){
+    if (auditId !== "municipality_improvement_plan") {
       const audit = await audits[auditId]();
 
       const auditMeta = await audit.meta();
@@ -34,10 +34,11 @@ const render = async () => {
       const infoScore = audit.infoScore;
       const error = auditResult.error;
 
-      let improvementPlanHTML = '';
+      let improvementPlanHTML = "";
 
-      if(auditId === 'lighthouse' && audits['municipality_improvement_plan']){
-        const improvementAudit = await audits['municipality_improvement_plan']();
+      if (auditId === "lighthouse" && audits["municipality_improvement_plan"]) {
+        const improvementAudit =
+          await audits["municipality_improvement_plan"]();
         improvementPlanHTML = await improvementAudit.returnGlobalHTML();
       }
 
@@ -46,41 +47,41 @@ const render = async () => {
           ...auditMeta,
           auditHTML: await audit.returnGlobalHTML(),
           status: infoScore
-              ? ""
-              : score > 0.5
-                  ? "pass"
-                  : score === 0.5
-                      ? "average"
-                      : "fail",
+            ? ""
+            : score > 0.5
+              ? "pass"
+              : score === 0.5
+                ? "average"
+                : "fail",
         });
-      } else if (error){
+      } else if (error) {
         errorAudits.push({
           ...auditMeta,
           status: "fail",
-          auditHTML: await audit.returnGlobalHTML() + improvementPlanHTML,
+          auditHTML: (await audit.returnGlobalHTML()) + improvementPlanHTML,
         });
-      }else if (score > 0.5) {
+      } else if (score > 0.5) {
         successAudits.push({
           ...auditMeta,
           status: "pass",
-          auditHTML: await audit.returnGlobalHTML() + improvementPlanHTML,
+          auditHTML: (await audit.returnGlobalHTML()) + improvementPlanHTML,
         });
       } else if (score === 0.5) {
         successAudits.push({
           ...auditMeta,
           status: "average",
-          auditHTML: await audit.returnGlobalHTML() + improvementPlanHTML,
+          auditHTML: (await audit.returnGlobalHTML()) + improvementPlanHTML,
         });
       } else {
         failedAudits.push({
           ...auditMeta,
           status: "fail",
-          auditHTML: await audit.returnGlobalHTML() + improvementPlanHTML,
+          auditHTML: (await audit.returnGlobalHTML()) + improvementPlanHTML,
         });
       }
 
       /** LIGHTHOUSE AUDIT specific flow */
-      if (auditId === "lighthouse" || auditId === 'lighthouse_school') {
+      if (auditId === "lighthouse" || auditId === "lighthouse_school") {
         lighthouseIFrame = audit.reportHTML;
       }
     }
@@ -91,8 +92,8 @@ const render = async () => {
   let status = "ko";
   if (!failedAudits.length && !errorAudits.length) {
     status = "ok";
-  }else if (errorAudits.length){
-    status = 'x';
+  } else if (errorAudits.length) {
+    status = "x";
   }
 
   successAudits = sortByWeights(successAudits);
@@ -110,7 +111,8 @@ const render = async () => {
       error_audits: errorAudits.length,
       passed_audits: successAudits.length,
       failed_audits: failedAudits.length,
-      total_audits: successAudits.length + failedAudits.length + errorAudits.length,
+      total_audits:
+        successAudits.length + failedAudits.length + errorAudits.length,
     },
     audits: {
       error: errorAudits,
@@ -119,7 +121,7 @@ const render = async () => {
       failed: failedAudits,
     },
     url_comune: website,
-    lighthouseIFrame: lighthouseIFrame
+    lighthouseIFrame: lighthouseIFrame,
   });
 
   if (saveFile == "false") {

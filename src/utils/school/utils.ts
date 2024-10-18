@@ -14,7 +14,7 @@ import {
   loadPageData,
 } from "../utils.js";
 import { DataElementError } from "../DataElementError.js";
-import {PageLink, RequestPages} from "../../types/crawler-types.js";
+import { PageLink, RequestPages } from "../../types/crawler-types.js";
 
 import { LRUCache } from "lru-cache";
 

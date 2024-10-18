@@ -1,5 +1,5 @@
 import { errorHandling } from "../../config/commonAuditsParts.js";
-import {Audit, GlobalResultsMulti} from "../Audit.js";
+import { Audit, GlobalResultsMulti } from "../Audit.js";
 import { Page } from "puppeteer";
 import { allowedFonts } from "./allowedFonts.js";
 
@@ -46,7 +46,6 @@ class FontAudit extends Audit {
   code = "";
   mainTitle = "";
   title = "";
-  
 
   async meta() {
     return {
@@ -55,7 +54,6 @@ class FontAudit extends Audit {
       title: this.title,
       mainTitle: this.mainTitle,
       auditId: this.auditId,
-      
     };
   }
 
@@ -183,7 +181,7 @@ class FontAudit extends Audit {
 
   async returnGlobal() {
     this.globalResults.correctPages.pages = [];
-    if(this.globalResults.tolerancePages){
+    if (this.globalResults.tolerancePages) {
       this.globalResults.tolerancePages.pages = [];
     }
     this.globalResults.wrongPages.pages = [];
@@ -276,7 +274,7 @@ class FontAudit extends Audit {
         title_wrong_fonts: this.titleSubHeadings[1],
       });
 
-      if(this.globalResults.tolerancePages){
+      if (this.globalResults.tolerancePages) {
         this.globalResults.tolerancePages.headings = [
           this.subItem?.yellowResult ?? "",
           this.titleSubHeadings[0],
@@ -293,8 +291,6 @@ class FontAudit extends Audit {
           });
         }
       }
-
-
 
       results.push({});
     }

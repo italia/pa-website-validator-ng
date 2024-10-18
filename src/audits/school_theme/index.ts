@@ -7,10 +7,13 @@ import { fileURLToPath } from "url";
 
 class SchoolThemeAudit extends ThemeAudit {
   auditId = "school-ux-ui-consistency-theme-version-check";
-  greenResult = "Il sito utilizza una versione uguale o superiore alla 2.0 del tema CMS del modello.";
+  greenResult =
+    "Il sito utilizza una versione uguale o superiore alla 2.0 del tema CMS del modello.";
   yellowResult = "Il sito non utilizza il tema CMS del modello.";
-  redResult = "Il sito non utilizza una versione uguale o superiore alla 2.0 del tema CMS del modello.";
-  title = "C.SC.1.3 - UTILIZZO DI TEMI PER CMS - Nel caso in cui il sito utilizzi un tema messo a disposizione nella documentazione del modello di sito della scuola, lo utilizza nella versione 2.0 o successive.";
+  redResult =
+    "Il sito non utilizza una versione uguale o superiore alla 2.0 del tema CMS del modello.";
+  title =
+    "C.SC.1.3 - UTILIZZO DI TEMI PER CMS - Nel caso in cui il sito utilizzi un tema messo a disposizione nella documentazione del modello di sito della scuola, lo utilizza nella versione 2.0 o successive.";
   minVersion = "2.0.0";
   code = "C.SC.1.3";
   mainTitle = "UTILIZZO DI TEMI PER CMS";

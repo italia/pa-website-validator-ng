@@ -10,7 +10,7 @@ import {
   missingMenuItems,
 } from "../../utils/utils.js";
 import { Page } from "puppeteer";
-import {Audit, GlobalResults} from "../Audit.js";
+import { Audit, GlobalResults } from "../Audit.js";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import { detectLang, getFirstLevelPages } from "../../utils/school/utils.js";
 import { MenuItem, primaryMenuItems } from "./menuItem.js";
@@ -42,11 +42,16 @@ class SchoolFirstLevelMenuAudit extends Audit {
   auditId = "school-menu-structure-match-model";
   code = "C.SC.1.4";
   mainTitle = "VOCI DI MENÙ DI PRIMO LIVELLO";
-  greenResult = "Le voci del menù sono corrett, nell'ordine giusto e inviano a pagine interne al dominio della scuola.";
-  yellowResult = "L'ordine delle voci del menu è corretto ma sono presenti fino a 3 voci aggiuntive. Tutte le voci inviano a pagine interne al dominio della scuola.";
-  redResult ="Almeno una delle voci obbligatorie è assente o inesatta e/o le voci obbligatorie sono in ordine errato e/o sono presenti 8 o più voci nel menù del sito e/o sono presenti voci che inviano a pagine esterne al dominio della scuola.";
-  nonExecuted = "Uno o più data-element necessari per condurre il test non sono stati trovati. Verifica il capitolo sui Requisiti tecnici nella Documentazione delle App di valutazione per risolvere il problema.";
-  title = "C.SC.1.4 - VOCI DI MENÙ DI PRIMO LIVELLO - Il sito della scuola deve presentare tutte le voci di menù di primo livello, nell'esatto ordine descritto dalla documentazione del modello di sito scolastico.";
+  greenResult =
+    "Le voci del menù sono corrett, nell'ordine giusto e inviano a pagine interne al dominio della scuola.";
+  yellowResult =
+    "L'ordine delle voci del menu è corretto ma sono presenti fino a 3 voci aggiuntive. Tutte le voci inviano a pagine interne al dominio della scuola.";
+  redResult =
+    "Almeno una delle voci obbligatorie è assente o inesatta e/o le voci obbligatorie sono in ordine errato e/o sono presenti 8 o più voci nel menù del sito e/o sono presenti voci che inviano a pagine esterne al dominio della scuola.";
+  nonExecuted =
+    "Uno o più data-element necessari per condurre il test non sono stati trovati. Verifica il capitolo sui Requisiti tecnici nella Documentazione delle App di valutazione per risolvere il problema.";
+  title =
+    "C.SC.1.4 - VOCI DI MENÙ DI PRIMO LIVELLO - Il sito della scuola deve presentare tutte le voci di menù di primo livello, nell'esatto ordine descritto dalla documentazione del modello di sito scolastico.";
 
   async meta() {
     return {
@@ -173,7 +178,7 @@ class SchoolFirstLevelMenuAudit extends Audit {
         results[0].result = this.yellowResult;
       }
 
-      if(this.globalResults.recapItems){
+      if (this.globalResults.recapItems) {
         this.globalResults.recapItems.headings = [
           "Risultato",
           "Voci del menù identificate",
@@ -182,7 +187,6 @@ class SchoolFirstLevelMenuAudit extends Audit {
         ];
         this.globalResults.recapItems.pages = [results[0]];
       }
-
 
       const firstLevelPages = await getFirstLevelPages(url);
 

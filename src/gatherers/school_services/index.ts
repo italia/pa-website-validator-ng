@@ -1,5 +1,5 @@
 import { Gatherer } from "../Gatherer.js";
-import {PageData} from "../../types/crawler-types.js";
+import { PageData } from "../../types/crawler-types.js";
 import { Page } from "puppeteer";
 import { loadPage } from "../../utils/utils.js";
 
@@ -10,8 +10,8 @@ class servicesPageGatherer extends Gatherer {
 
   async navigateAndFetchPages(
     url: string,
-    numberOfPages : number,
-    website : string,
+    numberOfPages: number,
+    website: string,
     page: Page,
   ): Promise<PageData[]> {
     if (this.gatheredPages.length > 0) {

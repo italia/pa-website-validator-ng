@@ -1,6 +1,6 @@
-import {Audit, GlobalResults} from "../Audit.js";
+import { Audit, GlobalResults } from "../Audit.js";
 
-import lighthouse, {Flags, RunnerResult} from "lighthouse";
+import lighthouse, { Flags, RunnerResult } from "lighthouse";
 import { Page } from "puppeteer";
 import { initializePuppeteer } from "../../PuppeteerInstance.js";
 import * as ejs from "ejs";
@@ -12,7 +12,7 @@ class lighthouseAudit extends Audit {
   auditId = "lighthouse_school";
   code = "R.SC.3.1";
   mainTitle = "Velocità e tempi di risposta";
-  title = "R.SC.3.1 - Velocità e tempi di risposta"
+  title = "R.SC.3.1 - Velocità e tempi di risposta";
   metricsResult = {};
   displayMetrics = [
     "first-contentful-paint",
@@ -49,8 +49,9 @@ class lighthouseAudit extends Audit {
 
       const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-      const options : Flags = {
-        logLevel: process.env["logsLevel"] as 'info' | 'error' | 'silent' || 'info',
+      const options: Flags = {
+        logLevel:
+          (process.env["logsLevel"] as "info" | "error" | "silent") || "info",
         output: ["html", "json"],
         port: parseInt(port),
         maxWaitForLoad: 300000,
@@ -60,9 +61,12 @@ class lighthouseAudit extends Audit {
 
       const url = page.url();
       await page.goto(url, { waitUntil: "domcontentloaded" });
-      const runnerResult : RunnerResult | undefined = await this.runLighthouse(url, options);
+      const runnerResult: RunnerResult | undefined = await this.runLighthouse(
+        url,
+        options,
+      );
 
-      if(runnerResult) {
+      if (runnerResult) {
         if (runnerResult.report.length < 2) {
           throw new Error("Missing JSON or HTML report");
         }
@@ -79,7 +83,7 @@ class lighthouseAudit extends Audit {
 
             const score = metric.score;
             let status = "fail";
-            if(score){
+            if (score) {
               if (score * 100 > 90) {
                 status = "pass";
               } else if (score * 100 > 50) {
@@ -102,7 +106,7 @@ class lighthouseAudit extends Audit {
         this.reportJSON = runnerResult.report[1];
 
         this.globalResults.details.items = JSON.parse(
-            runnerResult.report[1],
+          runnerResult.report[1],
         ).audits;
       }
 
@@ -119,7 +123,6 @@ class lighthouseAudit extends Audit {
       title: this.title,
       mainTitle: this.mainTitle,
       auditId: this.auditId,
-      
     };
   }
 
@@ -127,7 +130,10 @@ class lighthouseAudit extends Audit {
     return this.globalResults;
   }
 
-  async runLighthouse(url: string, options : Flags): Promise<RunnerResult | undefined> {
+  async runLighthouse(
+    url: string,
+    options: Flags,
+  ): Promise<RunnerResult | undefined> {
     try {
       return await lighthouse(url, options);
     } catch (error) {

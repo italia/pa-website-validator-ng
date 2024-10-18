@@ -9,7 +9,8 @@ import { fileURLToPath } from "url";
 
 class SchoolInfoCloudAudit extends InfoCloudAudit {
   auditId = "school-informative-cloud-infrastructure";
-  title = "R.SC.2.3 - INFRASTRUTTURE CLOUD - Il sito della scuola deve essere ospitato su infrastrutture qualificate ai sensi della normativa vigente.";
+  title =
+    "R.SC.2.3 - INFRASTRUTTURE CLOUD - Il sito della scuola deve essere ospitato su infrastrutture qualificate ai sensi della normativa vigente.";
   mainTitle = "INFRASTRUTTURE CLOUD";
   code = "R.SC.2.3";
 
