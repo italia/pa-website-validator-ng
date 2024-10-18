@@ -127,7 +127,7 @@ const render = async () => {
       status: true,
       data: {
         htmlReport: reportHtml,
-        jsonReport: reportJSON,
+        jsonReport: JSON.stringify(reportJSON),
       },
     };
   }
