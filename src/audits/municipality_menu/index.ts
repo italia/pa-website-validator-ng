@@ -8,7 +8,7 @@ import {
 } from "../../utils/utils.js";
 import { MenuItem } from "../../types/menuItem.js";
 import { getFirstLevelPages } from "../../utils/municipality/utils.js";
-import {Audit, GlobalResults} from "../Audit.js";
+import { Audit, GlobalResults } from "../Audit.js";
 import { Page } from "puppeteer";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import * as ejs from "ejs";
@@ -16,13 +16,16 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 const auditId = "municipality-menu-structure-match-model";
-const greenResult = "Le voci del menù obbligatorie sono corrette, nell'ordine giusto e inviano a pagine interne al dominio del Comune.";
-const yellowResult = "Le voci del menù obbligatorie e il loro ordine è corretto ma sono presenti fino a 3 voci aggiuntive. Tutte le voci inviano a pagine interne al dominio del Comune.";
-const redResult = "Almeno una delle voci obbligatorie è assente o inesatta e/o le voci obbligatorie sono in ordine errato e/o sono presenti 8 o più voci nel menù del sito e/o sono presenti voci che inviano a pagine esterne al dominio del Comune.";
-const title = "C.SI.1.6 - VOCI DI MENÙ DI PRIMO LIVELLO - Il sito comunale deve presentare tutte le voci di menù di primo livello, nell'esatto ordine descritto dalla documentazione del modello di sito comunale.";
+const greenResult =
+  "Le voci del menù obbligatorie sono corrette, nell'ordine giusto e inviano a pagine interne al dominio del Comune.";
+const yellowResult =
+  "Le voci del menù obbligatorie e il loro ordine è corretto ma sono presenti fino a 3 voci aggiuntive. Tutte le voci inviano a pagine interne al dominio del Comune.";
+const redResult =
+  "Almeno una delle voci obbligatorie è assente o inesatta e/o le voci obbligatorie sono in ordine errato e/o sono presenti 8 o più voci nel menù del sito e/o sono presenti voci che inviano a pagine esterne al dominio del Comune.";
+const title =
+  "C.SI.1.6 - VOCI DI MENÙ DI PRIMO LIVELLO - Il sito comunale deve presentare tutte le voci di menù di primo livello, nell'esatto ordine descritto dalla documentazione del modello di sito comunale.";
 const code = "C.SI.1.6";
 const mainTitle = "VOCI DI MENÙ DI PRIMO LIVELLO";
-
 
 class MenuAudit extends Audit {
   public globalResults: GlobalResults = {
@@ -45,7 +48,6 @@ class MenuAudit extends Audit {
     errorMessage: "",
   };
 
-  
   public score = 0;
   async meta() {
     return {
@@ -61,16 +63,16 @@ class MenuAudit extends Audit {
     if (error && !page) {
       this.globalResults.score = 0;
 
-        this.globalResults.pagesItems.headings = ["Risultato"];
-        this.globalResults.pagesItems.message = notExecutedErrorMessage.replace(
-            "<LIST>",
-            error,
-        );
-        this.globalResults.pagesItems.pages = [
-          {
-            result: redResult,
-          },
-        ];
+      this.globalResults.pagesItems.headings = ["Risultato"];
+      this.globalResults.pagesItems.message = notExecutedErrorMessage.replace(
+        "<LIST>",
+        error,
+      );
+      this.globalResults.pagesItems.pages = [
+        {
+          result: redResult,
+        },
+      ];
 
       this.globalResults.error = true;
 
@@ -137,7 +139,7 @@ class MenuAudit extends Audit {
         results[0].result = yellowResult;
       }
 
-      if(this.globalResults.recapItems){
+      if (this.globalResults.recapItems) {
         this.globalResults.recapItems.headings = [
           "Risultato",
           "Voci del menù identificate",

@@ -5,7 +5,7 @@ import { CheerioAPI } from "cheerio";
 import { urlExists } from "../../utils/utils.js";
 import { Page } from "puppeteer";
 
-import {Audit, GlobalResults} from "../Audit.js";
+import { Audit, GlobalResults } from "../Audit.js";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import * as cheerio from "cheerio";
 
@@ -40,7 +40,6 @@ class PrivacyAudit extends Audit {
   }
 
   async auditPage(page: Page | null, url: string, error?: string) {
-
     if (error && !page) {
       this.globalResults.score = 0;
 

@@ -1,8 +1,8 @@
 import { Gatherer } from "../Gatherer.js";
-import {PageData} from "../../types/crawler-types.js";
+import { PageData } from "../../types/crawler-types.js";
 import { setTimeout } from "timers/promises";
 import { Page } from "puppeteer";
-import {getRandomNString, loadPage} from "../../utils/utils.js";
+import { getRandomNString, loadPage } from "../../utils/utils.js";
 
 class servicesGatherer extends Gatherer {
   static dataElement: string = "service-link";
@@ -34,7 +34,7 @@ class servicesGatherer extends Gatherer {
           button.click();
           return true;
         });
-        
+
         if (!clickButton) {
           continue;
         }
@@ -52,11 +52,11 @@ class servicesGatherer extends Gatherer {
           `[data-element="${servicesGatherer.dataElement}"]`,
         );
 
-        const foundElementsHrefs : string[] = await Promise.all(
+        const foundElementsHrefs: string[] = await Promise.all(
           foundElements.map(async (el) => {
             const href = await el.getProperty("href");
             const jsonValue = await href.jsonValue();
-            const hrefValue : string = String(jsonValue);
+            const hrefValue: string = String(jsonValue);
             return hrefValue;
           }),
         );
@@ -78,35 +78,34 @@ class servicesGatherer extends Gatherer {
       }
     }
 
-
     const foundSecondLevel = await page.$$(
-        `[data-element="${secondPageLevel}"]`,
+      `[data-element="${secondPageLevel}"]`,
     );
 
-    const foundElementSecondHref : string[] = await Promise.all(
-        foundSecondLevel.map(async (el) => {
-          const href = await el.getProperty("href");
-          const jsonValue = await href.jsonValue();
-          const hrefValue : string = String(jsonValue);
-          return hrefValue;
-        }),
+    const foundElementSecondHref: string[] = await Promise.all(
+      foundSecondLevel.map(async (el) => {
+        const href = await el.getProperty("href");
+        const jsonValue = await href.jsonValue();
+        const hrefValue: string = String(jsonValue);
+        return hrefValue;
+      }),
     );
 
-    if(foundElementSecondHref.length){
-      const secondPage : Page | null = await loadPage(foundElementSecondHref[0]);
+    if (foundElementSecondHref.length) {
+      const secondPage: Page | null = await loadPage(foundElementSecondHref[0]);
 
-      if(secondPage){
+      if (secondPage) {
         const foundElementsSecondLevel = await secondPage.$$(
-            `[data-element="${servicesGatherer.dataElement}"]`,
+          `[data-element="${servicesGatherer.dataElement}"]`,
         );
 
-        const foundElementSecondLevelHref : string[] = await Promise.all(
-            foundElementsSecondLevel.map(async (el) => {
-              const href = await el.getProperty("href");
-              const jsonValue = await href.jsonValue();
-              const hrefValue : string = String(jsonValue);
-              return hrefValue;
-            }),
+        const foundElementSecondLevelHref: string[] = await Promise.all(
+          foundElementsSecondLevel.map(async (el) => {
+            const href = await el.getProperty("href");
+            const jsonValue = await href.jsonValue();
+            const hrefValue: string = String(jsonValue);
+            return hrefValue;
+          }),
         );
 
         pages = foundElementSecondLevelHref;
@@ -118,7 +117,6 @@ class servicesGatherer extends Gatherer {
         await secondPage.close();
       }
     }
-
 
     if (!maxCountPages || (maxCountPages == 0 && click)) {
       throw new Error(

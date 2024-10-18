@@ -5,9 +5,11 @@ import path from "path";
 
 class MunicipalityCookie extends CookieAudit {
   auditId = "municipality-legislation-cookie-domain-check";
-  greenResult = "In tutte le pagine analizzate sono stati rilevati solo cookie idonei.";
+  greenResult =
+    "In tutte le pagine analizzate sono stati rilevati solo cookie idonei.";
   yellowResult = "";
-  redResult = "In almeno una delle pagine analizzate sono stati rilevati cookie non idonei.";
+  redResult =
+    "In almeno una delle pagine analizzate sono stati rilevati cookie non idonei.";
   subItem = {
     greenResult: "Pagine nelle quali sono stati rilevati solo cookie idonei:",
     yellowResult: "",
@@ -15,7 +17,8 @@ class MunicipalityCookie extends CookieAudit {
   };
   code = "C.SI.3.1";
   mainTitle = "COOKIE";
-  title = "C.SI.3.1 - COOKIE - Il sito comunale deve presentare cookie tecnici in linea con la normativa vigente.";
+  title =
+    "C.SI.3.1 - COOKIE - Il sito comunale deve presentare cookie tecnici in linea con la normativa vigente.";
 
   static getInstance(): MunicipalityCookie {
     if (!MunicipalityCookie.instance) {

@@ -1,7 +1,7 @@
 import { errorHandling } from "../../config/commonAuditsParts.js";
-import {Audit, GlobalResultsMulti} from "../Audit.js";
-import {Browser, Page, Cookie as CookieProtocol} from "puppeteer";
-import {Cookie} from "../../types/crawler-types";
+import { Audit, GlobalResultsMulti } from "../Audit.js";
+import { Browser, Page, Cookie as CookieProtocol } from "puppeteer";
+import { Cookie } from "../../types/crawler-types";
 import { gotoRetry } from "../../utils/utils.js";
 import { initializePuppeteerOld } from "../../PuppeteerInstanceOld.js";
 
@@ -38,7 +38,7 @@ class CookieAudit extends Audit {
 
   code = "";
   mainTitle = "";
-  title = ""; 
+  title = "";
 
   async meta() {
     return {
@@ -47,7 +47,6 @@ class CookieAudit extends Audit {
       title: this.title,
       mainTitle: this.mainTitle,
       auditId: this.auditId,
-      
     };
   }
 
@@ -85,14 +84,14 @@ class CookieAudit extends Audit {
         const items = [];
         let score = 1;
 
-        const oldBrowser : Browser | null = await initializePuppeteerOld();
+        const oldBrowser: Browser | null = await initializePuppeteerOld();
 
-        if(oldBrowser){
+        if (oldBrowser) {
           const oldPage = await oldBrowser.newPage();
 
           await gotoRetry(oldPage, url, errorHandling.gotoRetryTentative);
 
-          const cookies : CookieProtocol[] = await oldPage.cookies();
+          const cookies: CookieProtocol[] = await oldPage.cookies();
 
           await oldPage.close();
 
@@ -127,8 +126,8 @@ class CookieAudit extends Audit {
               });
             }
           }
-        }else{
-          throw new Error('Non è stato possibile aprire Puppeteer');
+        } else {
+          throw new Error("Non è stato possibile aprire Puppeteer");
         }
       } catch (ex) {
         if (!(ex instanceof Error)) {
@@ -291,7 +290,10 @@ class CookieAudit extends Audit {
 export { CookieAudit };
 export default CookieAudit.getInstance;
 
-async function checkCookieDomain(url: string, cookies : CookieProtocol[]): Promise<Cookie[]> {
+async function checkCookieDomain(
+  url: string,
+  cookies: CookieProtocol[],
+): Promise<Cookie[]> {
   const returnValue = [];
 
   for (const cookie of cookies) {

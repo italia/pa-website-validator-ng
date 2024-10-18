@@ -7,14 +7,14 @@ import * as util from "util";
 import geoip from "geoip-lite";
 import { allowedCountries } from "../../storage/common/allowedCountries.js";
 import { Page } from "puppeteer";
-import {Audit, GlobalResults} from "../Audit.js";
+import { Audit, GlobalResults } from "../Audit.js";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import * as ejs from "ejs";
 import { fileURLToPath } from "url";
 import path from "path";
 
 const auditId = "common-security-ip-location";
-const greenResult ="L'hosting è su territorio europeo.";
+const greenResult = "L'hosting è su territorio europeo.";
 const redResult = "L'hosting non è su territorio europeo.";
 const code = "LOCALIZZAZIONE IP";
 const mainTitle = "LOCALIZZAZIONE IP";
@@ -40,7 +40,8 @@ class IpLocationAudit extends Audit {
   async meta() {
     return {
       id: auditId,
-      title: "LOCALIZZAZIONE IP - Il sito deve essere ospitato su datacenter localizzati su territorio europeo.",
+      title:
+        "LOCALIZZAZIONE IP - Il sito deve essere ospitato su datacenter localizzati su territorio europeo.",
       code: code,
       mainTitle: mainTitle,
       auditId: auditId,

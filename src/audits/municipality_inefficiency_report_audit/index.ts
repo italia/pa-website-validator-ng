@@ -6,7 +6,7 @@ import { CheerioAPI } from "cheerio";
 import { buildUrl, isInternalUrl, urlExists } from "../../utils/utils.js";
 import isEmail from "validator/lib/isEmail.js";
 import { Page } from "puppeteer";
-import {Audit, GlobalResults} from "../Audit.js";
+import { Audit, GlobalResults } from "../Audit.js";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import * as ejs from "ejs";
 import { fileURLToPath } from "url";
@@ -15,10 +15,14 @@ import path from "path";
 const auditId = "municipality-inefficiency-report";
 const code = "C.SI.2.4";
 const mainTitle = "SEGNALAZIONE DISSERVIZIO";
-const greenResult = "Il link è nel footer, la pagina di destinazione esiste e la label è nominata correttamente.";
-const yellowResult = "Il link è nel footer, la pagina di destinazione esiste ma la label non è nominata correttamente.";
-const redResult = "Il link non è nel footer o la pagina di destinazione è inesistente.";
-const title = "C.SI.2.4 - SEGNALAZIONE DISSERVIZIO - Il sito comunale deve fornire al cittadino la possibilità di segnalare un disservizio, tramite email o servizio dedicato.";
+const greenResult =
+  "Il link è nel footer, la pagina di destinazione esiste e la label è nominata correttamente.";
+const yellowResult =
+  "Il link è nel footer, la pagina di destinazione esiste ma la label non è nominata correttamente.";
+const redResult =
+  "Il link non è nel footer o la pagina di destinazione è inesistente.";
+const title =
+  "C.SI.2.4 - SEGNALAZIONE DISSERVIZIO - Il sito comunale deve fornire al cittadino la possibilità di segnalare un disservizio, tramite email o servizio dedicato.";
 
 class InefficiencyAudit extends Audit {
   public globalResults: GlobalResults = {
@@ -36,7 +40,6 @@ class InefficiencyAudit extends Audit {
     errorMessage: "",
   };
 
-  
   public score = 0;
 
   async meta() {

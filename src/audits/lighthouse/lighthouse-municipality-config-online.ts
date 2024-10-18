@@ -1,4 +1,9 @@
-import {groups, accessibilityAudits, bestPracticeAudits, seoAudits} from "../../config/commonAuditsParts";
+import {
+  groups,
+  accessibilityAudits,
+  bestPracticeAudits,
+  seoAudits,
+} from "../../config/commonAuditsParts";
 
 module.exports = {
   extends: "lighthouse:default",
@@ -13,11 +18,7 @@ module.exports = {
       title: "Test aggiuntivi",
       description:
         "Vengono mostrati i risultati di test aggiuntivi utili a facilitare le attività di sviluppo e garantire un buon risultato.",
-      auditRefs: [
-        ...accessibilityAudits,
-        ...bestPracticeAudits,
-        ...seoAudits,
-      ],
+      auditRefs: [...accessibilityAudits, ...bestPracticeAudits, ...seoAudits],
     },
   },
 };

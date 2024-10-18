@@ -7,12 +7,15 @@ import path from "path";
 
 class MunicipalityA11yAudit extends A11yAudit {
   auditId = "municipality-legislation-accessibility-declaration-is-present";
-  greenResult = "Il link è nel footer, invia alla pagina corretta e contiene l'URL corretto.";
+  greenResult =
+    "Il link è nel footer, invia alla pagina corretta e contiene l'URL corretto.";
   yellowResult = "";
-  redResult = "Il link non è nel footer o non invia alla pagina corretta o la pagina non esiste.";
+  redResult =
+    "Il link non è nel footer o non invia alla pagina corretta o la pagina non esiste.";
   mainTitle = "DICHIARAZIONE DI ACCESSIBILITÀ";
   code = "C.SI.3.2";
-  title = "C.SI.3.2 - DICHIARAZIONE DI ACCESSIBILITÀ - Il sito comunale deve esporre la dichiarazione di accessibilità in conformità al modello e alle linee guida rese disponibili da AgID in ottemperanza alla normativa vigente in materia di accessibilità e con livelli di accessibilità contemplati nelle specifiche tecniche WCAG 2.1.";
+  title =
+    "C.SI.3.2 - DICHIARAZIONE DI ACCESSIBILITÀ - Il sito comunale deve esporre la dichiarazione di accessibilità in conformità al modello e alle linee guida rese disponibili da AgID in ottemperanza alla normativa vigente in materia di accessibilità e con livelli di accessibilità contemplati nelle specifiche tecniche WCAG 2.1.";
 
   async returnGlobalHTML() {
     let status = "fail";

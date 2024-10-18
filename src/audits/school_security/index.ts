@@ -10,7 +10,8 @@ class SchoolSecurityAudit extends SecurityAudit {
   greenResult = "Il certificato del sito [url] è attivo e valido.";
   yellowResult = "";
   redResult = "Il certificato del sito [url] non è attivo o valido: ";
-  title = "C.SC.3.1 - CERTIFICATO HTTPS - Il sito della scuola deve avere un certificato https valido e attivo.";
+  title =
+    "C.SC.3.1 - CERTIFICATO HTTPS - Il sito della scuola deve avere un certificato https valido e attivo.";
   code = "C.SC.3.1";
   mainTitle = "CERTIFICATO HTTPS";
 

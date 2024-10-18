@@ -1,13 +1,11 @@
 "use strict";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import {
-  getPageElementDataAttribute,
-} from "../../utils/utils.js";
+import { getPageElementDataAttribute } from "../../utils/utils.js";
 import * as cheerio from "cheerio";
 import { CheerioAPI } from "cheerio";
 import { errorHandling } from "../../config/commonAuditsParts.js";
-import {Audit, GlobalResultsMulti} from "../Audit.js";
+import { Audit, GlobalResultsMulti } from "../Audit.js";
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
 import { fileURLToPath } from "url";
@@ -16,16 +14,19 @@ import path from "path";
 const auditId = "municipality-contacts-assistency";
 const code = "C.SI.2.2";
 const mainTitle = "RICHIESTA DI ASSISTENZA / CONTATTI";
-const title = "C.SI.2.2 - RICHIESTA DI ASSISTENZA / CONTATTI - All'interno del sito comunale, nel contenuto della scheda servizio, devono essere comunicati i contatti dell'ufficio preposto all'erogazione del servizio.";
-const greenResult = 'In tutte le schede servizio analizzate la voce "Contatti" è presente.';
-const redResult = 'In almeno una delle schede servizio analizzate la voce "Contatti" è assente.'; 
+const title =
+  "C.SI.2.2 - RICHIESTA DI ASSISTENZA / CONTATTI - All'interno del sito comunale, nel contenuto della scheda servizio, devono essere comunicati i contatti dell'ufficio preposto all'erogazione del servizio.";
+const greenResult =
+  'In tutte le schede servizio analizzate la voce "Contatti" è presente.';
+const redResult =
+  'In almeno una delle schede servizio analizzate la voce "Contatti" è assente.';
 const subItem = {
   greenResult:
-    'Schede servizio analizzate nelle quali la voce "Contatti" è presente:',  
+    'Schede servizio analizzate nelle quali la voce "Contatti" è presente:',
   redResult:
     'Schede servizio analizzate nelle quali la voce "Contatti" è assente:',
 };
-    
+
 class ContactAssistencyAudit extends Audit {
   public globalResults: GlobalResultsMulti = {
     score: 1,
@@ -90,7 +91,7 @@ class ContactAssistencyAudit extends Audit {
     if (page) {
       const url = page.url();
 
-      let $: CheerioAPI = cheerio.load('<html><body></body></html>');
+      let $: CheerioAPI = cheerio.load("<html><body></body></html>");
 
       try {
         const data = await page.content();

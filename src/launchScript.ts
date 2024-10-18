@@ -29,8 +29,7 @@ async function run(
   numberOfServicePages?: number,
   concurrentPages?: number,
 ) {
-
-    let finalResults: Record<string, unknown> = {};
+  let finalResults: Record<string, unknown> = {};
 
   try {
     const config = await initializeConfig(type, scope);
@@ -80,8 +79,16 @@ async function run(
       });
     });
 
-    if (config.audits["homepage"].find((i: string) => (i === "lighthouse" || i === "lighthouse_school"))) {
-      const lighthouseId = config.audits["homepage"].find((i: string) => i === "lighthouse_school") ? 'lighthouse_school' : 'lighthouse';
+    if (
+      config.audits["homepage"].find(
+        (i: string) => i === "lighthouse" || i === "lighthouse_school",
+      )
+    ) {
+      const lighthouseId = config.audits["homepage"].find(
+        (i: string) => i === "lighthouse_school",
+      )
+        ? "lighthouse_school"
+        : "lighthouse";
       const audit = await audits[lighthouseId]();
       let page: Page | null = null;
       let navigatingError;
@@ -91,11 +98,11 @@ async function run(
           await page.waitForNetworkIdle();
         }
       } catch (e) {
-          if(e instanceof Error){
-              navigatingError = e.message;
-          }else{
-              navigatingError = String(e);
-          }
+        if (e instanceof Error) {
+          navigatingError = e.message;
+        } else {
+          navigatingError = String(e);
+        }
       }
 
       await audit.auditPage(
@@ -130,11 +137,11 @@ async function run(
 
     await onScriptClosedPromise;
 
-    if(browser){
+    if (browser) {
       console.error("closing puppeteer");
       await browser.close();
     }
-    if(oldBrowser){
+    if (oldBrowser) {
       console.error("closing puppeteer old");
       await oldBrowser.close();
     }

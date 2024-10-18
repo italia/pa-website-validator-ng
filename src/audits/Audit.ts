@@ -16,10 +16,10 @@ export interface GlobalResults {
     pages: Record<string, unknown>[];
   };
   recapItems?: {
-    message: string,
-    headings: string[],
-    pages: Record<string, unknown>[],
-  },
+    message: string;
+    headings: string[];
+    pages: Record<string, unknown>[];
+  };
   errorMessage: string;
   info?: boolean;
   error?: boolean;
@@ -34,25 +34,25 @@ export interface GlobalResultsMulti {
     summary: string;
   };
   pagesInError: {
-    message: string,
+    message: string;
     headings: string[];
     pages: Record<string, unknown>[];
-  },
+  };
   wrongPages: {
-    message: string,
+    message: string;
     headings: string[];
     pages: Record<string, unknown>[];
-  },
+  };
   tolerancePages?: {
-    message: string,
+    message: string;
     headings: string[];
     pages: Record<string, unknown>[];
-  },
+  };
   correctPages: {
-    message: string,
+    message: string;
     headings: string[];
     pages: Record<string, unknown>[];
-  },
+  };
   errorMessage: string;
   info?: boolean;
   error?: boolean;
@@ -63,7 +63,7 @@ abstract class Audit {
   protected static instance: Audit;
   globalResults: GlobalResults | GlobalResultsMulti = {
     score: 0,
-    details:  {
+    details: {
       items: [],
       type: "table",
       summary: "",
@@ -74,22 +74,22 @@ abstract class Audit {
       pages: [],
     },
     errorMessage: "",
-    id: '',
+    id: "",
   };
   code = "";
   info = false;
-  reportHTML = '';
+  reportHTML = "";
   protected minVersion = "";
   mainTitle = "";
   infoScore = false;
   title = "";
   greenResult = "";
   yellowResult = "";
-  redResult = ""
+  redResult = "";
   subItem = {
     greenResult: "",
     yellowResult: "",
-    redResult: ""
+    redResult: "",
   };
 
   protected auditId = "audit";
@@ -101,8 +101,8 @@ abstract class Audit {
     url: string,
     error?: string,
     pageType?: string | null,
-  ) : Promise<unknown> {
-    console.log(page, url, error, pageType)
+  ): Promise<unknown> {
+    console.log(page, url, error, pageType);
     return {};
   }
 
@@ -123,14 +123,14 @@ abstract class Audit {
     let message = "";
 
     if (this.globalResults.score > 0.5) {
-      (status = "pass");
-      (message = this.greenResult);
-    } else if ((this.globalResults.score === 0.5)) {
-      (status = "average");
-      (message = this.yellowResult);
+      status = "pass";
+      message = this.greenResult;
+    } else if (this.globalResults.score === 0.5) {
+      status = "average";
+      message = this.yellowResult;
     } else {
-      (status = "fail");
-      (message = this.redResult);
+      status = "fail";
+      message = this.redResult;
     }
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -159,4 +159,4 @@ abstract class Audit {
   };
 }
 
-export {Audit}
+export { Audit };

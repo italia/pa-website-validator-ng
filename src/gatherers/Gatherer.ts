@@ -1,12 +1,12 @@
-import {ElementHandle, JSHandle, Page} from "puppeteer";
-import {PageData} from "../types/crawler-types.js";
+import { ElementHandle, JSHandle, Page } from "puppeteer";
+import { PageData } from "../types/crawler-types.js";
 import { loadPage } from "../utils/utils.js";
 
 abstract class Gatherer {
   id: string;
   timeout: number;
   gatheredPages: PageData[];
-  protected static instance : Gatherer;
+  protected static instance: Gatherer;
   static pageType: string;
   static dataElements: string[];
 
@@ -73,15 +73,12 @@ abstract class Gatherer {
 
       if (!elementWithAtrr) continue;
 
-      const elements = await elementWithAtrr.$$eval(
-        "li > a",
-        (links) => {
-          return links.map((link) => ({
-            href: link.href,
-            textContent: link.textContent,
-          }));
-        },
-      );
+      const elements = await elementWithAtrr.$$eval("li > a", (links) => {
+        return links.map((link) => ({
+          href: link.href,
+          textContent: link.textContent,
+        }));
+      });
 
       if (Object.keys(elements).length > 0) {
         for (const element of elements) {
@@ -173,7 +170,7 @@ abstract class Gatherer {
     elementDataAttribute: string,
     property: string = "href",
   ): Promise<string[]> {
-    const urls : string[] = [];
+    const urls: string[] = [];
     const element = await page.$(elementDataAttribute);
 
     if (element) {
@@ -319,7 +316,8 @@ abstract class Gatherer {
     elementDataAttribute: string,
   ): Promise<string[]> {
     const url = page.url();
-    const elements: ElementHandle<Element>[] = await page.$$(elementDataAttribute);
+    const elements: ElementHandle<Element>[] =
+      await page.$$(elementDataAttribute);
 
     if (!elements || elements.length === 0) {
       throw new Error(

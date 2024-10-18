@@ -2,7 +2,7 @@
 
 import { Page, ElementHandle } from "puppeteer";
 import * as cheerio from "cheerio";
-import {Audit, GlobalResults} from "../Audit.js";
+import { Audit, GlobalResults } from "../Audit.js";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import {
   areAllElementsInVocabulary,
@@ -31,10 +31,14 @@ class SchoolVocabularies extends Audit {
   };
 
   auditId = "school-controlled-vocabularies";
-  greenResult = "Tutti gli argomenti appartengono all’elenco di voci del modello e l'elenco degli argomenti è presente nella pagina dei risultati di ricerca.";
-  yellowResult = "Almeno il 50% degli argomenti appartengono all'elenco di voci del modello e l'elenco degli argomenti è presente nella pagina dei risultati di ricerca.";
-  redResult = "Meno del 50% degli argomenti appartengono alle voci del modello o l'elenco degli argomenti non è presente nella pagina dei risultati di ricerca.";
-  title ="R.SC.1.1 - VOCABOLARI CONTROLLATI - Il sito della scuola deve utilizzare argomenti forniti dal modello di sito scuola.";
+  greenResult =
+    "Tutti gli argomenti appartengono all’elenco di voci del modello e l'elenco degli argomenti è presente nella pagina dei risultati di ricerca.";
+  yellowResult =
+    "Almeno il 50% degli argomenti appartengono all'elenco di voci del modello e l'elenco degli argomenti è presente nella pagina dei risultati di ricerca.";
+  redResult =
+    "Meno del 50% degli argomenti appartengono alle voci del modello o l'elenco degli argomenti non è presente nella pagina dei risultati di ricerca.";
+  title =
+    "R.SC.1.1 - VOCABOLARI CONTROLLATI - Il sito della scuola deve utilizzare argomenti forniti dal modello di sito scuola.";
   code = "R.SC.1.1";
   mainTitle = "VOCABOLARI CONTROLLATI";
 
@@ -83,19 +87,19 @@ class SchoolVocabularies extends Audit {
       try {
         argumentsElements = await getArgumentsElements(url, page);
       } catch {
-          this.globalResults.score = 0;
-          this.globalResults.pagesItems.pages = [
-              {
-                  result: notExecutedErrorMessage.replace("<LIST>", "all-topics"),
-              }
-          ];
-          this.globalResults.pagesItems.headings = ['Risultato'];
+        this.globalResults.score = 0;
+        this.globalResults.pagesItems.pages = [
+          {
+            result: notExecutedErrorMessage.replace("<LIST>", "all-topics"),
+          },
+        ];
+        this.globalResults.pagesItems.headings = ["Risultato"];
         this.globalResults.error = true;
 
         return {
           score: 0,
           details: {
-              type: "table",
+            type: "table",
             headings: [{ key: "result", itemType: "text", text: "Risultato" }],
             summary: "",
           },
@@ -103,13 +107,13 @@ class SchoolVocabularies extends Audit {
       }
 
       if (argumentsElements.length <= 0) {
-          this.globalResults.score = 0;
-          this.globalResults.pagesItems.pages = [
-              {
-                  result: notExecutedErrorMessage.replace("<LIST>", "all-topics"),
-              }
-          ];
-          this.globalResults.pagesItems.headings = ['Risultato'];
+        this.globalResults.score = 0;
+        this.globalResults.pagesItems.pages = [
+          {
+            result: notExecutedErrorMessage.replace("<LIST>", "all-topics"),
+          },
+        ];
+        this.globalResults.pagesItems.headings = ["Risultato"];
 
         return {
           score: 0,
@@ -223,18 +227,17 @@ async function getArgumentsElements(
   try {
     await page.waitForSelector('[data-element="search-modal-button"]');
 
-    await page.$eval(
-        '[data-element="search-modal-input"]',
-        (el: Element) => {
-          if (el instanceof HTMLInputElement) {
-            el.value = "scuola";
-          } else {
-            console.warn("L'elemento selezionato non è un input.");
-          }
-        }
-    );
+    await page.$eval('[data-element="search-modal-input"]', (el: Element) => {
+      if (el instanceof HTMLInputElement) {
+        el.value = "scuola";
+      } else {
+        console.warn("L'elemento selezionato non è un input.");
+      }
+    });
 
-    const button: ElementHandle<Element> | null = await page.$('[data-element="search-submit"]');
+    const button: ElementHandle<Element> | null = await page.$(
+      '[data-element="search-submit"]',
+    );
 
     if (!button) {
       return elements;

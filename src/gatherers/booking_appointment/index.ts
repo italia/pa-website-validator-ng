@@ -2,7 +2,7 @@ import { getPrimaryPageUrl } from "../../utils/municipality/utils.js";
 import { primaryMenuItems } from "../../storage/municipality/menuItems.js";
 import { DataElementError } from "../../utils/DataElementError.js";
 import { Gatherer } from "../Gatherer.js";
-import {PageData} from "../../types/crawler-types.js";
+import { PageData } from "../../types/crawler-types.js";
 
 class bookingAppointmentGatherer extends Gatherer {
   static dataElements: string[] = ["appointment-booking"];
@@ -15,9 +15,7 @@ class bookingAppointmentGatherer extends Gatherer {
     return bookingAppointmentGatherer.instance;
   }
 
-  async navigateAndFetchPages(
-    url: string,
-  ): Promise<PageData[]> {
+  async navigateAndFetchPages(url: string): Promise<PageData[]> {
     const currentClass = this.constructor as typeof Gatherer;
 
     const servicesPage = await getPrimaryPageUrl(

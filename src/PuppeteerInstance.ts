@@ -1,5 +1,5 @@
 "use strict";
-import puppeteer, {Browser} from "puppeteer";
+import puppeteer, { Browser } from "puppeteer";
 import * as dotenv from "dotenv";
 dotenv.config();
 

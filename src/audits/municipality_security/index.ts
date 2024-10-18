@@ -11,7 +11,8 @@ class MunicipalitySecurityAudit extends SecurityAudit {
   redResult = "Il certificato del sito [url] non è attivo o valido: ";
   code = "C.SI.5.1";
   mainTitle = "CERTIFICATO HTTPS";
-  title =  "C.SI.5.1 - CERTIFICATO HTTPS - Il sito comunale deve avere un certificato https valido e attivo.";
+  title =
+    "C.SI.5.1 - CERTIFICATO HTTPS - Il sito comunale deve avere un certificato https valido e attivo.";
 
   static getInstance(): MunicipalitySecurityAudit {
     if (!MunicipalitySecurityAudit.instance) {

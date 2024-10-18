@@ -2,7 +2,7 @@
 
 import { checkFeedbackComponent } from "../../utils/municipality/utils.js";
 import { errorHandling } from "../../config/commonAuditsParts.js";
-import {Audit, GlobalResultsMulti} from "../Audit.js";
+import { Audit, GlobalResultsMulti } from "../Audit.js";
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
 import path from "path";
@@ -11,22 +11,23 @@ import { fileURLToPath } from "url";
 const auditId = "municipality-user-experience-evaluation";
 const code = "C.SI.2.6";
 const mainTitle =
-    "VALUTAZIONE DELL’ESPERIENZA D’USO, CHIAREZZA INFORMATIVA DELLA SCHEDA DI SERVIZIO";
+  "VALUTAZIONE DELL’ESPERIENZA D’USO, CHIAREZZA INFORMATIVA DELLA SCHEDA DI SERVIZIO";
 const greenResult =
-    "In tutte le pagine analizzate il componente è presente e rispetta le caratteristiche richieste.";
+  "In tutte le pagine analizzate il componente è presente e rispetta le caratteristiche richieste.";
 const yellowResult =
-    "In tutte le pagine analizzate il componente è presente ma potrebbe non rispettare tutte le caratteristiche richieste.";
+  "In tutte le pagine analizzate il componente è presente ma potrebbe non rispettare tutte le caratteristiche richieste.";
 const redResult =
-    "In almeno una delle pagine analizzate il componente non è presente o non rispetta le caratteristiche richieste.";
+  "In almeno una delle pagine analizzate il componente non è presente o non rispetta le caratteristiche richieste.";
 const subItem = {
-    greenResult:
-      "Pagine nelle quali il componente è presente e rispetta le caratteristiche richieste:",
-    yellowResult:
-      "Pagine nelle quali il componente è presente ma potrebbe non rispettare tutte le caratteristiche richieste:",
-    redResult:
-      "Pagine nelle quali il componente non è presente o non rispetta le caratteristiche richieste:",
+  greenResult:
+    "Pagine nelle quali il componente è presente e rispetta le caratteristiche richieste:",
+  yellowResult:
+    "Pagine nelle quali il componente è presente ma potrebbe non rispettare tutte le caratteristiche richieste:",
+  redResult:
+    "Pagine nelle quali il componente non è presente o non rispetta le caratteristiche richieste:",
 };
-const title = "C.SI.2.6 - VALUTAZIONE DELL’ESPERIENZA D’USO, CHIAREZZA INFORMATIVA DELLA SCHEDA DI SERVIZIO - Il sito comunale deve permettere la valutazione della chiarezza informativa per ogni scheda di servizio secondo le modalità indicate nella documentazione del modello di sito comunale.";    
+const title =
+  "C.SI.2.6 - VALUTAZIONE DELL’ESPERIENZA D’USO, CHIAREZZA INFORMATIVA DELLA SCHEDA DI SERVIZIO - Il sito comunale deve permettere la valutazione della chiarezza informativa per ogni scheda di servizio secondo le modalità indicate nella documentazione del modello di sito comunale.";
 
 class UserExperienceEvaluationAudit extends Audit {
   public globalResults: GlobalResultsMulti = {
@@ -59,7 +60,6 @@ class UserExperienceEvaluationAudit extends Audit {
     errorMessage: "",
   };
 
-  
   public wrongItems: Record<string, unknown>[] = [];
   public correctItems: Record<string, unknown>[] = [];
   public pagesInError: Record<string, unknown>[] = [];
@@ -148,8 +148,8 @@ class UserExperienceEvaluationAudit extends Audit {
   }
 
   async returnGlobal() {
-    this.globalResults.correctPages.pages = []
-    if(this.globalResults.tolerancePages){
+    this.globalResults.correctPages.pages = [];
+    if (this.globalResults.tolerancePages) {
       this.globalResults.tolerancePages.pages = [];
     }
     this.globalResults.wrongPages.pages = [];
@@ -234,7 +234,7 @@ class UserExperienceEvaluationAudit extends Audit {
         title_errors_found: this.titleSubHeadings[0],
       });
 
-      if(this.globalResults.tolerancePages){
+      if (this.globalResults.tolerancePages) {
         this.globalResults.tolerancePages.headings = [
           subItem.yellowResult,
           this.titleSubHeadings[0],
@@ -250,7 +250,6 @@ class UserExperienceEvaluationAudit extends Audit {
           });
         }
       }
-
     }
 
     if (this.correctItems.length > 0) {
@@ -318,7 +317,9 @@ class UserExperienceEvaluationAudit extends Audit {
       UserExperienceEvaluationAudit.instance =
         new UserExperienceEvaluationAudit();
     }
-    return <UserExperienceEvaluationAudit>UserExperienceEvaluationAudit.instance;
+    return <UserExperienceEvaluationAudit>(
+      UserExperienceEvaluationAudit.instance
+    );
   }
 
   async getType() {

@@ -1,5 +1,5 @@
 import { Gatherer } from "../Gatherer.js";
-import {PageData} from "../../types/crawler-types.js";
+import { PageData } from "../../types/crawler-types.js";
 import { Page } from "puppeteer";
 import { getRandomSecondLevelPagesUrl } from "../../utils/municipality/utils.js";
 

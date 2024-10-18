@@ -2,8 +2,8 @@ import { sync } from "glob";
 import { getAudits } from "./config/config.js";
 import { fileURLToPath } from "url";
 import path from "path";
-let audits : Record<string, () => Promise<Audit>> = {};
-import {Audit} from "./audits/Audit.js";
+let audits: Record<string, () => Promise<Audit>> = {};
+import { Audit } from "./audits/Audit.js";
 
 function extractFolderName(path: string) {
   const fileNameWithoutExtension = path.replace(/\.[^/.]+$/, "");

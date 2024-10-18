@@ -7,7 +7,7 @@ import { checkFeedbackComponent } from "../../utils/municipality/utils.js";
 import { errorHandling } from "../../config/commonAuditsParts.js";
 
 import { Page } from "puppeteer";
-import {Audit, GlobalResultsMulti} from "../Audit.js";
+import { Audit, GlobalResultsMulti } from "../Audit.js";
 import * as ejs from "ejs";
 import { fileURLToPath } from "url";
 import path from "path";
@@ -15,22 +15,25 @@ import path from "path";
 const auditId = "municipality-feedback-element";
 const code = "C.SI.2.5";
 const mainTitle =
-    "VALUTAZIONE DELL'ESPERIENZA D'USO, CHIAREZZA DELLE PAGINE INFORMATIVE";
-const  title = "C.SI.2.5 - VALUTAZIONE DELL'ESPERIENZA D'USO, CHIAREZZA DELLE PAGINE INFORMATIVE - Il sito comunale deve consentire al cittadino di fornire una valutazione della chiarezza di ogni pagina di primo e secondo livello.";    
-const greenResult = "In tutte le pagine analizzate il componente è presente e rispetta le caratteristiche richieste.";
-const yellowResult = "In tutte le pagine analizzate il componente è presente ma potrebbe non rispettare tutte le caratteristiche richieste.";
-const redResult = "In almeno una delle pagine analizzate il componente non è presente o non rispetta le caratteristiche richieste.";
-const  subItem = {
-    greenResult:
-      "Pagine nelle quali il componente è presente e rispetta le caratteristiche richieste:",
-    yellowResult:
-      "Pagine nelle quali il componente è presente ma potrebbe non rispettare tutte le caratteristiche richieste:",
-    redResult:
-      "Pagine nelle quali il componente non è presente o non rispetta le caratteristiche richieste:",
-  };    
+  "VALUTAZIONE DELL'ESPERIENZA D'USO, CHIAREZZA DELLE PAGINE INFORMATIVE";
+const title =
+  "C.SI.2.5 - VALUTAZIONE DELL'ESPERIENZA D'USO, CHIAREZZA DELLE PAGINE INFORMATIVE - Il sito comunale deve consentire al cittadino di fornire una valutazione della chiarezza di ogni pagina di primo e secondo livello.";
+const greenResult =
+  "In tutte le pagine analizzate il componente è presente e rispetta le caratteristiche richieste.";
+const yellowResult =
+  "In tutte le pagine analizzate il componente è presente ma potrebbe non rispettare tutte le caratteristiche richieste.";
+const redResult =
+  "In almeno una delle pagine analizzate il componente non è presente o non rispetta le caratteristiche richieste.";
+const subItem = {
+  greenResult:
+    "Pagine nelle quali il componente è presente e rispetta le caratteristiche richieste:",
+  yellowResult:
+    "Pagine nelle quali il componente è presente ma potrebbe non rispettare tutte le caratteristiche richieste:",
+  redResult:
+    "Pagine nelle quali il componente non è presente o non rispetta le caratteristiche richieste:",
+};
 
 class FeedbackAudit extends Audit {
-  
   public globalResults: GlobalResultsMulti = {
     score: 1,
     details: {
@@ -67,7 +70,6 @@ class FeedbackAudit extends Audit {
   public pagesInError: Record<string, unknown>[] = [];
   private score = 1;
   private titleSubHeadings: string[] = [];
-
 
   async meta() {
     return {
@@ -155,7 +157,7 @@ class FeedbackAudit extends Audit {
 
   async returnGlobal() {
     this.globalResults.correctPages.pages = [];
-    if(this.globalResults.tolerancePages){
+    if (this.globalResults.tolerancePages) {
       this.globalResults.tolerancePages.pages = [];
     }
     this.globalResults.wrongPages.pages = [];
@@ -247,7 +249,7 @@ class FeedbackAudit extends Audit {
         title_errors_found: this.titleSubHeadings[0],
       });
 
-      if(this.globalResults.tolerancePages){
+      if (this.globalResults.tolerancePages) {
         this.globalResults.tolerancePages.headings = [
           subItem.yellowResult,
           this.titleSubHeadings[0],

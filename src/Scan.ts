@@ -1,6 +1,6 @@
 import PageManager from "./PageManager.js";
 
-import {PageData} from "./types/crawler-types.js";
+import { PageData } from "./types/crawler-types.js";
 import { initializeConfig } from "./config/config.js";
 import { loadPage } from "./utils/utils.js";
 import { Page } from "puppeteer";
@@ -8,9 +8,7 @@ import render from "./report/Renderer.js";
 import { collectAudits } from "./AuditManager.js";
 import { collectGatherers } from "./GathererManager.js";
 
-const scan = async (
-  pageData: PageData,
-) => {
+const scan = async (pageData: PageData) => {
   let results: Record<string, unknown> = {};
   try {
     const config = await initializeConfig();
@@ -37,15 +35,18 @@ const scan = async (
       PageManager.setGathered(pageData.url, pageData.type);
       PageManager.setNotTemporaryGatherer(pageData.url, pageData.type);
     }
-    const pageTemp : PageData | undefined = PageManager.getPageByUrl(pageData.url, pageData.type);
+    const pageTemp: PageData | undefined = PageManager.getPageByUrl(
+      pageData.url,
+      pageData.type,
+    );
 
-    if(pageTemp){
+    if (pageTemp) {
       pageData = pageTemp;
     }
 
     /** GATHERING */
     let gathererPages: PageData[] = [];
-    const gatheringErrors : string[] = [];
+    const gatheringErrors: string[] = [];
 
     if (
       !pageData.gathered ||
@@ -54,7 +55,7 @@ const scan = async (
       console.log(
         ` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Gathering start`,
       );
-      let navigatingError: string | unknown = '';
+      let navigatingError: string | unknown = "";
 
       let page: Page | null = null;
       if (!pageData.temporaryGatherer) {
@@ -101,7 +102,7 @@ const scan = async (
             page,
           );
           gathererPages = [...gathererPages, ...fetchedPages];
-        } catch (e : unknown) {
+        } catch (e: unknown) {
           console.log(
             ` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: ERROR`,
           );
@@ -114,7 +115,7 @@ const scan = async (
             internal: false,
             gathered: true,
             audited: true,
-            errors: [ e instanceof Error ? e.message : String(e)],
+            errors: [e instanceof Error ? e.message : String(e)],
             temporaryGatherer: true,
             temporaryAudit: true,
           });
@@ -122,15 +123,14 @@ const scan = async (
         }
       }
 
+      const pageTemp: PageData | undefined = await PageManager.setErrors(
+        pageData.url,
+        pageData.type,
+        gatheringErrors,
+        true,
+      );
 
-      const pageTemp : PageData | undefined = await PageManager.setErrors(
-          pageData.url,
-          pageData.type,
-          gatheringErrors,
-          true,
-      )
-
-      if(pageTemp){
+      if (pageTemp) {
         pageData = pageTemp;
       }
 
@@ -152,7 +152,7 @@ const scan = async (
     const auditingErrors = [];
 
     if (!pageData.audited || (pageData.audited && pageData.temporaryAudit)) {
-      let navigatingError: string = '';
+      let navigatingError: string = "";
 
       let page: Page | null = null;
       console.log(
@@ -171,7 +171,7 @@ const scan = async (
 
       if (config.audits[pageData.type]) {
         for (const auditId of config.audits[pageData.type]) {
-          if (auditId !== "lighthouse" && auditId !== 'lighthouse_school') {
+          if (auditId !== "lighthouse" && auditId !== "lighthouse_school") {
             if (!audits[auditId]) continue;
             const audit = await audits[auditId]();
             try {

@@ -1,4 +1,4 @@
-import {Audit, GlobalResults} from "../Audit.js";
+import { Audit, GlobalResults } from "../Audit.js";
 import { Page } from "puppeteer";
 import * as cheerio from "cheerio";
 import { CheerioAPI } from "cheerio";
@@ -44,7 +44,6 @@ class ImprovementPlanAudit extends Audit {
       this.globalResults.score = 0;
 
       this.globalResults.error = true;
-
 
       return {
         score: 0,

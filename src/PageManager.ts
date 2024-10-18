@@ -1,14 +1,14 @@
 import { EventEmitter } from "events";
-import {PageData} from "./types/crawler-types.js";
+import { PageData } from "./types/crawler-types.js";
 
 interface Results {
-  audits: Record<string, unknown>
+  audits: Record<string, unknown>;
 }
 class PageManager {
   private static instance: PageManager;
   private pagesArray: PageData[] = [];
   private firstAdd = true;
-  private globalResult : Results = {
+  private globalResult: Results = {
     audits: {},
   };
   private emitter: EventEmitter;
@@ -77,7 +77,7 @@ class PageManager {
     }
   }
 
-  async setGlobalResults(result : Record<string, unknown>) {
+  async setGlobalResults(result: Record<string, unknown>) {
     const audits = this.globalResult.audits;
     const newKey = Object.keys(result)[0];
     const foundKey = Object.keys(audits).find((el) => el == newKey);
@@ -105,7 +105,7 @@ class PageManager {
     this.emitter.on("pagesClosed", callback);
   }
 
-  async onScriptClosed(callback: (results : Record<string, unknown>) => void) {
+  async onScriptClosed(callback: (results: Record<string, unknown>) => void) {
     this.emitter.on("scriptClosed", callback);
   }
 
@@ -114,9 +114,9 @@ class PageManager {
   }
 
   getPageByUrl(url: string, pageType: string): PageData | undefined {
-      return this.pagesArray.find(
-        (page : PageData) => page.url === url && page.type === pageType,
-      );
+    return this.pagesArray.find(
+      (page: PageData) => page.url === url && page.type === pageType,
+    );
   }
 
   getAllPages(): PageData[] {

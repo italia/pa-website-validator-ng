@@ -16,19 +16,20 @@ import {
   primaryMenuItems,
 } from "./menuItems.js";
 import { DataElementError } from "../../utils/DataElementError.js";
-import {Audit, GlobalResults} from "../Audit.js";
+import { Audit, GlobalResults } from "../Audit.js";
 import { Page } from "puppeteer";
 import { errorHandling } from "../../config/commonAuditsParts.js";
 import * as ejs from "ejs";
 import path from "path";
 import { fileURLToPath } from "url";
-import {MunicipalitySecondLevelPages} from "../../types/crawler-types.js";
+import { MunicipalitySecondLevelPages } from "../../types/crawler-types.js";
 
 const auditId = "municipality-second-level-pages";
 const greenResult = "Tutti i titoli usati sono corretti.";
 const yellowResult = "Almeno il 50% dei titoli usati è corretto.";
 const redResult = "Meno del 50% dei titoli usati è corretto.";
-const title = "C.SI.1.7 - TITOLI DELLE PAGINE DI SECONDO LIVELLO - Nel sito comunale, i titoli delle pagine di secondo livello devono rispettare il vocabolario descritto dalla documentazione del modello di sito comunale.";
+const title =
+  "C.SI.1.7 - TITOLI DELLE PAGINE DI SECONDO LIVELLO - Nel sito comunale, i titoli delle pagine di secondo livello devono rispettare il vocabolario descritto dalla documentazione del modello di sito comunale.";
 const code = "C.SI.1.7";
 const mainTitle = "TITOLI DELLE PAGINE DI SECONDO LIVELLO ";
 interface itemPage {
@@ -37,8 +38,7 @@ interface itemPage {
   pagesNotInVocabulary: string[];
 }
 
-class SecondLevelAudit extends Audit {  
-
+class SecondLevelAudit extends Audit {
   public globalResults: GlobalResults = {
     score: 0,
     details: {
@@ -77,7 +77,6 @@ class SecondLevelAudit extends Audit {
   }
 
   async auditPage(page: Page | null, url: string, error: string) {
-
     if (error && !page) {
       this.score = 0;
 
@@ -196,7 +195,7 @@ class SecondLevelAudit extends Audit {
         errorHandling.errorColumnTitles[0],
         errorHandling.errorColumnTitles[1],
       ];
-      this.pagesInError.forEach((p: Record<string,unknown>) => {
+      this.pagesInError.forEach((p: Record<string, unknown>) => {
         this.globalResults.pagesItems.pages.push(p);
       });
     }

@@ -13,7 +13,7 @@ import {
   loadPageData,
 } from "../../utils/utils.js";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
-import {Audit, GlobalResults} from "../Audit.js";
+import { Audit, GlobalResults } from "../Audit.js";
 
 import * as cheerio from "cheerio";
 import { CheerioAPI } from "cheerio";
@@ -25,10 +25,14 @@ import { fileURLToPath } from "url";
 const auditId = "municipality-controlled-vocabularies";
 const code = "C.SI.1.5";
 const mainTitle = "VOCABOLARI CONTROLLATI";
-const title = "C.SI.1.5 - VOCABOLARI CONTROLLATI - Il sito comunale deve utilizzare argomenti forniti dal modello di sito comunale ovvero quelli appartenenti al vocabolario controllato europeo EuroVoc.";
-const greenResult = "Tutti gli argomenti appartengono all’elenco di voci del modello e l'elenco degli argomenti è presente nella pagina indicata.";
-const yellowResult = "Almeno il 50% degli argomenti appartengono all'elenco di voci del modello o al vocabolario EuroVoc e l'elenco degli argomenti è presente nella pagina indicata.";
-const redResult = "Meno del 50% degli argomenti appartengono alle voci del modello Comuni o al vocabolario EuroVoc o l'elenco degli argomenti non è presente nella pagina indicata.";
+const title =
+  "C.SI.1.5 - VOCABOLARI CONTROLLATI - Il sito comunale deve utilizzare argomenti forniti dal modello di sito comunale ovvero quelli appartenenti al vocabolario controllato europeo EuroVoc.";
+const greenResult =
+  "Tutti gli argomenti appartengono all’elenco di voci del modello e l'elenco degli argomenti è presente nella pagina indicata.";
+const yellowResult =
+  "Almeno il 50% degli argomenti appartengono all'elenco di voci del modello o al vocabolario EuroVoc e l'elenco degli argomenti è presente nella pagina indicata.";
+const redResult =
+  "Meno del 50% degli argomenti appartengono alle voci del modello Comuni o al vocabolario EuroVoc o l'elenco degli argomenti non è presente nella pagina indicata.";
 
 class MunicipalityVocabulary extends Audit {
   public globalResults: GlobalResults = {
@@ -71,10 +75,10 @@ class MunicipalityVocabulary extends Audit {
         error,
       );
 
-        this.globalResults.pagesItems.pages = [
+      this.globalResults.pagesItems.pages = [
         {
           result: redResult,
-        }
+        },
       ];
 
       this.globalResults.error = true;

@@ -17,7 +17,7 @@ class SchoolA11yAudit extends A11yAudit {
     "Uno o più data-element necessari per condurre il test non sono stati trovati. Verifica il capitolo sui Requisiti tecnici nella Documentazione delle App di valutazione per risolvere il problema.";
   title =
     "C.SC.2.2 - © - Il sito della scuola deve esporre la dichiarazione di accessibilità.";
-  
+
   async meta() {
     return {
       code: this.code,

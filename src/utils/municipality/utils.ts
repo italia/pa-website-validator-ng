@@ -21,7 +21,11 @@ import {
 import { feedbackComponentStructure } from "../../storage/municipality/feedbackComponentStructure.js";
 import axios from "axios";
 import { DataElementError } from "../DataElementError.js";
-import {RequestPages, PageLink, MunicipalitySecondLevelPages} from "../../types/crawler-types.js";
+import {
+  RequestPages,
+  PageLink,
+  MunicipalitySecondLevelPages,
+} from "../../types/crawler-types.js";
 import { LRUCache } from "lru-cache";
 
 const cacheResults = new LRUCache<string, string[]>({ max: 100 });
@@ -439,59 +443,56 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
   };
 
   try {
-    returnValues = await page.evaluate(
-      async (feedbackComponentStructure) => {
-        let score = 1;
-        const errors: string[] = [];
+    returnValues = await page.evaluate(async (feedbackComponentStructure) => {
+      let score = 1;
+      const errors: string[] = [];
 
-        const feedbackComponent = document.querySelector(
-          `[data-element="${feedbackComponentStructure.component.dataElement}"]`,
-        );
-        if (!feedbackComponent) {
-          errors.push(feedbackComponentStructure.component.missingError);
-          score = 0;
-          return {
-            score: score,
-            errors: errors,
-          };
-        }
-
-        //Check title present
-        const feedbackTitleElement = feedbackComponent.querySelector(
-          `[data-element="${feedbackComponentStructure.title.dataElement}"]`,
-        );
-        if (!feedbackTitleElement) {
-          if (score > 0.5) score = 0.5;
-          errors.push(feedbackComponentStructure.title.missingError);
-        }
-
-        //Check title text
-        if (
-          feedbackTitleElement &&
-          feedbackTitleElement.textContent &&
-          feedbackTitleElement.textContent.trim().toLocaleLowerCase() !==
-            feedbackComponentStructure.title.text.toLowerCase()
-        ) {
-          if (score > 0) score = 0;
-          errors.push(feedbackComponentStructure.title.error);
-        }
-
-        //check input text
-        const feedbackInputText = feedbackComponent.querySelector(
-          `[data-element="${feedbackComponentStructure.input_text.dataElement}"]`,
-        );
-        if (!feedbackInputText) {
-          if (score > 0.5) score = 0.5;
-          errors.push(feedbackComponentStructure.input_text.missingError);
-        }
-
+      const feedbackComponent = document.querySelector(
+        `[data-element="${feedbackComponentStructure.component.dataElement}"]`,
+      );
+      if (!feedbackComponent) {
+        errors.push(feedbackComponentStructure.component.missingError);
+        score = 0;
         return {
           score: score,
           errors: errors,
         };
-      },
-      feedbackComponentStructure,
-    );
+      }
+
+      //Check title present
+      const feedbackTitleElement = feedbackComponent.querySelector(
+        `[data-element="${feedbackComponentStructure.title.dataElement}"]`,
+      );
+      if (!feedbackTitleElement) {
+        if (score > 0.5) score = 0.5;
+        errors.push(feedbackComponentStructure.title.missingError);
+      }
+
+      //Check title text
+      if (
+        feedbackTitleElement &&
+        feedbackTitleElement.textContent &&
+        feedbackTitleElement.textContent.trim().toLocaleLowerCase() !==
+          feedbackComponentStructure.title.text.toLowerCase()
+      ) {
+        if (score > 0) score = 0;
+        errors.push(feedbackComponentStructure.title.error);
+      }
+
+      //check input text
+      const feedbackInputText = feedbackComponent.querySelector(
+        `[data-element="${feedbackComponentStructure.input_text.dataElement}"]`,
+      );
+      if (!feedbackInputText) {
+        if (score > 0.5) score = 0.5;
+        errors.push(feedbackComponentStructure.input_text.missingError);
+      }
+
+      return {
+        score: score,
+        errors: errors,
+      };
+    }, feedbackComponentStructure);
 
     for (
       let i = 1;
@@ -507,7 +508,7 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
           delay: 500,
         });
         await page.waitForNetworkIdle();
-      } catch  {
+      } catch {
         /* empty */
       }
 
