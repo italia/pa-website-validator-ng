@@ -118,8 +118,6 @@ abstract class Gatherer {
     retryCount: number,
   ): Promise<unknown | null> {
     try {
-      console.log(`${url} goto tentative:  ${retryCount} inizio`);
-
       let response = await page.goto(url, {
         waitUntil: ["load", "networkidle0"],
         timeout: 0,

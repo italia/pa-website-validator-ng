@@ -228,55 +228,10 @@ const scan = async (
 
     if (!PageManager.hasRemainingPages()) {
       console.log("SCAN ENDED - navigated pages end:");
-      console.log(PageManager.getAllPages());
 
       results = await render();
 
       await PageManager.closeScript(results);
-
-      // /*if (!runnerResult || !Object.keys(runnerResult).length) {
-      //     throw new Error("Missing report");
-      // }*/
-
-      // if (!saveFile) {
-      //     return {
-      //         status: true,
-      //         data: {
-      //             htmlReport: '',
-      //             jsonReport: runnerResult,
-      //         },
-      //     };
-      // }
-
-      // const reportHtml: string = '';
-      // const reportJSON: string = JSON.stringify(runnerResult);
-
-      // await mkdir(destination, { recursive: true });
-
-      // const htmlPath = format({
-      //     dir: destination,
-      //     name: reportName,
-      //     ext: ".html",
-      // });
-      // const jsonPath = format({
-      //     dir: destination,
-      //     name: reportName,
-      //     ext: ".json",
-      // });
-      // await writeFile(htmlPath, reportHtml);
-      // await writeFile(jsonPath, reportJSON);
-
-      // if (view) {
-      //     await open(htmlPath);
-      // }
-
-      // return {
-      //     status: true,
-      //     data: {
-      //         htmlResultPath: htmlPath,
-      //         jsonResultPath: jsonPath,
-      //     },
-      // };
     }
   } catch (err) {
     console.log(`SCAN error: ${err}`);

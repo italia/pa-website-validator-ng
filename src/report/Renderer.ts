@@ -36,7 +36,7 @@ const render = async () => {
 
       let improvementPlanHTML = '';
 
-      if(auditId === 'lighthouse'){
+      if(auditId === 'lighthouse' && audits['municipality_improvement_plan']){
         const improvementAudit = await audits['municipality_improvement_plan']();
         improvementPlanHTML = await improvementAudit.returnGlobalHTML();
       }
