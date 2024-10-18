@@ -14,6 +14,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 class SchoolVocabularies extends Audit {
+  info = true;
   public globalResults: GlobalResults = {
     score: 0,
     details: {

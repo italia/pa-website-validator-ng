@@ -28,7 +28,7 @@ class eventsGatherer extends Gatherer {
     while (clickButton) {
       try {
         clickButton = !!(await page.$('[data-element="load-other-cards"]'));
-        console.log("BUTTON FOUND", clickButton);
+
         if (!clickButton) {
           continue;
         }

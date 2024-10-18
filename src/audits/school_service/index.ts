@@ -43,6 +43,7 @@ const code = "R.SC.1.2";
 const mainTitle = "SCHEDE INFORMATIVE DI SERVIZIO";
 
 class SchoolServiceAudit extends Audit {
+  info = true;
   public globalResults: GlobalResultsMulti = {
     score: 1,
     details: {

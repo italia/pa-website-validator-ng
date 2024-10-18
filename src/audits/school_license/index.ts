@@ -6,6 +6,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 class SchoolLicenceAudit extends LicenceAudit {
+  info = true;
+
   auditId = "school-license-and-attribution";
   greenResult = "La dicitura sulla licenza dei contenuti è presente nella pagina delle note legali raggiungibile dal footer.";
   yellowResult = "";

@@ -12,6 +12,7 @@ class MunicipalityLicenceAudit extends LicenceAudit {
   redResult = "La dicitura sulla licenza dei contenuti è errata o non presente nella pagina delle note legali o questa non è raggiungibile dal footer.";
   code = "C.SI.3.4";
   mainTitle = "LICENZA E ATTRIBUZIONE";
+  title = "C.SI.3.4 - LICENZA E ATTRIBUZIONE - Il sito comunale deve pubblicare dati, documenti e informazioni con licenza aperta comunicandolo come descritto nella documentazione del modello di sito comunale."
 
   static getInstance(): MunicipalityLicenceAudit {
     if (!MunicipalityLicenceAudit.instance) {

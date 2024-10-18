@@ -1,0 +1,66 @@
+<%# 
+    GLOBAL PARAMETERS:
+    - totalPercentage: number < 1
+
+    METRIC PARAMETERS:
+    - status: pass | average | fails
+    - result: string
+    - title: string
+    - description: string
+%>
+<% 
+  const statusColor = totalPercentage * 100 < 50 
+  ? '#c68700' // fail 
+  : totalPercentage * 100 < 90  
+    ? '#c68700' // average 
+    : '#5cc98d'; // pass
+
+  const getIconFromStatus = (status) => {
+  switch (status) {
+    case 'pass':
+      return '#it-check-circle'
+    case 'average':
+      return '#it-warning-circle'
+    case 'fail':
+      return '#it-error'
+    default:
+      return '#it-info-circle'
+  }
+} %>
+
+<section class="metrics">
+  <p><span class="h6">CONDIZIONI DI SUCCESSO:</span> il sito presenta livelli di prestazioni (media pesata di 6 metriche standard) pari o superiori a 50; RIFERIMENTI TECNICI E NORMATIVI: <a rel="noopener" target="_blank" href="https://docs.italia.it/italia/designers-italia/design-scuole-docs">Documentazione del Modello Scuole</a>.
+  </p>
+  <p>I valori sono delle stime e potrebbero variare. Il <a rel="noopener" target="_blank" href="https://web.dev/performance-scoring/?utm_source=lighthouse&amp;utm_medium=node">punteggio relativo alle prestazioni viene calcolato</a> direttamente in base a queste metriche.</span><a target="_blank" href="https://googlechrome.github.io/lighthouse/scorecalc/#FCP=2575&amp;TTI=2575&amp;SI=6037&amp;TBT=0&amp;LCP=5125&amp;CLS=0&amp;FMP=2575&amp;device=mobile&amp;version=9.6.8">Vai al calcolatore.</a>
+  </p>
+  <div class="donut-container">
+    <div class="progress-donut-wrapper">
+      <div class="progress-donut" data-bs-progress-donut data-bs-value="<%= totalPercentage %>" data-bs-color="<%= statusColor %>"></div>
+      <span class="visually-hidden"></span>
+    </div>
+    <div class="legend">
+      <p class="legend-item fail">0-49</p>
+      <p class="legend-item average">50-89</p>
+      <p class="legend-item pass">90-100</p>
+    </div>
+  </div>
+  <div class="metrics-container">
+    <% metrics.forEach(metric => { 
+    const {status, result, title, description} = metric;
+    const icon = getIconFromStatus(status);
+    %>
+    <div class="metric-wrapper">
+      <div class="d-flex">
+        <p class="h5">
+          <svg class="icon <%= status %>" aria-hidden="true">
+            <use href="<%= icon %>"></use>
+          </svg>
+          <%= title %>
+        </p>
+        <p class="result <%= status %>"><%= result %></p>
+      </div>
+      <p><%= description %></p>
+    </div>
+    <%  }); %>
+  </div>
+</section>

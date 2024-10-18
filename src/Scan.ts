@@ -171,7 +171,7 @@ const scan = async (
 
       if (config.audits[pageData.type]) {
         for (const auditId of config.audits[pageData.type]) {
-          if (auditId !== "lighthouse") {
+          if (auditId !== "lighthouse" && auditId !== 'lighthouse_school') {
             if (!audits[auditId]) continue;
             const audit = await audits[auditId]();
             try {

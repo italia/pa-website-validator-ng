@@ -80,7 +80,7 @@ const render = async () => {
       }
 
       /** LIGHTHOUSE AUDIT specific flow */
-      if (auditId === "lighthouse") {
+      if (auditId === "lighthouse" || auditId === 'lighthouse_school') {
         lighthouseIFrame = audit.reportHTML;
       }
     }

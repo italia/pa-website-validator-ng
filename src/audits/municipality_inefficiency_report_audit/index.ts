@@ -178,6 +178,10 @@ class InefficiencyAudit extends Audit {
     return auditId;
   }
 
+  async returnGlobal() {
+    return this.globalResults;
+  }
+
   async returnGlobalHTML() {
     let status = "fail";
     let message = "";

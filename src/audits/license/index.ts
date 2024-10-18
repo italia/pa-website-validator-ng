@@ -177,6 +177,10 @@ class LicenceAudit extends Audit {
     }
   }
 
+  async returnGlobal() {
+    return this.globalResults;
+  }
+
   async getType() {
     return this.auditId;
   }

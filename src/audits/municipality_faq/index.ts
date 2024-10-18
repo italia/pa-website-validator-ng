@@ -148,6 +148,10 @@ class FaqAudit extends Audit {
     };
   }
 
+  async returnGlobal() {
+    return this.globalResults;
+  }
+
   async returnGlobalHTML() {
     let status = "fail";
     let message = "";

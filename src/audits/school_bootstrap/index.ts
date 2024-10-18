@@ -10,7 +10,6 @@ import path from "path";
 
 const auditId = "school-ux-ui-consistency-bootstrap-italia-double-check";
 const greenResult = "In tutte le pagine analizzate la libreria Bootstrap Italia è presente e in uso in una versione idonea.";
-const yellowResult = "";
 const redResult = "In almeno una delle pagine analizzate la libreria Bootstrap Italia non è presente, o non è in uso o ne viene utilizzata una versione datata.";
 const subItem = {
       greenResult:

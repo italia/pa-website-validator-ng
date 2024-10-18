@@ -2,7 +2,6 @@ import { initializeConfig } from "./config/config.js";
 import { collectAudits } from "./AuditManager.js";
 import { collectGatherers } from "./GathererManager.js";
 import { initializePuppeteer } from "./PuppeteerInstance.js";
-import version from "./version.js";
 import PageManager from "./PageManager.js";
 import scan from "./Scan.js";
 import { Page } from "puppeteer";
@@ -81,8 +80,9 @@ async function run(
       });
     });
 
-    if (config.audits["homepage"].find((i: string) => i === "lighthouse")) {
-      const audit = await audits["lighthouse"]();
+    if (config.audits["homepage"].find((i: string) => (i === "lighthouse" || i === "lighthouse_school"))) {
+      const lighthouseId = config.audits["homepage"].find((i: string) => i === "lighthouse_school") ? 'lighthouse_school' : 'lighthouse';
+      const audit = await audits[lighthouseId]();
       let page: Page | null = null;
       let navigatingError;
       try {

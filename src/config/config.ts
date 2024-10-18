@@ -200,7 +200,7 @@ const config = {
       },
       audits: {
         homepage: [
-          "lighthouse",
+          "lighthouse_school",
           "school_accessibility",
           "school_bootstrap",
           "school_license",

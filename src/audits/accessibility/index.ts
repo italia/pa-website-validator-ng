@@ -30,7 +30,6 @@ class A11yAudit extends Audit {
     errorMessage: "",
   };
 
-
   async meta() {
     return {
       code: this.code,
@@ -181,6 +180,10 @@ class A11yAudit extends Audit {
 
   async getType() {
     return this.auditId;
+  }
+
+  async returnGlobal() {
+    return this.globalResults;
   }
 
   static getInstance(): A11yAudit {

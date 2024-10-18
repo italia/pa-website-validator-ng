@@ -1,4 +1,3 @@
-import {AuditDictionary} from "../types/crawler-types";
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
 import path from "path";

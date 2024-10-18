@@ -2,7 +2,6 @@ import {Audit, GlobalResults} from "../Audit.js";
 import { Page } from "puppeteer";
 import * as cheerio from "cheerio";
 import { CheerioAPI } from "cheerio";
-import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import * as ejs from "ejs";
 import { fileURLToPath } from "url";
 import path from "path";

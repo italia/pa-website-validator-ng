@@ -8,11 +8,11 @@ import { fileURLToPath } from "url";
 import path from "path";
 
 class lighthouseAudit extends Audit {
-  auditId = "lighthouse";
-  code = "C.SI.4.1";
+  info = true;
+  auditId = "lighthouse_school";
+  code = "R.SC.3.1";
   mainTitle = "Velocità e tempi di risposta";
-  title = "C.SI.4.1 - Velocità e tempi di risposta";
-
+  title = "R.SC.3.1 - Velocità e tempi di risposta"
   metricsResult = {};
   displayMetrics = [
     "first-contentful-paint",

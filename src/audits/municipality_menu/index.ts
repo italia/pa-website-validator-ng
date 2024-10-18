@@ -229,6 +229,10 @@ class MenuAudit extends Audit {
     });
   }
 
+  async returnGlobal() {
+    return this.globalResults;
+  }
+
   static getInstance(): MenuAudit {
     if (!MenuAudit.instance) {
       MenuAudit.instance = new MenuAudit();
