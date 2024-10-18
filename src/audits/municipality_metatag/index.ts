@@ -3,7 +3,6 @@ import * as cheerio from "cheerio";
 import { CheerioAPI } from "cheerio";
 import * as jsonschema from "jsonschema";
 import { ValidatorResult } from "jsonschema";
-import { auditDictionary } from "../../storage/auditDictionary.js";
 import { errorHandling } from "../../config/commonAuditsParts.js";
 import {Audit, GlobalResultsMulti} from "../Audit.js";
 import { Page } from "puppeteer";
@@ -12,16 +11,27 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 const auditId = "municipality-metatag";
-const auditData = auditDictionary[auditId];
+const code = "R.SI.1.1";
+const mainTitle = "METATAG";
+const greenResult = "In tutte le schede servizio analizzate tutti i metatag richiesti sono presenti e corretti.";
+const yellowResult = "In almeno una delle schede servizio analizzate non tutti i metatag richiesti sono presenti e corretti.";
+const redResult = "In almeno una delle schede servizio analizzate meno del 50% dei metatag richiesti sono presenti e corretti.";
+const subItem = {
+    greenResult:
+      "Pagine nelle quali tutti i metatag richiesti sono presenti e corretti:",
+    yellowResult:
+      "Pagine nelle quali almeno il 50% dei metatag richiesti sono presenti e corretti:",
+    redResult:
+      "Pagine nelle quali meno del 50% dei metatag richiesti sono presenti e corretti:",
+};
+const title = "R.SI.1.1 - METATAG - Nel sito comunale, le voci della scheda servizio devono presentare i metatag descritti dal modello, in base agli standard internazionali.";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const totalJSONVoices = 10;
 
 class MetatagAudit extends Audit {
-  code = "R.SI.1.1";
-  mainTitle = "METATAG";
-
+  
   public globalResults: GlobalResultsMulti = {
     score: 1,
     details: {
@@ -63,14 +73,10 @@ class MetatagAudit extends Audit {
   async meta() {
     return {
       id: auditId,
-      title: auditData.title,
-      failureTitle: auditData.failureTitle,
-      description: auditData.description,
-      scoreDisplayMode: this.SCORING_MODES.NUMERIC,
-      requiredArtifacts: ["origin"],
-      mainTitle: this.mainTitle,
-      auditId: this.auditId,
-      code: this.code,
+      title: title,
+      mainTitle: mainTitle,
+      auditId: auditId,
+      code: code,
     };
   }
 
@@ -219,17 +225,17 @@ class MetatagAudit extends Audit {
       switch (this.score) {
         case 1:
           results.push({
-            result: auditData.greenResult,
+            result: greenResult,
           });
           break;
         case 0.5:
           results.push({
-            result: auditData.yellowResult,
+            result:yellowResult,
           });
           break;
         case 0:
           results.push({
-            result: auditData.redResult,
+            result:redResult,
           });
           break;
       }
@@ -238,13 +244,13 @@ class MetatagAudit extends Audit {
 
     if (this.wrongItems.length > 0) {
       results.push({
-        result: auditData.subItem.redResult,
+        result: subItem.redResult,
         title_valid_json: this.titleSubHeadings[0],
         title_missing_keys: this.titleSubHeadings[1],
       });
 
       this.globalResults.wrongPages.headings = [
-        auditData.subItem.redResult,
+        subItem.redResult,
         this.titleSubHeadings[0],
         this.titleSubHeadings[1],
       ];
@@ -264,13 +270,13 @@ class MetatagAudit extends Audit {
 
     if (this.toleranceItems.length > 0) {
       results.push({
-        result: auditData.subItem.yellowResult,
+        result: subItem.yellowResult,
         title_valid_json: this.titleSubHeadings[0],
         title_missing_keys: this.titleSubHeadings[1],
       });
       if(this.globalResults.tolerancePages){
         this.globalResults.tolerancePages.headings = [
-          auditData.subItem.yellowResult,
+          subItem.yellowResult,
           this.titleSubHeadings[0],
           this.titleSubHeadings[1],
         ];
@@ -291,13 +297,13 @@ class MetatagAudit extends Audit {
 
     if (this.correctItems.length > 0) {
       results.push({
-        result: auditData.subItem.greenResult,
+        result: subItem.greenResult,
         title_valid_json: this.titleSubHeadings[0],
         title_missing_keys: this.titleSubHeadings[1],
       });
 
       this.globalResults.correctPages.headings = [
-        auditData.subItem.greenResult,
+        subItem.greenResult,
         this.titleSubHeadings[0],
         this.titleSubHeadings[1],
       ];
@@ -330,20 +336,20 @@ class MetatagAudit extends Audit {
 
     if (this.score > 0.5) {
       status = "pass";
-      message = this.auditData.greenResult;
+      message = greenResult;
     } else if (this.score == 0.5) {
       status = "average";
-      message = this.auditData.yellowResult;
+      message = yellowResult;
     } else {
       status = "fail";
-      message = this.auditData.redResult;
+      message = redResult;
     }
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
     return await ejs.renderFile(__dirname + "/template.ejs", {
       ...(await this.meta()),
-      code: this.code,
+      code: code,
       table: this.globalResults,
       status,
       statusMessage: message,

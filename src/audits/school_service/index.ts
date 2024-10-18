@@ -8,7 +8,6 @@ import {
   missingMenuItems,
   toMenuItem,
 } from "../../utils/utils.js";
-import { auditDictionary } from "../../storage/auditDictionary.js";
 import {
   errorHandling,
   minNumberOfServices,
@@ -28,7 +27,20 @@ import { fileURLToPath } from "url";
 import path from "path";
 
 const auditId = "school-servizi-structure-match-model";
-const auditData = auditDictionary[auditId];
+const greenResult = "In tutte le pagine analizzate tutte le voci obbligatorie e i relativi contenuti sono presenti e, dove richiesto, sono nell'ordine corretto.";
+const yellowResult = "In almeno una delle pagine analizzate fino a 2 voci obbligatorie o i relativi contenuti non sono presenti o 1 voce non è nell'ordine corretto.";
+const redResult = "In almeno una delle pagine analizzate più di 2 voci obbligatorie o i relativi contenuti non sono presenti o più di 1 voce non è nell'ordine corretto.";
+const subItem = {
+  greenResult:
+    "Pagine nelle quali tutte le voci obbligatorie e i relativi contenuti sono presenti e, dove richiesto, sono nell'ordine corretto:",
+  yellowResult:
+    "Pagine nelle quali fino a 2 voci obbligatorie o i relativi contenuti non sono presenti o 1 voce non è nell'ordine corretto:",
+  redResult:
+    "Pagine nelle quali più di 2 voci obbligatorie o i relativi contenuti non sono presenti o più di 1 voce non è nell'ordine corretto:",
+};
+const title = "R.SC.1.2 - SCHEDE INFORMATIVE DI SERVIZIO - Tutte le schede informative dei servizi devono mostrare le voci segnalate come obbligatorie all'interno dell'architettura dell'informazione, nell'ordine segnalato dal modello.";
+const code = "R.SC.1.2";
+const mainTitle = "SCHEDE INFORMATIVE DI SERVIZIO";
 
 class SchoolServiceAudit extends Audit {
   public globalResults: GlobalResultsMulti = {
@@ -61,9 +73,6 @@ class SchoolServiceAudit extends Audit {
     errorMessage: "",
   };
 
-  code = "R.SC.1.2";
-  mainTitle = "SCHEDE INFORMATIVE DI SERVIZIO";
-
   public wrongItems: Record<string, unknown>[] = [];
   public correctItems: Record<string, unknown>[] = [];
   public pagesInError: Record<string, unknown>[] = [];
@@ -75,13 +84,9 @@ class SchoolServiceAudit extends Audit {
   async meta() {
     return {
       id: auditId,
-      title: auditData.title,
-      failureTitle: auditData.failureTitle,
-      description: auditData.description,
-      scoreDisplayMode: this.SCORING_MODES.NUMERIC,
-      requiredArtifacts: ["origin"],
-      code: this.code,
-      mainTitle: this.mainTitle,
+      title: title,
+      code: code,
+      mainTitle: mainTitle,
       auditId: auditId,
     };
   }
@@ -276,17 +281,17 @@ class SchoolServiceAudit extends Audit {
     switch (this.score) {
       case 1:
         this.globalResults["details"]["items"].push({
-          result: auditData.greenResult,
+          result: greenResult,
         });
         break;
       case 0.5:
         this.globalResults["details"]["items"].push({
-          result: auditData.yellowResult,
+          result: yellowResult,
         });
         break;
       case 0:
         this.globalResults["details"]["items"].push({
-          result: auditData.redResult,
+          result: redResult,
         });
         break;
     }
@@ -329,13 +334,13 @@ class SchoolServiceAudit extends Audit {
 
     if (this.wrongItems.length > 0) {
       results.push({
-        result: auditData.subItem.redResult,
+        result: subItem.redResult,
         title_missing_elements: this.titleSubHeadings[0],
         title_wrong_order_elements: this.titleSubHeadings[1],
       });
 
       this.globalResults.wrongPages.headings = [
-        auditData.subItem.redResult,
+        subItem.redResult,
         this.titleSubHeadings[0],
         this.titleSubHeadings[1],
       ];
@@ -355,13 +360,13 @@ class SchoolServiceAudit extends Audit {
 
     if (this.toleranceItems.length > 0) {
       results.push({
-        result: auditData.subItem.yellowResult,
+        result: subItem.yellowResult,
         title_missing_elements: this.titleSubHeadings[0],
         title_wrong_order_elements: this.titleSubHeadings[1],
       });
       if(this.globalResults.tolerancePages){
         this.globalResults.tolerancePages.headings = [
-          auditData.subItem.yellowResult,
+          subItem.yellowResult,
           this.titleSubHeadings[0],
           this.titleSubHeadings[1],
         ];
@@ -383,12 +388,12 @@ class SchoolServiceAudit extends Audit {
 
     if (this.correctItems.length > 0) {
       results.push({
-        result: auditData.subItem.greenResult,
+        result: subItem.greenResult,
         title_missing_elements: this.titleSubHeadings[0],
         title_wrong_order_elements: this.titleSubHeadings[1],
       });
       this.globalResults.correctPages.headings = [
-        auditData.subItem.greenResult,
+        subItem.greenResult,
         this.titleSubHeadings[0],
         this.titleSubHeadings[1],
       ];
@@ -421,20 +426,20 @@ class SchoolServiceAudit extends Audit {
 
     if (this.score > 0.5) {
       status = "pass";
-      message = this.auditData.greenResult;
+      message = greenResult;
     } else if (this.score == 0.5) {
       status = "average";
-      message = this.auditData.yellowResult;
+      message = yellowResult;
     } else {
       status = "fail";
-      message = this.auditData.redResult;
+      message = redResult;
     }
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
     return await ejs.renderFile(__dirname + "/template.ejs", {
       ...(await this.meta()),
-      code: this.code,
+      code: code,
       table: this.globalResults,
       status,
       statusMessage: message,

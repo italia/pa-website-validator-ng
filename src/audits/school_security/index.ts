@@ -1,14 +1,16 @@
 "use strict";
 
 import { SecurityAudit } from "../security/index.js";
-import { auditDictionary } from "../../storage/auditDictionary.js";
 import * as ejs from "ejs";
 import { fileURLToPath } from "url";
 import path from "path";
 
 class SchoolSecurityAudit extends SecurityAudit {
   auditId = "school-security";
-  auditData = auditDictionary["school-security"];
+  greenResult = "Il certificato del sito [url] è attivo e valido.";
+  yellowResult = "";
+  redResult = "Il certificato del sito [url] non è attivo o valido: ";
+  title = "C.SC.3.1 - CERTIFICATO HTTPS - Il sito della scuola deve avere un certificato https valido e attivo.";
   code = "C.SC.3.1";
   mainTitle = "CERTIFICATO HTTPS";
 
@@ -25,10 +27,10 @@ class SchoolSecurityAudit extends SecurityAudit {
 
     if (this.globalResults.score > 0.5) {
       status = "pass";
-      message = this.auditData.greenResult;
+      message = this.greenResult;
     } else {
       status = "fail";
-      message = this.auditData.redResult;
+      message = this.redResult;
     }
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));

@@ -2,7 +2,7 @@
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { auditDictionary } from "../../storage/auditDictionary.js";
+
 import { checkFeedbackComponent } from "../../utils/municipality/utils.js";
 import { errorHandling } from "../../config/commonAuditsParts.js";
 
@@ -13,13 +13,24 @@ import { fileURLToPath } from "url";
 import path from "path";
 
 const auditId = "municipality-feedback-element";
-const auditData = auditDictionary[auditId];
+const code = "C.SI.2.5";
+const mainTitle =
+    "VALUTAZIONE DELL'ESPERIENZA D'USO, CHIAREZZA DELLE PAGINE INFORMATIVE";
+const  title = "C.SI.2.5 - VALUTAZIONE DELL'ESPERIENZA D'USO, CHIAREZZA DELLE PAGINE INFORMATIVE - Il sito comunale deve consentire al cittadino di fornire una valutazione della chiarezza di ogni pagina di primo e secondo livello.";    
+const greenResult = "In tutte le pagine analizzate il componente è presente e rispetta le caratteristiche richieste.";
+const yellowResult = "In tutte le pagine analizzate il componente è presente ma potrebbe non rispettare tutte le caratteristiche richieste.";
+const redResult = "In almeno una delle pagine analizzate il componente non è presente o non rispetta le caratteristiche richieste.";
+const  subItem = {
+    greenResult:
+      "Pagine nelle quali il componente è presente e rispetta le caratteristiche richieste:",
+    yellowResult:
+      "Pagine nelle quali il componente è presente ma potrebbe non rispettare tutte le caratteristiche richieste:",
+    redResult:
+      "Pagine nelle quali il componente non è presente o non rispetta le caratteristiche richieste:",
+  };    
 
 class FeedbackAudit extends Audit {
-  code = "C.SI.2.5";
-  mainTitle =
-    "VALUTAZIONE DELL'ESPERIENZA D'USO, CHIAREZZA DELLE PAGINE INFORMATIVE";
-
+  
   public globalResults: GlobalResultsMulti = {
     score: 1,
     details: {
@@ -61,13 +72,9 @@ class FeedbackAudit extends Audit {
   async meta() {
     return {
       id: auditId,
-      title: auditData.title,
-      failureTitle: auditData.failureTitle,
-      description: auditData.description,
-      scoreDisplayMode: this.SCORING_MODES.BINARY,
-      requiredArtifacts: ["origin"],
-      mainTitle: this.mainTitle,
-      code: this.code,
+      title: title,
+      mainTitle: mainTitle,
+      code: code,
       auditId: auditId,
     };
   }
@@ -193,17 +200,17 @@ class FeedbackAudit extends Audit {
       switch (this.score) {
         case 1:
           results.push({
-            result: auditData.greenResult,
+            result: greenResult,
           });
           break;
         case 0.5:
           results.push({
-            result: auditData.yellowResult,
+            result: yellowResult,
           });
           break;
         case 0:
           results.push({
-            result: auditData.redResult,
+            result: redResult,
           });
           break;
       }
@@ -213,12 +220,12 @@ class FeedbackAudit extends Audit {
 
     if (this.wrongItems.length > 0) {
       results.push({
-        result: auditData.subItem.redResult,
+        result: subItem.redResult,
         title_errors_found: this.titleSubHeadings[0],
       });
 
       this.globalResults.wrongPages.headings = [
-        auditData.subItem.redResult,
+        subItem.redResult,
         this.titleSubHeadings[0],
       ];
 
@@ -236,13 +243,13 @@ class FeedbackAudit extends Audit {
 
     if (this.toleranceItems.length > 0) {
       results.push({
-        result: auditData.subItem.yellowResult,
+        result: subItem.yellowResult,
         title_errors_found: this.titleSubHeadings[0],
       });
 
       if(this.globalResults.tolerancePages){
         this.globalResults.tolerancePages.headings = [
-          auditData.subItem.yellowResult,
+          subItem.yellowResult,
           this.titleSubHeadings[0],
         ];
 
@@ -260,12 +267,12 @@ class FeedbackAudit extends Audit {
 
     if (this.correctItems.length > 0) {
       results.push({
-        result: auditData.subItem.greenResult,
+        result: subItem.greenResult,
         title_errors_found: this.titleSubHeadings[0],
       });
 
       this.globalResults.correctPages.headings = [
-        auditData.subItem.greenResult,
+        subItem.greenResult,
         this.titleSubHeadings[0],
       ];
 
@@ -305,20 +312,20 @@ class FeedbackAudit extends Audit {
 
     if (this.score > 0.5) {
       status = "pass";
-      message = this.auditData.greenResult;
+      message = greenResult;
     } else if (this.score == 0.5) {
       status = "average";
-      message = this.auditData.yellowResult;
+      message = yellowResult;
     } else {
       status = "fail";
-      message = this.auditData.redResult;
+      message = redResult;
     }
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
     return await ejs.renderFile(__dirname + "/template.ejs", {
       ...(await this.meta()),
-      code: this.code,
+      code: code,
       table: this.globalResults,
       status,
       statusMessage: message,

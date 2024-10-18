@@ -2,7 +2,7 @@
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { auditDictionary } from "../../storage/auditDictionary.js";
+
 import { InfoReuseAudit } from "../informative_reuse/index.js";
 import * as ejs from "ejs";
 import path from "path";
@@ -10,7 +10,7 @@ import { fileURLToPath } from "url";
 
 class SchoolInfoReuseAudit extends InfoReuseAudit {
   auditId = "school-informative-reuse";
-  auditData = auditDictionary["school-informative-reuse"];
+  title = "R.SC.2.1 - RIUSO - La scuola deve mettere a riuso sotto licenza aperta il software secondo le Linee Guida “acquisizione e riuso di software e riuso di software per le pubbliche amministrazioni“.";
   mainTitle = "RIUSO";
   code = "R.SC.2.1";
 

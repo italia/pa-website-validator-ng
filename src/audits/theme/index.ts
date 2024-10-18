@@ -32,15 +32,12 @@ class ThemeAudit extends Audit {
   protected minVersion = "1.0.0";
   code = "";
   mainTitle = "";
+  title = "";
 
   async meta() {
     return {
       id: this.auditId,
-      title: this.auditData.title,
-      failureTitle: this.auditData.failureTitle,
-      description: this.auditData.description,
-      scoreDisplayMode: this.SCORING_MODES.NUMERIC,
-      requiredArtifacts: ["origin"],
+      title: this.title,
       code: this.code,
       mainTitle: this.mainTitle,
       auditId: this.auditId,
@@ -58,7 +55,7 @@ class ThemeAudit extends Audit {
       );
       this.globalResults.pagesItems.pages = [
         {
-          result: this.auditData.redResult,
+          result: this.redResult,
         },
       ];
 
@@ -75,7 +72,7 @@ class ThemeAudit extends Audit {
       let score = 0.5;
       const items = [
         {
-          result: this.auditData.yellowResult,
+          result: this.yellowResult,
           cms_name: "Nessuno",
           theme_version: "N/A",
         },
@@ -119,11 +116,11 @@ class ThemeAudit extends Audit {
           items[0].theme_version = version;
 
           score = 0;
-          items[0].result = this.auditData.redResult;
+          items[0].result = this.redResult;
 
           if (compareVersions(version, this.minVersion) >= 0) {
             score = 1;
-            items[0].result = this.auditData.greenResult;
+            items[0].result = this.greenResult;
           }
           break;
         }

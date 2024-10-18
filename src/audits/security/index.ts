@@ -40,16 +40,13 @@ class SecurityAudit extends Audit {
 
   code = "";
   mainTitle = "";
+  title = "";
 
 
   async meta() {
     return {
       id: this.auditId,
-      title: this.auditData.title,
-      failureTitle: this.auditData.failureTitle,
-      description: this.auditData.description,
-      scoreDisplayMode: this.SCORING_MODES.BINARY,
-      requiredArtifacts: ["origin"],
+      title: this.title,
       code: this.code,
       mainTitle: this.mainTitle,
       auditId: this.auditId,
@@ -67,7 +64,7 @@ class SecurityAudit extends Audit {
       );
       this.globalResults.pagesItems.pages = [
         {
-          result: this.auditData.redResult,
+          result: this.redResult,
         },
       ];
 
@@ -81,8 +78,8 @@ class SecurityAudit extends Audit {
     if (page) {
       const url = page.url();
 
-      const greenResult = this.auditData.greenResult.replace("[url]", url);
-      const redResult = this.auditData.redResult.replace("[url]", url);
+      const greenResult = this.greenResult.replace("[url]", url);
+      const redResult = this.redResult.replace("[url]", url);
 
       const item = [
         {

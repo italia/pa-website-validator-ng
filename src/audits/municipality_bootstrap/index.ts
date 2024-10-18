@@ -3,7 +3,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { compareVersions } from "compare-versions";
-import { auditDictionary } from "../../storage/auditDictionary.js";
 import { isDrupal } from "../../utils/municipality/utils.js";
 import { cssClasses, drupalCoreClasses } from "./cssClasses.js";
 import { Page } from "puppeteer";
@@ -15,12 +14,17 @@ import path from "path";
 
 class BootstrapMunAudit extends Audit {
   auditId = "municipality-ux-ui-consistency-bootstrap-italia-double-check";
-  auditData =
-    auditDictionary[
-      "municipality-ux-ui-consistency-bootstrap-italia-double-check"
-    ];
   code = "C.SI.1.2";
   mainTitle = "LIBRERIA DI ELEMENTI DI INTERFACCIA";
+  title = "C.SI.1.2 - LIBRERIA DI ELEMENTI DI INTERFACCIA - Il sito comunale deve utilizzare la libreria Bootstrap Italia.";
+  greenResult = "In tutte le pagine analizzate la libreria Bootstrap Italia è presente in una versione idonea ed è in uso come richiesto.";
+  yellowResult = "";
+  redResult = "In almeno una delle pagine analizzate la libreria Bootstrap Italia non è presente, o non è in uso come richiesto o ne viene utilizzata una versione datata.";
+  subItem = {
+      greenResult: "Pagine che utilizzano la libreria in una versione idonea e nelle quali almeno il 30% delle classi CSS uniche appartiene a Bootstrap Italia:",
+      yellowResult: "",
+      redResult:"Pagine che non utilizzano la libreria in una versione idonea o nelle quali meno del 30% delle classi CSS uniche appartiene a Bootstrap Italia:",
+    };
 
   public globalResults: GlobalResultsMulti = {
     score: 1,
@@ -57,13 +61,10 @@ class BootstrapMunAudit extends Audit {
     return {
       code: this.code,
       id: this.auditId,
-      title: this.auditData.title,
+      title: this.title,
       mainTitle: this.mainTitle,
       auditId: this.auditId,
-      failureTitle: this.auditData.failureTitle,
-      description: this.auditData.description,
-      scoreDisplayMode: this.SCORING_MODES.NUMERIC,
-      requiredArtifacts: ["origin"],
+     
     };
   }
 
@@ -265,12 +266,12 @@ class BootstrapMunAudit extends Audit {
       switch (this.score) {
         case 1:
           results.push({
-            result: this.auditData.greenResult,
+            result: this.greenResult,
           });
           break;
         case 0:
           results.push({
-            result: this.auditData.redResult,
+            result: this.redResult,
           });
           break;
       }
@@ -280,13 +281,13 @@ class BootstrapMunAudit extends Audit {
 
     if (this.wrongItems.length > 0) {
       results.push({
-        result: this.auditData.subItem.redResult,
+        result: this.subItem.redResult,
         title_library_name: this.titleSubHeadings[0],
         title_library_version: this.titleSubHeadings[1],
         title_classes_found: this.titleSubHeadings[2],
       });
       this.globalResults.wrongPages.headings = [
-        this.auditData.subItem.redResult,
+        this.subItem.redResult,
         this.titleSubHeadings[0],
         this.titleSubHeadings[1],
         this.titleSubHeadings[2],
@@ -305,14 +306,14 @@ class BootstrapMunAudit extends Audit {
 
     if (this.correctItems.length > 0) {
       results.push({
-        result: this.auditData.subItem.greenResult,
+        result: this.subItem.greenResult,
         title_library_name: this.titleSubHeadings[0],
         title_library_version: this.titleSubHeadings[1],
         title_classes_found: this.titleSubHeadings[2],
       });
 
       this.globalResults.correctPages.headings = [
-        this.auditData.subItem.greenResult,
+        this.subItem.greenResult,
         this.titleSubHeadings[0],
         this.titleSubHeadings[1],
         this.titleSubHeadings[2],
@@ -346,10 +347,10 @@ class BootstrapMunAudit extends Audit {
 
     if (this.globalResults.score > 0.5) {
       status = "pass";
-      message = this.auditData.greenResult;
+      message = this.greenResult;
     } else {
       status = "fail";
-      message = this.auditData.redResult;
+      message = this.redResult;
     }
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));

@@ -12,6 +12,8 @@ import * as cheerio from "cheerio";
 class A11yAudit extends Audit {
   mainTitle = "";
   code = "";
+  title = "";
+  
 
   public globalResults: GlobalResults = {
     score: 0,
@@ -33,13 +35,10 @@ class A11yAudit extends Audit {
     return {
       code: this.code,
       id: this.auditId,
-      title: this.auditData.title,
+      title: this.title,
       mainTitle: this.mainTitle,
       auditId: this.auditId,
-      failureTitle: this.auditData.failureTitle,
-      description: this.auditData.description,
-      scoreDisplayMode: this.SCORING_MODES.NUMERIC,
-      requiredArtifacts: ["origin"],
+      
     };
   }
 
@@ -57,7 +56,7 @@ class A11yAudit extends Audit {
       );
       this.globalResults.pagesItems.pages = [
         {
-          result: this.auditData.redResult,
+          result: this.redResult,
         },
       ];
 
@@ -81,7 +80,7 @@ class A11yAudit extends Audit {
 
       const items = [
         {
-          result: this.auditData.redResult,
+          result: this.redResult,
           link_name: "",
           link: "",
           existing_page: "No",
@@ -166,7 +165,7 @@ class A11yAudit extends Audit {
           items[0].wcag = "Sì";
         }
 
-        items[0].result = this.auditData.greenResult;
+        items[0].result = this.greenResult;
         this.globalResults.score = 1;
       }
 

@@ -1,16 +1,17 @@
 "use strict";
 
 import { SecurityAudit } from "../security/index.js";
-import { auditDictionary } from "../../storage/auditDictionary.js";
 import * as ejs from "ejs";
 import { fileURLToPath } from "url";
 import path from "path";
 
 class MunicipalitySecurityAudit extends SecurityAudit {
   auditId = "municipality-security";
-  auditData = auditDictionary["municipality-security"];
+  greenResult = "Il certificato del sito [url] è attivo e valido.";
+  redResult = "Il certificato del sito [url] non è attivo o valido: ";
   code = "C.SI.5.1";
   mainTitle = "CERTIFICATO HTTPS";
+  title =  "C.SI.5.1 - CERTIFICATO HTTPS - Il sito comunale deve avere un certificato https valido e attivo.";
 
   static getInstance(): MunicipalitySecurityAudit {
     if (!MunicipalitySecurityAudit.instance) {
@@ -25,10 +26,10 @@ class MunicipalitySecurityAudit extends SecurityAudit {
 
     if (this.globalResults.score > 0.5) {
       status = "pass";
-      message = this.auditData.greenResult;
+      message = this.greenResult;
     } else {
       status = "fail";
-      message = this.auditData.redResult;
+      message = this.redResult;
     }
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));

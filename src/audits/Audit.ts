@@ -1,6 +1,5 @@
 import {AuditDictionary} from "../types/crawler-types";
 import { Page } from "puppeteer";
-import { auditDictionary } from "../storage/auditDictionary.js";
 import * as ejs from "ejs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -84,9 +83,17 @@ abstract class Audit {
   protected minVersion = "";
   mainTitle = "";
   infoScore = false;
+  title = "";
+  greenResult = "";
+  yellowResult = "";
+  redResult = ""
+  subItem = {
+    greenResult: "",
+    yellowResult: "",
+    redResult: ""
+  };
 
   protected auditId = "audit";
-  protected auditData: AuditDictionary = auditDictionary["audit"];
 
   constructor() {}
 
@@ -118,13 +125,13 @@ abstract class Audit {
 
     if (this.globalResults.score > 0.5) {
       (status = "pass");
-      (message = this.auditData.greenResult);
+      (message = this.greenResult);
     } else if ((this.globalResults.score === 0.5)) {
       (status = "average");
-      (message = this.auditData.yellowResult);
+      (message = this.yellowResult);
     } else {
       (status = "fail");
-      (message = this.auditData.redResult);
+      (message = this.redResult);
     }
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));

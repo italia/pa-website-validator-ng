@@ -3,7 +3,6 @@
 import * as cheerio from "cheerio";
 import { CheerioAPI } from "cheerio";
 import { urlExists } from "../../utils/utils.js";
-import { auditDictionary } from "../../storage/auditDictionary.js";
 import {Audit, GlobalResults} from "../Audit.js";
 import { Page } from "puppeteer";
 import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
@@ -12,10 +11,13 @@ import { fileURLToPath } from "url";
 import path from "path";
 
 const auditId = "municipality-faq-is-present";
-const auditData = auditDictionary[auditId];
-const greenResult = auditData.greenResult;
-const yellowResult = auditData.yellowResult;
-const redResult = auditData.redResult;
+const code = "C.SI.2.3";
+const mainTitle = "RICHIESTA DI ASSISTENZA / DOMANDE FREQUENTI";
+const title =  "C.SI.2.3 - RICHIESTA DI ASSISTENZA / DOMANDE FREQUENTI - Il sito comunale deve contenere una sezione per le domande più frequenti (FAQ).";
+const greenResult = "Il link è nel footer, la pagina di destinazione esiste e la label è nominata correttamente.";
+const yellowResult = "Il link è nel footer, la pagina di destinazione esiste ma la label non è nominata correttamente.";
+const redResult = "Il link non è nel footer o la pagina di destinazione è inesistente.";
+
 
 class FaqAudit extends Audit {
   public globalResults: GlobalResults = {
@@ -33,21 +35,14 @@ class FaqAudit extends Audit {
     errorMessage: "",
   };
 
-  code = "C.SI.2.3";
-  mainTitle = "RICHIESTA DI ASSISTENZA / DOMANDE FREQUENTI";
-
   public score = 0;
 
   async meta() {
     return {
       id: auditId,
-      title: auditData.title,
-      failureTitle: auditData.failureTitle,
-      description: auditData.description,
-      scoreDisplayMode: this.SCORING_MODES.BINARY,
-      requiredArtifacts: ["origin"],
-      code: this.code,
-      mainTitle: this.mainTitle,
+      title: title,
+      code: code,
+      mainTitle: mainTitle,
       auditId: auditId,
     };
   }
@@ -67,7 +62,7 @@ class FaqAudit extends Audit {
       );
       this.globalResults.pagesItems.pages = [
         {
-          result: this.auditData.redResult,
+          result: redResult,
         },
       ];
 
@@ -159,20 +154,20 @@ class FaqAudit extends Audit {
 
     if (this.score > 0.5) {
       status = "pass";
-      message = this.auditData.greenResult;
+      message = greenResult;
     } else if (this.score == 0.5) {
       status = "average";
-      message = this.auditData.yellowResult;
+      message = yellowResult;
     } else {
       status = "fail";
-      message = this.auditData.redResult;
+      message = redResult;
     }
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
     return await ejs.renderFile(__dirname + "/template.ejs", {
       ...(await this.meta()),
-      code: this.code,
+      code: code,
       table: this.globalResults,
       status,
       statusMessage: message,

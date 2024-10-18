@@ -85,10 +85,10 @@ class ImprovementPlanAudit extends Audit {
 
     if (this.score > 0.5) {
       status = "info";
-      message = this.auditData.greenResult;
+      message = this.greenResult;
     } else {
       status = "average";
-      message = this.auditData.yellowResult;
+      message = this.yellowResult;
     }
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));

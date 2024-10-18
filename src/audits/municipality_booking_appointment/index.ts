@@ -2,7 +2,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { getPages, getPrimaryPageUrl } from "../../utils/municipality/utils.js";
-import { auditDictionary } from "../../storage/auditDictionary.js";
 import {
   errorHandling,
 } from "../../config/commonAuditsParts.js";
@@ -19,7 +18,15 @@ class BookingAppointment extends Audit {
   code = "C.SI.2.1";
   mainTitle = "PRENOTAZIONE APPUNTAMENTI";
   auditId = "municipality-booking-appointment-check";
-  auditData = auditDictionary["municipality-booking-appointment-check"];
+  title = "C.SI.2.1 - PRENOTAZIONE APPUNTAMENTI - Il sito comunale deve consentire di prenotare un appuntamento presso lo sportello di competenza"
+  greenResult = "Il componente è presente in tutte le pagine analizzate.";
+  yellowResult = "";
+  redResult = "Il componente non è presente in tutte le pagine analizzate.";
+  subItem = {
+    greenResult: "Pagine nelle quali è presente il componente:",
+    yellowResult: "",
+    redResult: "Pagine nelle quali non è presente il componente:",
+  }; 
 
   public globalResults: GlobalResultsMulti = {
     score: 1,
@@ -61,13 +68,10 @@ class BookingAppointment extends Audit {
     return {
       code: this.code,
       id: this.auditId,
-      title: this.auditData.title,
+      title: this.title,
       mainTitle: this.mainTitle,
       auditId: this.auditId,
-      failureTitle: this.auditData.failureTitle,
-      description: this.auditData.description,
-      scoreDisplayMode: this.SCORING_MODES.NUMERIC,
-      requiredArtifacts: ["origin"],
+
     };
   }
 
@@ -230,12 +234,12 @@ class BookingAppointment extends Audit {
       switch (this.score) {
         case 1:
           results.push({
-            result: this.auditData.greenResult,
+            result: this.greenResult,
           });
           break;
         case 0:
           results.push({
-            result: this.auditData.redResult,
+            result: this.redResult,
           });
           break;
       }
@@ -245,13 +249,13 @@ class BookingAppointment extends Audit {
 
     if (this.wrongItems.length > 0) {
       results.push({
-        result: this.auditData.subItem.redResult,
+        result: this.subItem.redResult,
         title_component_exist: this.titleSubHeadings[0],
         title_in_page_url: this.titleSubHeadings[1],
       });
 
       this.globalResults.wrongPages.headings = [
-        this.auditData.subItem.redResult,
+        this.subItem.redResult,
         this.titleSubHeadings[0],
         this.titleSubHeadings[1],
       ];
@@ -271,13 +275,13 @@ class BookingAppointment extends Audit {
 
     if (this.correctItems.length > 0) {
       results.push({
-        result: this.auditData.subItem.greenResult,
+        result: this.subItem.greenResult,
         title_component_exist: this.titleSubHeadings[0],
         title_in_page_url: this.titleSubHeadings[1],
       });
 
       this.globalResults.correctPages.headings = [
-        this.auditData.subItem.greenResult,
+        this.subItem.greenResult,
         this.titleSubHeadings[0],
         this.titleSubHeadings[1],
       ];
@@ -316,10 +320,10 @@ class BookingAppointment extends Audit {
 
     if (this.score > 0.5) {
       status = "pass";
-      message = this.auditData.greenResult;
+      message = this.greenResult;
     } else {
       status = "fail";
-      message = this.auditData.redResult;
+      message = this.redResult;
     }
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));

@@ -2,7 +2,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { domains } from "./allowedDomain.js";
-import { auditDictionary } from "../../storage/auditDictionary.js";
 import { urlExists } from "../../utils/utils.js";
 import { errorHandling } from "../../config/commonAuditsParts.js";
 import {Audit, GlobalResultsMulti} from "../Audit.js";
@@ -13,17 +12,19 @@ import path from "path";
 
 class DomainAudit extends Audit {
   auditId = "municipality-domain";
-  auditData = auditDictionary["municipality-domain"];
   code = "C.SI.5.2";
   mainTitle = "DOMINIO ISTITUZIONALE";
-  mainDescription =
-    "Il sito comunale utilizza un dominio istituzionale secondo le modalità indicate nella documentazione del modello di sito comunale.";
-  minRequirement =
-    'il sito comunale è raggiungibile senza necessità di inserimento del sottodominio “www.” e le pagine utilizzano il sottodominio "comune." immediatamente seguito da uno dei domini utilizzabili presenti in [questa pagina](https://raw.githubusercontent.com/italia/pa-website-validator/main/src/storage/municipality/allowedDomains.ts) secondo la struttura indicata nel criterio di conformità;';
-  automaticChecks =
-    'ricercando specifici attributi "data-element" come spiegato nella Documentazione delle App di valutazione, viene verificato che il dominio utilizzato nelle pagine analizzate rispetti la struttura richiesta dal criterio di conformità e che le pagine siano raggiungibili senza necessità di inserimento del sottodominio "www."; ';
-  failures = "Elementi di fallimento:";
-
+  title = "C.SI.5.2 - DOMINIO ISTITUZIONALE - Il sito comunale utilizza un dominio istituzionale secondo le modalità indicate nella documentazione del modello di sito comunale.";
+  greenResult = 'Tutte le pagine analizzate sono raggiungibili senza che sia necessario inserire "www." e il dominio utilizzato è corretto.'; 
+  redResult = 'Almeno una delle pagine analizzate non è raggiungibile senza inserire "www." o il dominio utilizzato è errato.';
+  subItem = {
+      greenResult:
+        'Pagine raggiungibili senza che sia necessario inserire "www." e nelle quali il dominio utilizzato è corretto:',
+      yellowResult: "",  
+      redResult:
+        'Pagine non raggiungibili senza inserire "www." o nelle quali il dominio utilizzato è errato:',
+  };
+    
   public globalResults: GlobalResultsMulti = {
     score: 1,
     details: {
@@ -59,17 +60,10 @@ class DomainAudit extends Audit {
     return {
       code: this.code,
       id: this.auditId,
-      title: this.auditData.title,
+      title: this.title,
       mainTitle: this.mainTitle,
-      mainDescription: this.mainDescription,
-      minRequirement: this.minRequirement,
-      automaticChecks: this.automaticChecks,
-      failures: this.failures,
       auditId: this.auditId,
-      failureTitle: this.auditData.failureTitle,
-      description: this.auditData.description,
-      scoreDisplayMode: this.SCORING_MODES.BINARY,
-      requiredArtifacts: ["origin"],
+      
     };
   }
 
@@ -153,12 +147,12 @@ class DomainAudit extends Audit {
     switch (this.score) {
       case 1:
         results.push({
-          result: this.auditData.greenResult,
+          result: this.greenResult,
         });
         break;
       case 0:
         results.push({
-          result: this.auditData.redResult,
+          result: this.redResult,
         });
         break;
     }
@@ -201,14 +195,14 @@ class DomainAudit extends Audit {
 
     if (this.wrongItems.length > 0) {
       results.push({
-        result: this.auditData.subItem.redResult,
+        result: this.subItem.redResult,
         title_domain: this.titleSubHeadings[0],
         title_correct_domain: this.titleSubHeadings[1],
         title_www_access: this.titleSubHeadings[2],
       });
 
       this.globalResults.wrongPages.headings = [
-        this.auditData.subItem.redResult,
+        this.subItem.redResult,
         this.titleSubHeadings[0],
         this.titleSubHeadings[1],
         this.titleSubHeadings[2],
@@ -229,14 +223,14 @@ class DomainAudit extends Audit {
 
     if (this.correctItems.length > 0) {
       results.push({
-        result: this.auditData.subItem.greenResult,
+        result: this.subItem.greenResult,
         title_domain: this.titleSubHeadings[0],
         title_correct_domain: this.titleSubHeadings[1],
         title_www_access: this.titleSubHeadings[2],
       });
 
       this.globalResults.correctPages.headings = [
-        this.auditData.subItem.greenResult,
+        this.subItem.greenResult,
         this.titleSubHeadings[0],
         this.titleSubHeadings[1],
         this.titleSubHeadings[2],
@@ -267,10 +261,10 @@ class DomainAudit extends Audit {
 
     if (this.globalResults.score > 0.5) {
       status = "pass";
-      message = this.auditData.greenResult;
+      message = this.greenResult;
     } else {
       status = "fail";
-      message = this.auditData.redResult;
+      message = this.redResult;
     }
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));

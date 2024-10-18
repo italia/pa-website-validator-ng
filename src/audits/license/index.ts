@@ -18,6 +18,7 @@ import { Gatherer } from "../../gatherers/Gatherer.js";
 class LicenceAudit extends Audit {
   code = "";
   mainTitle = "";
+  title = "";
 
   public globalResults: GlobalResults = {
     score: 0,
@@ -37,11 +38,7 @@ class LicenceAudit extends Audit {
   async meta() {
     return {
       id: this.auditId,
-      title: this.auditData.title,
-      failureTitle: this.auditData.failureTitle,
-      description: this.auditData.description,
-      scoreDisplayMode: this.SCORING_MODES.BINARY,
-      requiredArtifacts: ["origin"],
+      title: this.title,
       code: this.code,
       mainTitle: this.mainTitle,
       auditId: this.auditId,
@@ -58,7 +55,7 @@ class LicenceAudit extends Audit {
       );
       this.globalResults.pagesItems.pages = [
         {
-          result: this.auditData.redResult,
+          result: this.redResult,
         },
       ];
 
@@ -84,7 +81,7 @@ class LicenceAudit extends Audit {
 
       const items = [
         {
-          result: this.auditData.redResult,
+          result: this.redResult,
           link_name: "",
           link: "",
           page_section: "",
@@ -164,7 +161,7 @@ class LicenceAudit extends Audit {
           items[0].page_section === "Sì" &&
           items[0].page_contains_correct_text === "Sì"
         ) {
-          items[0].result = this.auditData.greenResult;
+          items[0].result = this.greenResult;
           score = 1;
         }
       }

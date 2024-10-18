@@ -235,7 +235,7 @@ const config = {
 
 async function initializeConfig(siteType?: string, scope?: string) {
   if (!exportedConfig && siteType && scope) {
-    if (!exportedConfig && siteType && (siteType === 'municipality' || siteType === 'local') && (scope === 'local' || scope === 'online') && scope) {
+    if (!exportedConfig && siteType && (siteType === 'school' || siteType === 'municipality') && (scope === 'local' || scope === 'online') && scope) {
       exportedConfig = config[scope as keyof typeof config][siteType as keyof typeof config.online];
     }
   }

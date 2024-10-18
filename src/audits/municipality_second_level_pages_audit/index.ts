@@ -8,7 +8,6 @@ import {
   loadPageData,
 } from "../../utils/utils.js";
 import { getSecondLevelPages } from "../../utils/municipality/utils.js";
-import { auditDictionary } from "../../storage/auditDictionary.js";
 import * as cheerio from "cheerio";
 import { CheerioAPI } from "cheerio";
 import {
@@ -26,17 +25,19 @@ import { fileURLToPath } from "url";
 import {MunicipalitySecondLevelPages} from "../../types/crawler-types.js";
 
 const auditId = "municipality-second-level-pages";
-const auditData = auditDictionary[auditId];
-
+const greenResult = "Tutti i titoli usati sono corretti.";
+const yellowResult = "Almeno il 50% dei titoli usati è corretto.";
+const redResult = "Meno del 50% dei titoli usati è corretto.";
+const title = "C.SI.1.7 - TITOLI DELLE PAGINE DI SECONDO LIVELLO - Nel sito comunale, i titoli delle pagine di secondo livello devono rispettare il vocabolario descritto dalla documentazione del modello di sito comunale.";
+const code = "C.SI.1.7";
+const mainTitle = "TITOLI DELLE PAGINE DI SECONDO LIVELLO ";
 interface itemPage {
   key: string;
   pagesInVocabulary: string[];
   pagesNotInVocabulary: string[];
 }
 
-class SecondLevelAudit extends Audit {
-  code = "C.SI.1.7";
-  mainTitle = "TITOLI DELLE PAGINE DI SECONDO LIVELLO ";
+class SecondLevelAudit extends Audit {  
 
   public globalResults: GlobalResults = {
     score: 0,
@@ -69,13 +70,9 @@ class SecondLevelAudit extends Audit {
   async meta() {
     return {
       id: auditId,
-      title: auditData.title,
-      failureTitle: auditData.failureTitle,
-      description: auditData.description,
-      scoreDisplayMode: this.SCORING_MODES.NUMERIC,
-      requiredArtifacts: ["origin"],
-      code: this.code,
-      mainTitle: this.mainTitle,
+      title: title,
+      code: code,
+      mainTitle: mainTitle,
     };
   }
 
@@ -204,7 +201,7 @@ class SecondLevelAudit extends Audit {
       });
     }
     results.push({
-      result: auditData.redResult,
+      result: redResult,
       correct_title_percentage: "",
       correct_title_found: "",
       wrong_title_found: "",
@@ -245,13 +242,13 @@ class SecondLevelAudit extends Audit {
     );
 
     if (pagesFoundInVocabularyPercentage === 100) {
-      results[0].result = auditData.greenResult;
+      results[0].result = greenResult;
       this.score = 1;
     } else if (
       pagesFoundInVocabularyPercentage > 50 &&
       pagesFoundInVocabularyPercentage < 100
     ) {
-      results[0].result = auditData.yellowResult;
+      results[0].result = yellowResult;
       this.score = 0.5;
     }
 
@@ -280,20 +277,20 @@ class SecondLevelAudit extends Audit {
 
     if (this.score > 0.5) {
       status = "pass";
-      message = this.auditData.greenResult;
+      message = greenResult;
     } else if (this.score == 0.5) {
       status = "average";
-      message = this.auditData.yellowResult;
+      message = yellowResult;
     } else {
       status = "fail";
-      message = this.auditData.redResult;
+      message = redResult;
     }
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
     return await ejs.renderFile(__dirname + "/template.ejs", {
       ...(await this.meta()),
-      code: this.code,
+      code: code,
       table: this.globalResults,
       status,
       statusMessage: message,
