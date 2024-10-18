@@ -164,6 +164,8 @@ class DomainAudit extends Audit {
     }
 
     if (this.pagesInError.length) {
+      this.globalResults.error = true;
+
       results.push({
         result: errorHandling.errorMessage,
       });

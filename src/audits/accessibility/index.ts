@@ -61,6 +61,8 @@ class A11yAudit extends Audit {
         },
       ];
 
+      this.globalResults.error = true;
+
       return {
         score: 0,
       };
@@ -136,7 +138,7 @@ class A11yAudit extends Audit {
 
         const domain = new URL(url).host.replace(/^www./, "");
 
-        const privacyPageHTML: string = await getAllPageHTML(href); //TODO: questa funzione utilizza una nuova instanza di puppeteer, secondo me dovremmo creare un altro gatherer per questa tipologia di pagina
+        const privacyPageHTML: string = await getAllPageHTML(href);
         if (!privacyPageHTML.match(new RegExp(domain, "i"))) {
           this.globalResults.score = 0;
           this.globalResults.details.items = items;

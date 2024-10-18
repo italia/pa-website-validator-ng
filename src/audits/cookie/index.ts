@@ -73,6 +73,8 @@ class CookieAudit extends Audit {
         cookie_domain: error,
       });
 
+      this.globalResults.error = true;
+
       return {
         score: 0,
       };
@@ -180,6 +182,8 @@ class CookieAudit extends Audit {
     }
 
     if (this.pagesInError.length) {
+      this.globalResults.error = true;
+
       results.push({
         result: errorHandling.errorMessage,
       });

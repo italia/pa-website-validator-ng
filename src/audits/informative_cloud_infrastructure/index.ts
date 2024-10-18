@@ -5,6 +5,7 @@ class InfoCloudAudit extends Audit {
   code = "";
   mainTitle = "";
   info = true;
+  infoScore = true;
   async meta() {
     return {
       id: this.auditId,

@@ -59,11 +59,6 @@ class SecurityAudit extends Audit {
   async auditPage(page: Page | null, error?: string) {
     if (error && !page) {
       this.globalResults.score = 0;
-      this.globalResults.details.items.push(
-        {
-          result: notExecutedErrorMessage.replace("<LIST>", error),
-        },
-      );
 
       this.globalResults.pagesItems.headings = ["Risultato"];
       this.globalResults.pagesItems.message = notExecutedErrorMessage.replace(
@@ -75,6 +70,8 @@ class SecurityAudit extends Audit {
           result: this.auditData.redResult,
         },
       ];
+
+      this.globalResults.error = true;
 
       return {
         score: 0,

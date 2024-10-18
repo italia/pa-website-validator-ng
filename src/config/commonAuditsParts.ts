@@ -23,9 +23,6 @@ export const groups = {
   seo: {
     title: "SEO",
   },
-  pwa: {
-    title: "PWA",
-  },
 };
 
 export const accessibilityAudits = [
@@ -124,20 +121,6 @@ export const seoAudits = [
   { id: "plugins", weight: 1, group: "seo" },
   { id: "tap-targets", weight: 1, group: "seo" },
   { id: "structured-data", weight: 0, group: "seo" },
-];
-
-export const pwaAudits = [
-  { id: "installable-manifest", weight: 2, group: "pwa" },
-  { id: "service-worker", weight: 1, group: "pwa" },
-  { id: "splash-screen", weight: 1, group: "pwa" },
-  { id: "themed-omnibox", weight: 1, group: "pwa" },
-  { id: "content-width", weight: 1, group: "pwa" },
-  { id: "viewport", weight: 2, group: "pwa" },
-  { id: "apple-touch-icon", weight: 1, group: "pwa" },
-  { id: "maskable-icon", weight: 1, group: "pwa" },
-  { id: "pwa-cross-browser", weight: 0, group: "pwa" },
-  { id: "pwa-page-transitions", weight: 0, group: "pwa" },
-  { id: "pwa-each-page-has-url", weight: 0, group: "pwa" },
 ];
 
 export const errorHandling = {

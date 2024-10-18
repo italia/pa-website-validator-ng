@@ -62,6 +62,7 @@ class SchoolVocabularies extends Audit {
           result: this.auditData.redResult,
         },
       ];
+      this.globalResults.error = true;
 
       return {
         score: 0,
@@ -90,6 +91,7 @@ class SchoolVocabularies extends Audit {
               }
           ];
           this.globalResults.pagesItems.headings = ['Risultato'];
+        this.globalResults.error = true;
 
         return {
           score: 0,

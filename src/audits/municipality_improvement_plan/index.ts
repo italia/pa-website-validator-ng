@@ -27,8 +27,6 @@ class ImprovementPlanAudit extends Audit {
       pages: [],
     },
     errorMessage: "",
-    info: true,
-    infoScore: false,
   };
 
   async meta() {
@@ -44,14 +42,10 @@ class ImprovementPlanAudit extends Audit {
 
   async auditPage(page: Page | null, error?: string) {
     if (error && !page) {
-      this.globalResults["score"] = 0;
-      this.globalResults["details"]["items"] = [
-        {
-          result: notExecutedErrorMessage.replace("<LIST>", error),
-        },
-      ];
-      this.globalResults["details"]["type"] = "table";
-      this.globalResults["details"]["summary"] = "";
+      this.globalResults.score = 0;
+
+      this.globalResults.error = true;
+
 
       return {
         score: 0,

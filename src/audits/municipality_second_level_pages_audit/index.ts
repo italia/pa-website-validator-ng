@@ -192,6 +192,8 @@ class SecondLevelAudit extends Audit {
     this.globalResults.pagesItems.pages = [];
 
     if (this.pagesInError.length) {
+      this.globalResults.error = true;
+
       this.globalResults.pagesItems.message = errorHandling.errorMessage;
       this.globalResults.pagesItems.headings = [
         errorHandling.errorColumnTitles[0],

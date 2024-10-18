@@ -57,6 +57,7 @@ class PrivacyAudit extends Audit {
           result: this.auditData.redResult,
         },
       ];
+      this.globalResults.error = true;
 
       return {
         score: 0,

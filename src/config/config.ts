@@ -116,7 +116,7 @@ const config = {
           "booking_appointment",
           "personal_area_login",
           "first_level_pages",
-          "second_level_pages_all",
+          "second_level_pages",
         ],
         "events-page": ["events"],
         "vivere-page": ["events_page"],
@@ -137,7 +137,9 @@ const config = {
           "municipality_theme",
           "municipality_informative_cloud_infrastructure",
           "municipality_informative_reuse",
+          "municipality_menu",
           "ipLocation",
+          "municipality_second_level_pages_audit"
         ],
         "services-page": ["municipality_booking_appointment"],
         service: [
@@ -161,14 +163,14 @@ const config = {
           "municipality_bootstrap",
           "municipality_cookie",
           "municipality_domain_audit",
-          //"municipality_feedback",
+          "municipality_feedback",
           "municipality_font",
         ],
-        "second-level-page-all": [
+        "second-level-page": [
           "municipality_bootstrap",
           "municipality_cookie",
           "municipality_domain_audit",
-          //"municipality_feedback",
+          "municipality_feedback",
           "municipality_font",
         ],
         "appointment-booking": [

@@ -68,12 +68,16 @@ export const municipalityWeights = [
     weight: 84,
   },
   {
-    id: "municipality-security",
+    id: "lighthouse",
     weight: 83,
   },
   {
-    id: "municipality-domain",
+    id: "municipality-security",
     weight: 82,
+  },
+  {
+    id: "municipality-domain",
+    weight: 81,
   },
   {
     id: "municipality-metatag",
@@ -91,17 +95,9 @@ export const municipalityWeights = [
     id: "common-security-ip-location",
     weight: 76,
   },
-  {
-    id: "lighthouse",
-    weight: 101,
-  },
 ];
 
 export const schoolWeights = [
-  {
-    id: "lighthouse",
-    weight: 101,
-  },
   {
     id: "school-ux-ui-consistency-fonts-check",
     weight: 100,
@@ -147,19 +143,23 @@ export const schoolWeights = [
     weight: 90,
   },
   {
-    id: "school-informative-reuse",
-    weight: 89,
-  },
-  {
     id: "school-license-and-attribution",
     weight: 88,
   },
   {
-    id: "school-informative-cloud-infrastructure",
+    id: "lighthouse",
     weight: 87,
   },
   {
-    id: "common-security-ip-location",
+    id: "school-informative-reuse",
+    weight: 89,
+  },
+  {
+    id: "school-informative-cloud-infrastructure",
     weight: 86,
+  },
+  {
+    id: "common-security-ip-location",
+    weight: 85,
   },
 ];

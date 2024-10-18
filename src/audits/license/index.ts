@@ -51,10 +51,6 @@ class LicenceAudit extends Audit {
   async auditPage(page: Page | null, error?: string) {
     if (error && !page) {
       this.globalResults.score = 0;
-      this.globalResults.details.items.push({
-        result: notExecutedErrorMessage.replace("<LIST>", error),
-      });
-
       this.globalResults.pagesItems.headings = ["Risultato"];
       this.globalResults.pagesItems.message = notExecutedErrorMessage.replace(
         "<LIST>",
@@ -65,6 +61,8 @@ class LicenceAudit extends Audit {
           result: this.auditData.redResult,
         },
       ];
+
+      this.globalResults.error = true;
 
       return {
         score: 0,
@@ -110,13 +108,13 @@ class LicenceAudit extends Audit {
 
         const checkUrl = await urlExists(url, pageUrl);
         if (!checkUrl.result) {
+
+          this.globalResults.score = 0;
+          this.globalResults.id = this.auditId;
+          this.globalResults.pagesItems.pages = items;
+
           return {
             score: 0,
-            details: {
-              items: items,
-              type: "table",
-              summary: "",
-            },
           };
         }
 
@@ -125,7 +123,7 @@ class LicenceAudit extends Audit {
         items[0].page_contains_correct_text = "No";
 
         const browser = await initializePuppeteer();
-        const legalNotesPage = await browser.newPage(); //TODO: da verificare se fatto in questo modo è corretto, secondo me dovremmo creare un gatherer dedicato a questa tipologia di pagina
+        const legalNotesPage = await browser.newPage();
         await Gatherer.gotoRetry(
           legalNotesPage,
           pageUrl,

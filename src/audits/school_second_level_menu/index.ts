@@ -85,6 +85,8 @@ class SchoolSecondLevelMenuAudit extends Audit {
         },
       ];
 
+      this.globalResults.error = true;
+
       return {
         score: 0,
       };

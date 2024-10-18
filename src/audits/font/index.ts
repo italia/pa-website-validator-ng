@@ -74,6 +74,8 @@ class FontAudit extends Audit {
         wrong_fonts: error,
       });
 
+      this.globalResults.error = true;
+
       return {
         score: 0,
       };
@@ -190,6 +192,7 @@ class FontAudit extends Audit {
     const results = [];
 
     if (this.pagesInError.length) {
+      this.globalResults.error = true;
       results.push({
         result: errorHandling.errorMessage,
       });

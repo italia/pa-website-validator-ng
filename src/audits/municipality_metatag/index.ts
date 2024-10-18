@@ -50,6 +50,7 @@ class MetatagAudit extends Audit {
       pages: [],
     },
     errorMessage: "",
+    info: true
   };
 
   public wrongItems: Record<string, unknown>[] = [];
@@ -185,6 +186,8 @@ class MetatagAudit extends Audit {
 
     const results = [];
     if (this.pagesInError.length > 0) {
+      this.globalResults.error = true;
+
       results.push({
         result: errorHandling.errorMessage,
       });

@@ -216,6 +216,8 @@ class SchoolBootstrap extends Audit {
     const results = [];
 
     if (this.pagesInError.length) {
+      this.globalResults.error = true;
+
       results.push({
         result: errorHandling.errorMessage,
       });

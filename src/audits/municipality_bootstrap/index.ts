@@ -231,6 +231,8 @@ class BootstrapMunAudit extends Audit {
 
     const results = [];
     if (this.pagesInError.length > 0) {
+      this.globalResults.error = true;
+
       results.push({
         result: errorHandling.errorMessage,
       });

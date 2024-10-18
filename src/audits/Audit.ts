@@ -24,7 +24,7 @@ export interface GlobalResults {
   },
   errorMessage: string;
   info?: boolean;
-  infoScore?: boolean;
+  error?: boolean;
   id?: string;
 }
 
@@ -57,7 +57,7 @@ export interface GlobalResultsMulti {
   },
   errorMessage: string;
   info?: boolean;
-  infoScore?: boolean;
+  error?: boolean;
   id?: string;
 }
 
@@ -83,6 +83,7 @@ abstract class Audit {
   reportHTML = '';
   protected minVersion = "";
   mainTitle = "";
+  infoScore = false;
 
   protected auditId = "audit";
   protected auditData: AuditDictionary = auditDictionary["audit"];

@@ -44,13 +44,14 @@ default:
     requiredArtifacts: ["origin"],
 }; -->
 
-<div class="audit-content">
-  <h2 class="h3 audit-title">
+<div class="audit-content info">
+<div class="top">
     <svg class="icon <%= status %>" aria-hidden="true">
-      <use href="<%= icon %>"></use>
+        <use href="<%= icon %>"></use>
     </svg>
-      <%=code%> <%= message %>
-  </h2>
+    <%= code%> <%= message %>
+</div>
+
   <div class="audit-description">
   
     <p>Nel sito comunale, le voci della scheda servizio devono presentare i metatag descritti dal modello, in base agli standard internazionali.</p>

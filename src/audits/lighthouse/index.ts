@@ -10,7 +10,7 @@ import path from "path";
 class lighthouseAudit extends Audit {
   auditId = "lighthouse";
   code = "C.SI.4.1";
-  mainTitle = "LIGHTHOUSE";
+  mainTitle = "Velocità e tempi di risposta";
   metricsResult = {};
   displayMetrics = [
     "first-contentful-paint",

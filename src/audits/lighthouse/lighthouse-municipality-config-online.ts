@@ -1,23 +1,10 @@
-import {commonGatherersFolder} from "../../config/configFolderingConstants";
-import {groups, accessibilityAudits, bestPracticeAudits, seoAudits, pwaAudits} from "../../config/commonAuditsParts";
-
+import {groups, accessibilityAudits, bestPracticeAudits, seoAudits} from "../../config/commonAuditsParts";
 
 module.exports = {
   extends: "lighthouse:default",
   settings: {
     onlyCategories: ["performance", "additionalTests"],
   },
-
-  passes: [
-    {
-      gatherers: [
-        commonGatherersFolder + "/originGatherer.js",
-        commonGatherersFolder + "/hostnameGatherer.js",
-        commonGatherersFolder + "/bootstrapItaliaCheckGatherer.js",
-        commonGatherersFolder + "/bootstrapItaliaSelectorCheckGatherer.js",
-      ],
-    },
-  ],
 
   groups: groups,
 
@@ -30,7 +17,6 @@ module.exports = {
         ...accessibilityAudits,
         ...bestPracticeAudits,
         ...seoAudits,
-        ...pwaAudits,
       ],
     },
   },
