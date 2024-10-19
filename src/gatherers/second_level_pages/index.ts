@@ -24,11 +24,16 @@ class SecondLevelPagesGatherer extends Gatherer {
 
     const currentClass = this.constructor as typeof Gatherer;
 
-    const fetchedUrls: string[] = await getRandomSecondLevelPagesUrl(
-      url,
-      numberOfPages,
-      page,
-    );
+    let fetchedUrls: string[] = [];
+    try{
+      fetchedUrls = await getRandomSecondLevelPagesUrl(
+          url,
+          numberOfPages,
+          page,
+      );
+    }catch {
+      throw new Error(`Cannot find elements with data-element "${currentClass.dataElements[0]}"`,)
+    }
 
     this.gatheredPages = fetchedUrls.map((url: string) => {
       return {

@@ -109,6 +109,7 @@ const getRandomSecondLevelPagesUrl = async (
 ): Promise<string[]> => {
   const data = await page.content();
   const $: CheerioAPI = await cheerio.load(data);
+  let found = 0;
 
   let pagesUrls: string[] = [];
 
@@ -125,6 +126,11 @@ const getRandomSecondLevelPagesUrl = async (
     const dataElement = `[data-element="${primaryMenuItem.data_element}"]`;
 
     const elements = $(dataElement);
+
+  if(elements.length){
+    found = 1;
+  }
+
     for (const element of elements) {
       let primaryLevelPageUrl = $(element).attr()?.href;
       if (
@@ -186,7 +192,9 @@ const getRandomSecondLevelPagesUrl = async (
     }
   }
 
-  console.log(numberOfPages);
+  if(!found){
+    throw new DataElementError('First level page not available');
+  }
 
   return getRandomNString(pagesUrls, numberOfPages);
 };

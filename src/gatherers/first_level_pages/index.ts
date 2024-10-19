@@ -23,12 +23,20 @@ class firstLevelPagesGatherer extends Gatherer {
     if (this.gatheredPages.length > 0) return this.gatheredPages;
 
     const currentClass = this.constructor as typeof Gatherer;
+    let fetchedUrls: string[] = [];
 
-    const fetchedUrls: string[] = await getRandomFirstLevelPagesUrl(
-      url,
-      numberOfPages,
-      page,
-    );
+    try {
+      fetchedUrls = await getRandomFirstLevelPagesUrl(
+          url,
+          numberOfPages,
+          page,
+      );
+    }catch {
+      throw new Error(
+          `Cannot find elements with data-element "${currentClass.dataElements[0]}"`,
+      );
+    }
+
 
     this.gatheredPages = fetchedUrls.map((url: string) => {
       return {
@@ -43,22 +51,6 @@ class firstLevelPagesGatherer extends Gatherer {
     });
 
     return this.gatheredPages;
-
-    // const randomPagesUrl = await this.getRandomFirstLevelPagesUrl(url, numberOfPages, '')
-
-    // console.log(randomPagesUrl)
-    // this.gatheredPages = randomPagesUrl.map((url: any) => {
-    //   return {
-    //     url: url,
-    //     id: 'primo-livello' + Date.now(),
-    //     type: 'first-level',
-    //     'audited': false,
-    //     internal: true,
-    //     redirectUrl: ''
-    //   }
-    // })
-
-    // return this.gatheredPages
   }
 }
 

@@ -184,7 +184,7 @@ class FeedbackAudit extends Audit {
       });
 
       this.globalResults.pagesInError.message = errorHandling.errorMessage;
-      this.globalResults.wrongPages.headings = [
+      this.globalResults.pagesInError.headings = [
         errorHandling.errorColumnTitles[0],
         errorHandling.errorColumnTitles[1],
       ];
