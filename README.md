@@ -36,7 +36,7 @@ L'applicazione genera un report in stile Lighthouse del risultato della valutazi
 ...
 SCAN  first-level  https://esempio.scuola.edu.it/: Gathering start
 SCAN  first-level  https://esempio.scuola.edu.it/: Gathering end
-SCAN  first-level  https://esempio.scuola.edu.it/: Audit start
+SCAN  first-level  https://esempio.scuola.edu.it/: Auditing start
 SCAN  first-level  https://esempio.scuola.edu.it/: Auditing end
 ...
 ```

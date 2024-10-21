@@ -156,7 +156,7 @@ const scan = async (pageData: PageData) => {
 
       let page: Page | null = null;
       console.log(
-        ` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Audit start`,
+        ` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Auditing start`,
       );
       if (!pageData.temporaryAudit) {
         try {
