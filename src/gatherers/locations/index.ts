@@ -1,6 +1,7 @@
 import { Gatherer } from "../Gatherer.js";
 import { PageData } from "../../types/crawler-types.js";
 import { Page } from "puppeteer";
+import { getRandomNString } from "../../utils/utils.js";
 
 class locationsGatherer extends Gatherer {
   static dataElements: string[] = ["location-link"];
@@ -26,6 +27,8 @@ class locationsGatherer extends Gatherer {
         )) as string[]),
       ];
     }
+
+    fetchedUrls = await getRandomNString(fetchedUrls, numberOfPages);
 
     this.gatheredPages = fetchedUrls.map((url: string) => {
       return {

@@ -1,7 +1,7 @@
 import { Gatherer } from "../Gatherer.js";
 import { PageData } from "../../types/crawler-types.js";
 import { Page } from "puppeteer";
-import { loadPage } from "../../utils/utils.js";
+import { getRandomNString, loadPage } from "../../utils/utils.js";
 
 class servicesPageGatherer extends Gatherer {
   static dataElements: string[] = ["service-type"];
@@ -43,6 +43,8 @@ class servicesPageGatherer extends Gatherer {
       ];
       await servicePage.close();
     }
+
+    servicesUrls = await getRandomNString(servicesUrls, numberOfPages);
 
     this.gatheredPages = servicesUrls.map((url) => {
       return {

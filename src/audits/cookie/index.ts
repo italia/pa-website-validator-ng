@@ -130,21 +130,18 @@ class CookieAudit extends Audit {
           throw new Error("Non è stato possibile aprire Puppeteer");
         }
       } catch (ex) {
-        if (!(ex instanceof Error)) {
-          throw ex;
-        }
+        this.score = 0;
 
-        let errorMessage = ex.message;
-        errorMessage = errorMessage.substring(
-          errorMessage.indexOf('"') + 1,
-          errorMessage.lastIndexOf('"'),
-        );
+        let errorMessage = "";
+        if (!(ex instanceof Error)) {
+          errorMessage = String(ex);
+        } else {
+          errorMessage = ex.message;
+        }
 
         this.pagesInError.push({
           link: url,
           cookie_domain: errorMessage,
-          cookie_name: "",
-          cookie_value: "",
         });
       }
 

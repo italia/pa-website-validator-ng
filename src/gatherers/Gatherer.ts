@@ -1,6 +1,6 @@
 import { ElementHandle, JSHandle, Page } from "puppeteer";
 import { PageData } from "../types/crawler-types.js";
-import { loadPage } from "../utils/utils.js";
+import { getRandomNString, loadPage } from "../utils/utils.js";
 import { DataElementError } from "../utils/DataElementError.js";
 
 abstract class Gatherer {
@@ -37,7 +37,10 @@ abstract class Gatherer {
       return this.gatheredPages;
     }
 
-    const randomPagesUrl = await this.getRandomPagesUrl(url);
+    const randomPagesUrl = await this.getRandomPagesUrl(
+      url,
+      numberOfPages ?? -1,
+    );
 
     const currentClass = this.constructor as typeof Gatherer;
     this.gatheredPages = randomPagesUrl.map((url) => {
@@ -55,7 +58,10 @@ abstract class Gatherer {
     return this.gatheredPages;
   }
 
-  async getRandomPagesUrl(url: string): Promise<string[]> {
+  async getRandomPagesUrl(
+    url: string,
+    numberOfPages: number,
+  ): Promise<string[]> {
     let pagesUrls: string[] = [];
     const page = await loadPage(url);
 
@@ -106,6 +112,8 @@ abstract class Gatherer {
 
       pagesUrls = [...pagesUrls, ...new Set(elementPagesUrls)];
     }
+
+    pagesUrls = await getRandomNString(pagesUrls, numberOfPages);
 
     return pagesUrls;
   }
