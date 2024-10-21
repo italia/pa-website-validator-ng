@@ -40,7 +40,7 @@ const parser = yargs(hideBin(process.argv))
   .option("view", {
     describe: "View report after scan",
     type: "string",
-    demandOption: false,
+    demandOption: true,
   })
   .option("accuracy", {
     describe:
@@ -87,7 +87,7 @@ try {
     true,
     args.destination,
     args.report,
-    "view" in args,
+    args.view,
     args.accuracy,
     args.timeout,
     args["number-of-service-pages"],

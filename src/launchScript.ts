@@ -23,7 +23,7 @@ async function run(
   saveFile = true,
   destination: string,
   reportName: string,
-  view = false,
+  view: string,
   accuracy = "suggested",
   requestTimeout = 30000,
   numberOfServicePages?: number,
