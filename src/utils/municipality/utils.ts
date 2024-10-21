@@ -348,7 +348,7 @@ const getRandomThirdLevelPagesUrl = async (
         }
 
         await Promise.race([
-          setTimeout(10000),
+          setTimeout(5000),
           page.waitForNetworkIdle({
             idleTime: 2000,
           }),
@@ -508,15 +508,24 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
       i++
     ) {
       try {
-        const feedbackComponentRate = await page.$(
-          `[data-element="${feedbackComponentStructure.rate.dataElement + i}"]`,
-        );
-        await page.waitForNetworkIdle();
-        await feedbackComponentRate?.click({
-          delay: 500,
-        });
-        await page.waitForNetworkIdle();
-      } catch {
+        await page.evaluate(async (feedbackComponentStructure, i) => {
+         const button = document.querySelector(
+              `[data-element="${feedbackComponentStructure.rate.dataElement + i}"]`,
+          ) as HTMLElement;
+
+          if(button){
+            await button.click();
+          }
+
+          }, feedbackComponentStructure, i);
+
+        await Promise.race([
+          setTimeout(5000),
+          page.waitForNetworkIdle({
+            idleTime: 2000,
+          }),
+        ]);
+      } catch (e) {
         /* empty */
       }
 
@@ -856,6 +865,7 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
         feedbackComponentStructure,
         i,
       );
+
       returnValues.errors = [
         ...returnValues.errors,
         ...feedbackReturnValue.errors,

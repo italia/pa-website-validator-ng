@@ -23,7 +23,7 @@ class bookingAppointmentGatherer extends Gatherer {
       primaryMenuItems.services.data_element,
     );
     if (servicesPage === "") {
-      throw new DataElementError(primaryMenuItems.services.data_element);
+      throw new DataElementError(`Non è stato possibile trovare l'attributo [data-element="${primaryMenuItems.services.data_element}"]`);
     }
 
     const bookingAppointmentPage = await getPrimaryPageUrl(
@@ -31,7 +31,7 @@ class bookingAppointmentGatherer extends Gatherer {
       "appointment-booking",
     );
     if (bookingAppointmentPage === "") {
-      throw new DataElementError("appointment-booking");
+      throw new DataElementError(`Non è stato possibile trovare l'attributo [data-element="appointment-booking"]`);
     }
 
     this.gatheredPages = [bookingAppointmentPage].map((url: string) => {

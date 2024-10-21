@@ -2,6 +2,7 @@ import { Gatherer } from "../Gatherer.js";
 import { PageData } from "../../types/crawler-types.js";
 import { Page } from "puppeteer";
 import { getRandomSecondLevelPagesUrl } from "../../utils/municipality/utils.js";
+import {DataElementError} from "../../utils/DataElementError.js";
 
 class SecondLevelPagesGatherer extends Gatherer {
   static dataElements: string[] = ["custom-submenu"];
@@ -32,7 +33,7 @@ class SecondLevelPagesGatherer extends Gatherer {
           page,
       );
     }catch {
-      throw new Error(`Cannot find elements with data-element "${currentClass.dataElements[0]}"`,)
+      throw new DataElementError(`Non è stato possibile trovare l'attributo [data-element="${currentClass.dataElements[0]}"]`);
     }
 
     this.gatheredPages = fetchedUrls.map((url: string) => {
@@ -48,22 +49,6 @@ class SecondLevelPagesGatherer extends Gatherer {
     });
 
     return this.gatheredPages;
-
-    // const randomPagesUrl = await this.getRandomFirstLevelPagesUrl(url, numberOfPages, '')
-
-    // console.log(randomPagesUrl)
-    // this.gatheredPages = randomPagesUrl.map((url: any) => {
-    //   return {
-    //     url: url,
-    //     id: 'primo-livello' + Date.now(),
-    //     type: 'first-level',
-    //     'audited': false,
-    //     internal: true,
-    //     redirectUrl: ''
-    //   }
-    // })
-
-    // return this.gatheredPages
   }
 }
 

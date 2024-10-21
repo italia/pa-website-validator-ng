@@ -1,6 +1,7 @@
 import { ElementHandle, JSHandle, Page } from "puppeteer";
 import { PageData } from "../types/crawler-types.js";
 import { loadPage } from "../utils/utils.js";
+import {DataElementError} from "../utils/DataElementError.js";
 
 abstract class Gatherer {
   id: string;
@@ -187,10 +188,8 @@ abstract class Gatherer {
         "No element found with the data-element attribute" +
           elementDataAttribute,
       );
-      throw new Error(
-        "No element found with the data-element attribute" +
-          elementDataAttribute,
-      );
+      throw new DataElementError(`Non è stato possibile trovare l'attributo ${elementDataAttribute}`);
+
     }
 
     return urls;
@@ -320,9 +319,8 @@ abstract class Gatherer {
       await page.$$(elementDataAttribute);
 
     if (!elements || elements.length === 0) {
-      throw new Error(
-        `Cannot find element with attribute ${elementDataAttribute}`,
-      );
+      throw new DataElementError(`Non è stato possibile trovare l'attributo [data-element="${elementDataAttribute}"]`);
+
     }
 
     const buttonUrls = [];

@@ -3,6 +3,7 @@ import { PageData } from "../../types/crawler-types.js";
 import { setTimeout } from "timers/promises";
 import { Page } from "puppeteer";
 import { getRandomNString, loadPage } from "../../utils/utils.js";
+import {DataElementError} from "../../utils/DataElementError.js";
 
 class servicesGatherer extends Gatherer {
   static dataElement: string = "service-link";
@@ -119,9 +120,7 @@ class servicesGatherer extends Gatherer {
     }
 
     if (!maxCountPages || (maxCountPages == 0 && click)) {
-      throw new Error(
-        `Cannot find elements with data-element "${servicesGatherer.dataElement}"`,
-      );
+      throw new DataElementError(`Non è stato possibile trovare l'attributo [data-element="${servicesGatherer.dataElement}"]`);
     }
 
     pages = await getRandomNString(pages, numberOfPages);

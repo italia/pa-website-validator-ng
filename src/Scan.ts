@@ -84,7 +84,9 @@ const scan = async (pageData: PageData) => {
 
           if (!page && pageData.temporaryGatherer) {
             throw new Error(
-              `Page not available for type ${pageData.type}`,
+              pageData && pageData.errors && pageData.errors.length
+                ? pageData.errors[0].toString()
+                : `Page not available for type ${pageData.type}`,
             );
           }
 
@@ -183,7 +185,7 @@ const scan = async (pageData: PageData) => {
                 navigatingError ? null : page,
                 pageData.url,
                 pageData.errors && pageData.errors.length
-                  ? `Page not available for type ${pageData.type}`
+                  ? pageData.errors[0]
                   : navigatingError
                     ? navigatingError
                     : "",

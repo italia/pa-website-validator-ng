@@ -2,6 +2,7 @@ import { Gatherer } from "../Gatherer.js";
 import { PageData } from "../../types/crawler-types.js";
 import { Page } from "puppeteer";
 import { getRandomFirstLevelPagesUrl } from "../../utils/municipality/utils.js";
+import {DataElementError} from "../../utils/DataElementError.js";
 
 class firstLevelPagesGatherer extends Gatherer {
   static dataElements: string[] = ["custom-submenu"];
@@ -32,9 +33,7 @@ class firstLevelPagesGatherer extends Gatherer {
           page,
       );
     }catch {
-      throw new Error(
-          `Cannot find elements with data-element "${currentClass.dataElements[0]}"`,
-      );
+      throw new DataElementError(`Non è stato possibile trovare l'attributo [data-element="custom-submenu"]`);
     }
 
 
