@@ -6,7 +6,7 @@ import {
   getRandomNString,
   isInternalUrl,
 } from "../../utils/utils.js";
-import {DataElementError} from "../../utils/DataElementError.js";
+import { DataElementError } from "../../utils/DataElementError.js";
 
 class eventsGatherer extends Gatherer {
   static dataElements = ["event-link"];
@@ -62,7 +62,9 @@ class eventsGatherer extends Gatherer {
     }
 
     if (!maxCountPages || maxCountPages == 0) {
-      throw new DataElementError(`Non è stato possibile trovare l'attributo [data-element="${eventsGatherer.dataElement}"]`);
+      throw new DataElementError(
+        `Non è stato possibile trovare l'attributo [data-element="${eventsGatherer.dataElement}"]`,
+      );
     }
 
     eventsPageUrls = await getRandomNString(eventsPageUrls, numberOfPages);

@@ -151,7 +151,7 @@ const render = async () => {
   await writeFile(htmlPath, reportHtml);
   await writeFile(jsonPath, JSON.stringify(reportJSON));
 
-  if (view && view === 'true') {
+  if (view && view === "true") {
     await open(htmlPath);
   }
 

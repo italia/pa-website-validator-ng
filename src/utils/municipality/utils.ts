@@ -127,9 +127,9 @@ const getRandomSecondLevelPagesUrl = async (
 
     const elements = $(dataElement);
 
-  if(elements.length){
-    found = 1;
-  }
+    if (elements.length) {
+      found = 1;
+    }
 
     for (const element of elements) {
       let primaryLevelPageUrl = $(element).attr()?.href;
@@ -192,8 +192,8 @@ const getRandomSecondLevelPagesUrl = async (
     }
   }
 
-  if(!found){
-    throw new DataElementError('First level page not available');
+  if (!found) {
+    throw new DataElementError("First level page not available");
   }
 
   return getRandomNString(pagesUrls, numberOfPages);
@@ -508,16 +508,19 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
       i++
     ) {
       try {
-        await page.evaluate(async (feedbackComponentStructure, i) => {
-         const button = document.querySelector(
+        await page.evaluate(
+          async (feedbackComponentStructure, i) => {
+            const button = document.querySelector(
               `[data-element="${feedbackComponentStructure.rate.dataElement + i}"]`,
-          ) as HTMLElement;
+            ) as HTMLElement;
 
-          if(button){
-            await button.click();
-          }
-
-          }, feedbackComponentStructure, i);
+            if (button) {
+              await button.click();
+            }
+          },
+          feedbackComponentStructure,
+          i,
+        );
 
         await Promise.race([
           setTimeout(5000),
