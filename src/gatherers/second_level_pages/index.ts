@@ -2,7 +2,7 @@ import { Gatherer } from "../Gatherer.js";
 import { PageData } from "../../types/crawler-types.js";
 import { Page } from "puppeteer";
 import { getRandomSecondLevelPagesUrl } from "../../utils/municipality/utils.js";
-import {DataElementError} from "../../utils/DataElementError.js";
+import { DataElementError } from "../../utils/DataElementError.js";
 
 class SecondLevelPagesGatherer extends Gatherer {
   static dataElements: string[] = ["custom-submenu"];
@@ -26,14 +26,16 @@ class SecondLevelPagesGatherer extends Gatherer {
     const currentClass = this.constructor as typeof Gatherer;
 
     let fetchedUrls: string[] = [];
-    try{
+    try {
       fetchedUrls = await getRandomSecondLevelPagesUrl(
-          url,
-          numberOfPages,
-          page,
+        url,
+        numberOfPages,
+        page,
       );
-    }catch {
-      throw new DataElementError(`Non è stato possibile trovare l'attributo [data-element="${currentClass.dataElements[0]}"]`);
+    } catch {
+      throw new DataElementError(
+        `Non è stato possibile trovare l'attributo [data-element="${currentClass.dataElements[0]}"]`,
+      );
     }
 
     this.gatheredPages = fetchedUrls.map((url: string) => {

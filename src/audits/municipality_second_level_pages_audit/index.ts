@@ -251,8 +251,9 @@ class SecondLevelAudit extends Audit {
       this.score = 0.5;
     }
 
-    results[0].correct_title_percentage = pagesFoundInVocabularyPercentage ?
-      pagesFoundInVocabularyPercentage + "%" : '0%';
+    results[0].correct_title_percentage = pagesFoundInVocabularyPercentage
+      ? pagesFoundInVocabularyPercentage + "%"
+      : "0%";
     results[0].correct_title_found = correctTitleFound;
     results[0].wrong_title_found = wrongTitleFound;
 
