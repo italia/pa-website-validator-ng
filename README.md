@@ -14,22 +14,19 @@ Le App di valutazione sono strumenti che integrano la libreria [Lighthouse][ligh
 
 ## Test del modello Scuole
 
-| Test                                                                  | Descrizione                                                                                                                                                                                                                              |
-| --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Criteri di conformità                                                 | Vengono mostrati i risultati degli audit relativi ai [criteri di conformità del modello scuole][verifica-scuole].                                                                                                                        |
-| Raccomandazioni progettuali                                           | Vengono mostrati i risultati degli audit relativi alle [raccomandazioni progettuali del modello scuole][verifica-scuole].                                                                                                                |
-| Test aggiuntivi                                                       | Vengono mostrati i risultati di test standard forniti da lighthouse. Non sono rilevanti in termini di raggiungimento dei criteri di conformità, ma rappresentano comunque indicazioni utili a valutare eventuali miglioramenti del sito. |
-| Raccomandazione progettuale "R.SC.3.1 - Velocità e tempi di risposta" | Viene mostrato il risultato del test relativo alla raccomandazione progettuale "R.SC.3.1 - Velocità e tempi di risposta" per il sito scolastico.                                                                                         |
+| Test                                      | Descrizione                                                                                                                                                                                                                                     |
+|-------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Criteri di conformità per la misura 1.4.1 | Vengono mostrati i risultati degli audit relativi ai [criteri di conformità del modello scuole](https://docs.italia.it/italia/designers-italia/design-scuole-docs/it/versione-corrente/conformita-modello-scuola.html).                         |
+| Raccomandazioni non abbligatorie          | Vengono mostrati i risultati degli audit relativi alle [raccomandazioni progettuali del modello scuole](https://docs.italia.it/italia/designers-italia/design-scuole-docs/it/versione-corrente/conformita-modello-scuola.html#raccomandazioni). |
+| Test aggiuntivi                           | Vengono mostrati i risultati di test standard forniti da lighthouse. Non sono rilevanti in termini di raggiungimento dei criteri di conformità, ma rappresentano comunque indicazioni utili a valutare eventuali miglioramenti del sito.        |
 
 ## Test del modello Comuni
 
-| Test                                                                              | Descrizione                                                                                                                                                                                                                              |
-| --------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Pacchetto Cittadino Informato: criterio "C.SI.4.1 - Velocità e tempi di risposta" | Viene mostrato il risultato del test relativo al criterio "C.SI.4.1 - Velocità e tempi di risposta" per il sito comunale.                                                                                                                |
-| Pacchetto Cittadino Informato: criteri di conformità                              | Vengono mostrati i risultati degli audit relativi ai [criteri di conformità per il sito comunale][verifica-comuni].                                                                                                                      |
-| Pacchetto Cittadino Attivo: criteri di conformità                                 | Vengono mostrati i risultati degli audit relativi ai [criteri di conformità per i servizi digitali comunali][verifica-comuni].                                                                                                           |
-| Pacchetto Cittadino Informato: raccomandazioni progettuali                        | Vengono mostrati i risultati degli audit relativi alle [raccomandazioni progettuali per il sito comunale][verifica-comuni].                                                                                                              |
-| Test aggiuntivi                                                                   | Vengono mostrati i risultati di test standard forniti da lighthouse. Non sono rilevanti in termini di raggiungimento dei criteri di conformità, ma rappresentano comunque indicazioni utili a valutare eventuali miglioramenti del sito. |
+| Test                                                         | Descrizione                                                                                                                                                                                                                                               |
+|--------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Conformità al modello di sito comunale - Cittadino informato | Vengono mostrati i risultati degli audit relativi ai [criteri di conformità per il sito comunale](https://docs.italia.it/italia/designers-italia/design-comuni-docs/it/versione-corrente/conformita/conformita-modello-sito.html).                        |
+| Raccomandazioni non abbligatorie                             | Vengono mostrati i risultati degli audit relativi alle [raccomandazioni progettuali per il sito comunale](https://docs.italia.it/italia/designers-italia/design-comuni-docs/it/versione-corrente/conformita/conformita-modello-sito.html#raccomandazioni) |
+| Lighthouse                                                   | Vengono mostrati i risultati di test standard forniti da lighthouse. Non sono rilevanti in termini di raggiungimento dei criteri di conformità, ma rappresentano comunque indicazioni utili a valutare eventuali miglioramenti del sito.                  |
 
 ## Report e messaggi in console
 
@@ -37,12 +34,19 @@ L'applicazione genera un report in stile Lighthouse del risultato della valutazi
 
 ```console
 ...
-https://esempio.scuola.edu.it/novita/ 200
-https://esempio.scuola.edu.it/didattica/ 200
+SCAN  first-level  https://esempio.scuola.edu.it/: Gathering start
+SCAN  first-level  https://esempio.scuola.edu.it/: Gathering end
+SCAN  first-level  https://esempio.scuola.edu.it/: Audit start
+SCAN  first-level  https://esempio.scuola.edu.it/: Auditing end
 ...
 ```
 
-che indicano il risultato del caricamento della pagina in questione ([200 = successo][codici-http]). Quest'informazione può essere usata per fare debug di un sito o dell'applicazione stessa.
+che indicano rispettivamente:
+- SCAN => messa in scansione la pagina x
+- first-level => tipo di pagina messa in scansione
+- https://esempio.scuola.edu.it/ => url
+- Gathering => raccolta informazioni pagina
+- Audit => controlli sulla pagina per superare i criteri ad essa connessi
 
 ## Tecnologie
 
@@ -76,7 +80,7 @@ PA Website validator utilizza le seguenti dipendenze esterne principali
 Per l'installazione locale, una volta clonato il repository, eseguire:
 
 ```console
-cd pa-website-validator
+cd DTD_Crawler
 npm install
 ```
 
@@ -85,21 +89,21 @@ La directory `dist` sarà popolata con l’output del processo di build.
 Utilizzo:
 
 ```console
-node dist --type <type> --destination <folder> --report <report_name> --website <url> --scope <local|online> --view
+node dist --type <type> --destination <folder> --report <report_name> --website <url> --scope <local|online> --view <true|false> --timeout <number> --number-of-service-pages <number> --concurrentPages <number>
 ```
 
 Esempio:
 
 ```console
-node dist --type school --destination ~/pa-italia-crawler-reports --report myreport --website https://www.ismonnet.edu.it/ --scope online --view --accuracy all
+node dist --type school --destination ~/pa-italia-crawler-reports --report myreport --website https://www.ismonnet.edu.it/ --scope online --view false --accuracy all concurrentPages 10
 ```
 
 ## Installazione globale
 
-Una volta effettuata l’installazione globale sarà possibile usare il comando `pa-website-validator` dal terminale, senza dover entrare nella directory clonata. Questa è la procedura per installare il comando globalmente:
+Una volta effettuata l’installazione globale sarà possibile usare il comando `pa-website-validator-ng` dal terminale, senza dover entrare nella directory clonata. Questa è la procedura per installare il comando globalmente:
 
 ```console
-cd pa-website-validator
+cd pa-website-validator-ng
 npm install
 npm install -g --install-links
 ```
@@ -113,28 +117,32 @@ npm cache clean
 Utilizzo:
 
 ```console
-pa-website-validator --type <type> --destination <folder> --report <report_name> --website <url> --scope <local|online> --view
+pa-website-validator-ng --type <type> --destination <folder> --report <report_name> --website <url> --scope <local|online> --view <boolean> --timeout <number> --number-of-service-pages <number> --concurrentPages <number>
 ```
 
 Esempio:
 
 ```console
-pa-website-validator --type school --destination ~/pa-italia-crawler-reports --report myreport --website https://www.ismonnet.edu.it/ --scope online --view --accuracy all
+pa-website-validator-ng --type school --destination ~/pa-italia-crawler-reports --report myreport --website https://www.ismonnet.edu.it/ --scope online --view --accuracy all
 ```
 
 ## Opzioni comando
 
-| Parametro Comando | Descrizione                            | Obbligatorio | Possibili valori                  | Default     |
-| ----------------- | -------------------------------------- | ------------ | --------------------------------- | ----------- |
-| - -help           | Mostra la mappa comando                | ❌           |                                   |             |
-| - -version        | Versione del pacchetto                 | ❌           |                                   |             |
-| - -type           | Tipologia di crawler da lanciare       | ✅           | "municipality" "school"           |             |
-| - -destination    | Folder dove salvare la reportistica    | ✅           |                                   |             |
-| - -report         | Nome da assegnare al report            | ✅           |                                   |             |
-| - -website        | Url sito web da analizzare             | ✅           |                                   |             |
-| - -scope          | Scope di esecuzione                    | ❌           | "local" "online"                  | "online"    |
-| - -view           | Visualizzazione istantanea report      | ❌           |                                   |             |
-| - -accuracy       | Definisce la morbosità della scansione | ✅           | "min", "suggested", "high", "all" | "suggested" |
+| Parametro Comando          | Descrizione                                                      | Obbligatorio | Possibili valori                  | Default     |
+|----------------------------|------------------------------------------------------------------|--------------|-----------------------------------|-------------|
+| - -help                    | Mostra la mappa comando                                          | ❌            |                                   |             |
+| - -version                 | Versione del pacchetto                                           | ❌            |                                   |             |
+| - -type                    | Tipologia di crawler da lanciare                                 | ✅            | "municipality" "school"           |             |
+| - -destination             | Folder dove salvare la reportistica                              | ✅            |                                   |             |
+| - -report                  | Nome da assegnare al report                                      | ✅            |                                   |             |
+| - -website                 | Url sito web da analizzare                                       | ✅            |                                   |             |
+| - -scope                   | Scope di esecuzione                                              | ❌            | "local" "online"                  | "online"    |
+| - -view                    | Visualizzazione istantanea report                                | ❌            |                                   |             |
+| - -accuracy                | Definisce la morbosità della scansione                           | ✅            | "min", "suggested", "high", "all" | "suggested" |
+| - -concurrentPages         | Definisce il numero di pagine in parallelo                       | ❌            |                                   | 20          |
+ | - -timeout                 | Definisce il timeout per dichiarare una pagina non raggiungibile | ❌            |                                   | 300000      |
+| - -number-of-service-pages | Definisce il numero minimo di servizi da trovare                 | ❌            |                                   | 10          |
+
 
 Note:
 
@@ -148,6 +156,9 @@ Note:
 - `--view` se passato al comando alla fine dell'auditing lancia un'istanza di chrome che mostra automaticamente la reportistica generata.
 - `--accuracy` indica la precisione della scansione, definita come il numero di pagina analizzate:
   - `all` la scansione è effettuata su tutte le pagine disponibili.
+- `--timeout` timeout utilizzato per dichiarare la pagina non raggiungibile
+- `--concurrentPages` numero massimo di pagine di Puppeteer aperte in parallelo
+- `--number-of-service-pages` numero minimo di pagine di servizio da trovare, per dichiarare superato il check sui servizi
 
 [lighthouse]: https://www.npmjs.com/package/lighthouse
 [node.js]: http://nodejs.org

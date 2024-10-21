@@ -54,7 +54,7 @@ class lighthouseAudit extends Audit {
           (process.env["logsLevel"] as "info" | "error" | "silent") || "info",
         output: ["html", "json"],
         port: parseInt(port),
-        maxWaitForLoad: 300000,
+        maxWaitForLoad: parseInt(process.env["requestTimeout"] ?? "300000"),
         locale: "it",
         configPath: `${__dirname}/lighthouse-municipality-config-online.js`,
       };

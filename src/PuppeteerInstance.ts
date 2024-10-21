@@ -23,7 +23,7 @@ async function initializePuppeteer() {
       if (target.type() === "page") {
         const page = await target.page();
 
-        page?.setDefaultTimeout(300000);
+        page?.setDefaultTimeout(parseInt(process.env["requestTimeout"] ?? "300000"));
       }
     });
   }
