@@ -15,7 +15,7 @@ Le App di valutazione sono strumenti che integrano la libreria [Lighthouse][ligh
 ## Test del modello Scuole
 
 | Test                                      | Descrizione                                                                                                                                                                                                                                     |
-|-------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Criteri di conformità per la misura 1.4.1 | Vengono mostrati i risultati degli audit relativi ai [criteri di conformità del modello scuole](https://docs.italia.it/italia/designers-italia/design-scuole-docs/it/versione-corrente/conformita-modello-scuola.html).                         |
 | Raccomandazioni non abbligatorie          | Vengono mostrati i risultati degli audit relativi alle [raccomandazioni progettuali del modello scuole](https://docs.italia.it/italia/designers-italia/design-scuole-docs/it/versione-corrente/conformita-modello-scuola.html#raccomandazioni). |
 | Test aggiuntivi                           | Vengono mostrati i risultati di test standard forniti da lighthouse. Non sono rilevanti in termini di raggiungimento dei criteri di conformità, ma rappresentano comunque indicazioni utili a valutare eventuali miglioramenti del sito.        |
@@ -23,7 +23,7 @@ Le App di valutazione sono strumenti che integrano la libreria [Lighthouse][ligh
 ## Test del modello Comuni
 
 | Test                                                         | Descrizione                                                                                                                                                                                                                                               |
-|--------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Conformità al modello di sito comunale - Cittadino informato | Vengono mostrati i risultati degli audit relativi ai [criteri di conformità per il sito comunale](https://docs.italia.it/italia/designers-italia/design-comuni-docs/it/versione-corrente/conformita/conformita-modello-sito.html).                        |
 | Raccomandazioni non abbligatorie                             | Vengono mostrati i risultati degli audit relativi alle [raccomandazioni progettuali per il sito comunale](https://docs.italia.it/italia/designers-italia/design-comuni-docs/it/versione-corrente/conformita/conformita-modello-sito.html#raccomandazioni) |
 | Lighthouse                                                   | Vengono mostrati i risultati di test standard forniti da lighthouse. Non sono rilevanti in termini di raggiungimento dei criteri di conformità, ma rappresentano comunque indicazioni utili a valutare eventuali miglioramenti del sito.                  |
@@ -42,6 +42,7 @@ SCAN  first-level  https://esempio.scuola.edu.it/: Auditing end
 ```
 
 che indicano rispettivamente:
+
 - SCAN => messa in scansione la pagina x
 - first-level => tipo di pagina messa in scansione
 - https://esempio.scuola.edu.it/ => url
@@ -129,20 +130,19 @@ pa-website-validator-ng --type school --destination ~/pa-italia-crawler-reports 
 ## Opzioni comando
 
 | Parametro Comando          | Descrizione                                                      | Obbligatorio | Possibili valori                  | Default     |
-|----------------------------|------------------------------------------------------------------|--------------|-----------------------------------|-------------|
-| - -help                    | Mostra la mappa comando                                          | ❌            |                                   |             |
-| - -version                 | Versione del pacchetto                                           | ❌            |                                   |             |
-| - -type                    | Tipologia di crawler da lanciare                                 | ✅            | "municipality" "school"           |             |
-| - -destination             | Folder dove salvare la reportistica                              | ✅            |                                   |             |
-| - -report                  | Nome da assegnare al report                                      | ✅            |                                   |             |
-| - -website                 | Url sito web da analizzare                                       | ✅            |                                   |             |
-| - -scope                   | Scope di esecuzione                                              | ❌            | "local" "online"                  | "online"    |
-| - -view                    | Visualizzazione istantanea report                                | ❌            |                                   |             |
-| - -accuracy                | Definisce la morbosità della scansione                           | ✅            | "min", "suggested", "high", "all" | "suggested" |
-| - -concurrentPages         | Definisce il numero di pagine in parallelo                       | ❌            |                                   | 20          |
- | - -timeout                 | Definisce il timeout per dichiarare una pagina non raggiungibile | ❌            |                                   | 300000      |
-| - -number-of-service-pages | Definisce il numero minimo di servizi da trovare                 | ❌            |                                   | 10          |
-
+| -------------------------- | ---------------------------------------------------------------- | ------------ | --------------------------------- | ----------- |
+| - -help                    | Mostra la mappa comando                                          | ❌           |                                   |             |
+| - -version                 | Versione del pacchetto                                           | ❌           |                                   |             |
+| - -type                    | Tipologia di crawler da lanciare                                 | ✅           | "municipality" "school"           |             |
+| - -destination             | Folder dove salvare la reportistica                              | ✅           |                                   |             |
+| - -report                  | Nome da assegnare al report                                      | ✅           |                                   |             |
+| - -website                 | Url sito web da analizzare                                       | ✅           |                                   |             |
+| - -scope                   | Scope di esecuzione                                              | ❌           | "local" "online"                  | "online"    |
+| - -view                    | Visualizzazione istantanea report                                | ❌           |                                   |             |
+| - -accuracy                | Definisce la morbosità della scansione                           | ✅           | "min", "suggested", "high", "all" | "suggested" |
+| - -concurrentPages         | Definisce il numero di pagine in parallelo                       | ❌           |                                   | 20          |
+| - -timeout                 | Definisce il timeout per dichiarare una pagina non raggiungibile | ❌           |                                   | 300000      |
+| - -number-of-service-pages | Definisce il numero minimo di servizi da trovare                 | ❌           |                                   | 10          |
 
 Note:
 

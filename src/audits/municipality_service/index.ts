@@ -32,12 +32,9 @@ class ServiceAudit extends Audit {
   mainTitle = "SCHEDE INFORMATIVE DI SERVIZIO PER IL CITTADINO";
   title =
     "C.SI.1.3 - SCHEDE INFORMATIVE DI SERVIZIO PER IL CITTADINO - Tutte le schede informative dei servizi per il cittadino devono mostrare le voci segnalate come obbligatorie all'interno dell'architettura dell'informazione, nell'ordine segnalato dal modello.";
-  greenResult =
-    `Sono presenti almeno ${process.env["numberOfServicePages"] ?? minNumberOfServices} schede servizio e in tutte le pagine analizzate tutte le voci obbligatorie e i relativi contenuti sono presenti e, dove richiesto, sono nell'ordine corretto.`;
-  yellowResult =
-    `Sono presenti almeno ${process.env["numberOfServicePages"] ?? minNumberOfServices} schede servizio e in almeno una delle pagine analizzate fino a 2 voci obbligatorie o i relativi contenuti non sono presenti o 1 voce non è nell'ordine corretto.`;
-  redResult =
-    `Non sono presenti almeno ${process.env["numberOfServicePages"] ?? minNumberOfServices} schede servizio o in almeno una delle pagine analizzate più di 2 voci obbligatorie o i relativi contenuti non sono presenti o più di 1 voce non è nell'ordine corretto.`;
+  greenResult = `Sono presenti almeno ${process.env["numberOfServicePages"] ?? minNumberOfServices} schede servizio e in tutte le pagine analizzate tutte le voci obbligatorie e i relativi contenuti sono presenti e, dove richiesto, sono nell'ordine corretto.`;
+  yellowResult = `Sono presenti almeno ${process.env["numberOfServicePages"] ?? minNumberOfServices} schede servizio e in almeno una delle pagine analizzate fino a 2 voci obbligatorie o i relativi contenuti non sono presenti o 1 voce non è nell'ordine corretto.`;
+  redResult = `Non sono presenti almeno ${process.env["numberOfServicePages"] ?? minNumberOfServices} schede servizio o in almeno una delle pagine analizzate più di 2 voci obbligatorie o i relativi contenuti non sono presenti o più di 1 voce non è nell'ordine corretto.`;
   subItem = {
     greenResult:
       "Pagine nelle quali tutte le voci obbligatorie e i relativi contenuti sono presenti e, dove richiesto, sono nell'ordine corretto:",
@@ -257,7 +254,9 @@ class ServiceAudit extends Audit {
     this.globalResults.wrongPages.pages = [];
     this.globalResults.pagesInError.pages = [];
 
-    const servicesNumber = process.env["numberOfServicePages"] ? parseInt(process.env["numberOfServicePages"]) : minNumberOfServices;
+    const servicesNumber = process.env["numberOfServicePages"]
+      ? parseInt(process.env["numberOfServicePages"])
+      : minNumberOfServices;
     if (Number(process.env["numberOfServicesFound"]) < servicesNumber) {
       this.globalResults["score"] = 0;
       this.score = 0;
@@ -432,7 +431,7 @@ class ServiceAudit extends Audit {
       statusMessage: message,
       metrics: null,
       totalPercentage: null,
-      serviceNum: process.env["numberOfServicePages"] ?? minNumberOfServices
+      serviceNum: process.env["numberOfServicePages"] ?? minNumberOfServices,
     });
   }
 
