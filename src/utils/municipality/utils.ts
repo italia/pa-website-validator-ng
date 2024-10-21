@@ -525,7 +525,7 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
             idleTime: 2000,
           }),
         ]);
-      } catch (e) {
+      } catch {
         /* empty */
       }
 
