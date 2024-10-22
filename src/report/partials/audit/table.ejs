@@ -13,7 +13,7 @@
             <tr>
                 <% Object.keys(item).forEach(element => { %>
                     <td>
-                        <% if(element == 'link' && !!(new URL(item[element]))) { %>
+                        <% if(element == 'link' && item[element] && !!(new URL(item[element]))) { %>
                         <a href="<%=item[element]%>"><%= new URL(item[element]).pathname %></a>
                         <% }else{ %>
                         <%=item[element]%>
