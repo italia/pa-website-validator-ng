@@ -13,7 +13,18 @@ async function initializePuppeteerOld() {
     oldBrowser = await puppeteer
       .launch({
         headless: true,
-        args: ["--no-zygote", "--no-sandbox", "--accept-lang=it"],
+        args: [
+          "--no-zygote",
+          "--no-sandbox",
+          "--accept-lang=it",
+          "--disable-setuid-sandbox",
+          "--disable-dev-shm-usage",
+          "--single-process",
+          "--disable-gpu",
+          "--disable-software-rasterizer",
+          "--enable-logging",
+          "--v=1",
+        ],
         executablePath: process.env?.OLD_PUPPETEER_BROWSER_PATH ?? "",
       })
       .catch((err) => {

@@ -123,7 +123,7 @@ async function run(
       });
     }
 
-    const oldBrowser = await initializePuppeteerOld();
+    //const oldBrowser = await initializePuppeteerOld();
 
     await PageManager.addPage({
       id: "homepage",
@@ -140,10 +140,6 @@ async function run(
     if (browser) {
       console.error("closing puppeteer");
       await browser.close();
-    }
-    if (oldBrowser) {
-      console.error("closing puppeteer old");
-      await oldBrowser.close();
     }
 
     return finalResults;

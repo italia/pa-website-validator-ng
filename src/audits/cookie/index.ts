@@ -84,51 +84,46 @@ class CookieAudit extends Audit {
         const items = [];
         let score = 1;
 
-        const oldBrowser: Browser | null = await initializePuppeteerOld();
+        //const oldBrowser: Browser | null = await initializePuppeteerOld();
 
-        if (oldBrowser) {
-          const oldPage = await oldBrowser.newPage();
+        //if (oldBrowser) {
 
-          await gotoRetry(oldPage, url, errorHandling.gotoRetryTentative);
+        const cookies: CookieProtocol[] = await page.cookies();
 
-          const cookies: CookieProtocol[] = await oldPage.cookies();
+        const resultCookies = await checkCookieDomain(url, cookies);
 
-          await oldPage.close();
-
-          const resultCookies = await checkCookieDomain(url, cookies);
-
-          for (const resultCookie of resultCookies) {
-            if (!resultCookie.is_correct) {
-              score = 0;
-            }
-
-            items.push(resultCookie);
+        for (const resultCookie of resultCookies) {
+          if (!resultCookie.is_correct) {
+            score = 0;
           }
 
-          if (score < this.score) {
-            this.score = score;
-          }
-
-          for (const item of items) {
-            if (item.is_correct) {
-              this.correctItems.push({
-                link: item.link,
-                cookie_domain: item.cookie_domain,
-                cookie_name: item.cookie_name,
-                cookie_value: item.cookie_value,
-              });
-            } else {
-              this.wrongItems.push({
-                link: item.link,
-                cookie_domain: item.cookie_domain,
-                cookie_name: item.cookie_name,
-                cookie_value: item.cookie_value,
-              });
-            }
-          }
-        } else {
-          throw new Error("Non è stato possibile aprire Puppeteer");
+          items.push(resultCookie);
         }
+
+        if (score < this.score) {
+          this.score = score;
+        }
+
+        for (const item of items) {
+          if (item.is_correct) {
+            this.correctItems.push({
+              link: item.link,
+              cookie_domain: item.cookie_domain,
+              cookie_name: item.cookie_name,
+              cookie_value: item.cookie_value,
+            });
+          } else {
+            this.wrongItems.push({
+              link: item.link,
+              cookie_domain: item.cookie_domain,
+              cookie_name: item.cookie_name,
+              cookie_value: item.cookie_value,
+            });
+          }
+        }
+        //} else {
+        // throw new Error("Non è stato possibile aprire Puppeteer");
+        //}
       } catch (ex) {
         this.score = 0;
 
