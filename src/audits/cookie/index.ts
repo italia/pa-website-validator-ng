@@ -1,9 +1,7 @@
 import { errorHandling } from "../../config/commonAuditsParts.js";
 import { Audit, GlobalResultsMulti } from "../Audit.js";
-import { Browser, Page, Cookie as CookieProtocol } from "puppeteer";
+import { Page, Cookie as CookieProtocol } from "puppeteer";
 import { Cookie } from "../../types/crawler-types";
-import { gotoRetry } from "../../utils/utils.js";
-import { initializePuppeteerOld } from "../../PuppeteerInstanceOld.js";
 
 class CookieAudit extends Audit {
   public globalResults: GlobalResultsMulti = {
@@ -84,10 +82,6 @@ class CookieAudit extends Audit {
         const items = [];
         let score = 1;
 
-        //const oldBrowser: Browser | null = await initializePuppeteerOld();
-
-        //if (oldBrowser) {
-
         const cookies: CookieProtocol[] = await page.cookies();
 
         const resultCookies = await checkCookieDomain(url, cookies);
@@ -121,9 +115,6 @@ class CookieAudit extends Audit {
             });
           }
         }
-        //} else {
-        // throw new Error("Non è stato possibile aprire Puppeteer");
-        //}
       } catch (ex) {
         this.score = 0;
 

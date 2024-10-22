@@ -6,7 +6,6 @@ import PageManager from "./PageManager.js";
 import scan from "./Scan.js";
 import { Page } from "puppeteer";
 import { loadPage } from "./utils/utils.js";
-import { initializePuppeteerOld } from "./PuppeteerInstanceOld.js";
 
 export const logLevels = {
   display_none: "silent",
@@ -122,8 +121,6 @@ async function run(
         lighthouse: { ...result, ...meta },
       });
     }
-
-    //const oldBrowser = await initializePuppeteerOld();
 
     await PageManager.addPage({
       id: "homepage",

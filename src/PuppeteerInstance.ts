@@ -20,6 +20,7 @@ async function initializePuppeteer() {
           "--enable-logging",
           "--v=1",
         ],
+        executablePath: process.env?.OLD_PUPPETEER_BROWSER_PATH ?? "",
       })
       .catch((err) => {
         console.error("Failed to launch Puppeteer:", err);
