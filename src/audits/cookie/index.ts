@@ -84,46 +84,50 @@ class CookieAudit extends Audit {
         const items = [];
         let score = 1;
 
-        //const oldBrowser: Browser | null = await initializePuppeteerOld();
+        const oldBrowser: Browser | null = await initializePuppeteerOld();
 
-        //if (oldBrowser) {
+        if (oldBrowser) {
+          const oldPage = await oldBrowser.newPage();
 
-        const cookies: CookieProtocol[] = await page.cookies();
+          await gotoRetry(oldPage, url, errorHandling.gotoRetryTentative);
 
-        const resultCookies = await checkCookieDomain(url, cookies);
+          const cookies: CookieProtocol[] = await oldPage.cookies();
 
-        for (const resultCookie of resultCookies) {
-          if (!resultCookie.is_correct) {
-            score = 0;
+          await oldPage.close();
+          const resultCookies = await checkCookieDomain(url, cookies);
+
+          for (const resultCookie of resultCookies) {
+            if (!resultCookie.is_correct) {
+              score = 0;
+            }
+
+            items.push(resultCookie);
           }
 
-          items.push(resultCookie);
-        }
-
-        if (score < this.score) {
-          this.score = score;
-        }
-
-        for (const item of items) {
-          if (item.is_correct) {
-            this.correctItems.push({
-              link: item.link,
-              cookie_domain: item.cookie_domain,
-              cookie_name: item.cookie_name,
-              cookie_value: item.cookie_value,
-            });
-          } else {
-            this.wrongItems.push({
-              link: item.link,
-              cookie_domain: item.cookie_domain,
-              cookie_name: item.cookie_name,
-              cookie_value: item.cookie_value,
-            });
+          if (score < this.score) {
+            this.score = score;
           }
+
+          for (const item of items) {
+            if (item.is_correct) {
+              this.correctItems.push({
+                link: item.link,
+                cookie_domain: item.cookie_domain,
+                cookie_name: item.cookie_name,
+                cookie_value: item.cookie_value,
+              });
+            } else {
+              this.wrongItems.push({
+                link: item.link,
+                cookie_domain: item.cookie_domain,
+                cookie_name: item.cookie_name,
+                cookie_value: item.cookie_value,
+              });
+            }
+          }
+        } else {
+          throw new Error("Non è stato possibile aprire Puppeteer");
         }
-        //} else {
-        // throw new Error("Non è stato possibile aprire Puppeteer");
-        //}
       } catch (ex) {
         this.score = 0;
 
