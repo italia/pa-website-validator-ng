@@ -136,7 +136,7 @@ async function run(
 
     if (browser) {
       console.error("closing puppeteer");
-      await browser.process()?.kill()
+      await browser.process()?.kill();
     }
 
     return finalResults;
