@@ -1,6 +1,6 @@
 {
   "name": "pa-website-validator-ng",
-  "version": "0.1.4",
+  "version": "1.0.0",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -13,9 +13,9 @@
     "format:check": "prettier -c .",
     "format:write": "prettier --write ."
   },
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "author": "Presidenza del Consiglio dei Ministri",
+  "license": "BSD-3-Clause",
+  "description": "Applicativo desktop a supporto degli sviluppatori che aiuta a valutare la qualità dei siti istituzionali di Comuni e scuole.",
   "bin": {
     "pa-website-validator-ng": "dist/index.js"
   },
