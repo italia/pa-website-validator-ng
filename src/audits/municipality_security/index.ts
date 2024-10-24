@@ -27,10 +27,10 @@ class MunicipalitySecurityAudit extends SecurityAudit {
 
     if (this.globalResults.score > 0.5) {
       status = "pass";
-      message = this.greenResult;
+      message = this.greenResult.replace("[url]", this.url);
     } else {
       status = "fail";
-      message = this.redResult;
+      message = this.redResult.replace("[url]", this.url);
     }
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));

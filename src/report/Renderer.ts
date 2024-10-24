@@ -17,10 +17,10 @@ const render = async () => {
   const date = formatDate(new Date());
 
   let successAudits = [];
-  let errorAudits = [];
   let failedAudits = [];
   let informativeAudits = [];
   let lighthouseIFrame = null;
+  let errorPages: Record<string, unknown>[] = [];
 
   const audits = await collectAudits();
   /** get data from report instances */
@@ -28,18 +28,22 @@ const render = async () => {
     if (auditId !== "municipality_improvement_plan") {
       const audit = await audits[auditId]();
 
-      const auditMeta = await audit.meta();
+      const auditMeta: Record<string, unknown> = await audit.meta();
       const auditResult = audit.globalResults;
-      const score = auditResult.score;
+      let score = auditResult.score;
       const infoScore = audit.infoScore;
       const error = auditResult.error;
 
       let improvementPlanHTML = "";
+      let improvementPlanScore = 0;
 
       if (auditId === "lighthouse" && audits["municipality_improvement_plan"]) {
         const improvementAudit =
           await audits["municipality_improvement_plan"]();
         improvementPlanHTML = await improvementAudit.returnGlobalHTML();
+        improvementPlanScore =
+          score < 0.5 ? improvementAudit.globalResults.score : 0;
+        score = improvementPlanScore > 0.5 && score < 0.5 ? 1 : score;
       }
 
       if (auditResult.info || audit.info) {
@@ -55,17 +59,35 @@ const render = async () => {
                 : "fail",
         });
       } else if (error) {
-        errorAudits.push({
+        failedAudits.push({
           ...auditMeta,
           status: "fail",
           auditHTML: (await audit.returnGlobalHTML()) + improvementPlanHTML,
         });
+        if ("pagesInError" in audit.globalResults) {
+          audit.globalResults.pagesInError.pages.forEach((p) => {
+            errorPages.push({
+              criteria: auditMeta.code + " - " + auditMeta.mainTitle,
+              ...p,
+              id: auditMeta.id,
+            });
+          });
+        }
       } else if (score > 0.5) {
-        successAudits.push({
-          ...auditMeta,
-          status: "pass",
-          auditHTML: (await audit.returnGlobalHTML()) + improvementPlanHTML,
-        });
+        if (improvementPlanScore > 0.5) {
+          successAudits.push({
+            ...auditMeta,
+            status: "pass",
+            auditHTML:
+              (await audit.returnGlobalHTML(true)) + improvementPlanHTML,
+          });
+        } else {
+          successAudits.push({
+            ...auditMeta,
+            status: "pass",
+            auditHTML: (await audit.returnGlobalHTML()) + improvementPlanHTML,
+          });
+        }
       } else if (score === 0.5) {
         successAudits.push({
           ...auditMeta,
@@ -90,16 +112,25 @@ const render = async () => {
   const reportJSON = await PageManager.getGlobalResults();
 
   let status = "ko";
-  if (!failedAudits.length && !errorAudits.length) {
+  if (!failedAudits.length) {
     status = "ok";
-  } else if (errorAudits.length) {
+  } else if (errorPages.length) {
     status = "x";
   }
 
   successAudits = sortByWeights(successAudits);
   failedAudits = sortByWeights(failedAudits);
   informativeAudits = sortByWeights(informativeAudits);
-  errorAudits = sortByWeights(errorAudits);
+  errorPages = sortByWeights(errorPages).map((p) => {
+    const keys = Object.keys(p);
+    const obj: Record<string, unknown> = {};
+    keys.forEach((k) => {
+      if (k !== "weight" && k !== "id") {
+        obj[k] = p[k];
+      }
+    });
+    return obj;
+  });
 
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -108,18 +139,16 @@ const render = async () => {
     date: date,
     results: {
       status: status,
-      error_audits: errorAudits.length,
       passed_audits: successAudits.length,
       failed_audits: failedAudits.length,
-      total_audits:
-        successAudits.length + failedAudits.length + errorAudits.length,
+      total_audits: successAudits.length + failedAudits.length,
     },
     audits: {
-      error: errorAudits,
       passed: successAudits,
       info: informativeAudits,
       failed: failedAudits,
     },
+    pagesInError: errorPages,
     url_comune: website,
     lighthouseIFrame: lighthouseIFrame,
   });

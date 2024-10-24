@@ -47,6 +47,11 @@ class MunicipalityVocabulary extends Audit {
       headings: [],
       pages: [],
     },
+    pagesInError: {
+      message: "",
+      headings: [],
+      pages: [],
+    },
     errorMessage: "",
   };
 
@@ -69,15 +74,18 @@ class MunicipalityVocabulary extends Audit {
     if (error && !page) {
       this.globalResults.score = 0;
 
-      this.globalResults.pagesItems.headings = ["Risultato"];
-      this.globalResults.pagesItems.message = notExecutedErrorMessage.replace(
+      this.globalResults.pagesInError.headings = ["Risultato", "Errori"];
+      this.globalResults.pagesInError.message = notExecutedErrorMessage.replace(
         "<LIST>",
         error,
       );
 
-      this.globalResults.pagesItems.pages = [
+      this.globalResults.error = true;
+
+      this.globalResults.pagesInError.pages = [
         {
-          result: redResult,
+          link: url,
+          result: error,
         },
       ];
 

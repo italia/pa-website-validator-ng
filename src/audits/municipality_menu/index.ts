@@ -45,6 +45,11 @@ class MenuAudit extends Audit {
       headings: [],
       pages: [],
     },
+    pagesInError: {
+      message: "",
+      headings: [],
+      pages: [],
+    },
     errorMessage: "",
   };
 
@@ -59,18 +64,19 @@ class MenuAudit extends Audit {
     };
   }
 
-  async auditPage(page: Page | null, error?: string) {
+  async auditPage(page: Page | null, url: string, error?: string) {
     if (error && !page) {
       this.globalResults.score = 0;
 
-      this.globalResults.pagesItems.headings = ["Risultato"];
-      this.globalResults.pagesItems.message = notExecutedErrorMessage.replace(
+      this.globalResults.pagesInError.headings = ["Risultato", "Errori"];
+      this.globalResults.pagesInError.message = notExecutedErrorMessage.replace(
         "<LIST>",
         error,
       );
-      this.globalResults.pagesItems.pages = [
+      this.globalResults.pagesInError.pages = [
         {
-          result: redResult,
+          link: url,
+          result: error,
         },
       ];
 

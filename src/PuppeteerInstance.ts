@@ -12,15 +12,7 @@ async function initializePuppeteer() {
     browser = await puppeteer
       .launch({
         headless: true,
-        args: [
-          "--no-zygote",
-          "--no-sandbox",
-          "--accept-lang=it",
-          "--disable-setuid-sandbox",
-          "--disable-features=RendererCodeIntegrity",
-          "--enable-logging",
-          "--v=1",
-        ],
+        args: ["--no-zygote", "--no-sandbox", "--accept-lang=it", "--v=1"],
       })
       .catch((err) => {
         console.error("Failed to launch Puppeteer:", err);

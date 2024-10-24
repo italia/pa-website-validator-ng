@@ -446,18 +446,15 @@
 
     -->
     <div class="accordion" id="collapse">
-      <% if (audits.error.length >0) { %>
+      <% if (pagesInError.length >0) { %>
         <div class="accordion-item">
           <h2 class="accordion-header" id="accordion-header-failed-audits">
             <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-error-audits" aria-expanded="true" aria-controls="accordion-collapse-error-audits">
-              Test che hanno generato un errore / non portati a termine (all’interno la visualizzazione resta la stessa però con indicazione sugli errori dei criteri)
-              <span class="text--fail">
-              <%= results.error_audits %></span> su
-              <%= results.total_audits %>
+              Errori generati durante la scansione
             </button>
           </h2>
           <div id="accordion-collapse-error-audits" class="accordion-collapse collapse show" role="region" aria-labelledby="accordion-header-error-audits">
-            <%- include('partials/accordion-body', { items: audits.error }); %>
+            <%- include('partials/audit/table_errors', { items: pagesInError }); %>
           </div>
         </div>
       <% } %>

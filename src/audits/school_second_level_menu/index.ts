@@ -45,6 +45,11 @@ class SchoolSecondLevelMenuAudit extends Audit {
       headings: [],
       pages: [],
     },
+    pagesInError: {
+      message: "",
+      headings: [],
+      pages: [],
+    },
     errorMessage: "",
   };
 
@@ -76,14 +81,15 @@ class SchoolSecondLevelMenuAudit extends Audit {
     if (error && !page) {
       this.globalResults.score = 0;
 
-      this.globalResults.pagesItems.headings = ["Risultato"];
-      this.globalResults.pagesItems.message = notExecutedErrorMessage.replace(
+      this.globalResults.pagesInError.headings = ["Risultato", "Errori"];
+      this.globalResults.pagesInError.message = notExecutedErrorMessage.replace(
         "<LIST>",
         error,
       );
-      this.globalResults.pagesItems.pages = [
+      this.globalResults.pagesInError.pages = [
         {
-          result: this.redResult,
+          link: url,
+          result: error,
         },
       ];
 

@@ -46,6 +46,11 @@ class SecondLevelAudit extends Audit {
       type: "table",
       summary: "",
     },
+    pagesInError: {
+      message: "",
+      headings: [],
+      pages: [],
+    },
     pagesItems: {
       message: "",
       headings: [],
@@ -54,7 +59,6 @@ class SecondLevelAudit extends Audit {
     errorMessage: "",
   };
 
-  public pagesInError: Record<string, unknown>[] = [];
   public score = 0;
   private secondLevelPages: MunicipalitySecondLevelPages = {
     management: [],
@@ -80,10 +84,12 @@ class SecondLevelAudit extends Audit {
     if (error && !page) {
       this.score = 0;
 
-      this.pagesInError.push({
+      this.globalResults.pagesInError.pages.push({
         link: url,
         missing_elements: error,
       });
+
+      this.globalResults.error = true;
 
       return {
         score: 0,
@@ -106,7 +112,7 @@ class SecondLevelAudit extends Audit {
           errorMessage.lastIndexOf('"'),
         );
 
-        this.pagesInError.push({
+        this.globalResults.pagesInError.pages.push({
           link: url,
           errors_found: errorMessage,
         });
@@ -187,7 +193,7 @@ class SecondLevelAudit extends Audit {
     const results = [];
     this.globalResults.pagesItems.pages = [];
 
-    if (this.pagesInError.length) {
+    if (this.globalResults.pagesInError.pages.length) {
       this.globalResults.error = true;
 
       this.globalResults.pagesItems.message = errorHandling.errorMessage;
@@ -195,9 +201,11 @@ class SecondLevelAudit extends Audit {
         errorHandling.errorColumnTitles[0],
         errorHandling.errorColumnTitles[1],
       ];
-      this.pagesInError.forEach((p: Record<string, unknown>) => {
-        this.globalResults.pagesItems.pages.push(p);
-      });
+      this.globalResults.pagesInError.pages.forEach(
+        (p: Record<string, unknown>) => {
+          this.globalResults.pagesItems.pages.push(p);
+        },
+      );
     }
     results.push({
       result: redResult,

@@ -53,7 +53,7 @@ default:
   </h2>
   <div class="audit-description">
 
-    <% if ( metrics ) { %>
+    <% if ( metrics && metrics.length ) { %>
       <%-  include('../../report/partials/audit/metrics_school', { metrics, totalPercentage }) %>
     <% } %>
 

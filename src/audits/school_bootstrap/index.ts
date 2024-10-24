@@ -65,13 +65,12 @@ class SchoolBootstrap extends Audit {
     };
   }
 
-  async auditPage(page: Page | null, error?: string) {
+  async auditPage(page: Page | null, url: string, error?: string) {
     if (error && !page) {
       this.score = 0;
 
       this.pagesInError.push({
-        link: "",
-        wrong_order_elements: "",
+        link: url,
         missing_elements: error,
       });
 

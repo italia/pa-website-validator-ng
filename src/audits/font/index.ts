@@ -83,8 +83,8 @@ class FontAudit extends Audit {
 
       const item = {
         link: url,
-        wrong_fonts: "",
         wrong_number_elements: 0,
+        wrong_fonts: "",
       };
 
       const badElements: Array<BadElement> = await page.evaluate(

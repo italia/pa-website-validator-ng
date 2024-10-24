@@ -12,11 +12,6 @@
 let icon = "";
 let message = "";
 switch (status) {
-    case 'pass':
-        icon = '#it-check-circle';
-        message = title;
-        break;
-
     case 'average':
         icon = '#it-warning-circle';
         message = failureTitle;
@@ -24,7 +19,7 @@ switch (status) {
 
     default:
         icon = '#it-info-circle';
-        message = "";
+        message = title;
         break;
 } %>
 
@@ -40,7 +35,7 @@ switch (status) {
 }; -->
 
 <div class="audit-content">
-    <h2 class="h3 audit-title">
+    <h2 class="h5 audit-title">
         <svg class="icon <%= status %>" aria-hidden="true">
             <use href="<%= icon %>"></use>
         </svg>

@@ -106,9 +106,8 @@ class SchoolServiceAudit extends Audit {
       this.score = 0;
 
       this.pagesInError.push({
-        link: "",
+        link: url,
         missing_elements: error,
-        wrong_order_elements: "",
       });
 
       return {

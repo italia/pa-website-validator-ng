@@ -53,7 +53,7 @@ const scan = async (pageData: PageData) => {
       (pageData.gathered && pageData.temporaryGatherer)
     ) {
       console.log(
-        ` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Gathering start`,
+        `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Gathering start`,
       );
       let navigatingError: string | unknown = "";
 
@@ -109,7 +109,7 @@ const scan = async (pageData: PageData) => {
 
           await PageManager.addPage({
             id: "",
-            url: "https://temp" + gatherer.getPageType(),
+            url: pageData.url,
             type: gatherer.getPageType(),
             redirectUrl: "",
             internal: false,
@@ -141,7 +141,7 @@ const scan = async (pageData: PageData) => {
       PageManager.setNotTemporaryGatherer(pageData.url, pageData.type);
       await PageManager.setGathered(pageData.url, pageData.type);
       console.log(
-        ` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Gathering end`,
+        `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Gathering end`,
       );
       if (page) {
         await page.close();
@@ -156,7 +156,7 @@ const scan = async (pageData: PageData) => {
 
       let page: Page | null = null;
       console.log(
-        ` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Auditing start`,
+        `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Auditing start`,
       );
       if (!pageData.temporaryAudit) {
         try {
@@ -216,7 +216,7 @@ const scan = async (pageData: PageData) => {
       PageManager.setErrors(pageData.url, pageData.type, auditingErrors);
       PageManager.setAudited(pageData.url, pageData.type);
       console.log(
-        ` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Auditing end`,
+        `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Auditing end`,
       );
     }
 

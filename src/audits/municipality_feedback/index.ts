@@ -88,7 +88,7 @@ class FeedbackAudit extends Audit {
       this.score = 0;
 
       this.pagesInError.push({
-        inspected_page: url,
+        link: url,
         errors_found: error,
       });
 

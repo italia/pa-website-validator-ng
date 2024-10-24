@@ -73,6 +73,14 @@ switch (status) {
             <span class="h6"> <%= statusMessage %> </span>
         </p>
 
+        <% if( table.pagesInError.pages.length ) { %>
+            <p>
+                <span class="h6 uppercase">Elementi di fallimento: <%= table.pagesInError.message %></span>
+                %>
+                <%- include('../../report/partials/audit/table', {table: table.pagesInError}) %>
+            </p>
+        <% } %>
+
         <% if( table.pagesItems.pages.length ) { %>
             <p>
                 <%- include('../../report/partials/audit/table', {table: table.pagesItems}) %>

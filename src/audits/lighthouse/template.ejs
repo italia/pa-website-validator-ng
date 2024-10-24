@@ -14,7 +14,12 @@ let message = "";
 switch (status) {
 case 'pass':
     icon = '#it-check-circle';
-    message = "- Criterio superato";
+    message = "- Criterio superato per performance sufficienti";
+    break;
+
+case 'pass_plan':
+    icon = '#it-check-circle';
+    message = "- Criterio superato per presenza del piano di miglioramento";
     break;
 
 case 'average':
@@ -53,7 +58,7 @@ default:
   </h2>
   <div class="audit-description">
 
-    <% if ( metrics ) { %>
+    <% if ( metrics && metrics.length ) { %>
       <%-  include('../../report/partials/audit/metrics', { metrics, totalPercentage }) %>
     <% } %>
 

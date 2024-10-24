@@ -15,6 +15,11 @@ export interface GlobalResults {
     headings: string[];
     pages: Record<string, unknown>[];
   };
+  pagesInError: {
+    message: string;
+    headings: string[];
+    pages: Record<string, unknown>[];
+  };
   recapItems?: {
     message: string;
     headings: string[];
@@ -68,6 +73,11 @@ abstract class Audit {
       type: "table",
       summary: "",
     },
+    pagesInError: {
+      message: "",
+      headings: [],
+      pages: [],
+    },
     pagesItems: {
       message: "",
       headings: [],
@@ -118,9 +128,11 @@ abstract class Audit {
     return {};
   }
 
-  async returnGlobalHTML() {
+  async returnGlobalHTML(passPlan?: boolean) {
     let status = "fail";
     let message = "";
+
+    console.log(passPlan);
 
     if (this.globalResults.score > 0.5) {
       status = "pass";

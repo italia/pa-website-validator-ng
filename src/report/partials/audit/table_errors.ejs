@@ -1,15 +1,20 @@
 <div class="table-wrapper">
     <table class="table">
         <thead>
-        <tr> <% table.headings.forEach(h => { %>
-                <th>
-                    <%= h %>
-                </th>
-            <% }); %>
+        <tr>
+            <th>
+                Criterio
+            </th>
+            <th>
+                Pagina in errore
+            </th>
+            <th>
+                Errore
+            </th>
         </tr>
         </thead>
         <tbody>
-        <% table.pages.forEach(item => { %>
+        <% items.forEach(item => { %>
             <tr>
                 <% Object.keys(item).forEach(element => { %>
                     <td>

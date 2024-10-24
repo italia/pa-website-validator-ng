@@ -6,6 +6,7 @@ import { initializePuppeteer } from "../../PuppeteerInstance.js";
 import * as ejs from "ejs";
 import { fileURLToPath } from "url";
 import path from "path";
+import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 
 class lighthouseAudit extends Audit {
   auditId = "lighthouse";
@@ -27,7 +28,7 @@ class lighthouseAudit extends Audit {
   reportHTML = "";
 
   public globalResults: GlobalResults = {
-    score: 1,
+    score: 0,
     details: {
       items: [],
       type: "table",
@@ -38,10 +39,37 @@ class lighthouseAudit extends Audit {
       headings: [],
       pages: [],
     },
+    pagesInError: {
+      message: "",
+      headings: [],
+      pages: [],
+    },
     errorMessage: "",
   };
 
-  async auditPage(page: Page | null) {
+  async auditPage(page: Page | null, url: string, error?: string) {
+    if (error && !page) {
+      this.globalResults.score = 0;
+
+      this.globalResults.pagesInError.headings = ["Risultato"];
+      this.globalResults.pagesInError.message = notExecutedErrorMessage.replace(
+        "<LIST>",
+        error,
+      );
+      this.globalResults.pagesInError.pages = [
+        {
+          link: url,
+          result: error,
+        },
+      ];
+
+      this.globalResults.error = true;
+
+      return {
+        score: 0,
+      };
+    }
+
     if (page) {
       const browser = await initializePuppeteer();
       const browserWSEndpoint = browser.wsEndpoint();
@@ -61,6 +89,7 @@ class lighthouseAudit extends Audit {
 
       const url = page.url();
       await page.goto(url, { waitUntil: "domcontentloaded" });
+
       const runnerResult: RunnerResult | undefined = await this.runLighthouse(
         url,
         options,
@@ -146,12 +175,14 @@ class lighthouseAudit extends Audit {
     return this.auditId;
   }
 
-  async returnGlobalHTML() {
+  async returnGlobalHTML(passPlan: boolean) {
     const message = "";
     const score = this.globalResults.score;
 
     let status = "pass";
-    if (score * 100 < 50) {
+    if (passPlan) {
+      status = "pass_plan";
+    } else if (score * 100 < 50) {
       status = "fail";
     } else if (score * 100 < 90) {
       status = "average";

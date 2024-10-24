@@ -26,6 +26,11 @@ class A11yAudit extends Audit {
       headings: [],
       pages: [],
     },
+    pagesInError: {
+      message: "",
+      headings: [],
+      pages: [],
+    },
     errorMessage: "",
   };
 
@@ -42,18 +47,16 @@ class A11yAudit extends Audit {
   async auditPage(page: Page | null, url: string, error?: string) {
     if (error && !page) {
       this.globalResults.score = 0;
-      this.globalResults.details.items.push({
-        result: notExecutedErrorMessage.replace("<LIST>", error),
-      });
 
-      this.globalResults.pagesItems.headings = ["Risultato"];
-      this.globalResults.pagesItems.message = notExecutedErrorMessage.replace(
+      this.globalResults.pagesInError.headings = ["Risultato", "Errori"];
+      this.globalResults.pagesInError.message = notExecutedErrorMessage.replace(
         "<LIST>",
         error,
       );
-      this.globalResults.pagesItems.pages = [
+      this.globalResults.pagesInError.pages = [
         {
-          result: this.redResult,
+          link: url,
+          result: error,
         },
       ];
 

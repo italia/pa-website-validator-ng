@@ -25,6 +25,11 @@ class ImprovementPlanAudit extends Audit {
       headings: [],
       pages: [],
     },
+    pagesInError: {
+      message: "",
+      headings: [],
+      pages: [],
+    },
     errorMessage: "",
   };
 
@@ -42,8 +47,6 @@ class ImprovementPlanAudit extends Audit {
   async auditPage(page: Page | null, error?: string) {
     if (error && !page) {
       this.globalResults.score = 0;
-
-      this.globalResults.error = true;
 
       return {
         score: 0,
@@ -79,14 +82,10 @@ class ImprovementPlanAudit extends Audit {
 
   async returnGlobalHTML() {
     let status = "fail";
-    let message = "";
-
     if (this.score > 0.5) {
       status = "info";
-      message = this.greenResult;
     } else {
       status = "average";
-      message = this.yellowResult;
     }
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -96,7 +95,6 @@ class ImprovementPlanAudit extends Audit {
       code: this.code,
       table: this.globalResults,
       status,
-      statusMessage: message,
       metrics: null,
       totalPercentage: null,
     });

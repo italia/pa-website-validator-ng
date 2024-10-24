@@ -27,6 +27,11 @@ class SchoolVocabularies extends Audit {
       headings: [],
       pages: [],
     },
+    pagesInError: {
+      message: "",
+      headings: [],
+      pages: [],
+    },
     errorMessage: "",
   };
 
@@ -55,14 +60,15 @@ class SchoolVocabularies extends Audit {
   async auditPage(page: Page | null, url: string, error?: string) {
     if (error && !page) {
       this.globalResults.score = 0;
-      this.globalResults.pagesItems.headings = ["Risultato"];
-      this.globalResults.pagesItems.message = notExecutedErrorMessage.replace(
+      this.globalResults.pagesInError.headings = ["Risultato", "Errori"];
+      this.globalResults.pagesInError.message = notExecutedErrorMessage.replace(
         "<LIST>",
         error,
       );
-      this.globalResults.pagesItems.pages = [
+      this.globalResults.pagesInError.pages = [
         {
-          result: this.redResult,
+          link: url,
+          result: error,
         },
       ];
       this.globalResults.error = true;
@@ -88,12 +94,13 @@ class SchoolVocabularies extends Audit {
         argumentsElements = await getArgumentsElements(url, page);
       } catch {
         this.globalResults.score = 0;
-        this.globalResults.pagesItems.pages = [
+        this.globalResults.pagesInError.pages = [
           {
+            link: url,
             result: notExecutedErrorMessage.replace("<LIST>", "all-topics"),
           },
         ];
-        this.globalResults.pagesItems.headings = ["Risultato"];
+        this.globalResults.pagesInError.headings = ["Risultato"];
         this.globalResults.error = true;
 
         return {
@@ -113,7 +120,7 @@ class SchoolVocabularies extends Audit {
             result: notExecutedErrorMessage.replace("<LIST>", "all-topics"),
           },
         ];
-        this.globalResults.pagesItems.headings = ["Risultato"];
+        this.globalResults.pagesItems.headings = ["Risultato", "Errori"];
 
         return {
           score: 0,
