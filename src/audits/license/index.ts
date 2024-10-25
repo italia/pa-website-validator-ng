@@ -4,7 +4,7 @@ import { CheerioAPI } from "cheerio";
 
 import { initializePuppeteer } from "./../../PuppeteerInstance.js";
 import { buildUrl, isInternalUrl, urlExists } from "../../utils/utils.js";
-import {Dialog, Page} from "puppeteer";
+import { Dialog, Page } from "puppeteer";
 
 import { Audit, GlobalResults } from "../Audit.js";
 import { errorHandling } from "../../config/commonAuditsParts.js";

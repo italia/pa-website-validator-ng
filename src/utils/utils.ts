@@ -4,7 +4,7 @@ import {
   VocabularyResult,
 } from "../types/crawler-types.js";
 import * as cheerio from "cheerio";
-import {HTTPResponse, Page, HTTPRequest, Dialog} from "puppeteer";
+import { HTTPResponse, Page, HTTPRequest, Dialog } from "puppeteer";
 import { CheerioAPI } from "cheerio";
 import axios from "axios";
 import { LRUCache } from "lru-cache";
