@@ -92,13 +92,24 @@ class LicenceAudit extends Audit {
       items[0].page_section = "No";
       items[0].page_contains_correct_text = "No";
 
-      const browser = await initializePuppeteer();
-      const legalNotesPage = await browser.newPage();
-      await Gatherer.gotoRetry(
-        legalNotesPage,
-        pageUrl,
-        errorHandling.gotoRetryTentative,
-      );
+        const browser = await initializePuppeteer();
+        const legalNotesPage = await browser.newPage();
+
+        legalNotesPage.on("dialog", async (dialog: any) => {
+          console.log(
+            `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} Navigation to ${url} interrupted by dialog with message : "${dialog.message()}"`,
+          );
+          await dialog.dismiss();
+          console.log(
+            `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} Dismissed dialog`,
+          );
+        });
+
+        await Gatherer.gotoRetry(
+          legalNotesPage,
+          pageUrl,
+          errorHandling.gotoRetryTentative,
+        );
 
       const data = await legalNotesPage.content();
       const $: CheerioAPI = await cheerio.load(data);
