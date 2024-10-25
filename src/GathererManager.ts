@@ -29,7 +29,7 @@ async function collectGatherers() {
         const moduleName = file.replace(".ts", ".js");
         const moduleId = extractFolderName(moduleName);
         if (!configGatherers.includes(moduleId)) continue;
-        const module = await import( (process.platform as string) == "win32" ? '../' : moduleName);
+        const module = await import( (process.platform as string) == "win32" ? '../' + moduleName : moduleName);
         if (moduleId) {
           console.log("GATHERER MANAGER registered gatherer: " + moduleId);
           gatherers[moduleId] = module.default;
