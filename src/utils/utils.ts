@@ -29,6 +29,10 @@ const loadPageData = async (
     const browser = await initializePuppeteer();
     const page = await browser.newPage();
 
+    page.on("dialog", async (dialog) => {
+      await dialog.dismiss();
+    });
+
     await page.setRequestInterception(true);
     page.on("request", (request: HTTPRequest) => {
       if (
@@ -76,6 +80,10 @@ const loadPage = async (url: string): Promise<Page> => {
   try {
     const browser = await initializePuppeteer();
     const page = await browser.newPage();
+
+    page.on("dialog", async (dialog) => {
+      await dialog.dismiss();
+    });
 
     await page.setRequestInterception(true);
     await page.on("request", (request: HTTPRequest) => {
@@ -472,6 +480,10 @@ const getRedirectedUrl = async (url: string): Promise<string> => {
   try {
     const browser = await initializePuppeteer();
     const page = await browser.newPage();
+
+    page.on("dialog", async (dialog) => {
+      await dialog.dismiss();
+    });
 
     await page.setRequestInterception(true);
     page.on("request", (request: HTTPRequest) => {
