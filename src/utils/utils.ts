@@ -4,7 +4,7 @@ import {
   VocabularyResult,
 } from "../types/crawler-types.js";
 import * as cheerio from "cheerio";
-import { HTTPResponse, Page, HTTPRequest } from "puppeteer";
+import { HTTPResponse, Page, HTTPRequest, Dialog } from "puppeteer";
 import { CheerioAPI } from "cheerio";
 import axios from "axios";
 import { LRUCache } from "lru-cache";
@@ -29,8 +29,14 @@ const loadPageData = async (
     const browser = await initializePuppeteer();
     const page = await browser.newPage();
 
-    page.on("dialog", async (dialog) => {
+    page.on("dialog", async (dialog: any) => {
+      console.log(
+        `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} Navigation to ${url} interrupted by dialog with message : "${dialog.message()}"`,
+      );
       await dialog.dismiss();
+      console.log(
+        `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} Dismissed dialog`,
+      );
     });
 
     await page.setRequestInterception(true);
@@ -81,8 +87,14 @@ const loadPage = async (url: string): Promise<Page> => {
     const browser = await initializePuppeteer();
     const page = await browser.newPage();
 
-    page.on("dialog", async (dialog) => {
+    page.on("dialog", async (dialog: any) => {
+      console.log(
+        `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} Navigation to ${url} interrupted by dialog with message : "${dialog.message()}"`,
+      );
       await dialog.dismiss();
+      console.log(
+        `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} Dismissed dialog`,
+      );
     });
 
     await page.setRequestInterception(true);
@@ -481,8 +493,14 @@ const getRedirectedUrl = async (url: string): Promise<string> => {
     const browser = await initializePuppeteer();
     const page = await browser.newPage();
 
-    page.on("dialog", async (dialog) => {
+    page.on("dialog", async (dialog: any) => {
+      console.log(
+        `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} Navigation to ${url} interrupted by dialog with message : "${dialog.message()}"`,
+      );
       await dialog.dismiss();
+      console.log(
+        `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} Dismissed dialog`,
+      );
     });
 
     await page.setRequestInterception(true);

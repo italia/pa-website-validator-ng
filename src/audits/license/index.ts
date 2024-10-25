@@ -127,8 +127,14 @@ class LicenceAudit extends Audit {
         const browser = await initializePuppeteer();
         const legalNotesPage = await browser.newPage();
 
-        legalNotesPage.on("dialog", async (dialog) => {
+        legalNotesPage.on("dialog", async (dialog: any) => {
+          console.log(
+            `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} Navigation to ${url} interrupted by dialog with message : "${dialog.message()}"`,
+          );
           await dialog.dismiss();
+          console.log(
+            `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} Dismissed dialog`,
+          );
         });
 
         await Gatherer.gotoRetry(
