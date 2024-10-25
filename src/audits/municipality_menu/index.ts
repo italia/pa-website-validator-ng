@@ -30,11 +30,6 @@ const mainTitle = "VOCI DI MENÙ DI PRIMO LIVELLO";
 class MenuAudit extends Audit {
   public globalResults: GlobalResults = {
     score: 0,
-    details: {
-      items: [],
-      type: "table",
-      summary: "",
-    },
     pagesItems: {
       message: "",
       headings: [],
@@ -45,11 +40,11 @@ class MenuAudit extends Audit {
       headings: [],
       pages: [],
     },
-    pagesInError: {
-      message: "",
-      headings: [],
-      pages: [],
-    },
+      pagesInError: {
+          message: "",
+          headings: [],
+          pages: [],
+      },
     errorMessage: "",
   };
 
@@ -64,39 +59,14 @@ class MenuAudit extends Audit {
     };
   }
 
-  async auditPage(page: Page | null, url: string, error?: string) {
-    if (error && !page) {
-      this.globalResults.score = 0;
+  async auditPage(page: Page, url: string) {
 
-      this.globalResults.pagesInError.headings = ["Risultato", "Errori"];
-      this.globalResults.pagesInError.message = notExecutedErrorMessage.replace(
-        "<LIST>",
-        error,
-      );
-      this.globalResults.pagesInError.pages = [
-        {
-          link: url,
-          result: error,
-        },
-      ];
-
-      this.globalResults.error = true;
-
-      return {
-        score: 0,
-      };
-    }
-
-    if (page) {
-      const url = page.url();
-
-      const results = [];
-      results.push({
+      let result = {
         result: redResult,
         found_menu_voices: "",
         missing_menu_voices: "",
         wrong_order_menu_voices: "",
-      });
+      };
 
       const firstLevelPages = await getFirstLevelPages(url, false, page);
 
@@ -104,7 +74,7 @@ class MenuAudit extends Audit {
         return page.linkName;
       });
 
-      results[0].found_menu_voices = foundMenuElements.join(", ");
+      result.found_menu_voices = foundMenuElements.join(", ");
 
       const menuItem: MenuItem[] = [];
 
@@ -119,10 +89,10 @@ class MenuAudit extends Audit {
         foundMenuElements,
         menuItem,
       );
-      results[0].missing_menu_voices = missingMandatoryElements.join(", ");
+      result.missing_menu_voices = missingMandatoryElements.join(", ");
 
       const orderResult = checkOrder(menuItem, foundMenuElements);
-      results[0].wrong_order_menu_voices =
+      result.wrong_order_menu_voices =
         orderResult.elementsNotInSequence.join(", ");
 
       const containsMandatoryElementsResult =
@@ -134,7 +104,7 @@ class MenuAudit extends Audit {
         orderResult.numberOfElementsNotInSequence === 0
       ) {
         this.score = 1;
-        results[0].result = greenResult;
+        result.result = greenResult;
       } else if (
         foundMenuElements.length > 4 &&
         foundMenuElements.length < 8 &&
@@ -142,7 +112,7 @@ class MenuAudit extends Audit {
         orderResult.numberOfElementsNotInSequence === 0
       ) {
         this.score = 0.5;
-        results[0].result = yellowResult;
+        result.result = yellowResult;
       }
 
       if (this.globalResults.recapItems) {
@@ -153,16 +123,8 @@ class MenuAudit extends Audit {
           "Voci del menù in ordine errato",
         ];
 
-        this.globalResults.recapItems.pages = [results[0]];
+        this.globalResults.recapItems.pages = [result];
       }
-
-      results.push({});
-
-      results.push({
-        result: "Voce di menù",
-        found_menu_voices: "Link trovato",
-        missing_menu_voices: "Pagina interna al dominio",
-      });
 
       this.globalResults.pagesItems.headings = [
         "Voce di menù",
@@ -186,19 +148,11 @@ class MenuAudit extends Audit {
           external: isInternal ? "Sì" : "No",
         };
 
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
-
         this.globalResults.pagesItems.pages.push(item);
       }
 
       this.globalResults.score = this.score;
-      this.globalResults.details.items = results;
-    }
+
 
     return {
       score: this.score,

@@ -37,11 +37,6 @@ const redResult =
 class MunicipalityVocabulary extends Audit {
   public globalResults: GlobalResults = {
     score: 0,
-    details: {
-      items: [],
-      type: "table",
-      summary: "",
-    },
     pagesItems: {
       message: "",
       headings: [],
@@ -70,35 +65,7 @@ class MunicipalityVocabulary extends Audit {
     };
   }
 
-  async auditPage(page: Page | null, url: string, error?: string) {
-    if (error && !page) {
-      this.globalResults.score = 0;
-
-      this.globalResults.pagesInError.headings = ["Risultato", "Errori"];
-      this.globalResults.pagesInError.message = notExecutedErrorMessage.replace(
-        "<LIST>",
-        error,
-      );
-
-      this.globalResults.error = true;
-
-      this.globalResults.pagesInError.pages = [
-        {
-          link: url,
-          result: error,
-        },
-      ];
-
-      this.globalResults.error = true;
-
-      return {
-        score: 0,
-      };
-    }
-
-    if (page) {
-      const url = page.url();
-
+  async auditPage(page: Page, url: string) {
       this.globalResults.pagesItems.headings = [
         "Risultato",
         "% di argomenti presenti nell'elenco del modello",
@@ -131,7 +98,6 @@ class MunicipalityVocabulary extends Audit {
           "`all-topics",
         );
 
-        this.globalResults.details.items = item;
         this.globalResults.pagesItems.pages = item;
         this.globalResults.score = 0;
         this.score = 0;
@@ -156,7 +122,6 @@ class MunicipalityVocabulary extends Audit {
       );
 
       if (argumentList.length === 0) {
-        this.globalResults.details.items = item;
         this.globalResults.pagesItems.pages = item;
         this.globalResults.score = 0;
         this.score = 0;
@@ -221,14 +186,12 @@ class MunicipalityVocabulary extends Audit {
       item[0].element_not_in_union_vocabulary =
         elementInUnionVocabulary.elementNotIncluded.join(", ");
 
-      this.globalResults.details.items = item;
       this.globalResults.pagesItems.pages = item;
       this.globalResults.score = this.score;
 
       return {
         score: this.score,
       };
-    }
   }
 
   async getType() {

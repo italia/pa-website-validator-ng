@@ -1,5 +1,6 @@
 import { EventEmitter } from "events";
 import { PageData } from "./types/crawler-types.js";
+import {DataElementError} from "./utils/DataElementError";
 
 interface Results {
   audits: Record<string, unknown>;
@@ -90,11 +91,17 @@ class PageManager {
   }
 
   async getGlobalResults() {
-    return this.globalResult;
-  }
-
-  removePage(id: string) {
-    this.pagesArray.filter((el) => el.id != id);
+    const results = {...this.globalResult};
+    return Object.keys(results.audits).map(key => {
+      if (typeof results.audits[key] === 'object' && results.audits[key] !== null) {
+        const audit = results.audits[key] as { score: number | null, id: string, title: string };
+        return {
+          id: audit.id,
+          title: audit.title,
+          score: audit.score,
+        }
+      }
+    })
   }
 
   onPagesAdded(callback: (pageData: PageData) => void): void {
@@ -109,18 +116,10 @@ class PageManager {
     this.emitter.on("scriptClosed", callback);
   }
 
-  getPageById(id: string): PageData | undefined {
-    return this.pagesArray.find((page) => page.id === id);
-  }
-
   getPageByUrl(url: string, pageType: string): PageData | undefined {
     return this.pagesArray.find(
       (page: PageData) => page.url === url && page.type === pageType,
     );
-  }
-
-  getAllPages(): PageData[] {
-    return [...this.pagesArray];
   }
 
   setAudited(url: string, pageType: string) {
@@ -161,7 +160,7 @@ class PageManager {
   setErrors(
     url: string,
     pageType: string,
-    errors: string[],
+    errors: (Error | DataElementError | string)[],
     returnPage?: boolean,
   ): PageData | undefined {
     const page = this.pagesArray.find(
@@ -179,10 +178,10 @@ class PageManager {
   hasRemainingPages() {
     const remainingPages = this.pagesArray.find(
       (el) =>
-        !el.audited ||
+        (!el.audited ||
         !el.gathered ||
         el.temporaryGatherer ||
-        el.temporaryAudit,
+        el.temporaryAudit)
     );
     return remainingPages != undefined;
   }

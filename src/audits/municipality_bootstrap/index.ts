@@ -33,11 +33,6 @@ class BootstrapMunAudit extends Audit {
 
   public globalResults: GlobalResultsMulti = {
     score: 1,
-    details: {
-      items: [],
-      type: "table",
-      summary: "",
-    },
     pagesInError: {
       message: "",
       headings: [],
@@ -57,7 +52,6 @@ class BootstrapMunAudit extends Audit {
   };
   public wrongItems: Record<string, unknown>[] = [];
   public correctItems: Record<string, unknown>[] = [];
-  public pagesInError: Record<string, unknown>[] = [];
   public score = 1;
   private titleSubHeadings: string[] = [];
   private subResults: string[] = [];
@@ -72,7 +66,7 @@ class BootstrapMunAudit extends Audit {
     };
   }
 
-  async auditPage(page: Page | null, url: string, error?: string) {
+  async auditPage(page: Page, url: string) {
     this.titleSubHeadings = [
       "La libreria Bootstrap Italia è presente",
       "Versione in uso",
@@ -80,22 +74,6 @@ class BootstrapMunAudit extends Audit {
     ];
 
     this.subResults = ["Nessuna classe CSS trovata"];
-
-    if (error && !page) {
-      this.score = 0;
-
-      this.pagesInError.push({
-        link: url,
-        library_name: error,
-      });
-
-      return {
-        score: 0,
-      };
-    }
-
-    if (page) {
-      const url = page.url();
 
       const drupalClassesCheck = await isDrupal(url);
 
@@ -210,7 +188,7 @@ class BootstrapMunAudit extends Audit {
           throw ex;
         }
 
-        this.pagesInError.push({
+        this.wrongItems.push({
           link: url,
           library_name: ex.message,
         });
@@ -222,7 +200,6 @@ class BootstrapMunAudit extends Audit {
         this.score = 0;
         this.wrongItems.push(item);
       }
-    }
 
     return {
       score: this.score,
@@ -232,64 +209,8 @@ class BootstrapMunAudit extends Audit {
   async returnGlobal() {
     this.globalResults.correctPages.pages = [];
     this.globalResults.wrongPages.pages = [];
-    this.globalResults.pagesInError.pages = [];
-
-    const results = [];
-    if (this.pagesInError.length > 0) {
-      this.globalResults.error = true;
-
-      results.push({
-        result: errorHandling.errorMessage,
-      });
-
-      results.push({});
-
-      results.push({
-        result: errorHandling.errorColumnTitles[0],
-        title_library_name: errorHandling.errorColumnTitles[1],
-        title_library_version: "",
-        title_classes_found: "",
-      });
-
-      this.globalResults.pagesInError.message = errorHandling.errorMessage;
-      this.globalResults.pagesInError.headings = [
-        errorHandling.errorColumnTitles[0],
-        errorHandling.errorColumnTitles[1],
-      ];
-
-      for (const item of this.pagesInError) {
-        this.globalResults.pagesInError.pages.push(item);
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
-      }
-    } else {
-      switch (this.score) {
-        case 1:
-          results.push({
-            result: this.greenResult,
-          });
-          break;
-        case 0:
-          results.push({
-            result: this.redResult,
-          });
-          break;
-      }
-    }
-
-    results.push({});
 
     if (this.wrongItems.length > 0) {
-      results.push({
-        result: this.subItem.redResult,
-        title_library_name: this.titleSubHeadings[0],
-        title_library_version: this.titleSubHeadings[1],
-        title_classes_found: this.titleSubHeadings[2],
-      });
       this.globalResults.wrongPages.headings = [
         this.subItem.redResult,
         this.titleSubHeadings[0],
@@ -299,23 +220,10 @@ class BootstrapMunAudit extends Audit {
 
       for (const item of this.wrongItems) {
         this.globalResults.wrongPages.pages.push(item);
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
       }
     }
 
     if (this.correctItems.length > 0) {
-      results.push({
-        result: this.subItem.greenResult,
-        title_library_name: this.titleSubHeadings[0],
-        title_library_version: this.titleSubHeadings[1],
-        title_classes_found: this.titleSubHeadings[2],
-      });
-
       this.globalResults.correctPages.headings = [
         this.subItem.greenResult,
         this.titleSubHeadings[0],
@@ -325,22 +233,12 @@ class BootstrapMunAudit extends Audit {
 
       for (const item of this.correctItems) {
         this.globalResults.correctPages.pages.push(item);
-
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
       }
-
-      results.push({});
     }
 
-    this.globalResults.details.items = results;
     this.globalResults.score = this.score;
     this.globalResults.errorMessage =
-      this.pagesInError.length > 0 ? errorHandling.popupMessage : "";
+      this.globalResults.pagesInError.pages.length > 0 ? errorHandling.popupMessage : "";
 
     return this.globalResults;
   }

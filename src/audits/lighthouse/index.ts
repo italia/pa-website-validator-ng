@@ -29,11 +29,6 @@ class lighthouseAudit extends Audit {
 
   public globalResults: GlobalResults = {
     score: 0,
-    details: {
-      items: [],
-      type: "table",
-      summary: "",
-    },
     pagesItems: {
       message: "",
       headings: [],
@@ -47,30 +42,7 @@ class lighthouseAudit extends Audit {
     errorMessage: "",
   };
 
-  async auditPage(page: Page | null, url: string, error?: string) {
-    if (error && !page) {
-      this.globalResults.score = 0;
-
-      this.globalResults.pagesInError.headings = ["Risultato"];
-      this.globalResults.pagesInError.message = notExecutedErrorMessage.replace(
-        "<LIST>",
-        error,
-      );
-      this.globalResults.pagesInError.pages = [
-        {
-          link: url,
-          result: error,
-        },
-      ];
-
-      this.globalResults.error = true;
-
-      return {
-        score: 0,
-      };
-    }
-
-    if (page) {
+  async auditPage(page: Page) {
       const browser = await initializePuppeteer();
       const browserWSEndpoint = browser.wsEndpoint();
       const { port } = new URL(browserWSEndpoint);
@@ -133,14 +105,7 @@ class lighthouseAudit extends Audit {
         this.metricsResult = metricsResult;
         this.reportHTML = runnerResult.report[0];
         this.reportJSON = runnerResult.report[1];
-
-        this.globalResults.details.items = JSON.parse(
-          runnerResult.report[1],
-        ).audits;
       }
-
-      return;
-    }
 
     return;
   }
@@ -193,7 +158,6 @@ class lighthouseAudit extends Audit {
     return await ejs.renderFile(__dirname + "/template.ejs", {
       ...(await this.meta()),
       code: this.code,
-      table: this.globalResults.details,
       status,
       statusMessage: message,
       metrics: this.metricsResult,

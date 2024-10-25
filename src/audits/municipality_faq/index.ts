@@ -25,11 +25,6 @@ const redResult =
 class FaqAudit extends Audit {
   public globalResults: GlobalResults = {
     score: 0,
-    details: {
-      items: [],
-      type: "table",
-      summary: "",
-    },
     pagesItems: {
       message: "",
       headings: [],
@@ -59,31 +54,7 @@ class FaqAudit extends Audit {
     return auditId;
   }
 
-  async auditPage(page: Page | null, url: string, error?: string) {
-    if (error && !page) {
-      this.globalResults.score = 0;
-
-      this.globalResults.pagesInError.headings = ["Risultato", "Errori"];
-      this.globalResults.pagesInError.message = notExecutedErrorMessage.replace(
-        "<LIST>",
-        error,
-      );
-      this.globalResults.pagesInError.pages = [
-        {
-          link: url,
-          result: error,
-        },
-      ];
-
-      this.globalResults.error = true;
-
-      return {
-        score: 0,
-      };
-    }
-
-    if (page) {
-      const url = page.url();
+  async auditPage(page: Page, url: string) {
 
       this.globalResults.pagesItems.headings = [
         "Risultato",
@@ -120,7 +91,6 @@ class FaqAudit extends Audit {
         items[0].link = checkUrl.inspectedUrl;
 
         if (!checkUrl.result) {
-          this.globalResults.details.items = items;
           this.globalResults.pagesItems.pages = items;
 
           this.globalResults.score = 0;
@@ -135,7 +105,6 @@ class FaqAudit extends Audit {
 
         if (!label.includes("faq") && !label.includes("domande frequenti")) {
           items[0].result = yellowResult;
-          this.globalResults.details.items = items;
           this.globalResults.pagesItems.pages = items;
           this.globalResults.score = 0.5;
           this.score = 0.5;
@@ -145,12 +114,10 @@ class FaqAudit extends Audit {
         }
 
         items[0].result = greenResult;
-        this.globalResults.details.items = items;
         this.globalResults.pagesItems.pages = items;
         this.globalResults.score = 1;
         this.score = 1;
       }
-    }
 
     return {
       score: this.score,

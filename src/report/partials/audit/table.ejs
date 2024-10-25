@@ -12,14 +12,16 @@
         <% table.pages.forEach(item => { %>
             <tr>
                 <% Object.keys(item).forEach(element => { %>
+                    <% if(element != 'show') { %>
                     <td>
                         <% if(element == 'link' && item[element] && !!(new URL(item[element]))) { %>
                         <a href="<%=item[element]%>"><%= new URL(item[element]).pathname === '/' ? new URL(item[element]) : new URL(item[element]).pathname %></a>
                         <% }else{ %>
                         <%=item[element]%>
                         <%} %>
-                </td>
-                    <%}); %>
+                    </td>
+                    <%} %>
+                <%}); %>
             </tr>
         <% }); %>
         </tbody>

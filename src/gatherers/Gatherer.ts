@@ -19,14 +19,6 @@ abstract class Gatherer {
     this.gatheredPages = [];
   }
 
-  async createGatherer(
-    id: string,
-    gathererPageType: string[],
-    auditsIds: string[],
-  ) {
-    return this.constructor(id, gathererPageType, auditsIds);
-  }
-
   async navigateAndFetchPages(
     url: string,
     numberOfPages?: number,
@@ -187,9 +179,6 @@ abstract class Gatherer {
       if (href) {
         const hrefValue = await href.jsonValue();
         urls.push(String(hrefValue));
-      } else {
-        console.log("The element does not have an href attribute");
-        throw new Error("The element does not have an href attribute");
       }
     } else {
       console.log(

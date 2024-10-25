@@ -450,7 +450,7 @@
         <div class="accordion-item">
           <h2 class="accordion-header" id="accordion-header-failed-audits">
             <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-error-audits" aria-expanded="true" aria-controls="accordion-collapse-error-audits">
-              Errori generati durante la scansione
+              Controlli che hanno generato un errore in fase di scansione
             </button>
           </h2>
           <div id="accordion-collapse-error-audits" class="accordion-collapse collapse show" role="region" aria-labelledby="accordion-header-error-audits">
@@ -499,7 +499,7 @@
           </button>
         </h2>
         <div id="accordion-collapse-info-audits" class="accordion-collapse collapse" role="region" aria-labelledby="accordion-header-info-audits">
-          <%- include('partials/accordion-body', { items: audits.info }); %>
+          <%- include('partials/accordion-body-info', { items: audits.info }); %>
         </div>
       </div>
       <%  } %>
@@ -508,7 +508,7 @@
       <div class="accordion-item">
         <h2 class="accordion-header" id="accordion-header-lighthouse-audits">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-lighthouse-audits" aria-expanded="false" aria-controls="accordion-collapse-lighthouse-audits">
-            Lighthouse
+            Test aggiuntivi non oggetto di verifica della misura
           </button>
         </h2>
         <div id="accordion-collapse-lighthouse-audits" class="accordion-collapse collapse" role="region" aria-labelledby="accordion-header-lighthouse-audits">

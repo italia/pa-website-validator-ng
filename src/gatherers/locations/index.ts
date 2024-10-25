@@ -2,6 +2,7 @@ import { Gatherer } from "../Gatherer.js";
 import { PageData } from "../../types/crawler-types.js";
 import { Page } from "puppeteer";
 import { getRandomNString } from "../../utils/utils.js";
+import {DataElementError} from "../../utils/DataElementError.js";
 
 class locationsGatherer extends Gatherer {
   static dataElements: string[] = ["location-link"];
@@ -29,6 +30,12 @@ class locationsGatherer extends Gatherer {
     }
 
     fetchedUrls = await getRandomNString(fetchedUrls, numberOfPages);
+
+    if(!fetchedUrls.length){
+      throw new DataElementError(
+          `Non è stato possibile trovare l'attributo [data-element="location-link"]`,
+      );
+    }
 
     this.gatheredPages = fetchedUrls.map((url: string) => {
       return {

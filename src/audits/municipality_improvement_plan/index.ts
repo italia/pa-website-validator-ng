@@ -15,11 +15,6 @@ class ImprovementPlanAudit extends Audit {
 
   public globalResults: GlobalResults = {
     score: 0,
-    details: {
-      items: [],
-      type: "table",
-      summary: "",
-    },
     pagesItems: {
       message: "",
       headings: [],
@@ -39,21 +34,12 @@ class ImprovementPlanAudit extends Audit {
       title: "Il sito ha un link al piano di miglioramento nel footer",
       failureTitle:
         "Il sito non ha un link al piano di miglioramento nel footer",
-      scoreDisplayMode: this.SCORING_MODES.BINARY,
       requiredArtifacts: ["origin"],
     };
   }
 
-  async auditPage(page: Page | null, error?: string) {
-    if (error && !page) {
-      this.globalResults.score = 0;
+  async auditPage(page: Page) {
 
-      return {
-        score: 0,
-      };
-    }
-
-    if (page) {
       const data = await page.content();
       const $: CheerioAPI = await cheerio.load(data);
 
@@ -66,7 +52,6 @@ class ImprovementPlanAudit extends Audit {
         this.score = 0.5;
         return { score: 0.5 };
       }
-    }
   }
 
   async getType() {

@@ -15,11 +15,6 @@ import { cmsThemeRx } from "./cmsThemeRx.js";
 class ThemeAudit extends Audit {
   public globalResults: GlobalResults = {
     score: 0,
-    details: {
-      items: [],
-      type: "table",
-      summary: "",
-    },
     pagesItems: {
       message: "",
       headings: [],
@@ -49,32 +44,7 @@ class ThemeAudit extends Audit {
     };
   }
 
-  async auditPage(page: Page | null, url: string, error?: string) {
-    if (error && !page) {
-      this.globalResults.score = 0;
-
-      this.globalResults.pagesInError.headings = ["Risultato", "Errori"];
-      this.globalResults.pagesInError.message = notExecutedErrorMessage.replace(
-        "<LIST>",
-        error,
-      );
-      this.globalResults.pagesInError.pages = [
-        {
-          link: url,
-          result: error,
-        },
-      ];
-
-      this.globalResults.error = true;
-
-      return {
-        score: 0,
-      };
-    }
-
-    if (page) {
-      const url = page.url();
-
+  async auditPage(page: Page, url: string) {
       let score = 0.5;
       const items = [
         {
@@ -133,7 +103,6 @@ class ThemeAudit extends Audit {
       }
 
       this.globalResults.score = score;
-      this.globalResults.details.items = items;
       this.globalResults.id = this.auditId;
 
       this.globalResults.pagesItems.pages = items;
@@ -146,7 +115,6 @@ class ThemeAudit extends Audit {
       return {
         score: score,
       };
-    }
   }
 
   async getType() {

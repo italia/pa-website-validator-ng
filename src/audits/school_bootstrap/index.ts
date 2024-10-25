@@ -27,11 +27,6 @@ const mainTitle = "LIBRERIA DI ELEMENTI DI INTERFACCIA";
 class SchoolBootstrap extends Audit {
   public globalResults: GlobalResultsMulti = {
     score: 1,
-    details: {
-      items: [],
-      type: "table",
-      summary: "",
-    },
     pagesInError: {
       message: "",
       headings: [],
@@ -52,7 +47,6 @@ class SchoolBootstrap extends Audit {
 
   public wrongItems: Record<string, unknown>[] = [];
   public correctItems: Record<string, unknown>[] = [];
-  public pagesInError: Record<string, unknown>[] = [];
   public score = 1;
   private titleSubHeadings: string[] = [];
 
@@ -65,21 +59,7 @@ class SchoolBootstrap extends Audit {
     };
   }
 
-  async auditPage(page: Page | null, url: string, error?: string) {
-    if (error && !page) {
-      this.score = 0;
-
-      this.pagesInError.push({
-        link: url,
-        missing_elements: error,
-      });
-
-      return {
-        score: 0,
-      };
-    }
-
-    if (page) {
+  async auditPage(page: Page, url: string) {
       this.titleSubHeadings = [
         "La libreria Bootstrap Italia è presente",
         "Versione in uso",
@@ -87,8 +67,6 @@ class SchoolBootstrap extends Audit {
       ];
 
       const subResults = ["Nessuna", "Almeno una"];
-
-      const url = page.url();
 
       let singleResult = 0;
       const item = {
@@ -170,9 +148,11 @@ class SchoolBootstrap extends Audit {
           throw ex;
         }
 
-        this.pagesInError.push({
+        this.wrongItems.push({
           link: url,
           library_name: ex.message,
+          library_version: "",
+          classes_found: "",
         });
       }
 
@@ -193,7 +173,6 @@ class SchoolBootstrap extends Audit {
       return {
         score: this.score,
       };
-    }
   }
 
   async getType() {
@@ -203,64 +182,8 @@ class SchoolBootstrap extends Audit {
   async returnGlobal() {
     this.globalResults.correctPages.pages = [];
     this.globalResults.wrongPages.pages = [];
-    this.globalResults.pagesInError.pages = [];
-
-    switch (this.score) {
-      case 1:
-        this.globalResults["details"]["items"].push({
-          result: greenResult,
-        });
-        break;
-      case 0:
-        this.globalResults["details"]["items"].push({
-          result: redResult,
-        });
-        break;
-    }
-
-    const results = [];
-
-    if (this.pagesInError.length) {
-      this.globalResults.error = true;
-
-      results.push({
-        result: errorHandling.errorMessage,
-      });
-
-      results.push({});
-
-      results.push({
-        result: errorHandling.errorColumnTitles[0],
-        title_missing_elements: errorHandling.errorColumnTitles[1],
-        title_wrong_order_elements: "",
-      });
-
-      this.globalResults.pagesInError.message = errorHandling.errorMessage;
-      this.globalResults.pagesInError.headings = [
-        errorHandling.errorColumnTitles[0],
-        errorHandling.errorColumnTitles[1],
-      ];
-
-      for (const item of this.pagesInError) {
-        this.globalResults.pagesInError.pages.push(item);
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
-      }
-    }
-
-    results.push({});
 
     if (this.wrongItems.length > 0) {
-      results.push({
-        result: subItem.redResult,
-        title_library_name: this.titleSubHeadings[0],
-        title_library_version: this.titleSubHeadings[1],
-        title_classes_found: this.titleSubHeadings[2],
-      });
 
       this.globalResults.wrongPages.headings = [
         subItem.redResult,
@@ -271,26 +194,10 @@ class SchoolBootstrap extends Audit {
 
       for (const item of this.wrongItems) {
         this.globalResults.wrongPages.pages.push(item);
-
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
       }
-
-      results.push({});
     }
 
     if (this.correctItems.length > 0) {
-      results.push({
-        result: subItem.greenResult,
-        title_library_name: this.titleSubHeadings[0],
-        title_library_version: this.titleSubHeadings[1],
-        title_classes_found: this.titleSubHeadings[2],
-      });
-
       this.globalResults.correctPages.headings = [
         subItem.greenResult,
         this.titleSubHeadings[0],
@@ -300,21 +207,11 @@ class SchoolBootstrap extends Audit {
 
       for (const item of this.correctItems) {
         this.globalResults.correctPages.pages.push(item);
-
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
       }
-
-      results.push({});
     }
 
     this.globalResults.errorMessage =
-      this.pagesInError.length > 0 ? errorHandling.popupMessage : "";
-    this.globalResults.details.items = results;
+      this.globalResults.pagesInError.pages.length > 0 ? errorHandling.popupMessage : "";
     this.globalResults.score = this.score;
     this.globalResults.id = this.auditId;
 

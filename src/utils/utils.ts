@@ -25,7 +25,7 @@ const loadPageData = async (
     return data_from_cache;
   }
   let data = "";
-  try {
+
     const browser = await initializePuppeteer();
     const page = await browser.newPage();
 
@@ -64,12 +64,6 @@ const loadPageData = async (
     cache.set(url, c);
     cache.set(redirectedUrl, c);
     return c;
-  } catch (ex) {
-    console.error(`ERROR LOAD ${url}: ${ex}`);
-    throw new Error(
-      `Il test è stato interrotto perché nella prima pagina analizzata ${url} si è verificato l'errore "${ex}". Verificarne la causa e rifare il test.`,
-    );
-  }
 };
 
 const loadPage = async (url: string): Promise<Page> => {
@@ -88,8 +82,6 @@ const loadPage = async (url: string): Promise<Page> => {
         request.continue();
       }
     });
-
-    //console.log('provo a navigare url:', url)
 
     await gotoRetry(page, url, 3);
 

@@ -17,11 +17,6 @@ class SchoolVocabularies extends Audit {
   info = true;
   public globalResults: GlobalResults = {
     score: 0,
-    details: {
-      items: [],
-      type: "table",
-      summary: "",
-    },
     pagesItems: {
       message: "",
       headings: [],
@@ -57,29 +52,7 @@ class SchoolVocabularies extends Audit {
     };
   }
 
-  async auditPage(page: Page | null, url: string, error?: string) {
-    if (error && !page) {
-      this.globalResults.score = 0;
-      this.globalResults.pagesInError.headings = ["Risultato", "Errori"];
-      this.globalResults.pagesInError.message = notExecutedErrorMessage.replace(
-        "<LIST>",
-        error,
-      );
-      this.globalResults.pagesInError.pages = [
-        {
-          link: url,
-          result: error,
-        },
-      ];
-      this.globalResults.error = true;
-
-      return {
-        score: 0,
-      };
-    }
-
-    if (page) {
-      const url = page.url();
+  async auditPage(page: Page, url: string) {
 
       const item = [
         {
@@ -89,29 +62,7 @@ class SchoolVocabularies extends Audit {
         },
       ];
 
-      let argumentsElements: string[] = [];
-      try {
-        argumentsElements = await getArgumentsElements(url, page);
-      } catch {
-        this.globalResults.score = 0;
-        this.globalResults.pagesInError.pages = [
-          {
-            link: url,
-            result: notExecutedErrorMessage.replace("<LIST>", "all-topics"),
-          },
-        ];
-        this.globalResults.pagesInError.headings = ["Risultato"];
-        this.globalResults.error = true;
-
-        return {
-          score: 0,
-          details: {
-            type: "table",
-            headings: [{ key: "result", itemType: "text", text: "Risultato" }],
-            summary: "",
-          },
-        };
-      }
+      const argumentsElements = await getArgumentsElements(url, page);
 
       if (argumentsElements.length <= 0) {
         this.globalResults.score = 0;
@@ -163,7 +114,6 @@ class SchoolVocabularies extends Audit {
         schoolModelCheck.elementNotIncluded.join(", ");
 
       this.globalResults.score = score;
-      this.globalResults.details.items = item;
       this.globalResults.pagesItems.pages = item;
       this.globalResults.pagesItems.headings = [
         "Risultato",
@@ -175,7 +125,6 @@ class SchoolVocabularies extends Audit {
       return {
         score: score,
       };
-    }
   }
 
   async getType() {

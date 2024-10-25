@@ -1,3 +1,5 @@
+import {DataElementError} from "../utils/DataElementError";
+
 export interface AuditDictionary {
   greenResult: string;
   yellowResult: string;
@@ -21,7 +23,7 @@ export interface PageData {
   internal: boolean | undefined;
   gathered: boolean;
   audited: boolean;
-  errors?: string[];
+  errors?: (Error | DataElementError | string)[];
   temporaryGatherer?: boolean;
   temporaryAudit?: boolean;
   scanning?: boolean;

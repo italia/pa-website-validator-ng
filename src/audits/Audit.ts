@@ -2,14 +2,11 @@ import { Page } from "puppeteer";
 import * as ejs from "ejs";
 import path from "path";
 import { fileURLToPath } from "url";
+import {errorHandling} from "../config/commonAuditsParts.js";
+import {DataElementError} from "../utils/DataElementError.js";
 
 export interface GlobalResults {
   score: number;
-  details: {
-    items: Record<string, unknown>[];
-    type: string;
-    summary: string;
-  };
   pagesItems: {
     message: string;
     headings: string[];
@@ -33,11 +30,6 @@ export interface GlobalResults {
 
 export interface GlobalResultsMulti {
   score: number;
-  details: {
-    items: Record<string, unknown>[];
-    type: string;
-    summary: string;
-  };
   pagesInError: {
     message: string;
     headings: string[];
@@ -68,11 +60,6 @@ abstract class Audit {
   protected static instance: Audit;
   globalResults: GlobalResults | GlobalResultsMulti = {
     score: 0,
-    details: {
-      items: [],
-      type: "table",
-      summary: "",
-    },
     pagesInError: {
       message: "",
       headings: [],
@@ -89,6 +76,7 @@ abstract class Audit {
   code = "";
   info = false;
   reportHTML = "";
+  score = 0;
   protected minVersion = "";
   mainTitle = "";
   infoScore = false;
@@ -101,18 +89,44 @@ abstract class Audit {
     yellowResult: "",
     redResult: "",
   };
+  showError = false;
 
   protected auditId = "audit";
 
   constructor() {}
 
+  async returnErrors(error : DataElementError | Error | string, url: string, pageType: string, inError= true) : Promise<Record<string, number> | undefined>{
+
+    if(inError){
+      this.showError = true;
+    }
+    this.globalResults.pagesInError.message = errorHandling.errorMessage;
+    this.globalResults.pagesInError.headings = [
+      errorHandling.errorColumnTitles[0],
+      errorHandling.errorColumnTitles[1],
+    ];
+
+    this.globalResults.pagesInError.pages.push({
+      link: url,
+      result: (error instanceof DataElementError || error instanceof Error) ? error.message : String(error),
+      show: inError
+    });
+
+    this.globalResults.error = this.showError;
+    this.score = 0;
+    this.globalResults.score = 0;
+
+    return {
+      score: 0,
+    };
+  }
+
   async auditPage(
-    page: Page | null,
-    url: string,
-    error?: string,
+    page: Page,
+    url?: string,
     pageType?: string | null,
   ): Promise<unknown> {
-    console.log(page, url, error, pageType);
+    console.log(page, pageType);
     return {};
   }
 
@@ -152,7 +166,6 @@ abstract class Audit {
       {
         ...(await this.meta()),
         code: this.code,
-        table: this.globalResults.details,
         status,
         statusMessage: message,
         metrics: null,
@@ -160,15 +173,6 @@ abstract class Audit {
       },
     );
   }
-
-  SCORING_MODES = {
-    NUMERIC: "numeric",
-    BINARY: "binary",
-    MANUAL: "manual",
-    INFORMATIVE: "informative",
-    NOT_APPLICABLE: "notApplicable",
-    ERROR: "error",
-  };
 }
 
 export { Audit };

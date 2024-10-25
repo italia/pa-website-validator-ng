@@ -1,6 +1,7 @@
 import { Gatherer } from "../Gatherer.js";
 import { PageData } from "../../types/crawler-types.js";
 import { Page } from "puppeteer";
+import {DataElementError} from "../../utils/DataElementError.js";
 
 const requestTimeout = parseInt(process.env["requestTimeout"] ?? "300000");
 
@@ -24,6 +25,12 @@ class pageGatherer extends Gatherer {
         ...fetchedUrls,
         ...(await this.getDataElementUrls(page, dataElement)),
       ];
+    }
+
+    if(!fetchedUrls.length){
+      throw new DataElementError(
+          `Non è stato possibile trovare l'attributo ${currentClass.dataElements.toString()}`,
+      );
     }
 
     this.gatheredPages = fetchedUrls.map((url: string) => {

@@ -50,11 +50,6 @@ class SchoolServiceAudit extends Audit {
   info = true;
   public globalResults: GlobalResultsMulti = {
     score: 1,
-    details: {
-      items: [],
-      type: "table",
-      summary: "",
-    },
     pagesInError: {
       message: "",
       headings: [],
@@ -80,7 +75,6 @@ class SchoolServiceAudit extends Audit {
 
   public wrongItems: Record<string, unknown>[] = [];
   public correctItems: Record<string, unknown>[] = [];
-  public pagesInError: Record<string, unknown>[] = [];
   public toleranceItems: Record<string, unknown>[] = [];
   public score = 1;
   private titleSubHeadings: string[] = [];
@@ -96,29 +90,11 @@ class SchoolServiceAudit extends Audit {
     };
   }
 
-  async auditPage(page: Page | null, url: string, error?: string) {
+  async auditPage(page: Page, url: string) {
     this.titleSubHeadings = [
       "Voci mancanti o senza contenuto",
       "Voci che non rispettano l'ordine richiesto",
     ];
-
-    if (error && !page) {
-      this.score = 0;
-
-      this.pagesInError.push({
-        link: url,
-        missing_elements: error,
-      });
-
-      return {
-        score: 0,
-      };
-    }
-
-    if (page) {
-      this.totalServices++;
-
-      const url = page.url();
 
       const data = await page.content();
       const $: CheerioAPI = await cheerio.load(data);
@@ -263,7 +239,6 @@ class SchoolServiceAudit extends Audit {
       return {
         score: this.score,
       };
-    }
   }
 
   async getType() {
@@ -276,72 +251,12 @@ class SchoolServiceAudit extends Audit {
       this.globalResults.tolerancePages.pages = [];
     }
     this.globalResults.wrongPages.pages = [];
-    this.globalResults.pagesInError.pages = [];
 
     if (this.totalServices < minNumberOfServices) {
       this.globalResults["score"] = 0;
     }
 
-    switch (this.score) {
-      case 1:
-        this.globalResults["details"]["items"].push({
-          result: greenResult,
-        });
-        break;
-      case 0.5:
-        this.globalResults["details"]["items"].push({
-          result: yellowResult,
-        });
-        break;
-      case 0:
-        this.globalResults["details"]["items"].push({
-          result: redResult,
-        });
-        break;
-    }
-
-    const results = [];
-
-    if (this.pagesInError.length) {
-      this.globalResults.error = true;
-
-      results.push({
-        result: errorHandling.errorMessage,
-      });
-
-      results.push({});
-
-      results.push({
-        result: errorHandling.errorColumnTitles[0],
-        title_missing_elements: errorHandling.errorColumnTitles[1],
-        title_wrong_order_elements: "",
-      });
-
-      this.globalResults.pagesInError.message = errorHandling.errorMessage;
-      this.globalResults.pagesInError.headings = [
-        errorHandling.errorColumnTitles[0],
-        errorHandling.errorColumnTitles[1],
-      ];
-
-      for (const item of this.pagesInError) {
-        this.globalResults.pagesInError.pages.push(item);
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
-      }
-    }
-
-    results.push({});
-
     if (this.wrongItems.length > 0) {
-      results.push({
-        result: subItem.redResult,
-        title_missing_elements: this.titleSubHeadings[0],
-        title_wrong_order_elements: this.titleSubHeadings[1],
-      });
 
       this.globalResults.wrongPages.headings = [
         subItem.redResult,
@@ -351,23 +266,11 @@ class SchoolServiceAudit extends Audit {
 
       for (const item of this.wrongItems) {
         this.globalResults.wrongPages.pages.push(item);
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
       }
-
-      results.push({});
     }
 
     if (this.toleranceItems.length > 0) {
-      results.push({
-        result: subItem.yellowResult,
-        title_missing_elements: this.titleSubHeadings[0],
-        title_wrong_order_elements: this.titleSubHeadings[1],
-      });
+
       if (this.globalResults.tolerancePages) {
         this.globalResults.tolerancePages.headings = [
           subItem.yellowResult,
@@ -377,51 +280,29 @@ class SchoolServiceAudit extends Audit {
 
         for (const item of this.toleranceItems) {
           this.globalResults.tolerancePages.pages.push(item);
-          results.push({
-            subItems: {
-              type: "subitems",
-              items: [item],
-            },
-          });
+        }
+      }
+    }
+
+      if (this.correctItems.length > 0) {
+        this.globalResults.correctPages.headings = [
+          subItem.greenResult,
+          this.titleSubHeadings[0],
+          this.titleSubHeadings[1],
+        ];
+
+        for (const item of this.correctItems) {
+          this.globalResults.correctPages.pages.push(item);
         }
       }
 
-      results.push({});
+      this.globalResults.errorMessage =
+          this.globalResults.pagesInError.pages.length > 0 ? errorHandling.popupMessage : "";
+      this.globalResults.score = this.score;
+      this.globalResults.id = this.auditId;
+
+      return this.globalResults;
     }
-
-    if (this.correctItems.length > 0) {
-      results.push({
-        result: subItem.greenResult,
-        title_missing_elements: this.titleSubHeadings[0],
-        title_wrong_order_elements: this.titleSubHeadings[1],
-      });
-      this.globalResults.correctPages.headings = [
-        subItem.greenResult,
-        this.titleSubHeadings[0],
-        this.titleSubHeadings[1],
-      ];
-
-      for (const item of this.correctItems) {
-        this.globalResults.correctPages.pages.push(item);
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
-      }
-
-      results.push({});
-    }
-
-    this.globalResults.errorMessage =
-      this.pagesInError.length > 0 ? errorHandling.popupMessage : "";
-    this.globalResults.details.items = results;
-    this.globalResults.score = this.score;
-    this.globalResults.id = this.auditId;
-
-    return this.globalResults;
-  }
 
   async returnGlobalHTML() {
     let status = "fail";

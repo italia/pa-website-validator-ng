@@ -26,9 +26,9 @@ class firstLevelPagesGatherer extends Gatherer {
     const currentClass = this.constructor as typeof Gatherer;
     let fetchedUrls: string[] = [];
 
-    try {
-      fetchedUrls = await getRandomFirstLevelPagesUrl(url, numberOfPages, page);
-    } catch {
+    fetchedUrls = await getRandomFirstLevelPagesUrl(url, numberOfPages, page);
+
+    if(!fetchedUrls.length){
       throw new DataElementError(
         `Non è stato possibile trovare l'attributo [data-element="custom-submenu"]`,
       );

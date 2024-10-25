@@ -25,11 +25,6 @@ const errorLogging = [
 class SecurityAudit extends Audit {
   public globalResults: GlobalResults = {
     score: 0,
-    details: {
-      items: [],
-      type: "table",
-      summary: "",
-    },
     pagesItems: {
       message: "",
       headings: [],
@@ -58,33 +53,7 @@ class SecurityAudit extends Audit {
     };
   }
 
-  async auditPage(page: Page | null, url: string, error?: string) {
-    this.url = url;
-
-    if (error && !page) {
-      this.globalResults.score = 0;
-
-      this.globalResults.pagesInError.headings = ["Risultato", "Errori"];
-      this.globalResults.pagesInError.message = notExecutedErrorMessage.replace(
-        "<LIST>",
-        error,
-      );
-      this.globalResults.pagesInError.pages = [
-        {
-          link: url,
-          result: error,
-        },
-      ];
-
-      this.globalResults.error = true;
-
-      return {
-        score: 0,
-      };
-    }
-
-    if (page) {
-      const url = page.url();
+  async auditPage(page: Page, url: string) {
 
       const greenResult = this.greenResult.replace("[url]", url);
       const redResult = this.redResult.replace("[url]", url);
@@ -211,7 +180,6 @@ class SecurityAudit extends Audit {
       item[0].redirect_to_https = protocolInPage === "https:" ? "Sì" : "No";
 
       this.globalResults.score = score;
-      this.globalResults.details.items = item;
       this.globalResults.id = this.auditId;
 
       this.globalResults.pagesItems.pages = item;
@@ -227,7 +195,6 @@ class SecurityAudit extends Audit {
       return {
         score: score,
       };
-    }
   }
 
   async getType() {

@@ -52,11 +52,9 @@ const render = async () => {
           auditHTML: await audit.returnGlobalHTML(),
           status: infoScore
             ? ""
-            : score > 0.5
+            : score >= 0.5
               ? "pass"
-              : score === 0.5
-                ? "average"
-                : "fail",
+                  : "fail",
         });
       } else if (error) {
         failedAudits.push({
@@ -66,14 +64,16 @@ const render = async () => {
         });
         if ("pagesInError" in audit.globalResults) {
           audit.globalResults.pagesInError.pages.forEach((p) => {
-            errorPages.push({
-              criteria: auditMeta.code + " - " + auditMeta.mainTitle,
-              ...p,
-              id: auditMeta.id,
-            });
+            if(p.show){
+              errorPages.push({
+                criteria: auditMeta.code + " - " + auditMeta.mainTitle,
+                ...p,
+                id: auditMeta.id,
+              });
+            }
           });
         }
-      } else if (score > 0.5) {
+      } else if (score >= 0.5) {
         if (improvementPlanScore > 0.5) {
           successAudits.push({
             ...auditMeta,
@@ -88,12 +88,6 @@ const render = async () => {
             auditHTML: (await audit.returnGlobalHTML()) + improvementPlanHTML,
           });
         }
-      } else if (score === 0.5) {
-        successAudits.push({
-          ...auditMeta,
-          status: "average",
-          auditHTML: (await audit.returnGlobalHTML()) + improvementPlanHTML,
-        });
       } else {
         failedAudits.push({
           ...auditMeta,
@@ -121,11 +115,12 @@ const render = async () => {
   successAudits = sortByWeights(successAudits);
   failedAudits = sortByWeights(failedAudits);
   informativeAudits = sortByWeights(informativeAudits);
+
   errorPages = sortByWeights(errorPages).map((p) => {
     const keys = Object.keys(p);
     const obj: Record<string, unknown> = {};
     keys.forEach((k) => {
-      if (k !== "weight" && k !== "id") {
+      if (k !== "weight" && k !== "id" && k !== 'show') {
         obj[k] = p[k];
       }
     });

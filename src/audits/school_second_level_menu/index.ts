@@ -30,11 +30,6 @@ interface itemPage {
 class SchoolSecondLevelMenuAudit extends Audit {
   public globalResults: GlobalResults = {
     score: 0,
-    details: {
-      items: [],
-      type: "table",
-      summary: "",
-    },
     pagesItems: {
       message: "",
       headings: [],
@@ -77,39 +72,14 @@ class SchoolSecondLevelMenuAudit extends Audit {
     };
   }
 
-  async auditPage(page: Page | null, url: string, error?: string) {
-    if (error && !page) {
-      this.globalResults.score = 0;
+  async auditPage(page: Page, url: string) {
 
-      this.globalResults.pagesInError.headings = ["Risultato", "Errori"];
-      this.globalResults.pagesInError.message = notExecutedErrorMessage.replace(
-        "<LIST>",
-        error,
-      );
-      this.globalResults.pagesInError.pages = [
-        {
-          link: url,
-          result: error,
-        },
-      ];
-
-      this.globalResults.error = true;
-
-      return {
-        score: 0,
-      };
-    }
-
-    if (page) {
-      const url = page.url();
-
-      const results = [];
-      results.push({
+      let result = {
         result: this.redResult,
         correct_voices_percentage: "",
         correct_voices: "",
         wrong_voices: "",
-      });
+      };
 
       let totalNumberOfTitleFound = 0;
       const itemsPage: itemPage[] = [];
@@ -235,16 +205,16 @@ class SchoolSecondLevelMenuAudit extends Audit {
       let score = 0;
       if (presentVoicesPercentage >= 30 && presentVoicesPercentage < 100) {
         score = 0.5;
-        results[0].result = this.yellowResult;
+        result.result = this.yellowResult;
       } else if (presentVoicesPercentage === 100) {
         score = 1;
-        results[0].result = this.greenResult;
+        result.result = this.greenResult;
       }
 
-      results[0].correct_voices = correctTitleFound;
-      results[0].correct_voices_percentage =
+      result.correct_voices = correctTitleFound;
+      result.correct_voices_percentage =
         presentVoicesPercentage.toString() + "%";
-      results[0].wrong_voices = wrongTitleFound;
+      result.wrong_voices = wrongTitleFound;
 
       if (this.globalResults.recapItems) {
         this.globalResults.recapItems.headings = [
@@ -253,18 +223,10 @@ class SchoolSecondLevelMenuAudit extends Audit {
           "Voci corrette identificate",
           "Voci aggiuntive trovate",
         ];
-        this.globalResults.recapItems.pages = [results[0]];
+        this.globalResults.recapItems.pages = [result];
       }
 
       const secondLevelPages = await getSecondLevelPages(url);
-
-      results.push({});
-
-      results.push({
-        result: "Voce di menù",
-        correct_voices: "Pagina interna al dominio",
-        correct_voices_percentage: "Link trovato",
-      });
 
       this.globalResults.pagesItems.headings = [
         "Voce di menù",
@@ -287,25 +249,15 @@ class SchoolSecondLevelMenuAudit extends Audit {
           link: page.linkUrl,
           external: isInternal ? "Sì" : "No",
         };
-
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
-
         this.globalResults.pagesItems.pages.push(item);
       }
 
       this.globalResults.score = score;
-      this.globalResults.details.items = results;
       this.globalResults.id = this.auditId;
 
       return {
         score: score,
       };
-    }
   }
 
   async getType() {

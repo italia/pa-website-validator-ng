@@ -29,11 +29,6 @@ class BookingAppointment extends Audit {
 
   public globalResults: GlobalResultsMulti = {
     score: 1,
-    details: {
-      items: [],
-      type: "table",
-      summary: "",
-    },
     pagesInError: {
       message: "",
       headings: [],
@@ -59,7 +54,6 @@ class BookingAppointment extends Audit {
   public wrongItems: Record<string, unknown>[] = [];
   public correctItems: Record<string, unknown>[] = [];
   public toleranceItems: Record<string, unknown>[] = [];
-  public pagesInError: Record<string, unknown>[] = [];
   public score = 1;
   private titleSubHeadings: string[] = [];
 
@@ -74,31 +68,14 @@ class BookingAppointment extends Audit {
   }
 
   async auditPage(
-    page: Page | null,
+    page: Page,
     url: string,
-    error?: string,
     pageType?: string | null,
   ) {
     this.titleSubHeadings = [
       "Componente individuato",
       'Nella sezione "Accedi al servizio" della scheda servizio è presente il pulsante di prenotazione appuntamento',
     ];
-
-    if (error && !page) {
-      this.score = 0;
-
-      this.pagesInError.push({
-        link: url,
-        component_exist: error,
-      });
-
-      return {
-        score: 0,
-      };
-    }
-
-    if (page) {
-      const url = page.url();
 
       if (pageType && pageType === "services-page") {
         const itemFirst = {
@@ -151,7 +128,7 @@ class BookingAppointment extends Audit {
           errorMessage.indexOf('"') + 1,
           errorMessage.lastIndexOf('"'),
         );
-        this.pagesInError.push({
+        this.wrongItems.push({
           link: url,
           component_exist: errorMessage,
         });
@@ -164,7 +141,7 @@ class BookingAppointment extends Audit {
       };
 
       const bookingAppointmentServicePage = await getPrimaryPageUrl(
-        url,
+          url,
         "appointment-booking",
       );
 
@@ -183,75 +160,20 @@ class BookingAppointment extends Audit {
       }
 
       this.correctItems.push(item);
-    }
   }
   async getType() {
     return this.auditId;
   }
 
   async returnGlobal() {
+
     this.globalResults.correctPages.pages = [];
     if (this.globalResults.tolerancePages) {
       this.globalResults.tolerancePages.pages = [];
     }
     this.globalResults.wrongPages.pages = [];
-    this.globalResults.pagesInError.pages = [];
-
-    const results = [];
-    if (this.pagesInError.length > 0) {
-      this.globalResults.error = true;
-
-      results.push({
-        result: errorHandling.errorMessage,
-      });
-
-      results.push({});
-
-      results.push({
-        result: errorHandling.errorColumnTitles[0],
-        title_component_exist: errorHandling.errorColumnTitles[1],
-        title_in_page_url: "",
-      });
-
-      this.globalResults.pagesInError.message = errorHandling.errorMessage;
-      this.globalResults.pagesInError.headings = [
-        errorHandling.errorColumnTitles[0],
-        errorHandling.errorColumnTitles[1],
-      ];
-
-      for (const item of this.pagesInError) {
-        this.globalResults.pagesInError.pages.push(item);
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
-      }
-    } else {
-      switch (this.score) {
-        case 1:
-          results.push({
-            result: this.greenResult,
-          });
-          break;
-        case 0:
-          results.push({
-            result: this.redResult,
-          });
-          break;
-      }
-    }
-
-    results.push({});
 
     if (this.wrongItems.length > 0) {
-      results.push({
-        result: this.subItem.redResult,
-        title_component_exist: this.titleSubHeadings[0],
-        title_in_page_url: this.titleSubHeadings[1],
-      });
-
       this.globalResults.wrongPages.headings = [
         this.subItem.redResult,
         this.titleSubHeadings[0],
@@ -260,23 +182,10 @@ class BookingAppointment extends Audit {
 
       for (const item of this.wrongItems) {
         this.globalResults.wrongPages.pages.push(item);
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
       }
-
-      results.push({});
     }
 
     if (this.correctItems.length > 0) {
-      results.push({
-        result: this.subItem.greenResult,
-        title_component_exist: this.titleSubHeadings[0],
-        title_in_page_url: this.titleSubHeadings[1],
-      });
 
       this.globalResults.correctPages.headings = [
         this.subItem.greenResult,
@@ -286,21 +195,12 @@ class BookingAppointment extends Audit {
 
       for (const item of this.correctItems) {
         this.globalResults.correctPages.pages.push(item);
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
       }
-
-      results.push({});
     }
 
     this.globalResults.score = this.score;
-    this.globalResults.details.items = results;
     this.globalResults.errorMessage =
-      this.pagesInError.length > 0 ? errorHandling.popupMessage : "";
+      this.globalResults.pagesInError.pages.length > 0 ? errorHandling.popupMessage : "";
 
     return this.globalResults;
   }

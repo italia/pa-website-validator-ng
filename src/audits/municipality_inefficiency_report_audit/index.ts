@@ -27,11 +27,6 @@ const title =
 class InefficiencyAudit extends Audit {
   public globalResults: GlobalResults = {
     score: 0,
-    details: {
-      items: [],
-      type: "table",
-      summary: "",
-    },
     pagesItems: {
       message: "",
       headings: [],
@@ -57,32 +52,7 @@ class InefficiencyAudit extends Audit {
     };
   }
 
-  async auditPage(page: Page | null, url: string, error?: string) {
-    if (error && !page) {
-      this.globalResults.score = 0;
-
-      this.globalResults.pagesInError.headings = ["Risultato", "Errori"];
-      this.globalResults.pagesInError.message = notExecutedErrorMessage.replace(
-        "<LIST>",
-        error,
-      );
-      this.globalResults.pagesInError.pages = [
-        {
-          link: url,
-          result: error,
-        },
-      ];
-
-      this.globalResults.error = true;
-
-      return {
-        score: 0,
-      };
-    }
-
-    if (page) {
-      const url = page.url();
-
+  async auditPage(page: Page, url: string,) {
       this.globalResults.pagesItems.headings = [
         "Risultato",
         "Testo del link",
@@ -133,7 +103,6 @@ class InefficiencyAudit extends Audit {
 
           if (!checkUrl.result) {
             this.score = 0;
-            this.globalResults.details.items = items;
             this.globalResults.score = 0;
 
             this.globalResults.pagesItems.pages = items;
@@ -158,7 +127,6 @@ class InefficiencyAudit extends Audit {
         ) {
           items[0].result = yellowResult;
           this.score = 0.5;
-          this.globalResults.details.items = items;
           this.globalResults.score = 0.5;
 
           this.globalResults.pagesItems.pages = items;
@@ -171,16 +139,13 @@ class InefficiencyAudit extends Audit {
         items[0].result = greenResult;
 
         this.score = 1;
-        this.globalResults.details.items = items;
         this.globalResults.score = 1;
-
         this.globalResults.pagesItems.pages = items;
       }
 
       return {
         score: this.score,
       };
-    }
   }
 
   async getType() {

@@ -6,7 +6,6 @@ import { getAllPageHTML, urlExists } from "../../utils/utils.js";
 import { Page } from "puppeteer";
 
 import { Audit, GlobalResults } from "../Audit.js";
-import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import * as cheerio from "cheerio";
 
 class A11yAudit extends Audit {
@@ -16,11 +15,6 @@ class A11yAudit extends Audit {
 
   public globalResults: GlobalResults = {
     score: 0,
-    details: {
-      items: [],
-      type: "table",
-      summary: "",
-    },
     pagesItems: {
       message: "",
       headings: [],
@@ -44,31 +38,7 @@ class A11yAudit extends Audit {
     };
   }
 
-  async auditPage(page: Page | null, url: string, error?: string) {
-    if (error && !page) {
-      this.globalResults.score = 0;
-
-      this.globalResults.pagesInError.headings = ["Risultato", "Errori"];
-      this.globalResults.pagesInError.message = notExecutedErrorMessage.replace(
-        "<LIST>",
-        error,
-      );
-      this.globalResults.pagesInError.pages = [
-        {
-          link: url,
-          result: error,
-        },
-      ];
-
-      this.globalResults.error = true;
-
-      return {
-        score: 0,
-      };
-    }
-
-    if (page) {
-      const url = page.url();
+  async auditPage(page: Page, url: string) {
       this.globalResults.pagesItems.headings = [
         "Risultato",
         "Testo del link",
@@ -113,7 +83,6 @@ class A11yAudit extends Audit {
 
         if (!checkUrl.result) {
           this.globalResults.score = 0;
-          this.globalResults.details.items = items;
           this.globalResults.pagesItems.pages = items;
 
           return {
@@ -127,7 +96,6 @@ class A11yAudit extends Audit {
 
         if (!href.includes("https://form.agid.gov.it/view/")) {
           this.globalResults.score = 0;
-          this.globalResults.details.items = items;
           this.globalResults.pagesItems.pages = items;
 
           return {
@@ -140,7 +108,6 @@ class A11yAudit extends Audit {
         const privacyPageHTML: string = await getAllPageHTML(href);
         if (!privacyPageHTML.match(new RegExp(domain, "i"))) {
           this.globalResults.score = 0;
-          this.globalResults.details.items = items;
           this.globalResults.pagesItems.pages = items;
 
           return {
@@ -155,7 +122,6 @@ class A11yAudit extends Audit {
           !privacyPageHTML.match(/wcag-21/i)
         ) {
           this.globalResults.score = 0;
-          this.globalResults.details.items = items;
           this.globalResults.pagesItems.pages = items;
 
           return {
@@ -169,14 +135,12 @@ class A11yAudit extends Audit {
         this.globalResults.score = 1;
       }
 
-      this.globalResults.details.items = items;
       this.globalResults.id = this.auditId;
       this.globalResults.pagesItems.pages = items;
 
       return {
         score: this.globalResults.score,
       };
-    }
   }
 
   async getType() {

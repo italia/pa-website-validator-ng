@@ -1,16 +1,12 @@
-import { errorHandling } from "../../config/commonAuditsParts.js";
+import {errorHandling } from "../../config/commonAuditsParts.js";
 import { Audit, GlobalResultsMulti } from "../Audit.js";
 import { Page, Cookie as CookieProtocol } from "puppeteer";
 import { Cookie } from "../../types/crawler-types";
+import {DataElementError} from "../../utils/DataElementError.js";
 
 class CookieAudit extends Audit {
   public globalResults: GlobalResultsMulti = {
     score: 1,
-    details: {
-      items: [],
-      type: "table",
-      summary: "",
-    },
     pagesInError: {
       message: "",
       headings: [],
@@ -30,7 +26,6 @@ class CookieAudit extends Audit {
   };
   public wrongItems: Record<string, unknown>[] = [];
   public correctItems: Record<string, unknown>[] = [];
-  public pagesInError: Record<string, unknown>[] = [];
   public score = 1;
   private titleSubHeadings: string[] = [];
 
@@ -48,35 +43,45 @@ class CookieAudit extends Audit {
     };
   }
 
+  async returnErrors(error : DataElementError | Error | string, url: string, pageType: string, inError = true){
+    if(pageType !== "event"){
+      if(inError){
+        this.showError = true;
+      }
+
+      this.globalResults.score = 0;
+
+      this.globalResults.pagesInError.headings = [
+        errorHandling.errorColumnTitles[0],
+        errorHandling.errorColumnTitles[1],
+      ];
+      this.globalResults.pagesInError.message = errorHandling.errorMessage;
+
+      this.globalResults.pagesInError.pages.push({
+        link: url,
+        result: (error instanceof DataElementError || error instanceof Error) ? error.message : String(error),
+        show: inError
+      });
+
+      this.globalResults.error = this.showError;
+      this.score = 0;
+      this.globalResults.score = 0;
+
+      return {
+        score: 0,
+      };
+    }
+  }
+
   async auditPage(
-    page: Page | null,
-    url: string,
-    error?: string,
-    pageType?: string | null,
+    page: Page,
+    url: string
   ) {
     this.titleSubHeadings = [
       "Dominio del cookie",
       "Nome del cookie",
       "Valore del cookie",
     ];
-
-    if (error && !page && pageType !== "event") {
-      this.score = 0;
-
-      this.pagesInError.push({
-        link: url,
-        cookie_domain: error,
-      });
-
-      this.globalResults.error = true;
-
-      return {
-        score: 0,
-      };
-    }
-
-    if (page) {
-      const url = page.url();
 
       try {
         const items = [];
@@ -125,16 +130,17 @@ class CookieAudit extends Audit {
           errorMessage = ex.message;
         }
 
-        this.pagesInError.push({
+        this.globalResults.wrongPages.pages.push({
           link: url,
           cookie_domain: errorMessage,
+          cookie_name: '',
+          cookie_value: '',
         });
       }
 
       return {
         score: this.score,
       };
-    }
   }
 
   async getType() {
@@ -144,66 +150,8 @@ class CookieAudit extends Audit {
   async returnGlobal() {
     this.globalResults.correctPages.pages = [];
     this.globalResults.wrongPages.pages = [];
-    this.globalResults.pagesInError.pages = [];
-
-    const results = [];
-
-    switch (this.score) {
-      case 1:
-        results.push({
-          result: this.greenResult,
-        });
-        break;
-      case 0:
-        results.push({
-          result: this.redResult,
-        });
-        break;
-    }
-
-    if (this.pagesInError.length) {
-      this.globalResults.error = true;
-
-      results.push({
-        result: errorHandling.errorMessage,
-      });
-
-      results.push({});
-
-      results.push({
-        result: errorHandling.errorColumnTitles[0],
-        title_cookie_domain: errorHandling.errorColumnTitles[1],
-        title_cookie_name: "",
-        title_cookie_value: "",
-      });
-
-      this.globalResults.pagesInError.message = errorHandling.errorMessage;
-      this.globalResults.pagesInError.headings = [
-        errorHandling.errorColumnTitles[0],
-        errorHandling.errorColumnTitles[1],
-      ];
-
-      for (const item of this.pagesInError) {
-        this.globalResults.pagesInError.pages.push(item);
-
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
-      }
-    }
-
-    results.push({});
 
     if (this.wrongItems.length > 0) {
-      results.push({
-        result: this.subItem?.redResult ?? "",
-        title_cookie_domain: this.titleSubHeadings[0],
-        title_cookie_name: this.titleSubHeadings[1],
-        title_cookie_value: this.titleSubHeadings[2],
-      });
 
       this.globalResults.wrongPages.headings = [
         this.subItem?.redResult ?? "",
@@ -214,24 +162,10 @@ class CookieAudit extends Audit {
 
       for (const item of this.wrongItems) {
         this.globalResults.wrongPages.pages.push(item);
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
       }
-
-      results.push({});
     }
 
     if (this.correctItems.length > 0) {
-      results.push({
-        result: this.subItem?.greenResult ?? "",
-        title_cookie_domain: this.titleSubHeadings[0],
-        title_cookie_name: this.titleSubHeadings[1],
-        title_cookie_value: this.titleSubHeadings[2],
-      });
 
       this.globalResults.correctPages.headings = [
         this.subItem?.greenResult ?? "",
@@ -242,20 +176,11 @@ class CookieAudit extends Audit {
 
       for (const item of this.correctItems) {
         this.globalResults.correctPages.pages.push(item);
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
       }
-
-      results.push({});
     }
 
-    this.globalResults.errorMessage =
-      this.pagesInError.length > 0 ? errorHandling.popupMessage : "";
-    this.globalResults.details.items = results;
+    this.globalResults.errorMessage = this.globalResults.pagesInError.pages.length > 0 ? errorHandling.popupMessage : "";
+    this.score = this.globalResults.pagesInError.pages.length > 0 ? 0 : this.score;
     this.globalResults.score = this.score;
     this.globalResults.id = this.auditId;
 

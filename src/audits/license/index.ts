@@ -22,11 +22,6 @@ class LicenceAudit extends Audit {
 
   public globalResults: GlobalResults = {
     score: 0,
-    details: {
-      items: [],
-      type: "table",
-      summary: "",
-    },
     pagesInError: {
       message: "",
       headings: [],
@@ -50,32 +45,9 @@ class LicenceAudit extends Audit {
     };
   }
 
-  async auditPage(page: Page | null, url: string, error?: string) {
-    if (error && !page) {
-      this.globalResults.score = 0;
-      this.globalResults.pagesInError.headings = ["Risultato", "Errori"];
-      this.globalResults.pagesInError.message = notExecutedErrorMessage.replace(
-        "<LIST>",
-        error,
-      );
-      this.globalResults.pagesInError.pages = [
-        {
-          link: url,
-          result: error,
-        },
-      ];
+  async auditPage(page: Page, url: string) {
 
-      this.globalResults.error = true;
-
-      return {
-        score: 0,
-      };
-    }
-
-    if (page) {
-      const url = page.url();
-
-      this.globalResults.pagesItems.headings = [
+    this.globalResults.pagesItems.headings = [
         "Risultato",
         "Testo del link",
         "Pagina di destinazione del link",
@@ -172,14 +144,12 @@ class LicenceAudit extends Audit {
       }
 
       this.globalResults.score = score;
-      this.globalResults.details.items = items;
       this.globalResults.id = this.auditId;
       this.globalResults.pagesItems.pages = items;
 
       return {
         score: score,
       };
-    }
   }
 
   async returnGlobal() {

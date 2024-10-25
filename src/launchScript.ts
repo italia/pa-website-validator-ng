@@ -6,6 +6,7 @@ import PageManager from "./PageManager.js";
 import scan from "./Scan.js";
 import { Page } from "puppeteer";
 import { loadPage } from "./utils/utils.js";
+import {DataElementError} from "./utils/DataElementError.js";
 
 export const logLevels = {
   display_none: "silent",
@@ -97,25 +98,29 @@ async function run(
           await page.waitForNetworkIdle();
         }
       } catch (e) {
-        if (e instanceof Error) {
+        if (e instanceof Error || e instanceof DataElementError) {
           navigatingError = e.message;
         } else {
           navigatingError = String(e);
         }
       }
 
-      await audit.auditPage(
-        navigatingError ? null : page,
-        website,
-        navigatingError ? navigatingError : "",
-        "homepage",
-      );
+      if(navigatingError){
+        await audit.returnErrors(navigatingError, website, 'homepage')
+      }else{
+        if (page) {
+          await audit.auditPage(
+              page,
+              website,
+              "homepage",
+          );
+
+          await page.close();
+        }
+      }
+
       const result = await audit.returnGlobal();
       const meta = await audit.meta();
-
-      if (page) {
-        await page.close();
-      }
 
       await PageManager.setGlobalResults({
         lighthouse: { ...result, ...meta },

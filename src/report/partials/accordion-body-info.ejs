@@ -1,9 +1,16 @@
 <div class="accordion-body">
   <div class="row">
-    <div class="col-12" style="padding-right: 0;">
+    <div class="col-4">
+      <div class="nav nav-tabs nav-tabs-vertical" role="tablist" aria-orientation="vertical">
+        <% items.forEach(({ id, code, mainTitle, status }, index) => { %>
+          <%- include('tabs/tab-button-info', { id, code, mainTitle, status, index }); %>
+        <% }) %>
+      </div>
+    </div>
+    <div class="col-8" style="padding-right: 0;">
       <div class="tab-content">
         <% items.forEach((audit, index) => { %>
-        <%- include('tabs/tab-pane-all', { audit, index }); %>
+          <%- include('tabs/tab-pane', { audit, index }); %>
         <% }) %>
       </div>
     </div>

@@ -21,11 +21,6 @@ import { fileURLToPath } from "url";
 class SchoolFirstLevelMenuAudit extends Audit {
   public globalResults: GlobalResults = {
     score: 0,
-    details: {
-      items: [],
-      type: "table",
-      summary: "",
-    },
     pagesItems: {
       message: "",
       headings: [],
@@ -68,40 +63,15 @@ class SchoolFirstLevelMenuAudit extends Audit {
     };
   }
 
-  async auditPage(page: Page | null, url: string, error?: string) {
-    if (error && !page) {
-      this.globalResults.score = 0;
+  async auditPage(page: Page, url: string) {
+    let score = 0;
 
-      this.globalResults.pagesInError.headings = ["Risultato", "Erroti"];
-      this.globalResults.pagesInError.message = notExecutedErrorMessage.replace(
-        "<LIST>",
-        error,
-      );
-      this.globalResults.pagesInError.pages = [
-        {
-          link: url,
-          result: error,
-        },
-      ];
-      this.globalResults.error = true;
-
-      return {
-        score: 0,
-      };
-    }
-
-    if (page) {
-      const url = page.url();
-
-      let score = 0;
-
-      const results = [];
-      results.push({
+      let result = {
         result: this.redResult,
         found_menu_voices: "",
         missing_menu_voices: "",
         wrong_order_menu_voices: "",
-      });
+      };
 
       const data = await page.content();
       const $: CheerioAPI = await cheerio.load(data);
@@ -136,7 +106,7 @@ class SchoolFirstLevelMenuAudit extends Audit {
         "> li > a",
       );
 
-      results[0].found_menu_voices = foundMenuElements.join(", ");
+      result.found_menu_voices = foundMenuElements.join(", ");
 
       const lang = detectLang(foundMenuElements);
 
@@ -151,13 +121,13 @@ class SchoolFirstLevelMenuAudit extends Audit {
         foundMenuElements,
         mandatoryPrimaryMenuItems,
       );
-      results[0].missing_menu_voices = missingMandatoryElements.join(", ");
+      result.missing_menu_voices = missingMandatoryElements.join(", ");
 
       const orderResult = checkOrder(
         mandatoryPrimaryMenuItems,
         foundMenuElements,
       );
-      results[0].wrong_order_menu_voices =
+      result.wrong_order_menu_voices =
         orderResult.elementsNotInSequence.join(", ");
 
       const containsMandatoryElementsResult =
@@ -173,7 +143,7 @@ class SchoolFirstLevelMenuAudit extends Audit {
         mandatoryElementsCorrectOrder
       ) {
         score = 1;
-        results[0].result = this.greenResult;
+        result.result = this.greenResult;
       } else if (
         foundMenuElements.length > 4 &&
         foundMenuElements.length < 8 &&
@@ -181,7 +151,7 @@ class SchoolFirstLevelMenuAudit extends Audit {
         mandatoryElementsCorrectOrder
       ) {
         score = 0.5;
-        results[0].result = this.yellowResult;
+        result.result = this.yellowResult;
       }
 
       if (this.globalResults.recapItems) {
@@ -191,18 +161,10 @@ class SchoolFirstLevelMenuAudit extends Audit {
           "Voci obbligatorie del menù mancanti",
           "Voci del menù in ordine errato",
         ];
-        this.globalResults.recapItems.pages = [results[0]];
+        this.globalResults.recapItems.pages = [result];
       }
 
       const firstLevelPages = await getFirstLevelPages(url);
-
-      results.push({});
-
-      results.push({
-        result: "Voce di menù",
-        found_menu_voices: "Link trovato",
-        missing_menu_voices: "Pagina interna al dominio",
-      });
 
       this.globalResults.pagesItems.headings = [
         "Voce di menù",
@@ -226,24 +188,15 @@ class SchoolFirstLevelMenuAudit extends Audit {
           external: isInternal ? "Sì" : "No",
         };
 
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
-
         this.globalResults.pagesItems.pages.push(item);
       }
 
       this.globalResults.score = score;
-      this.globalResults.details.items = results;
       this.globalResults.id = this.auditId;
 
       return {
         score: score,
       };
-    }
   }
 
   async getType() {

@@ -26,17 +26,17 @@ class SecondLevelPagesGatherer extends Gatherer {
     const currentClass = this.constructor as typeof Gatherer;
 
     let fetchedUrls: string[] = [];
-    try {
       fetchedUrls = await getRandomSecondLevelPagesUrl(
         url,
         numberOfPages,
         page,
       );
-    } catch {
-      throw new DataElementError(
-        `Non è stato possibile trovare l'attributo [data-element="${currentClass.dataElements[0]}"]`,
-      );
-    }
+
+    if(!fetchedUrls.length){
+  throw new DataElementError(
+`Non è stato possibile trovare l'attributo [data-element="custom-submenu"]`,
+);
+}
 
     this.gatheredPages = fetchedUrls.map((url: string) => {
       return {

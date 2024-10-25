@@ -93,7 +93,7 @@ const getFirstLevelPages = async (
       primaryLevelPageUrls.length === 0 &&
       value !== customPrimaryMenuItemsDataElement
     ) {
-      throw new DataElementError(value);
+      throw new DataElementError(`Non è stato possibile trovare l'attributo [data-element="${value}"]`);
     }
 
     pagesUrls = [...pagesUrls, ...new Set(primaryLevelPageUrls)];
@@ -185,7 +185,7 @@ const getRandomSecondLevelPagesUrl = async (
         }
 
         if (secondPageUrls.length === 0 && key !== "custom") {
-          throw new DataElementError(dataElementSecondary);
+          throw new DataElementError(`Non è stato possibile trovare l'attributo [data-element="${dataElementSecondary}"]`);
         }
         pagesUrls = [...pagesUrls, ...new Set(secondPageUrls)];
       }
@@ -305,7 +305,7 @@ const getSecondLevelPages = async (
         }
 
         if (secondPages.length === 0 && key !== "custom") {
-          throw new DataElementError(dataElementSecondary);
+          throw new DataElementError(`Non è stato possibile trovare l'attributo [data-element="${dataElementSecondary}"]`);
         }
 
         pages[key as keyof MunicipalitySecondLevelPages] = secondPages;
@@ -998,9 +998,7 @@ const getPages = async (
               primaryMenuItems.services.data_element,
             );
             if (servicesPage === "") {
-              throw new DataElementError(
-                primaryMenuItems.services.data_element,
-              );
+              throw new DataElementError(`Non è stato possibile trovare l'attributo [data-element="${primaryMenuItems.services.data_element}"]`);
             }
             requestedPages = [servicesPage];
             break;
@@ -1011,9 +1009,7 @@ const getPages = async (
               primaryMenuItems.services.data_element,
             );
             if (allServicePage.length === 0) {
-              throw new DataElementError(
-                primaryMenuItems.services.data_element,
-              );
+              throw new DataElementError(`Non è stato possibile trovare l'attributo [data-element="${primaryMenuItems.services.data_element}"]`);
             }
 
             const randomServicesUrl = await getRandomThirdLevelPagesUrl(
@@ -1024,9 +1020,7 @@ const getPages = async (
               page,
             );
             if (randomServicesUrl.length === 0) {
-              throw new DataElementError(
-                primaryMenuItems.services.third_item_data_element,
-              );
+              throw new DataElementError(`Non è stato possibile trovare l'attributo [data-element="${ primaryMenuItems.services.third_item_data_element}"]`);
             }
             requestedPages = randomServicesUrl;
             break;
@@ -1057,9 +1051,7 @@ const getPages = async (
               primaryMenuItems.services.data_element,
             );
             if (servicesPage === "") {
-              throw new DataElementError(
-                primaryMenuItems.services.data_element,
-              );
+              throw new DataElementError(`Non è stato possibile trovare l'attributo [data-element="${primaryMenuItems.services.data_element}"]`);
             }
 
             const bookingAppointmentPage = await getPrimaryPageUrl(
@@ -1067,7 +1059,7 @@ const getPages = async (
               "appointment-booking",
             );
             if (bookingAppointmentPage === "") {
-              throw new DataElementError("appointment-booking");
+              throw new DataElementError(`Non è stato possibile trovare l'attributo [data-element="appointment-booking"]`);
             }
             requestedPages = [bookingAppointmentPage];
             break;

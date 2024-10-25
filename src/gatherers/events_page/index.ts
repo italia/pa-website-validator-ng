@@ -1,6 +1,7 @@
 import { Gatherer } from "../Gatherer.js";
 import { PageData } from "../../types/crawler-types.js";
 import { Page } from "puppeteer";
+import {DataElementError} from "../../utils/DataElementError.js";
 
 class eventsPageGatherer extends Gatherer {
   static dataElements: string[] = ["live-button-events"];
@@ -22,6 +23,12 @@ class eventsPageGatherer extends Gatherer {
         ...fetchedUrls,
         ...(await this.getButtonUrl(page, dataElement)),
       ];
+    }
+
+    if(!fetchedUrls.length){
+      throw new DataElementError(
+          `Non è stato possibile trovare l'attributo [data-element="live-button-events"]`,
+      );
     }
 
     this.gatheredPages = fetchedUrls.map((url: string) => {

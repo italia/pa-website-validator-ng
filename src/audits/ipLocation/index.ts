@@ -22,11 +22,6 @@ const mainTitle = "LOCALIZZAZIONE IP";
 class IpLocationAudit extends Audit {
   public globalResults: GlobalResults = {
     score: 0,
-    details: {
-      items: [],
-      type: "table",
-      summary: "",
-    },
     pagesItems: {
       message: "",
       headings: [],
@@ -53,29 +48,7 @@ class IpLocationAudit extends Audit {
     };
   }
 
-  async auditPage(page: Page | null, url: string, error?: string) {
-    if (error && !page) {
-      this.globalResults.score = 0;
-
-      this.globalResults.pagesInError.headings = ["Risultato"];
-      this.globalResults.pagesInError.message = notExecutedErrorMessage.replace(
-        "<LIST>",
-        error,
-      );
-      this.globalResults.pagesInError.pages = [
-        {
-          link: url,
-          result: error,
-        },
-      ];
-
-      return {
-        score: 0,
-      };
-    }
-
-    if (page) {
-      const url = page.url();
+  async auditPage(page: Page, url: string) {
       const hostname = new URL(url).hostname.replace("www.", "");
       this.score = 0;
 
@@ -106,13 +79,11 @@ class IpLocationAudit extends Audit {
       }
 
       this.globalResults.score = this.score;
-      this.globalResults.details.items = items;
       this.globalResults.pagesItems.pages = items;
 
       return {
         score: this.score,
       };
-    }
   }
 
   async getType() {

@@ -30,11 +30,6 @@ const subItem = {
 class ContactAssistencyAudit extends Audit {
   public globalResults: GlobalResultsMulti = {
     score: 1,
-    details: {
-      items: [],
-      type: "table",
-      summary: "",
-    },
     pagesInError: {
       message: "",
       headings: [],
@@ -55,7 +50,6 @@ class ContactAssistencyAudit extends Audit {
 
   public wrongItems: Record<string, unknown>[] = [];
   public correctItems: Record<string, unknown>[] = [];
-  public pagesInError: Record<string, unknown>[] = [];
   public score = 1;
   private titleSubHeadings: string[] = [];
 
@@ -69,27 +63,11 @@ class ContactAssistencyAudit extends Audit {
     };
   }
 
-  async auditPage(page: Page | null, url: string, error?: string) {
+  async auditPage(page: Page, url: string) {
     this.titleSubHeadings = [
       "La voce è presente nell'indice",
       "Il componente è presente in pagina",
     ];
-
-    if (error && !page) {
-      this.score = 0;
-
-      this.pagesInError.push({
-        link: url,
-        in_index: error,
-      });
-
-      return {
-        score: 0,
-      };
-    }
-
-    if (page) {
-      const url = page.url();
 
       let $: CheerioAPI = cheerio.load("<html><body></body></html>");
 
@@ -107,7 +85,7 @@ class ContactAssistencyAudit extends Audit {
           errorMessage.lastIndexOf('"'),
         );
 
-        this.pagesInError.push({
+        this.wrongItems.push({
           link: url,
           in_index: errorMessage,
         });
@@ -145,7 +123,6 @@ class ContactAssistencyAudit extends Audit {
         this.wrongItems.push(item);
       }
       this.correctItems.push(item);
-    }
 
     return {
       score: this.score,
@@ -155,62 +132,8 @@ class ContactAssistencyAudit extends Audit {
   async returnGlobal() {
     this.globalResults.correctPages.pages = [];
     this.globalResults.wrongPages.pages = [];
-    this.globalResults.pagesInError.pages = [];
-
-    const results = [];
-    if (this.pagesInError.length > 0) {
-      this.globalResults.error = true;
-
-      results.push({
-        result: errorHandling.errorMessage,
-      });
-
-      results.push({});
-
-      results.push({
-        result: errorHandling.errorColumnTitles[0],
-        title_in_index: errorHandling.errorColumnTitles[1],
-        title_component_exists: "",
-      });
-
-      this.globalResults.pagesInError.message = errorHandling.errorMessage;
-      this.globalResults.pagesInError.headings = [
-        errorHandling.errorColumnTitles[0],
-        errorHandling.errorColumnTitles[1],
-      ];
-
-      for (const item of this.pagesInError) {
-        this.globalResults.pagesInError.pages.push(item);
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
-      }
-    } else {
-      switch (this.score) {
-        case 1:
-          results.push({
-            result: greenResult,
-          });
-          break;
-        case 0:
-          results.push({
-            result: redResult,
-          });
-          break;
-      }
-    }
-
-    results.push({});
 
     if (this.wrongItems.length > 0) {
-      results.push({
-        result: subItem.redResult,
-        title_in_index: this.titleSubHeadings[0],
-        title_component_exists: this.titleSubHeadings[1],
-      });
 
       this.globalResults.wrongPages.headings = [
         subItem.redResult,
@@ -220,23 +143,10 @@ class ContactAssistencyAudit extends Audit {
 
       for (const item of this.wrongItems) {
         this.globalResults.wrongPages.pages.push(item);
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
       }
-
-      results.push({});
     }
 
     if (this.correctItems.length > 0) {
-      results.push({
-        result: subItem.greenResult,
-        title_in_index: this.titleSubHeadings[0],
-        title_component_exists: this.titleSubHeadings[1],
-      });
 
       this.globalResults.correctPages.headings = [
         subItem.greenResult,
@@ -246,21 +156,12 @@ class ContactAssistencyAudit extends Audit {
 
       for (const item of this.correctItems) {
         this.globalResults.correctPages.pages.push(item);
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
       }
-
-      results.push({});
     }
 
     this.globalResults.score = this.score;
-    this.globalResults.details.items = results;
     this.globalResults.errorMessage =
-      this.pagesInError.length > 0 ? errorHandling.popupMessage : "";
+      this.globalResults.pagesInError.pages.length > 0 ? errorHandling.popupMessage : "";
 
     return this.globalResults;
   }

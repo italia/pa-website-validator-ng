@@ -41,11 +41,6 @@ interface itemPage {
 class SecondLevelAudit extends Audit {
   public globalResults: GlobalResults = {
     score: 0,
-    details: {
-      items: [],
-      type: "table",
-      summary: "",
-    },
     pagesInError: {
       message: "",
       headings: [],
@@ -80,24 +75,7 @@ class SecondLevelAudit extends Audit {
     };
   }
 
-  async auditPage(page: Page | null, url: string, error: string) {
-    if (error && !page) {
-      this.score = 0;
-
-      this.globalResults.pagesInError.pages.push({
-        link: url,
-        missing_elements: error,
-      });
-
-      this.globalResults.error = true;
-
-      return {
-        score: 0,
-      };
-    }
-
-    if (page) {
-      const url = page.url();
+  async auditPage(page: Page, url: string) {
 
       try {
         this.secondLevelPages = await getSecondLevelPages(url, true);
@@ -182,7 +160,6 @@ class SecondLevelAudit extends Audit {
           ...customSecondLevelPagesNames,
         ];
       }
-    }
 
     return {
       score: this.score,
@@ -265,7 +242,6 @@ class SecondLevelAudit extends Audit {
     results[0].correct_title_found = correctTitleFound;
     results[0].wrong_title_found = wrongTitleFound;
 
-    this.globalResults.details.items = results;
     this.globalResults.score = this.score;
 
     this.globalResults.pagesItems.headings = [

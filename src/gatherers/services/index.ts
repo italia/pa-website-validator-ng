@@ -23,7 +23,6 @@ class servicesGatherer extends Gatherer {
     const secondPageLevel: string = "pager-link";
 
     while (clickButton) {
-      try {
         clickButton = await page.evaluate(() => {
           const button = document.querySelector(
             '[data-element="load-other-cards"]',
@@ -74,9 +73,7 @@ class servicesGatherer extends Gatherer {
         }
 
         maxCountPages = currentCountPages;
-      } catch {
-        clickButton = false;
-      }
+
     }
 
     const foundSecondLevel = await page.$$(

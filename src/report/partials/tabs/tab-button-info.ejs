@@ -1,0 +1,12 @@
+<a class="nav-link <%= index === 0 ? 'active' : '' %>" id="id-<%= id %>-btn" data-bs-toggle="tab" href="#id-<%= id %>" role="tab" aria-controls="id-<%= id %>">
+  <div class="title">
+    Raccomandazione <%= code %>
+    <span><%= mainTitle %></span>
+  </div>
+  <% if(status){ %>
+    <div class="result">
+      Risultato
+      <div class="circle <%= status %>"></div>
+    </div>
+  <% } %>
+</a>

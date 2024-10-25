@@ -7,6 +7,7 @@ import { Page } from "puppeteer";
 import render from "./report/Renderer.js";
 import { collectAudits } from "./AuditManager.js";
 import { collectGatherers } from "./GathererManager.js";
+import {DataElementError} from "./utils/DataElementError.js";
 
 const scan = async (pageData: PageData) => {
   let results: Record<string, unknown> = {};
@@ -25,6 +26,9 @@ const scan = async (pageData: PageData) => {
       PageManager.setNotTemporaryAudit(pageData.url, pageData.type);
       await PageManager.setScanning(pageData.url, pageData.type, false);
       await PageManager.closePage(pageData);
+      if(!PageManager.hasRemainingPages()){
+        return;
+      }
     }
     if (!config.audits[pageData.type]) {
       PageManager.setAudited(pageData.url, pageData.type);
@@ -46,7 +50,6 @@ const scan = async (pageData: PageData) => {
 
     /** GATHERING */
     let gathererPages: PageData[] = [];
-    const gatheringErrors: string[] = [];
 
     if (
       !pageData.gathered ||
@@ -55,7 +58,7 @@ const scan = async (pageData: PageData) => {
       console.log(
         `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: Gathering start`,
       );
-      let navigatingError: string | unknown = "";
+      let navigatingError: Error | string = '';
 
       let page: Page | null = null;
       if (!pageData.temporaryGatherer) {
@@ -65,7 +68,7 @@ const scan = async (pageData: PageData) => {
             await page.waitForNetworkIdle();
           }
         } catch (e) {
-          navigatingError = e;
+          navigatingError = e instanceof Error ? e : String(e);
         }
       }
 
@@ -83,16 +86,25 @@ const scan = async (pageData: PageData) => {
           const configAccuracy = config.accuracy[accuracy];
 
           if (!page && pageData.temporaryGatherer) {
-            throw new Error(
-              pageData && pageData.errors && pageData.errors.length
-                ? pageData.errors[0].toString()
-                : `Page not available for type ${pageData.type}`,
-            );
+            let error : DataElementError | Error | string =  pageData && pageData.errors && pageData.errors.length ? pageData.errors[0] : '';
+            if(error instanceof DataElementError ){
+              throw new DataElementError(
+                  error.message
+              );
+            }else if(error instanceof Error){
+              throw new Error(
+                  error.message
+              );
+            } else{
+              throw new Error(
+                  `Page not available for type ${pageData.type}`,
+              );
+            }
           }
 
           if (navigatingError) {
             console.log("navigating Error gatherer =", navigatingError);
-            throw new Error(String(navigatingError));
+            throw new Error((navigatingError instanceof Error) ? navigatingError.message : String(navigatingError));
           }
 
           const fetchedPages = await gatherer.navigateAndFetchPages(
@@ -102,36 +114,24 @@ const scan = async (pageData: PageData) => {
             page,
           );
           gathererPages = [...gathererPages, ...fetchedPages];
-        } catch (e: unknown) {
+        } catch (e) {
           console.log(
             ` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: ERROR`,
           );
 
           await PageManager.addPage({
             id: "",
-            url: pageData.url,
+            url: 'https://temp' + gatherer.getPageType(),
             type: gatherer.getPageType(),
             redirectUrl: "",
             internal: false,
             gathered: true,
             audited: true,
-            errors: [e instanceof Error ? e.message : String(e)],
+            errors: [(e instanceof Error || e instanceof DataElementError) ? e : String(e)],
             temporaryGatherer: true,
             temporaryAudit: true,
           });
-          gatheringErrors.push(e instanceof Error ? e.message : String(e));
         }
-      }
-
-      const pageTemp: PageData | undefined = await PageManager.setErrors(
-        pageData.url,
-        pageData.type,
-        gatheringErrors,
-        true,
-      );
-
-      if (pageTemp) {
-        pageData = pageTemp;
       }
 
       for (const gatheredPage of gathererPages) {
@@ -152,7 +152,7 @@ const scan = async (pageData: PageData) => {
     const auditingErrors = [];
 
     if (!pageData.audited || (pageData.audited && pageData.temporaryAudit)) {
-      let navigatingError: string = "";
+      let navigatingError: Error | string = '';
 
       let page: Page | null = null;
       console.log(
@@ -180,17 +180,29 @@ const scan = async (pageData: PageData) => {
                   ` No audit found for id ${auditId}: check your configuration`,
                 );
 
+
               const auditType = await audit.getType();
-              await audit.auditPage(
-                navigatingError ? null : page,
-                pageData.url,
-                pageData.errors && pageData.errors.length
-                  ? pageData.errors[0]
-                  : navigatingError
-                    ? navigatingError
-                    : "",
-                pageData.type,
-              );
+              if(auditType === 'municipality-menu-structure-match-model'){
+                console.log(pageData);
+              }
+              if(navigatingError || (pageData.errors && pageData.errors.length)){
+                if(navigatingError){
+                  await audit.returnErrors(navigatingError, pageData.url, pageData.type)
+                }else if (pageData.errors && pageData.errors.length){
+                  //console.log('errore nuovo', pageData.errors[0])
+                  if(pageData.errors[0] instanceof DataElementError){
+                    await audit.returnErrors( pageData.errors[0], pageData.url, pageData.type, false)
+                  }else{
+                    await audit.returnErrors( pageData.errors[0], pageData.url, pageData.type)
+                  }
+                }
+              }else if(page){
+                await audit.auditPage(
+                    page,
+                    pageData.url,
+                    pageData.type,
+                );
+              }
               const result = await audit.returnGlobal();
               const meta = await audit.meta();
 
@@ -202,7 +214,7 @@ const scan = async (pageData: PageData) => {
                 ` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: ERROR`,
               );
 
-              auditingErrors.push(e instanceof Error ? e.message : String(e));
+              auditingErrors.push((e instanceof Error || e instanceof DataElementError) ? e.message : String(e));
             }
           }
         }
@@ -227,7 +239,7 @@ const scan = async (pageData: PageData) => {
     await PageManager.closePage(pageData);
 
     if (!PageManager.hasRemainingPages()) {
-      console.log("SCAN ENDED - navigated pages end:");
+      console.log("SCAN ENDED - navigated pages end:", pageData.url, pageData.type);
 
       results = await render();
 

@@ -36,11 +36,6 @@ const subItem = {
 class FeedbackAudit extends Audit {
   public globalResults: GlobalResultsMulti = {
     score: 1,
-    details: {
-      items: [],
-      type: "table",
-      summary: "",
-    },
     pagesInError: {
       message: "",
       headings: [],
@@ -67,8 +62,7 @@ class FeedbackAudit extends Audit {
   public wrongItems: Record<string, unknown>[] = [];
   public toleranceItems: Record<string, unknown>[] = [];
   public correctItems: Record<string, unknown>[] = [];
-  public pagesInError: Record<string, unknown>[] = [];
-  private score = 1;
+  public score = 1;
   private titleSubHeadings: string[] = [];
 
   async meta() {
@@ -81,24 +75,8 @@ class FeedbackAudit extends Audit {
     };
   }
 
-  async auditPage(page: Page | null, url: string, error?: string) {
+  async auditPage(page: Page, url: string) {
     this.titleSubHeadings = ["Elementi errati o non trovati"];
-
-    if (error && !page) {
-      this.score = 0;
-
-      this.pagesInError.push({
-        link: url,
-        errors_found: error,
-      });
-
-      return {
-        score: 0,
-      };
-    }
-
-    if (page) {
-      const url = page.url();
 
       const item = {
         link: url,
@@ -139,7 +117,7 @@ class FeedbackAudit extends Audit {
           errorMessage.lastIndexOf('"'),
         );
 
-        this.pagesInError.push({
+        this.wrongItems.push({
           link: url,
           errors_found: errorMessage,
         });
@@ -148,7 +126,6 @@ class FeedbackAudit extends Audit {
       return {
         score: this.score > 0 ? 1 : 0,
       };
-    }
   }
 
   async getType() {
@@ -161,70 +138,12 @@ class FeedbackAudit extends Audit {
       this.globalResults.tolerancePages.pages = [];
     }
     this.globalResults.wrongPages.pages = [];
-    this.globalResults.pagesInError.pages = [];
 
     if (this.score > 0) {
       this.score = 1;
     }
 
-    const results = [];
-
-    if (this.pagesInError.length > 0) {
-      this.globalResults.error = true;
-
-      results.push({
-        result: errorHandling.errorMessage,
-      });
-
-      results.push({});
-
-      results.push({
-        result: errorHandling.errorColumnTitles[0],
-        title_errors_found: errorHandling.errorColumnTitles[1],
-      });
-
-      this.globalResults.pagesInError.message = errorHandling.errorMessage;
-      this.globalResults.pagesInError.headings = [
-        errorHandling.errorColumnTitles[0],
-        errorHandling.errorColumnTitles[1],
-      ];
-
-      for (const item of this.pagesInError) {
-        this.globalResults.pagesInError.pages.push(item);
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
-      }
-    } else {
-      switch (this.score) {
-        case 1:
-          results.push({
-            result: greenResult,
-          });
-          break;
-        case 0.5:
-          results.push({
-            result: yellowResult,
-          });
-          break;
-        case 0:
-          results.push({
-            result: redResult,
-          });
-          break;
-      }
-    }
-
-    results.push({});
-
     if (this.wrongItems.length > 0) {
-      results.push({
-        result: subItem.redResult,
-        title_errors_found: this.titleSubHeadings[0],
-      });
 
       this.globalResults.wrongPages.headings = [
         subItem.redResult,
@@ -233,21 +152,10 @@ class FeedbackAudit extends Audit {
 
       for (const item of this.wrongItems) {
         this.globalResults.wrongPages.pages.push(item);
-
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
       }
     }
 
     if (this.toleranceItems.length > 0) {
-      results.push({
-        result: subItem.yellowResult,
-        title_errors_found: this.titleSubHeadings[0],
-      });
 
       if (this.globalResults.tolerancePages) {
         this.globalResults.tolerancePages.headings = [
@@ -257,22 +165,11 @@ class FeedbackAudit extends Audit {
 
         for (const item of this.toleranceItems) {
           this.globalResults.tolerancePages.pages.push(item);
-          results.push({
-            subItems: {
-              type: "subitems",
-              items: [item],
-            },
-          });
         }
       }
     }
 
     if (this.correctItems.length > 0) {
-      results.push({
-        result: subItem.greenResult,
-        title_errors_found: this.titleSubHeadings[0],
-      });
-
       this.globalResults.correctPages.headings = [
         subItem.greenResult,
         this.titleSubHeadings[0],
@@ -280,21 +177,12 @@ class FeedbackAudit extends Audit {
 
       for (const item of this.correctItems) {
         this.globalResults.correctPages.pages.push(item);
-        results.push({
-          subItems: {
-            type: "subitems",
-            items: [item],
-          },
-        });
       }
-
-      results.push({});
     }
 
-    this.globalResults["score"] = this.score;
-    this.globalResults["details"]["items"] = results;
-    this.globalResults["errorMessage"] =
-      this.pagesInError.length || this.wrongItems.length
+    this.globalResults.score = this.score;
+    this.globalResults.errorMessage =
+      this.globalResults.pagesInError.pages.length || this.wrongItems.length
         ? errorHandling.popupMessage
         : "";
 
