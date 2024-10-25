@@ -2,7 +2,7 @@ import { Gatherer } from "../Gatherer.js";
 import { PageData } from "../../types/crawler-types.js";
 import { Page } from "puppeteer";
 import { getRandomNString, loadPage } from "../../utils/utils.js";
-import {DataElementError} from "../../utils/DataElementError";
+import { DataElementError } from "../../utils/DataElementError";
 
 class servicesPageGatherer extends Gatherer {
   static dataElements: string[] = ["service-type"];
@@ -31,9 +31,9 @@ class servicesPageGatherer extends Gatherer {
       ];
     }
 
-    if(!fetchedUrls.length){
+    if (!fetchedUrls.length) {
       throw new DataElementError(
-          `Non è stato possibile trovare l'attributo [data-element="service-type"]`,
+        `Non è stato possibile trovare l'attributo [data-element="service-type"]`,
       );
     }
 
@@ -53,9 +53,9 @@ class servicesPageGatherer extends Gatherer {
 
     servicesUrls = await getRandomNString(servicesUrls, numberOfPages);
 
-    if(!servicesUrls.length){
+    if (!servicesUrls.length) {
       throw new DataElementError(
-          `Non è stato possibile trovare l'attributo [data-element="service-link"]`,
+        `Non è stato possibile trovare l'attributo [data-element="service-link"]`,
       );
     }
 

@@ -6,7 +6,6 @@ import { initializePuppeteer } from "../../PuppeteerInstance.js";
 import * as ejs from "ejs";
 import { fileURLToPath } from "url";
 import path from "path";
-import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 
 class lighthouseAudit extends Audit {
   auditId = "lighthouse";
@@ -43,69 +42,69 @@ class lighthouseAudit extends Audit {
   };
 
   async auditPage(page: Page) {
-      const browser = await initializePuppeteer();
-      const browserWSEndpoint = browser.wsEndpoint();
-      const { port } = new URL(browserWSEndpoint);
+    const browser = await initializePuppeteer();
+    const browserWSEndpoint = browser.wsEndpoint();
+    const { port } = new URL(browserWSEndpoint);
 
-      const __dirname = path.dirname(fileURLToPath(import.meta.url));
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-      const options: Flags = {
-        logLevel:
-          (process.env["logsLevel"] as "info" | "error" | "silent") || "info",
-        output: ["html", "json"],
-        port: parseInt(port),
-        maxWaitForLoad: parseInt(process.env["requestTimeout"] ?? "300000"),
-        locale: "it",
-        configPath: `${__dirname}/lighthouse-municipality-config-online.js`,
-      };
+    const options: Flags = {
+      logLevel:
+        (process.env["logsLevel"] as "info" | "error" | "silent") || "info",
+      output: ["html", "json"],
+      port: parseInt(port),
+      maxWaitForLoad: parseInt(process.env["requestTimeout"] ?? "300000"),
+      locale: "it",
+      configPath: `${__dirname}/lighthouse-municipality-config-online.js`,
+    };
 
-      const url = page.url();
-      await page.goto(url, { waitUntil: "domcontentloaded" });
+    const url = page.url();
+    await page.goto(url, { waitUntil: "domcontentloaded" });
 
-      const runnerResult: RunnerResult | undefined = await this.runLighthouse(
-        url,
-        options,
-      );
+    const runnerResult: RunnerResult | undefined = await this.runLighthouse(
+      url,
+      options,
+    );
 
-      if (runnerResult) {
-        if (runnerResult.report.length < 2) {
-          throw new Error("Missing JSON or HTML report");
-        }
-
-        const lhrAudits = runnerResult.lhr.audits;
-
-        const performanceScore = runnerResult.lhr.categories.performance.score;
-
-        const metricsResult = [];
-
-        for (const metricId of this.displayMetrics) {
-          if (Object.keys(lhrAudits).includes(metricId)) {
-            const metric = lhrAudits[metricId];
-
-            const score = metric.score;
-            let status = "fail";
-            if (score) {
-              if (score * 100 > 90) {
-                status = "pass";
-              } else if (score * 100 > 50) {
-                status = "average";
-              }
-            }
-
-            metricsResult.push({
-              status: status,
-              title: metric.title,
-              result: metric.displayValue,
-              description: metric.description,
-            });
-          }
-        }
-
-        this.globalResults.score = performanceScore ? performanceScore : 0;
-        this.metricsResult = metricsResult;
-        this.reportHTML = runnerResult.report[0];
-        this.reportJSON = runnerResult.report[1];
+    if (runnerResult) {
+      if (runnerResult.report.length < 2) {
+        throw new Error("Missing JSON or HTML report");
       }
+
+      const lhrAudits = runnerResult.lhr.audits;
+
+      const performanceScore = runnerResult.lhr.categories.performance.score;
+
+      const metricsResult = [];
+
+      for (const metricId of this.displayMetrics) {
+        if (Object.keys(lhrAudits).includes(metricId)) {
+          const metric = lhrAudits[metricId];
+
+          const score = metric.score;
+          let status = "fail";
+          if (score) {
+            if (score * 100 > 90) {
+              status = "pass";
+            } else if (score * 100 > 50) {
+              status = "average";
+            }
+          }
+
+          metricsResult.push({
+            status: status,
+            title: metric.title,
+            result: metric.displayValue,
+            description: metric.description,
+          });
+        }
+      }
+
+      this.globalResults.score = performanceScore ? performanceScore : 0;
+      this.metricsResult = metricsResult;
+      this.reportHTML = runnerResult.report[0];
+      this.reportJSON = runnerResult.report[1];
+    }
 
     return;
   }

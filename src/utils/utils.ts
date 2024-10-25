@@ -26,44 +26,44 @@ const loadPageData = async (
   }
   let data = "";
 
-    const browser = await initializePuppeteer();
-    const page = await browser.newPage();
+  const browser = await initializePuppeteer();
+  const page = await browser.newPage();
 
-    await page.setRequestInterception(true);
-    page.on("request", (request: HTTPRequest) => {
-      if (
-        ["image", "imageset", "media"].indexOf(request.resourceType()) !== -1 ||
-        new URL(request.url()).pathname.endsWith(".pdf")
-      ) {
-        request.abort();
-      } else {
-        request.continue();
-      }
-    });
-
-    await gotoRetry(page, url, errorHandling.gotoRetryTentative);
-
-    const redirectedUrl = await page.evaluate(async () => {
-      return window.location.href;
-    });
-
-    if (redirectUrlCache.get(url) === undefined) {
-      redirectUrlCache.set(url, redirectedUrl);
+  await page.setRequestInterception(true);
+  page.on("request", (request: HTTPRequest) => {
+    if (
+      ["image", "imageset", "media"].indexOf(request.resourceType()) !== -1 ||
+      new URL(request.url()).pathname.endsWith(".pdf")
+    ) {
+      request.abort();
+    } else {
+      request.continue();
     }
+  });
 
-    if (wait) {
-      await page.waitForNetworkIdle();
-    }
+  await gotoRetry(page, url, errorHandling.gotoRetryTentative);
 
-    data = await page.content();
+  const redirectedUrl = await page.evaluate(async () => {
+    return window.location.href;
+  });
 
-    await page.goto("about:blank");
-    await page.close();
+  if (redirectUrlCache.get(url) === undefined) {
+    redirectUrlCache.set(url, redirectedUrl);
+  }
 
-    const c = cheerio.load(data);
-    cache.set(url, c);
-    cache.set(redirectedUrl, c);
-    return c;
+  if (wait) {
+    await page.waitForNetworkIdle();
+  }
+
+  data = await page.content();
+
+  await page.goto("about:blank");
+  await page.close();
+
+  const c = cheerio.load(data);
+  cache.set(url, c);
+  cache.set(redirectedUrl, c);
+  return c;
 };
 
 const loadPage = async (url: string): Promise<Page> => {

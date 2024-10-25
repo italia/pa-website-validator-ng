@@ -96,149 +96,149 @@ class SchoolServiceAudit extends Audit {
       "Voci che non rispettano l'ordine richiesto",
     ];
 
-      const data = await page.content();
-      const $: CheerioAPI = await cheerio.load(data);
+    const data = await page.content();
+    const $: CheerioAPI = await cheerio.load(data);
 
-      const mandatoryVoices = contentTypeItemsIndex;
-      const mandatoryVoicesDataElements = contentTypeItemsIndexDataElements;
-      const mandatoryHeaderVoices = contentTypeItemsHeaders;
-      const mandatoryBodyVoices = contentTypeItemsBody;
-      const mandatoryPlaceInfo = contentTypeItemsLocation;
+    const mandatoryVoices = contentTypeItemsIndex;
+    const mandatoryVoicesDataElements = contentTypeItemsIndexDataElements;
+    const mandatoryHeaderVoices = contentTypeItemsHeaders;
+    const mandatoryBodyVoices = contentTypeItemsBody;
+    const mandatoryPlaceInfo = contentTypeItemsLocation;
 
-      const mandatoryMetadata = contentTypeItemsMetadata;
+    const mandatoryMetadata = contentTypeItemsMetadata;
 
-      const item = {
-        link: "",
-        missing_elements: "",
-        wrong_order_elements: "",
-      };
+    const item = {
+      link: "",
+      missing_elements: "",
+      wrong_order_elements: "",
+    };
 
-      item.link = url;
+    item.link = url;
 
-      let indexElements = await getServicesFromIndex($, mandatoryVoices);
+    let indexElements = await getServicesFromIndex($, mandatoryVoices);
 
-      const mandatoryMenuItems = mandatoryVoices.map(toMenuItem);
-      const orderResult = checkOrder(mandatoryMenuItems, indexElements);
+    const mandatoryMenuItems = mandatoryVoices.map(toMenuItem);
+    const orderResult = checkOrder(mandatoryMenuItems, indexElements);
 
-      //For Contatti we don't check its content
-      const indexElementsWithContent: string[] = ["Contatti"];
+    //For Contatti we don't check its content
+    const indexElementsWithContent: string[] = ["Contatti"];
 
-      for (const mandatoryVoiceDataElement of mandatoryVoicesDataElements.paragraph) {
-        const dataElement = `[data-element="${mandatoryVoiceDataElement.data_element}"]`;
-        const textContent = text($(dataElement));
-        if (textContent.length >= 3) {
-          indexElementsWithContent.push(mandatoryVoiceDataElement.key);
-        }
+    for (const mandatoryVoiceDataElement of mandatoryVoicesDataElements.paragraph) {
+      const dataElement = `[data-element="${mandatoryVoiceDataElement.data_element}"]`;
+      const textContent = text($(dataElement));
+      if (textContent.length >= 3) {
+        indexElementsWithContent.push(mandatoryVoiceDataElement.key);
+      }
+    }
+
+    for (const mandatoryVoiceDataElement of mandatoryVoicesDataElements.exist) {
+      const dataElement = `[data-element="${mandatoryVoiceDataElement.data_element}"]`;
+      const element = $(dataElement);
+      if (element.length > 0) {
+        indexElementsWithContent.push(mandatoryVoiceDataElement.key);
+      }
+    }
+
+    indexElements = indexElements.filter((value) =>
+      indexElementsWithContent.includes(value),
+    );
+
+    let missingMandatoryItems = missingMenuItems(
+      indexElements,
+      mandatoryMenuItems,
+    );
+
+    const title = $('[data-element="service-title"]').text().trim() ?? "";
+    if (title.length < 3) {
+      missingMandatoryItems.push(mandatoryHeaderVoices[0]);
+    }
+
+    const description =
+      $('[data-element="service-description"]').text().trim() ?? "";
+    if (description.length < 3) {
+      missingMandatoryItems.push(mandatoryHeaderVoices[1]);
+    }
+
+    let breadcrumbElements = await getPageElementDataAttribute(
+      $,
+      '[data-element="breadcrumb"]',
+      "li",
+    );
+    breadcrumbElements = breadcrumbElements.map((x) =>
+      x
+        .replaceAll(/[^a-zA-Z0-9 ]/g, "")
+        .trim()
+        .toLowerCase(),
+    );
+
+    if (!checkBreadcrumb(breadcrumbElements)) {
+      missingMandatoryItems.push(mandatoryHeaderVoices[2]);
+    }
+
+    const argumentsTag = await getPageElementDataAttribute(
+      $,
+      '[data-element="topic-list"]',
+    );
+    if (argumentsTag.length <= 0) {
+      missingMandatoryItems.push(mandatoryHeaderVoices[3]);
+    }
+
+    const whatNeeds = $('[data-element="used-for"]').text().trim() ?? "";
+    if (whatNeeds.length < 3) {
+      missingMandatoryItems.push(mandatoryBodyVoices[0]);
+    }
+
+    const responsibleStructure = await getPageElementDataAttribute(
+      $,
+      '[data-element="structures"]',
+      "a",
+    );
+    if (responsibleStructure.length <= 0) {
+      missingMandatoryItems.push(mandatoryBodyVoices[1]);
+    }
+
+    const placeInfo = await getPlaceInfo($, mandatoryPlaceInfo);
+    if (placeInfo.length > 0) {
+      missingMandatoryItems = [...missingMandatoryItems, ...placeInfo];
+    }
+
+    const metadata = $('[data-element="metadata"]').text().trim() ?? "";
+    if (
+      !metadata.toLowerCase().includes(mandatoryMetadata[0].toLowerCase()) ||
+      !metadata.toLowerCase().includes(mandatoryMetadata[1].toLowerCase())
+    ) {
+      missingMandatoryItems.push(mandatoryBodyVoices[2]);
+    }
+
+    item.missing_elements = missingMandatoryItems.join(", ");
+    item.wrong_order_elements = orderResult.elementsNotInSequence.join(", ");
+
+    const missingVoicesAmount = missingMandatoryItems.length;
+    const voicesNotInCorrectOrderAmount =
+      orderResult.numberOfElementsNotInSequence;
+
+    if (missingVoicesAmount > 2 || voicesNotInCorrectOrderAmount > 1) {
+      if (this.score > 0) {
+        this.score = 0;
       }
 
-      for (const mandatoryVoiceDataElement of mandatoryVoicesDataElements.exist) {
-        const dataElement = `[data-element="${mandatoryVoiceDataElement.data_element}"]`;
-        const element = $(dataElement);
-        if (element.length > 0) {
-          indexElementsWithContent.push(mandatoryVoiceDataElement.key);
-        }
+      this.wrongItems.push(item);
+    } else if (
+      (missingVoicesAmount > 0 && missingVoicesAmount <= 2) ||
+      voicesNotInCorrectOrderAmount === 1
+    ) {
+      if (this.score > 0.5) {
+        this.score = 0.5;
       }
 
-      indexElements = indexElements.filter((value) =>
-        indexElementsWithContent.includes(value),
-      );
+      this.toleranceItems.push(item);
+    } else {
+      this.correctItems.push(item);
+    }
 
-      let missingMandatoryItems = missingMenuItems(
-        indexElements,
-        mandatoryMenuItems,
-      );
-
-      const title = $('[data-element="service-title"]').text().trim() ?? "";
-      if (title.length < 3) {
-        missingMandatoryItems.push(mandatoryHeaderVoices[0]);
-      }
-
-      const description =
-        $('[data-element="service-description"]').text().trim() ?? "";
-      if (description.length < 3) {
-        missingMandatoryItems.push(mandatoryHeaderVoices[1]);
-      }
-
-      let breadcrumbElements = await getPageElementDataAttribute(
-        $,
-        '[data-element="breadcrumb"]',
-        "li",
-      );
-      breadcrumbElements = breadcrumbElements.map((x) =>
-        x
-          .replaceAll(/[^a-zA-Z0-9 ]/g, "")
-          .trim()
-          .toLowerCase(),
-      );
-
-      if (!checkBreadcrumb(breadcrumbElements)) {
-        missingMandatoryItems.push(mandatoryHeaderVoices[2]);
-      }
-
-      const argumentsTag = await getPageElementDataAttribute(
-        $,
-        '[data-element="topic-list"]',
-      );
-      if (argumentsTag.length <= 0) {
-        missingMandatoryItems.push(mandatoryHeaderVoices[3]);
-      }
-
-      const whatNeeds = $('[data-element="used-for"]').text().trim() ?? "";
-      if (whatNeeds.length < 3) {
-        missingMandatoryItems.push(mandatoryBodyVoices[0]);
-      }
-
-      const responsibleStructure = await getPageElementDataAttribute(
-        $,
-        '[data-element="structures"]',
-        "a",
-      );
-      if (responsibleStructure.length <= 0) {
-        missingMandatoryItems.push(mandatoryBodyVoices[1]);
-      }
-
-      const placeInfo = await getPlaceInfo($, mandatoryPlaceInfo);
-      if (placeInfo.length > 0) {
-        missingMandatoryItems = [...missingMandatoryItems, ...placeInfo];
-      }
-
-      const metadata = $('[data-element="metadata"]').text().trim() ?? "";
-      if (
-        !metadata.toLowerCase().includes(mandatoryMetadata[0].toLowerCase()) ||
-        !metadata.toLowerCase().includes(mandatoryMetadata[1].toLowerCase())
-      ) {
-        missingMandatoryItems.push(mandatoryBodyVoices[2]);
-      }
-
-      item.missing_elements = missingMandatoryItems.join(", ");
-      item.wrong_order_elements = orderResult.elementsNotInSequence.join(", ");
-
-      const missingVoicesAmount = missingMandatoryItems.length;
-      const voicesNotInCorrectOrderAmount =
-        orderResult.numberOfElementsNotInSequence;
-
-      if (missingVoicesAmount > 2 || voicesNotInCorrectOrderAmount > 1) {
-        if (this.score > 0) {
-          this.score = 0;
-        }
-
-        this.wrongItems.push(item);
-      } else if (
-        (missingVoicesAmount > 0 && missingVoicesAmount <= 2) ||
-        voicesNotInCorrectOrderAmount === 1
-      ) {
-        if (this.score > 0.5) {
-          this.score = 0.5;
-        }
-
-        this.toleranceItems.push(item);
-      } else {
-        this.correctItems.push(item);
-      }
-
-      return {
-        score: this.score,
-      };
+    return {
+      score: this.score,
+    };
   }
 
   async getType() {
@@ -257,7 +257,6 @@ class SchoolServiceAudit extends Audit {
     }
 
     if (this.wrongItems.length > 0) {
-
       this.globalResults.wrongPages.headings = [
         subItem.redResult,
         this.titleSubHeadings[0],
@@ -270,7 +269,6 @@ class SchoolServiceAudit extends Audit {
     }
 
     if (this.toleranceItems.length > 0) {
-
       if (this.globalResults.tolerancePages) {
         this.globalResults.tolerancePages.headings = [
           subItem.yellowResult,
@@ -284,25 +282,27 @@ class SchoolServiceAudit extends Audit {
       }
     }
 
-      if (this.correctItems.length > 0) {
-        this.globalResults.correctPages.headings = [
-          subItem.greenResult,
-          this.titleSubHeadings[0],
-          this.titleSubHeadings[1],
-        ];
+    if (this.correctItems.length > 0) {
+      this.globalResults.correctPages.headings = [
+        subItem.greenResult,
+        this.titleSubHeadings[0],
+        this.titleSubHeadings[1],
+      ];
 
-        for (const item of this.correctItems) {
-          this.globalResults.correctPages.pages.push(item);
-        }
+      for (const item of this.correctItems) {
+        this.globalResults.correctPages.pages.push(item);
       }
-
-      this.globalResults.errorMessage =
-          this.globalResults.pagesInError.pages.length > 0 ? errorHandling.popupMessage : "";
-      this.globalResults.score = this.score;
-      this.globalResults.id = this.auditId;
-
-      return this.globalResults;
     }
+
+    this.globalResults.errorMessage =
+      this.globalResults.pagesInError.pages.length > 0
+        ? errorHandling.popupMessage
+        : "";
+    this.globalResults.score = this.score;
+    this.globalResults.id = this.auditId;
+
+    return this.globalResults;
+  }
 
   async returnGlobalHTML() {
     let status = "fail";

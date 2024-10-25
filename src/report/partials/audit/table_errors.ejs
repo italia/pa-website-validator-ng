@@ -18,11 +18,15 @@
             <tr>
                 <% Object.keys(item).forEach(element => { %>
                     <td>
-                        <% if(element == 'link' && item[element] && !!(new URL(item[element]))) { %>
-                        <a href="<%=item[element]%>"><%= new URL(item[element]).pathname === '/' ? new URL(item[element]) : new URL(item[element]).pathname %></a>
-                        <% }else{ %>
-                        <%=item[element]%>
-                        <%} %>
+                        <% if(element == 'link' && item[element] && item[element].includes('temp')) { %>
+                            Pagina non trovata
+                        <% } else { %>
+                            <% if(element == 'link' && item[element] && !!(new URL(item[element]))) { %>
+                            <a href="<%=item[element]%>"><%= new URL(item[element]).pathname === '/' ? new URL(item[element]) : new URL(item[element]).pathname %></a>
+                            <% }else{ %>
+                            <%=item[element]%>
+                            <%} %>
+                            <%} %>
                 </td>
                     <%}); %>
             </tr>

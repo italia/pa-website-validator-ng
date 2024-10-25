@@ -53,78 +53,76 @@ class SchoolVocabularies extends Audit {
   }
 
   async auditPage(page: Page, url: string) {
+    const item = [
+      {
+        result: this.redResult,
+        element_in_school_model_percentage: "",
+        element_not_in_school_model: "",
+      },
+    ];
 
-      const item = [
+    const argumentsElements = await getArgumentsElements(url, page);
+
+    if (argumentsElements.length <= 0) {
+      this.globalResults.score = 0;
+      this.globalResults.pagesItems.pages = [
         {
-          result: this.redResult,
-          element_in_school_model_percentage: "",
-          element_not_in_school_model: "",
+          result: notExecutedErrorMessage.replace("<LIST>", "all-topics"),
         },
       ];
-
-      const argumentsElements = await getArgumentsElements(url, page);
-
-      if (argumentsElements.length <= 0) {
-        this.globalResults.score = 0;
-        this.globalResults.pagesItems.pages = [
-          {
-            result: notExecutedErrorMessage.replace("<LIST>", "all-topics"),
-          },
-        ];
-        this.globalResults.pagesItems.headings = ["Risultato", "Errori"];
-
-        return {
-          score: 0,
-          details: {
-            type: "table",
-            headings: [{ key: "result", itemType: "text", text: "Risultato" }],
-            summary: "",
-          },
-        };
-      }
-
-      const schoolModelCheck = await areAllElementsInVocabulary(
-        argumentsElements,
-        schoolModelVocabulary,
-      );
-
-      let numberOfElementsNotInScuoleModelPercentage = 100;
-
-      if (argumentsElements.length > 0) {
-        numberOfElementsNotInScuoleModelPercentage =
-          (schoolModelCheck.elementNotIncluded.length /
-            argumentsElements.length) *
-          100;
-      }
-
-      let score = 0;
-      if (schoolModelCheck.allArgumentsInVocabulary) {
-        item[0].result = this.greenResult;
-        score = 1;
-      } else if (numberOfElementsNotInScuoleModelPercentage <= 50) {
-        item[0].result = this.yellowResult;
-        score = 0.5;
-      }
-
-      item[0].element_in_school_model_percentage =
-        (100 - numberOfElementsNotInScuoleModelPercentage)
-          .toFixed(0)
-          .toString() + "%";
-      item[0].element_not_in_school_model =
-        schoolModelCheck.elementNotIncluded.join(", ");
-
-      this.globalResults.score = score;
-      this.globalResults.pagesItems.pages = item;
-      this.globalResults.pagesItems.headings = [
-        "Risultato",
-        "% di argomenti presenti nell'elenco del modello",
-        "Argomenti non presenti nell'elenco del modello",
-      ];
-      this.globalResults.id = this.auditId;
+      this.globalResults.pagesItems.headings = ["Risultato", "Errori"];
 
       return {
-        score: score,
+        score: 0,
+        details: {
+          type: "table",
+          headings: [{ key: "result", itemType: "text", text: "Risultato" }],
+          summary: "",
+        },
       };
+    }
+
+    const schoolModelCheck = await areAllElementsInVocabulary(
+      argumentsElements,
+      schoolModelVocabulary,
+    );
+
+    let numberOfElementsNotInScuoleModelPercentage = 100;
+
+    if (argumentsElements.length > 0) {
+      numberOfElementsNotInScuoleModelPercentage =
+        (schoolModelCheck.elementNotIncluded.length /
+          argumentsElements.length) *
+        100;
+    }
+
+    let score = 0;
+    if (schoolModelCheck.allArgumentsInVocabulary) {
+      item[0].result = this.greenResult;
+      score = 1;
+    } else if (numberOfElementsNotInScuoleModelPercentage <= 50) {
+      item[0].result = this.yellowResult;
+      score = 0.5;
+    }
+
+    item[0].element_in_school_model_percentage =
+      (100 - numberOfElementsNotInScuoleModelPercentage).toFixed(0).toString() +
+      "%";
+    item[0].element_not_in_school_model =
+      schoolModelCheck.elementNotIncluded.join(", ");
+
+    this.globalResults.score = score;
+    this.globalResults.pagesItems.pages = item;
+    this.globalResults.pagesItems.headings = [
+      "Risultato",
+      "% di argomenti presenti nell'elenco del modello",
+      "Argomenti non presenti nell'elenco del modello",
+    ];
+    this.globalResults.id = this.auditId;
+
+    return {
+      score: score,
+    };
   }
 
   async getType() {

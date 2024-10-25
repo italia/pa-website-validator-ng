@@ -6,7 +6,6 @@ import { buildUrl, isInternalUrl } from "../../utils/utils.js";
 import { Page } from "puppeteer";
 
 import { Audit, GlobalResults } from "../Audit.js";
-import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import * as cheerio from "cheerio";
 import { compareVersions } from "compare-versions";
 import axios from "axios";
@@ -45,76 +44,73 @@ class ThemeAudit extends Audit {
   }
 
   async auditPage(page: Page, url: string) {
-      let score = 0.5;
-      const items = [
-        {
-          result: this.yellowResult,
-          cms_name: "Nessuno",
-          theme_version: "N/A",
-        },
-      ];
+    let score = 0.5;
+    const items = [
+      {
+        result: this.yellowResult,
+        cms_name: "Nessuno",
+        theme_version: "N/A",
+      },
+    ];
 
-      const data = await page.content();
-      const $: CheerioAPI = await cheerio.load(data);
+    const data = await page.content();
+    const $: CheerioAPI = await cheerio.load(data);
 
-      const linkTags = $("link");
-      let styleCSSUrl = "";
-      for (const linkTag of linkTags) {
-        if (!linkTag.attribs || !("href" in linkTag.attribs)) {
+    const linkTags = $("link");
+    let styleCSSUrl = "";
+    for (const linkTag of linkTags) {
+      if (!linkTag.attribs || !("href" in linkTag.attribs)) {
+        continue;
+      }
+
+      if (linkTag.attribs.href.includes(".css")) {
+        styleCSSUrl = linkTag.attribs.href;
+        if ((await isInternalUrl(styleCSSUrl)) && !styleCSSUrl.includes(url)) {
+          styleCSSUrl = await buildUrl(url, styleCSSUrl);
+        }
+
+        let CSSContent = "";
+        try {
+          const response = await axios.get(styleCSSUrl);
+          CSSContent = typeof response.data === "string" ? response.data : "";
+        } catch {
+          CSSContent = "";
+        }
+
+        const match = CSSContent.match(cmsThemeRx);
+
+        if (match === null || !match.groups) {
           continue;
         }
 
-        if (linkTag.attribs.href.includes(".css")) {
-          styleCSSUrl = linkTag.attribs.href;
-          if (
-            (await isInternalUrl(styleCSSUrl)) &&
-            !styleCSSUrl.includes(url)
-          ) {
-            styleCSSUrl = await buildUrl(url, styleCSSUrl);
-          }
+        items[0].cms_name = match.groups.name;
+        const version = match.groups.version;
+        items[0].theme_version = version;
 
-          let CSSContent = "";
-          try {
-            const response = await axios.get(styleCSSUrl);
-            CSSContent = typeof response.data === "string" ? response.data : "";
-          } catch {
-            CSSContent = "";
-          }
+        score = 0;
+        items[0].result = this.redResult;
 
-          const match = CSSContent.match(cmsThemeRx);
-
-          if (match === null || !match.groups) {
-            continue;
-          }
-
-          items[0].cms_name = match.groups.name;
-          const version = match.groups.version;
-          items[0].theme_version = version;
-
-          score = 0;
-          items[0].result = this.redResult;
-
-          if (compareVersions(version, this.minVersion) >= 0) {
-            score = 1;
-            items[0].result = this.greenResult;
-          }
-          break;
+        if (compareVersions(version, this.minVersion) >= 0) {
+          score = 1;
+          items[0].result = this.greenResult;
         }
+        break;
       }
+    }
 
-      this.globalResults.score = score;
-      this.globalResults.id = this.auditId;
+    this.globalResults.score = score;
+    this.globalResults.id = this.auditId;
 
-      this.globalResults.pagesItems.pages = items;
-      this.globalResults.pagesItems.headings = [
-        "Risultato",
-        "Tema CMS del modello in uso",
-        "Versione del tema CMS in uso",
-      ];
+    this.globalResults.pagesItems.pages = items;
+    this.globalResults.pagesItems.headings = [
+      "Risultato",
+      "Tema CMS del modello in uso",
+      "Versione del tema CMS in uso",
+    ];
 
-      return {
-        score: score,
-      };
+    return {
+      score: score,
+    };
   }
 
   async getType() {

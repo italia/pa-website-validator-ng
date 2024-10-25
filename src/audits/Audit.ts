@@ -2,8 +2,8 @@ import { Page } from "puppeteer";
 import * as ejs from "ejs";
 import path from "path";
 import { fileURLToPath } from "url";
-import {errorHandling} from "../config/commonAuditsParts.js";
-import {DataElementError} from "../utils/DataElementError.js";
+import { errorHandling } from "../config/commonAuditsParts.js";
+import { DataElementError } from "../utils/DataElementError.js";
 
 export interface GlobalResults {
   score: number;
@@ -95,9 +95,13 @@ abstract class Audit {
 
   constructor() {}
 
-  async returnErrors(error : DataElementError | Error | string, url: string, pageType: string, inError= true) : Promise<Record<string, number> | undefined>{
-
-    if(inError){
+  async returnErrors(
+    error: DataElementError | Error | string,
+    url: string,
+    pageType: string,
+    inError = true,
+  ): Promise<Record<string, number> | undefined> {
+    if (inError) {
       this.showError = true;
     }
     this.globalResults.pagesInError.message = errorHandling.errorMessage;
@@ -108,8 +112,11 @@ abstract class Audit {
 
     this.globalResults.pagesInError.pages.push({
       link: url,
-      result: (error instanceof DataElementError || error instanceof Error) ? error.message : String(error),
-      show: inError
+      result:
+        error instanceof DataElementError || error instanceof Error
+          ? error.message
+          : String(error),
+      show: inError,
     });
 
     this.globalResults.error = this.showError;

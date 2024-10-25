@@ -1,4 +1,4 @@
-import {DataElementError} from "../utils/DataElementError";
+import { DataElementError } from "../utils/DataElementError";
 
 export interface AuditDictionary {
   greenResult: string;

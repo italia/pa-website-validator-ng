@@ -3,13 +3,13 @@
 // @ts-ignore
 import { domains } from "./allowedDomain.js";
 import { urlExists } from "../../utils/utils.js";
-import {errorHandling} from "../../config/commonAuditsParts.js";
+import { errorHandling } from "../../config/commonAuditsParts.js";
 import { Audit, GlobalResultsMulti } from "../Audit.js";
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
 import { fileURLToPath } from "url";
 import path from "path";
-import {DataElementError} from "../../utils/DataElementError.js";
+import { DataElementError } from "../../utils/DataElementError.js";
 
 class DomainAudit extends Audit {
   auditId = "municipality-domain";
@@ -64,9 +64,14 @@ class DomainAudit extends Audit {
     };
   }
 
-  async returnErrors(error : DataElementError | Error | string, url: string, pageType: string, inError = true){
-    if(pageType !== "event"){
-      if(inError){
+  async returnErrors(
+    error: DataElementError | Error | string,
+    url: string,
+    pageType: string,
+    inError = true,
+  ) {
+    if (pageType !== "event") {
+      if (inError) {
         this.showError = true;
       }
 
@@ -78,12 +83,14 @@ class DomainAudit extends Audit {
       ];
       this.globalResults.pagesInError.message = errorHandling.errorMessage;
 
-      this.globalResults.pagesInError.pages.push(
-        {
-          link: url,
-          result: (error instanceof DataElementError || error instanceof Error) ? error.message : String(error),
-          show: inError
-        });
+      this.globalResults.pagesInError.pages.push({
+        link: url,
+        result:
+          error instanceof DataElementError || error instanceof Error
+            ? error.message
+            : String(error),
+        show: inError,
+      });
 
       this.globalResults.error = this.showError;
       this.score = 0;
@@ -95,48 +102,45 @@ class DomainAudit extends Audit {
     }
   }
 
-  async auditPage(
-    page: Page,
-    url: string
-  ) {
+  async auditPage(page: Page, url: string) {
     this.titleSubHeadings = [
       "Dominio utilizzato",
       'Viene usato il sottodominio "comune." seguito da un dominio istituzionale riservato',
       'Sito raggiungibile senza "www."',
     ];
 
-      const hostname = new URL(url).hostname.replace("www.", "");
-      const item = {
-        link: url,
-        domain: hostname,
-        correct_domain: "No",
-        www_access: "",
-      };
+    const hostname = new URL(url).hostname.replace("www.", "");
+    const item = {
+      link: url,
+      domain: hostname,
+      correct_domain: "No",
+      www_access: "",
+    };
 
-      let correctDomain = false;
-      for (const domain of domains) {
-        if (
-          hostname === "comune." + domain ||
-          hostname.endsWith(".comune." + domain)
-        ) {
-          correctDomain = true;
-          item.correct_domain = "Sì";
-          break;
-        }
+    let correctDomain = false;
+    for (const domain of domains) {
+      if (
+        hostname === "comune." + domain ||
+        hostname.endsWith(".comune." + domain)
+      ) {
+        correctDomain = true;
+        item.correct_domain = "Sì";
+        break;
       }
+    }
 
-      const pageWithoutWww = new URL(url);
-      pageWithoutWww.hostname = pageWithoutWww.hostname.replace(/^www\./i, "");
-      const wwwAccess = (await urlExists(url, pageWithoutWww.href)).result;
+    const pageWithoutWww = new URL(url);
+    pageWithoutWww.hostname = pageWithoutWww.hostname.replace(/^www\./i, "");
+    const wwwAccess = (await urlExists(url, pageWithoutWww.href)).result;
 
-      item.www_access = wwwAccess ? "Sì" : "No";
+    item.www_access = wwwAccess ? "Sì" : "No";
 
-      if (correctDomain && wwwAccess) {
-        this.correctItems.push(item);
-      } else {
-        this.wrongItems.push(item);
-        this.score = 0;
-      }
+    if (correctDomain && wwwAccess) {
+      this.correctItems.push(item);
+    } else {
+      this.wrongItems.push(item);
+      this.score = 0;
+    }
 
     return {
       score: this.score,
@@ -152,7 +156,6 @@ class DomainAudit extends Audit {
     this.globalResults.wrongPages.pages = [];
 
     if (this.wrongItems.length > 0) {
-
       this.globalResults.wrongPages.headings = [
         this.subItem.redResult,
         this.titleSubHeadings[0],
@@ -178,8 +181,12 @@ class DomainAudit extends Audit {
       }
     }
 
-    this.globalResults.errorMessage = this.globalResults.pagesInError.pages.length > 0 ? errorHandling.popupMessage : "";
-    this.score = this.globalResults.pagesInError.pages.length > 0 ? 0 : this.score;
+    this.globalResults.errorMessage =
+      this.globalResults.pagesInError.pages.length > 0
+        ? errorHandling.popupMessage
+        : "";
+    this.score =
+      this.globalResults.pagesInError.pages.length > 0 ? 0 : this.score;
     this.globalResults.score = this.score;
     this.globalResults.id = this.auditId;
 

@@ -23,57 +23,56 @@ class servicesGatherer extends Gatherer {
     const secondPageLevel: string = "pager-link";
 
     while (clickButton) {
-        clickButton = await page.evaluate(() => {
-          const button = document.querySelector(
-            '[data-element="load-other-cards"]',
-          ) as HTMLElement;
-          if (!button) {
-            return true;
-          }
-          click = true;
-          button.click();
+      clickButton = await page.evaluate(() => {
+        const button = document.querySelector(
+          '[data-element="load-other-cards"]',
+        ) as HTMLElement;
+        if (!button) {
           return true;
-        });
-
-        if (!clickButton) {
-          continue;
         }
+        click = true;
+        button.click();
+        return true;
+      });
 
-        await Promise.race([
-          setTimeout(10000),
-          page.waitForNetworkIdle({
-            idleTime: 2000,
-          }),
-        ]);
+      if (!clickButton) {
+        continue;
+      }
 
-        await page.waitForNetworkIdle();
+      await Promise.race([
+        setTimeout(10000),
+        page.waitForNetworkIdle({
+          idleTime: 2000,
+        }),
+      ]);
 
-        foundElements = await page.$$(
-          `[data-element="${servicesGatherer.dataElement}"]`,
-        );
+      await page.waitForNetworkIdle();
 
-        const foundElementsHrefs: string[] = await Promise.all(
-          foundElements.map(async (el) => {
-            const href = await el.getProperty("href");
-            const jsonValue = await href.jsonValue();
-            const hrefValue: string = String(jsonValue);
-            return hrefValue;
-          }),
-        );
+      foundElements = await page.$$(
+        `[data-element="${servicesGatherer.dataElement}"]`,
+      );
 
-        pages = foundElementsHrefs;
+      const foundElementsHrefs: string[] = await Promise.all(
+        foundElements.map(async (el) => {
+          const href = await el.getProperty("href");
+          const jsonValue = await href.jsonValue();
+          const hrefValue: string = String(jsonValue);
+          return hrefValue;
+        }),
+      );
 
-        const currentCountPages = foundElementsHrefs.length;
+      pages = foundElementsHrefs;
 
-        process.env["numberOfServicesFound"] = String(currentCountPages);
+      const currentCountPages = foundElementsHrefs.length;
 
-        if (!currentCountPages || currentCountPages === maxCountPages) {
-          clickButton = false;
-          continue;
-        }
+      process.env["numberOfServicesFound"] = String(currentCountPages);
 
-        maxCountPages = currentCountPages;
+      if (!currentCountPages || currentCountPages === maxCountPages) {
+        clickButton = false;
+        continue;
+      }
 
+      maxCountPages = currentCountPages;
     }
 
     const foundSecondLevel = await page.$$(

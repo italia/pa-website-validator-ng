@@ -76,90 +76,84 @@ class SecondLevelAudit extends Audit {
   }
 
   async auditPage(page: Page, url: string) {
-
-      try {
-        this.secondLevelPages = await getSecondLevelPages(url, true);
-      } catch (ex) {
-        if (!(ex instanceof DataElementError)) {
-          throw ex;
-        }
-
-        let errorMessage = ex.message;
-        errorMessage = errorMessage.substring(
-          errorMessage.indexOf('"') + 1,
-          errorMessage.lastIndexOf('"'),
-        );
-
-        this.globalResults.pagesInError.pages.push({
-          link: url,
-          errors_found: errorMessage,
-        });
-
-        this.score = 0;
-
-        return {
-          score: 0,
-        };
+    try {
+      this.secondLevelPages = await getSecondLevelPages(url, true);
+    } catch (ex) {
+      if (!(ex instanceof DataElementError)) {
+        throw ex;
       }
 
-      for (const [key, primaryMenuItem] of Object.entries(primaryMenuItems)) {
-        const item: itemPage = {
-          key: primaryMenuItem.label,
-          pagesInVocabulary: [],
-          pagesNotInVocabulary: [],
-        };
-
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const secondLevelPagesSection = this.secondLevelPages[key];
-        for (const page of secondLevelPagesSection) {
-          if (
-            primaryMenuItem.dictionary.includes(page.linkName.toLowerCase())
-          ) {
-            item.pagesInVocabulary.push(page.linkName);
-          } else {
-            item.pagesNotInVocabulary.push(page.linkName);
-          }
-        }
-
-        this.totalNumberOfTitleFound += secondLevelPagesSection.length;
-
-        this.pagesItems.push(item);
-      }
-
-      const data = await page.content();
-      let $: CheerioAPI = await cheerio.load(data);
-
-      const customPrimaryMenuDataElement = `[data-element="${customPrimaryMenuItemsDataElement}"]`;
-      const customSecondLevelPageHref = await getHREFValuesDataAttribute(
-        $,
-        customPrimaryMenuDataElement,
+      let errorMessage = ex.message;
+      errorMessage = errorMessage.substring(
+        errorMessage.indexOf('"') + 1,
+        errorMessage.lastIndexOf('"'),
       );
 
-      for (let customSecondLevelPageUrl of customSecondLevelPageHref) {
-        if (
-          (await isInternalUrl(customSecondLevelPageUrl)) &&
-          !customSecondLevelPageUrl.includes(url)
-        ) {
-          customSecondLevelPageUrl = await buildUrl(
-            url,
-            customSecondLevelPageUrl,
-          );
+      this.globalResults.pagesInError.pages.push({
+        link: url,
+        errors_found: errorMessage,
+      });
+
+      this.score = 0;
+
+      return {
+        score: 0,
+      };
+    }
+
+    for (const [key, primaryMenuItem] of Object.entries(primaryMenuItems)) {
+      const item: itemPage = {
+        key: primaryMenuItem.label,
+        pagesInVocabulary: [],
+        pagesNotInVocabulary: [],
+      };
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const secondLevelPagesSection = this.secondLevelPages[key];
+      for (const page of secondLevelPagesSection) {
+        if (primaryMenuItem.dictionary.includes(page.linkName.toLowerCase())) {
+          item.pagesInVocabulary.push(page.linkName);
+        } else {
+          item.pagesNotInVocabulary.push(page.linkName);
         }
-
-        $ = await loadPageData(customSecondLevelPageUrl);
-
-        const customSecondaryMenuDataElement = `[data-element="${customSecondaryMenuItemsDataElement}"]`;
-        const customSecondLevelPagesNames = await getPageElementDataAttribute(
-          $,
-          customSecondaryMenuDataElement,
-        );
-
-        this.errorVoices = [
-          ...this.errorVoices,
-          ...customSecondLevelPagesNames,
-        ];
       }
+
+      this.totalNumberOfTitleFound += secondLevelPagesSection.length;
+
+      this.pagesItems.push(item);
+    }
+
+    const data = await page.content();
+    let $: CheerioAPI = await cheerio.load(data);
+
+    const customPrimaryMenuDataElement = `[data-element="${customPrimaryMenuItemsDataElement}"]`;
+    const customSecondLevelPageHref = await getHREFValuesDataAttribute(
+      $,
+      customPrimaryMenuDataElement,
+    );
+
+    for (let customSecondLevelPageUrl of customSecondLevelPageHref) {
+      if (
+        (await isInternalUrl(customSecondLevelPageUrl)) &&
+        !customSecondLevelPageUrl.includes(url)
+      ) {
+        customSecondLevelPageUrl = await buildUrl(
+          url,
+          customSecondLevelPageUrl,
+        );
+      }
+
+      $ = await loadPageData(customSecondLevelPageUrl);
+
+      const customSecondaryMenuDataElement = `[data-element="${customSecondaryMenuItemsDataElement}"]`;
+      const customSecondLevelPagesNames = await getPageElementDataAttribute(
+        $,
+        customSecondaryMenuDataElement,
+      );
+
+      this.errorVoices = [...this.errorVoices, ...customSecondLevelPagesNames];
+    }
 
     return {
       score: this.score,

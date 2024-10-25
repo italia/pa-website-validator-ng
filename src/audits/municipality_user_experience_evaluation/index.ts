@@ -74,50 +74,47 @@ class UserExperienceEvaluationAudit extends Audit {
   async auditPage(page: Page, url: string) {
     this.titleSubHeadings = ["Elementi errati o non trovati"];
 
-      const item = {
-        link: url,
-        errors_found: "",
-      };
-      try {
-        const feedbackComponentAnalysis = await checkFeedbackComponent(
-          url,
-          page,
-        );
+    const item = {
+      link: url,
+      errors_found: "",
+    };
+    try {
+      const feedbackComponentAnalysis = await checkFeedbackComponent(url, page);
 
-        if (this.score > feedbackComponentAnalysis.score) {
-          this.score = feedbackComponentAnalysis.score;
-        }
-
-        if (feedbackComponentAnalysis.errors.length > 0) {
-          item.errors_found = feedbackComponentAnalysis.errors.join("; ");
-        }
-        switch (feedbackComponentAnalysis.score) {
-          case 0:
-            this.wrongItems.push(item);
-            break;
-          case 0.5:
-            this.toleranceItems.push(item);
-            break;
-          case 1:
-            this.correctItems.push(item);
-            break;
-        }
-      } catch (ex) {
-        if (!(ex instanceof Error)) {
-          throw ex;
-        }
-
-        let errorMessage = ex.message;
-        errorMessage = errorMessage.substring(
-          errorMessage.indexOf('"') + 1,
-          errorMessage.lastIndexOf('"'),
-        );
-
-        this.wrongItems.push({
-          link: url,
-          errors_found: errorMessage,
-        });
+      if (this.score > feedbackComponentAnalysis.score) {
+        this.score = feedbackComponentAnalysis.score;
       }
+
+      if (feedbackComponentAnalysis.errors.length > 0) {
+        item.errors_found = feedbackComponentAnalysis.errors.join("; ");
+      }
+      switch (feedbackComponentAnalysis.score) {
+        case 0:
+          this.wrongItems.push(item);
+          break;
+        case 0.5:
+          this.toleranceItems.push(item);
+          break;
+        case 1:
+          this.correctItems.push(item);
+          break;
+      }
+    } catch (ex) {
+      if (!(ex instanceof Error)) {
+        throw ex;
+      }
+
+      let errorMessage = ex.message;
+      errorMessage = errorMessage.substring(
+        errorMessage.indexOf('"') + 1,
+        errorMessage.lastIndexOf('"'),
+      );
+
+      this.wrongItems.push({
+        link: url,
+        errors_found: errorMessage,
+      });
+    }
 
     return {
       score: this.score > 0 ? 1 : 0,
@@ -143,7 +140,6 @@ class UserExperienceEvaluationAudit extends Audit {
     }
 
     if (this.toleranceItems.length > 0) {
-
       if (this.globalResults.tolerancePages) {
         this.globalResults.tolerancePages.headings = [
           subItem.yellowResult,
@@ -157,7 +153,6 @@ class UserExperienceEvaluationAudit extends Audit {
     }
 
     if (this.correctItems.length > 0) {
-
       this.globalResults.correctPages.headings = [
         subItem.greenResult,
         this.titleSubHeadings[0],
@@ -166,11 +161,12 @@ class UserExperienceEvaluationAudit extends Audit {
       for (const item of this.correctItems) {
         this.globalResults.correctPages.pages.push(item);
       }
-
     }
 
     this.globalResults.errorMessage =
-      this.globalResults.pagesInError.pages.length > 0 ? errorHandling.popupMessage : "";
+      this.globalResults.pagesInError.pages.length > 0
+        ? errorHandling.popupMessage
+        : "";
     this.globalResults.score = this.score;
 
     return this.globalResults;

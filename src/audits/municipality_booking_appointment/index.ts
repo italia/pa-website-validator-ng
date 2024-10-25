@@ -67,106 +67,101 @@ class BookingAppointment extends Audit {
     };
   }
 
-  async auditPage(
-    page: Page,
-    url: string,
-    pageType?: string | null,
-  ) {
+  async auditPage(page: Page, url: string, pageType?: string | null) {
     this.titleSubHeadings = [
       "Componente individuato",
       'Nella sezione "Accedi al servizio" della scheda servizio è presente il pulsante di prenotazione appuntamento',
     ];
 
-      if (pageType && pageType === "services-page") {
-        const itemFirst = {
-          link: url,
-          component_exist: "Sì",
-          in_page_url: "Non si applica",
-        };
-
-        this.correctItems.push(itemFirst);
-      }
-
-      try {
-        const bookingAppointmentPage = await getPages(
-          url,
-          [
-            {
-              type: "booking_appointment",
-              numberOfPages: 1,
-            },
-          ],
-          false,
-          page,
-        );
-
-        if (bookingAppointmentPage.length === 0) {
-          throw new DataElementError("appointment-booking");
-        }
-      } catch (ex) {
-        if (!(ex instanceof DataElementError)) {
-          throw ex;
-        }
-        this.score = 0;
-
-        return {
-          score: 0,
-        };
-      }
-
-      let $: CheerioAPI = cheerio.load("<html><body></body></html>");
-
-      try {
-        const data = await page.content();
-        $ = await cheerio.load(data);
-      } catch (ex) {
-        if (!(ex instanceof Error)) {
-          throw ex;
-        }
-        let errorMessage = ex.message;
-        errorMessage = errorMessage.substring(
-          errorMessage.indexOf('"') + 1,
-          errorMessage.lastIndexOf('"'),
-        );
-        this.wrongItems.push({
-          link: url,
-          component_exist: errorMessage,
-        });
-      }
-
-      const item = {
+    if (pageType && pageType === "services-page") {
+      const itemFirst = {
         link: url,
         component_exist: "Sì",
-        in_page_url: "No",
+        in_page_url: "Non si applica",
       };
 
-      const bookingAppointmentServicePage = await getPrimaryPageUrl(
-          url,
-        "appointment-booking",
+      this.correctItems.push(itemFirst);
+    }
+
+    try {
+      const bookingAppointmentPage = await getPages(
+        url,
+        [
+          {
+            type: "booking_appointment",
+            numberOfPages: 1,
+          },
+        ],
+        false,
+        page,
       );
 
-      if (bookingAppointmentServicePage === "") {
-        item.component_exist = "No";
+      if (bookingAppointmentPage.length === 0) {
+        throw new DataElementError("appointment-booking");
       }
-
-      const inPageButton = $('[data-element="service-booking-access"]');
-      if (inPageButton.length > 0) {
-        item.in_page_url = "Sì";
+    } catch (ex) {
+      if (!(ex instanceof DataElementError)) {
+        throw ex;
       }
+      this.score = 0;
 
-      if (bookingAppointmentServicePage === "") {
-        this.score = 0;
-        this.wrongItems.push(item);
+      return {
+        score: 0,
+      };
+    }
+
+    let $: CheerioAPI = cheerio.load("<html><body></body></html>");
+
+    try {
+      const data = await page.content();
+      $ = await cheerio.load(data);
+    } catch (ex) {
+      if (!(ex instanceof Error)) {
+        throw ex;
       }
+      let errorMessage = ex.message;
+      errorMessage = errorMessage.substring(
+        errorMessage.indexOf('"') + 1,
+        errorMessage.lastIndexOf('"'),
+      );
+      this.wrongItems.push({
+        link: url,
+        component_exist: errorMessage,
+      });
+    }
 
-      this.correctItems.push(item);
+    const item = {
+      link: url,
+      component_exist: "Sì",
+      in_page_url: "No",
+    };
+
+    const bookingAppointmentServicePage = await getPrimaryPageUrl(
+      url,
+      "appointment-booking",
+    );
+
+    if (bookingAppointmentServicePage === "") {
+      item.component_exist = "No";
+    }
+
+    const inPageButton = $('[data-element="service-booking-access"]');
+    if (inPageButton.length > 0) {
+      item.in_page_url = "Sì";
+    }
+
+    if (bookingAppointmentServicePage === "") {
+      this.score = 0;
+      this.wrongItems.push(item);
+    }
+
+    this.correctItems.push(item);
   }
   async getType() {
     return this.auditId;
   }
 
   async returnGlobal() {
-
     this.globalResults.correctPages.pages = [];
     if (this.globalResults.tolerancePages) {
       this.globalResults.tolerancePages.pages = [];
@@ -186,7 +181,6 @@ class BookingAppointment extends Audit {
     }
 
     if (this.correctItems.length > 0) {
-
       this.globalResults.correctPages.headings = [
         this.subItem.greenResult,
         this.titleSubHeadings[0],
@@ -200,7 +194,9 @@ class BookingAppointment extends Audit {
 
     this.globalResults.score = this.score;
     this.globalResults.errorMessage =
-      this.globalResults.pagesInError.pages.length > 0 ? errorHandling.popupMessage : "";
+      this.globalResults.pagesInError.pages.length > 0
+        ? errorHandling.popupMessage
+        : "";
 
     return this.globalResults;
   }

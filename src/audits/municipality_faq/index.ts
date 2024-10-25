@@ -5,7 +5,6 @@ import { CheerioAPI } from "cheerio";
 import { urlExists } from "../../utils/utils.js";
 import { Audit, GlobalResults } from "../Audit.js";
 import { Page } from "puppeteer";
-import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import * as ejs from "ejs";
 import { fileURLToPath } from "url";
 import path from "path";
@@ -55,69 +54,68 @@ class FaqAudit extends Audit {
   }
 
   async auditPage(page: Page, url: string) {
+    this.globalResults.pagesItems.headings = [
+      "Risultato",
+      "Testo del link",
+      "Pagina di destinazione",
+      "Pagina esistente",
+    ];
 
-      this.globalResults.pagesItems.headings = [
-        "Risultato",
-        "Testo del link",
-        "Pagina di destinazione",
-        "Pagina esistente",
-      ];
+    const items = [
+      {
+        result: redResult,
+        link_name: "",
+        link: "",
+        existing_page: "No",
+      },
+    ];
 
-      const items = [
-        {
-          result: redResult,
-          link_name: "",
-          link: "",
-          existing_page: "No",
-        },
-      ];
+    const data = await page.content();
+    const $: CheerioAPI = await cheerio.load(data);
+    const privacyPolicyElement = $("footer").find('[data-element="faq"]');
+    const elementObj = $(privacyPolicyElement).attr();
 
-      const data = await page.content();
-      const $: CheerioAPI = await cheerio.load(data);
-      const privacyPolicyElement = $("footer").find('[data-element="faq"]');
-      const elementObj = $(privacyPolicyElement).attr();
+    const label = privacyPolicyElement.text().trim().toLowerCase() ?? "";
+    items[0].link_name = label;
+    items[0].link = elementObj?.href ?? "";
 
-      const label = privacyPolicyElement.text().trim().toLowerCase() ?? "";
-      items[0].link_name = label;
-      items[0].link = elementObj?.href ?? "";
+    if (
+      elementObj &&
+      "href" in elementObj &&
+      elementObj.href !== "#" &&
+      elementObj.href !== ""
+    ) {
+      const checkUrl = await urlExists(url, elementObj.href);
+      items[0].link = checkUrl.inspectedUrl;
 
-      if (
-        elementObj &&
-        "href" in elementObj &&
-        elementObj.href !== "#" &&
-        elementObj.href !== ""
-      ) {
-        const checkUrl = await urlExists(url, elementObj.href);
-        items[0].link = checkUrl.inspectedUrl;
-
-        if (!checkUrl.result) {
-          this.globalResults.pagesItems.pages = items;
-
-          this.globalResults.score = 0;
-          this.score = 0;
-
-          return {
-            score: 0,
-          };
-        }
-
-        items[0].existing_page = "Sì";
-
-        if (!label.includes("faq") && !label.includes("domande frequenti")) {
-          items[0].result = yellowResult;
-          this.globalResults.pagesItems.pages = items;
-          this.globalResults.score = 0.5;
-          this.score = 0.5;
-          return {
-            score: 0.5,
-          };
-        }
-
-        items[0].result = greenResult;
+      if (!checkUrl.result) {
         this.globalResults.pagesItems.pages = items;
-        this.globalResults.score = 1;
-        this.score = 1;
+
+        this.globalResults.score = 0;
+        this.score = 0;
+
+        return {
+          score: 0,
+        };
       }
+
+      items[0].existing_page = "Sì";
+
+      if (!label.includes("faq") && !label.includes("domande frequenti")) {
+        items[0].result = yellowResult;
+        this.globalResults.pagesItems.pages = items;
+        this.globalResults.score = 0.5;
+        this.score = 0.5;
+        return {
+          score: 0.5,
+        };
+      }
+
+      items[0].result = greenResult;
+      this.globalResults.pagesItems.pages = items;
+      this.globalResults.score = 1;
+      this.score = 1;
+    }
 
     return {
       score: this.score,

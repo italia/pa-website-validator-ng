@@ -6,7 +6,7 @@ import PageManager from "./PageManager.js";
 import scan from "./Scan.js";
 import { Page } from "puppeteer";
 import { loadPage } from "./utils/utils.js";
-import {DataElementError} from "./utils/DataElementError.js";
+import { DataElementError } from "./utils/DataElementError.js";
 
 export const logLevels = {
   display_none: "silent",
@@ -105,15 +105,11 @@ async function run(
         }
       }
 
-      if(navigatingError){
-        await audit.returnErrors(navigatingError, website, 'homepage')
-      }else{
+      if (navigatingError) {
+        await audit.returnErrors(navigatingError, website, "homepage");
+      } else {
         if (page) {
-          await audit.auditPage(
-              page,
-              website,
-              "homepage",
-          );
+          await audit.auditPage(page, website, "homepage");
 
           await page.close();
         }

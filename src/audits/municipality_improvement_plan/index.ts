@@ -39,19 +39,18 @@ class ImprovementPlanAudit extends Audit {
   }
 
   async auditPage(page: Page) {
+    const data = await page.content();
+    const $: CheerioAPI = await cheerio.load(data);
 
-      const data = await page.content();
-      const $: CheerioAPI = await cheerio.load(data);
+    const footer = $("footer").text();
 
-      const footer = $("footer").text();
-
-      if (footer.match(improvementPlan)) {
-        this.score = 1;
-        return { score: 1 };
-      } else {
-        this.score = 0.5;
-        return { score: 0.5 };
-      }
+    if (footer.match(improvementPlan)) {
+      this.score = 1;
+      return { score: 1 };
+    } else {
+      this.score = 0.5;
+      return { score: 0.5 };
+    }
   }
 
   async getType() {

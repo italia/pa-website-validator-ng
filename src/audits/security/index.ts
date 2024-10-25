@@ -4,7 +4,6 @@ import * as sslCertificate from "get-ssl-certificate";
 import { Page } from "puppeteer";
 
 import { Audit, GlobalResults } from "../Audit.js";
-import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import { allowedCiphers } from "./allowedCiphers.js";
 import https from "https";
 import { TLSSocket } from "tls";
@@ -54,147 +53,144 @@ class SecurityAudit extends Audit {
   }
 
   async auditPage(page: Page, url: string) {
+    const greenResult = this.greenResult.replace("[url]", url);
+    const redResult = this.redResult.replace("[url]", url);
 
-      const greenResult = this.greenResult.replace("[url]", url);
-      const redResult = this.redResult.replace("[url]", url);
-
-      const item = [
-        {
-          result: redResult,
-          protocol: "",
-          certificate_validation: "",
-          tls_version: "",
-          cipher_suite: "",
-          redirect_to_https: "",
-        },
-      ];
-      let score = 0;
-
-      const protocol = await getProtocol(url);
-      if (protocol !== "https") {
-        item[0].protocol = protocol;
-        item[0].result = redResult + errorLogging[0];
-        return {
-          score: 0,
-          details: {
-            items: item,
-            type: "table",
-            summary: "",
-          },
-        };
-      }
-
-      let certificate = {
-        valid: false,
-        valid_from: "",
-        valid_to: "",
-      };
-      let tls = {
-        valid: false,
+    const item = [
+      {
+        result: redResult,
+        protocol: "",
+        certificate_validation: "",
         tls_version: "",
-      };
-      let cipherSuite = {
-        valid: false,
-        version: "",
-      };
+        cipher_suite: "",
+        redirect_to_https: "",
+      },
+    ];
+    let score = 0;
 
-      try {
-        certificate = await checkCertificateValidation(url);
-        tls = await checkTLSVersion(url);
-        cipherSuite = await checkCipherSuite(url);
-      } catch {
-        item[0].protocol = protocol;
-        item[0].result = redResult + " Certificato non trovato";
-        return {
-          score: 0,
-          details: {
-            items: item,
-            type: "table",
-            summary: "",
-          },
-        };
-      }
-
+    const protocol = await getProtocol(url);
+    if (protocol !== "https") {
       item[0].protocol = protocol;
-
-      if (certificate.valid_from && certificate.valid_to) {
-        const validFrom = new Date(
-          (certificate.valid_from as string).toString(),
-        );
-        const validTo = new Date((certificate.valid_to as string).toString());
-        item[0].certificate_validation =
-          "Dal " +
-          validFrom.getDate() +
-          "/" +
-          validFrom.getMonth() +
-          "/" +
-          validFrom.getFullYear() +
-          " al " +
-          validTo.getDate() +
-          "/" +
-          validTo.getMonth() +
-          "/" +
-          validTo.getFullYear();
-      }
-
-      if (tls.tls_version === "TLSv1.2") {
-        item[0].tls_version = "1.2";
-      } else if (tls.tls_version === "TLSv1.3") {
-        item[0].tls_version = "1.3";
-      } else {
-        item[0].tls_version = "";
-      }
-
-      item[0].cipher_suite = cipherSuite.version;
-
-      if (certificate.valid && tls.valid && cipherSuite.valid) {
-        score = 1;
-        item[0].result = greenResult;
-      } else {
-        let errors: string[] = [];
-        if (!certificate.valid) {
-          errors = [...errors, errorLogging[1]];
-        }
-
-        if (!tls.valid) {
-          errors = [...errors, errorLogging[2]];
-        }
-
-        if (tls.tls_version === allowedTlsVersions[0] && !cipherSuite.valid) {
-          errors = [...errors, errorLogging[3]];
-        }
-
-        if (tls.tls_version === allowedTlsVersions[1] && !cipherSuite.valid) {
-          errors = [...errors, errorLogging[4]];
-        }
-
-        item[0].result = redResult + errors.join(", ");
-      }
-
-      const protocolInPage = await page.evaluate(async function () {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore
-        return window.location.protocol || null;
-      });
-
-      item[0].redirect_to_https = protocolInPage === "https:" ? "Sì" : "No";
-
-      this.globalResults.score = score;
-      this.globalResults.id = this.auditId;
-
-      this.globalResults.pagesItems.pages = item;
-      this.globalResults.pagesItems.headings = [
-        "Risultato",
-        "Protocollo usato dal dominio",
-        "Validità del certificato",
-        "Versione TLS",
-        "Suite di cifratura",
-        "La pagina effettua redirect da http a https",
-      ];
-
+      item[0].result = redResult + errorLogging[0];
       return {
-        score: score,
+        score: 0,
+        details: {
+          items: item,
+          type: "table",
+          summary: "",
+        },
       };
+    }
+
+    let certificate = {
+      valid: false,
+      valid_from: "",
+      valid_to: "",
+    };
+    let tls = {
+      valid: false,
+      tls_version: "",
+    };
+    let cipherSuite = {
+      valid: false,
+      version: "",
+    };
+
+    try {
+      certificate = await checkCertificateValidation(url);
+      tls = await checkTLSVersion(url);
+      cipherSuite = await checkCipherSuite(url);
+    } catch {
+      item[0].protocol = protocol;
+      item[0].result = redResult + " Certificato non trovato";
+      return {
+        score: 0,
+        details: {
+          items: item,
+          type: "table",
+          summary: "",
+        },
+      };
+    }
+
+    item[0].protocol = protocol;
+
+    if (certificate.valid_from && certificate.valid_to) {
+      const validFrom = new Date((certificate.valid_from as string).toString());
+      const validTo = new Date((certificate.valid_to as string).toString());
+      item[0].certificate_validation =
+        "Dal " +
+        validFrom.getDate() +
+        "/" +
+        validFrom.getMonth() +
+        "/" +
+        validFrom.getFullYear() +
+        " al " +
+        validTo.getDate() +
+        "/" +
+        validTo.getMonth() +
+        "/" +
+        validTo.getFullYear();
+    }
+
+    if (tls.tls_version === "TLSv1.2") {
+      item[0].tls_version = "1.2";
+    } else if (tls.tls_version === "TLSv1.3") {
+      item[0].tls_version = "1.3";
+    } else {
+      item[0].tls_version = "";
+    }
+
+    item[0].cipher_suite = cipherSuite.version;
+
+    if (certificate.valid && tls.valid && cipherSuite.valid) {
+      score = 1;
+      item[0].result = greenResult;
+    } else {
+      let errors: string[] = [];
+      if (!certificate.valid) {
+        errors = [...errors, errorLogging[1]];
+      }
+
+      if (!tls.valid) {
+        errors = [...errors, errorLogging[2]];
+      }
+
+      if (tls.tls_version === allowedTlsVersions[0] && !cipherSuite.valid) {
+        errors = [...errors, errorLogging[3]];
+      }
+
+      if (tls.tls_version === allowedTlsVersions[1] && !cipherSuite.valid) {
+        errors = [...errors, errorLogging[4]];
+      }
+
+      item[0].result = redResult + errors.join(", ");
+    }
+
+    const protocolInPage = await page.evaluate(async function () {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore
+      return window.location.protocol || null;
+    });
+
+    item[0].redirect_to_https = protocolInPage === "https:" ? "Sì" : "No";
+
+    this.globalResults.score = score;
+    this.globalResults.id = this.auditId;
+
+    this.globalResults.pagesItems.pages = item;
+    this.globalResults.pagesItems.headings = [
+      "Risultato",
+      "Protocollo usato dal dominio",
+      "Validità del certificato",
+      "Versione TLS",
+      "Suite di cifratura",
+      "La pagina effettua redirect da http a https",
+    ];
+
+    return {
+      score: score,
+    };
   }
 
   async getType() {

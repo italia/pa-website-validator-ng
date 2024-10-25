@@ -1,6 +1,6 @@
 import { EventEmitter } from "events";
 import { PageData } from "./types/crawler-types.js";
-import {DataElementError} from "./utils/DataElementError";
+import { DataElementError } from "./utils/DataElementError";
 
 interface Results {
   audits: Record<string, unknown>;
@@ -91,17 +91,24 @@ class PageManager {
   }
 
   async getGlobalResults() {
-    const results = {...this.globalResult};
-    return Object.keys(results.audits).map(key => {
-      if (typeof results.audits[key] === 'object' && results.audits[key] !== null) {
-        const audit = results.audits[key] as { score: number | null, id: string, title: string };
+    const results = { ...this.globalResult };
+    return Object.keys(results.audits).map((key) => {
+      if (
+        typeof results.audits[key] === "object" &&
+        results.audits[key] !== null
+      ) {
+        const audit = results.audits[key] as {
+          score: number | null;
+          id: string;
+          title: string;
+        };
         return {
           id: audit.id,
           title: audit.title,
           score: audit.score,
-        }
+        };
       }
-    })
+    });
   }
 
   onPagesAdded(callback: (pageData: PageData) => void): void {
@@ -178,10 +185,10 @@ class PageManager {
   hasRemainingPages() {
     const remainingPages = this.pagesArray.find(
       (el) =>
-        (!el.audited ||
+        !el.audited ||
         !el.gathered ||
         el.temporaryGatherer ||
-        el.temporaryAudit)
+        el.temporaryAudit,
     );
     return remainingPages != undefined;
   }

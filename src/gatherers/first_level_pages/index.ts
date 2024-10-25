@@ -28,7 +28,7 @@ class firstLevelPagesGatherer extends Gatherer {
 
     fetchedUrls = await getRandomFirstLevelPagesUrl(url, numberOfPages, page);
 
-    if(!fetchedUrls.length){
+    if (!fetchedUrls.length) {
       throw new DataElementError(
         `Non è stato possibile trovare l'attributo [data-element="custom-submenu"]`,
       );

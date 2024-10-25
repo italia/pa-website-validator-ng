@@ -69,60 +69,60 @@ class ContactAssistencyAudit extends Audit {
       "Il componente è presente in pagina",
     ];
 
-      let $: CheerioAPI = cheerio.load("<html><body></body></html>");
+    let $: CheerioAPI = cheerio.load("<html><body></body></html>");
 
-      try {
-        const data = await page.content();
-        $ = await cheerio.load(data);
-      } catch (ex) {
-        if (!(ex instanceof Error)) {
-          throw ex;
-        }
-
-        let errorMessage = ex.message;
-        errorMessage = errorMessage.substring(
-          errorMessage.indexOf('"') + 1,
-          errorMessage.lastIndexOf('"'),
-        );
-
-        this.wrongItems.push({
-          link: url,
-          in_index: errorMessage,
-        });
+    try {
+      const data = await page.content();
+      $ = await cheerio.load(data);
+    } catch (ex) {
+      if (!(ex instanceof Error)) {
+        throw ex;
       }
 
-      const item = {
-        link: url,
-        in_index: "No",
-        component_exists: "No",
-      };
-
-      const indexList = await getPageElementDataAttribute(
-        $,
-        '[data-element="page-index"]',
-        "> li > a",
+      let errorMessage = ex.message;
+      errorMessage = errorMessage.substring(
+        errorMessage.indexOf('"') + 1,
+        errorMessage.lastIndexOf('"'),
       );
 
-      if (indexList.includes("Contatti")) {
-        item.in_index = "Sì";
-      }
+      this.wrongItems.push({
+        link: url,
+        in_index: errorMessage,
+      });
+    }
 
-      const contactComponent = $('[data-element="service-area"]');
+    const item = {
+      link: url,
+      in_index: "No",
+      component_exists: "No",
+    };
 
-      if (contactComponent.length > 0) {
-        item.component_exists = "Sì";
-      }
+    const indexList = await getPageElementDataAttribute(
+      $,
+      '[data-element="page-index"]',
+      "> li > a",
+    );
 
-      let contactsPresent = false;
-      if (indexList.includes("Contatti") && contactComponent.length > 0) {
-        contactsPresent = true;
-      }
+    if (indexList.includes("Contatti")) {
+      item.in_index = "Sì";
+    }
 
-      if (!contactsPresent) {
-        this.score = 0;
-        this.wrongItems.push(item);
-      }
-      this.correctItems.push(item);
+    const contactComponent = $('[data-element="service-area"]');
+
+    if (contactComponent.length > 0) {
+      item.component_exists = "Sì";
+    }
+
+    let contactsPresent = false;
+    if (indexList.includes("Contatti") && contactComponent.length > 0) {
+      contactsPresent = true;
+    }
+
+    if (!contactsPresent) {
+      this.score = 0;
+      this.wrongItems.push(item);
+    }
+    this.correctItems.push(item);
 
     return {
       score: this.score,
@@ -134,7 +134,6 @@ class ContactAssistencyAudit extends Audit {
     this.globalResults.wrongPages.pages = [];
 
     if (this.wrongItems.length > 0) {
-
       this.globalResults.wrongPages.headings = [
         subItem.redResult,
         this.titleSubHeadings[0],
@@ -147,7 +146,6 @@ class ContactAssistencyAudit extends Audit {
     }
 
     if (this.correctItems.length > 0) {
-
       this.globalResults.correctPages.headings = [
         subItem.greenResult,
         this.titleSubHeadings[0],
@@ -161,7 +159,9 @@ class ContactAssistencyAudit extends Audit {
 
     this.globalResults.score = this.score;
     this.globalResults.errorMessage =
-      this.globalResults.pagesInError.pages.length > 0 ? errorHandling.popupMessage : "";
+      this.globalResults.pagesInError.pages.length > 0
+        ? errorHandling.popupMessage
+        : "";
 
     return this.globalResults;
   }

@@ -2,7 +2,7 @@ import { Gatherer } from "../Gatherer.js";
 import { PageData } from "../../types/crawler-types.js";
 import { Page } from "puppeteer";
 import { getRandomNString } from "../../utils/utils.js";
-import {DataElementError} from "../../utils/DataElementError";
+import { DataElementError } from "../../utils/DataElementError";
 
 class firstLevelPageGatherer extends Gatherer {
   static dataElements: string[] = ["overview"];
@@ -31,9 +31,9 @@ class firstLevelPageGatherer extends Gatherer {
 
     fetchedUrls = await getRandomNString(fetchedUrls, numberOfPages);
 
-    if(!fetchedUrls.length){
+    if (!fetchedUrls.length) {
       throw new DataElementError(
-          `Non è stato possibile trovare l'attributo [data-element="overview"]`,
+        `Non è stato possibile trovare l'attributo [data-element="overview"]`,
       );
     }
 

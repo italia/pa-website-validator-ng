@@ -60,119 +60,118 @@ class SchoolBootstrap extends Audit {
   }
 
   async auditPage(page: Page, url: string) {
-      this.titleSubHeadings = [
-        "La libreria Bootstrap Italia è presente",
-        "Versione in uso",
-        "Classi CSS trovate",
-      ];
+    this.titleSubHeadings = [
+      "La libreria Bootstrap Italia è presente",
+      "Versione in uso",
+      "Classi CSS trovate",
+    ];
 
-      const subResults = ["Nessuna", "Almeno una"];
+    const subResults = ["Nessuna", "Almeno una"];
 
-      let singleResult = 0;
-      const item = {
-        link: url,
-        library_name: "No",
-        library_version: "",
-        classes_found: "",
-      };
+    let singleResult = 0;
+    const item = {
+      link: url,
+      library_name: "No",
+      library_version: "",
+      classes_found: "",
+    };
 
-      const foundClasses = [];
-      try {
-        let bootstrapItaliaVariableVersion = (await page.evaluate(
-          async function () {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            //@ts-ignore
-            return window.BOOTSTRAP_ITALIA_VERSION || null;
-          },
-        )) as string | null;
+    const foundClasses = [];
+    try {
+      let bootstrapItaliaVariableVersion = (await page.evaluate(
+        async function () {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          //@ts-ignore
+          return window.BOOTSTRAP_ITALIA_VERSION || null;
+        },
+      )) as string | null;
 
-        if (bootstrapItaliaVariableVersion !== null)
-          bootstrapItaliaVariableVersion = bootstrapItaliaVariableVersion
-            .trim()
-            .replaceAll('"', "");
+      if (bootstrapItaliaVariableVersion !== null)
+        bootstrapItaliaVariableVersion = bootstrapItaliaVariableVersion
+          .trim()
+          .replaceAll('"', "");
 
-        let bootstrapItaliaSelectorVariableVersion = (await page.evaluate(
-          async function () {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            //@ts-ignore
-            return (
-              getComputedStyle(document.body).getPropertyValue(
-                "--bootstrap-italia-version",
-              ) || null
-            );
-          },
-        )) as string | null;
+      let bootstrapItaliaSelectorVariableVersion = (await page.evaluate(
+        async function () {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          //@ts-ignore
+          return (
+            getComputedStyle(document.body).getPropertyValue(
+              "--bootstrap-italia-version",
+            ) || null
+          );
+        },
+      )) as string | null;
 
-        if (bootstrapItaliaSelectorVariableVersion !== null)
-          bootstrapItaliaSelectorVariableVersion =
-            bootstrapItaliaSelectorVariableVersion.trim().replaceAll('"', "");
+      if (bootstrapItaliaSelectorVariableVersion !== null)
+        bootstrapItaliaSelectorVariableVersion =
+          bootstrapItaliaSelectorVariableVersion.trim().replaceAll('"', "");
+
+      if (
+        bootstrapItaliaVariableVersion !== null &&
+        bootstrapItaliaVariableVersion
+      ) {
+        item.library_version = bootstrapItaliaVariableVersion;
+        item.library_name = "Sì";
+
+        if (compareVersions(bootstrapItaliaVariableVersion, "1.6.0") >= 0) {
+          singleResult = 1;
+        }
+      } else if (
+        bootstrapItaliaSelectorVariableVersion !== null &&
+        bootstrapItaliaSelectorVariableVersion
+      ) {
+        item.library_version = bootstrapItaliaSelectorVariableVersion;
+        item.library_name = "Sì";
 
         if (
-          bootstrapItaliaVariableVersion !== null &&
-          bootstrapItaliaVariableVersion
+          compareVersions(bootstrapItaliaSelectorVariableVersion, "1.6.0") >= 0
         ) {
-          item.library_version = bootstrapItaliaVariableVersion;
-          item.library_name = "Sì";
-
-          if (compareVersions(bootstrapItaliaVariableVersion, "1.6.0") >= 0) {
-            singleResult = 1;
-          }
-        } else if (
-          bootstrapItaliaSelectorVariableVersion !== null &&
-          bootstrapItaliaSelectorVariableVersion
-        ) {
-          item.library_version = bootstrapItaliaSelectorVariableVersion;
-          item.library_name = "Sì";
-
-          if (
-            compareVersions(bootstrapItaliaSelectorVariableVersion, "1.6.0") >=
-            0
-          ) {
-            singleResult = 1;
-          }
+          singleResult = 1;
         }
-
-        for (const cssClass of cssClasses) {
-          const elementCount = await page.evaluate(async (cssClass) => {
-            const cssElements = document.querySelectorAll(`.${cssClass}`);
-            return cssElements.length;
-          }, cssClass);
-
-          if (elementCount > 0) {
-            foundClasses.push(cssClass);
-          }
-        }
-      } catch (ex) {
-        console.error(`ERROR ${url}: ${ex}`);
-        if (!(ex instanceof Error)) {
-          throw ex;
-        }
-
-        this.wrongItems.push({
-          link: url,
-          library_name: ex.message,
-          library_version: "",
-          classes_found: "",
-        });
       }
 
-      if (foundClasses.length === 0) {
-        singleResult = 0;
-        item.classes_found = subResults[0];
-      } else {
-        item.classes_found = subResults[1];
+      for (const cssClass of cssClasses) {
+        const elementCount = await page.evaluate(async (cssClass) => {
+          const cssElements = document.querySelectorAll(`.${cssClass}`);
+          return cssElements.length;
+        }, cssClass);
+
+        if (elementCount > 0) {
+          foundClasses.push(cssClass);
+        }
+      }
+    } catch (ex) {
+      console.error(`ERROR ${url}: ${ex}`);
+      if (!(ex instanceof Error)) {
+        throw ex;
       }
 
-      if (singleResult === 1) {
-        this.correctItems.push(item);
-      } else {
-        this.score = 0;
-        this.wrongItems.push(item);
-      }
+      this.wrongItems.push({
+        link: url,
+        library_name: ex.message,
+        library_version: "",
+        classes_found: "",
+      });
+    }
 
-      return {
-        score: this.score,
-      };
+    if (foundClasses.length === 0) {
+      singleResult = 0;
+      item.classes_found = subResults[0];
+    } else {
+      item.classes_found = subResults[1];
+    }
+
+    if (singleResult === 1) {
+      this.correctItems.push(item);
+    } else {
+      this.score = 0;
+      this.wrongItems.push(item);
+    }
+
+    return {
+      score: this.score,
+    };
   }
 
   async getType() {
@@ -184,7 +183,6 @@ class SchoolBootstrap extends Audit {
     this.globalResults.wrongPages.pages = [];
 
     if (this.wrongItems.length > 0) {
-
       this.globalResults.wrongPages.headings = [
         subItem.redResult,
         this.titleSubHeadings[0],
@@ -211,7 +209,9 @@ class SchoolBootstrap extends Audit {
     }
 
     this.globalResults.errorMessage =
-      this.globalResults.pagesInError.pages.length > 0 ? errorHandling.popupMessage : "";
+      this.globalResults.pagesInError.pages.length > 0
+        ? errorHandling.popupMessage
+        : "";
     this.globalResults.score = this.score;
     this.globalResults.id = this.auditId;
 

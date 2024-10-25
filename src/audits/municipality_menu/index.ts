@@ -10,7 +10,6 @@ import { MenuItem } from "../../types/menuItem.js";
 import { getFirstLevelPages } from "../../utils/municipality/utils.js";
 import { Audit, GlobalResults } from "../Audit.js";
 import { Page } from "puppeteer";
-import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import * as ejs from "ejs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -40,11 +39,11 @@ class MenuAudit extends Audit {
       headings: [],
       pages: [],
     },
-      pagesInError: {
-          message: "",
-          headings: [],
-          pages: [],
-      },
+    pagesInError: {
+      message: "",
+      headings: [],
+      pages: [],
+    },
     errorMessage: "",
   };
 
@@ -60,99 +59,97 @@ class MenuAudit extends Audit {
   }
 
   async auditPage(page: Page, url: string) {
+    const result = {
+      result: redResult,
+      found_menu_voices: "",
+      missing_menu_voices: "",
+      wrong_order_menu_voices: "",
+    };
 
-      let result = {
-        result: redResult,
-        found_menu_voices: "",
-        missing_menu_voices: "",
-        wrong_order_menu_voices: "",
-      };
+    const firstLevelPages = await getFirstLevelPages(url, false, page);
 
-      const firstLevelPages = await getFirstLevelPages(url, false, page);
+    const foundMenuElements = firstLevelPages.map((page) => {
+      return page.linkName;
+    });
 
-      const foundMenuElements = firstLevelPages.map((page) => {
-        return page.linkName;
+    result.found_menu_voices = foundMenuElements.join(", ");
+
+    const menuItem: MenuItem[] = [];
+
+    for (const [, primaryMenuItem] of Object.entries(primaryMenuItems)) {
+      menuItem.push({
+        name: primaryMenuItem.name,
+        regExp: primaryMenuItem.regExp,
       });
+    }
 
-      result.found_menu_voices = foundMenuElements.join(", ");
+    const missingMandatoryElements = missingMenuItems(
+      foundMenuElements,
+      menuItem,
+    );
+    result.missing_menu_voices = missingMandatoryElements.join(", ");
 
-      const menuItem: MenuItem[] = [];
+    const orderResult = checkOrder(menuItem, foundMenuElements);
+    result.wrong_order_menu_voices =
+      orderResult.elementsNotInSequence.join(", ");
 
-      for (const [, primaryMenuItem] of Object.entries(primaryMenuItems)) {
-        menuItem.push({
-          name: primaryMenuItem.name,
-          regExp: primaryMenuItem.regExp,
-        });
-      }
+    const containsMandatoryElementsResult =
+      missingMandatoryElements.length === 0;
 
-      const missingMandatoryElements = missingMenuItems(
-        foundMenuElements,
-        menuItem,
-      );
-      result.missing_menu_voices = missingMandatoryElements.join(", ");
+    if (
+      foundMenuElements.length === 4 &&
+      containsMandatoryElementsResult &&
+      orderResult.numberOfElementsNotInSequence === 0
+    ) {
+      this.score = 1;
+      result.result = greenResult;
+    } else if (
+      foundMenuElements.length > 4 &&
+      foundMenuElements.length < 8 &&
+      containsMandatoryElementsResult &&
+      orderResult.numberOfElementsNotInSequence === 0
+    ) {
+      this.score = 0.5;
+      result.result = yellowResult;
+    }
 
-      const orderResult = checkOrder(menuItem, foundMenuElements);
-      result.wrong_order_menu_voices =
-        orderResult.elementsNotInSequence.join(", ");
-
-      const containsMandatoryElementsResult =
-        missingMandatoryElements.length === 0;
-
-      if (
-        foundMenuElements.length === 4 &&
-        containsMandatoryElementsResult &&
-        orderResult.numberOfElementsNotInSequence === 0
-      ) {
-        this.score = 1;
-        result.result = greenResult;
-      } else if (
-        foundMenuElements.length > 4 &&
-        foundMenuElements.length < 8 &&
-        containsMandatoryElementsResult &&
-        orderResult.numberOfElementsNotInSequence === 0
-      ) {
-        this.score = 0.5;
-        result.result = yellowResult;
-      }
-
-      if (this.globalResults.recapItems) {
-        this.globalResults.recapItems.headings = [
-          "Risultato",
-          "Voci del menù identificate",
-          "Voci del menù mancanti",
-          "Voci del menù in ordine errato",
-        ];
-
-        this.globalResults.recapItems.pages = [result];
-      }
-
-      this.globalResults.pagesItems.headings = [
-        "Voce di menù",
-        "Link trovato",
-        "Pagina interna al dominio",
+    if (this.globalResults.recapItems) {
+      this.globalResults.recapItems.headings = [
+        "Risultato",
+        "Voci del menù identificate",
+        "Voci del menù mancanti",
+        "Voci del menù in ordine errato",
       ];
 
-      const host = new URL(url).hostname.replace("www.", "");
-      for (const page of firstLevelPages) {
-        const redirectedUrl = await getRedirectedUrl(page.linkUrl);
-        const pageHost = new URL(redirectedUrl).hostname.replace("www.", "");
-        const isInternal = pageHost.includes(host);
+      this.globalResults.recapItems.pages = [result];
+    }
 
-        if (!isInternal) {
-          this.score = 0;
-        }
+    this.globalResults.pagesItems.headings = [
+      "Voce di menù",
+      "Link trovato",
+      "Pagina interna al dominio",
+    ];
 
-        const item = {
-          menu_voice: page.linkName,
-          link: page.linkUrl,
-          external: isInternal ? "Sì" : "No",
-        };
+    const host = new URL(url).hostname.replace("www.", "");
+    for (const page of firstLevelPages) {
+      const redirectedUrl = await getRedirectedUrl(page.linkUrl);
+      const pageHost = new URL(redirectedUrl).hostname.replace("www.", "");
+      const isInternal = pageHost.includes(host);
 
-        this.globalResults.pagesItems.pages.push(item);
+      if (!isInternal) {
+        this.score = 0;
       }
 
-      this.globalResults.score = this.score;
+      const item = {
+        menu_voice: page.linkName,
+        link: page.linkUrl,
+        external: isInternal ? "Sì" : "No",
+      };
 
+      this.globalResults.pagesItems.pages.push(item);
+    }
+
+    this.globalResults.score = this.score;
 
     return {
       score: this.score,

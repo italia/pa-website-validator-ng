@@ -6,7 +6,6 @@ import { urlExists } from "../../utils/utils.js";
 import { Page } from "puppeteer";
 
 import { Audit, GlobalResults } from "../Audit.js";
-import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import * as cheerio from "cheerio";
 
 class PrivacyAudit extends Audit {
@@ -40,62 +39,61 @@ class PrivacyAudit extends Audit {
   }
 
   async auditPage(page: Page, url: string) {
+    let score = 0;
 
-      let score = 0;
+    const items = [
+      {
+        result: this.redResult,
+        link_name: "",
+        link: "",
+        existing_page: "No",
+        secure_page: "No",
+      },
+    ];
 
-      const items = [
-        {
-          result: this.redResult,
-          link_name: "",
-          link: "",
-          existing_page: "No",
-          secure_page: "No",
-        },
-      ];
+    const data = await page.content();
+    const $: CheerioAPI = await cheerio.load(data);
 
-      const data = await page.content();
-      const $: CheerioAPI = await cheerio.load(data);
+    const privacyPolicyElement = $("footer").find(
+      '[data-element="privacy-policy-link"]',
+    );
+    const elementObj = $(privacyPolicyElement).attr();
+    items[0].link_name = privacyPolicyElement.text().trim() ?? "";
+    items[0].link = elementObj?.href ?? "";
 
-      const privacyPolicyElement = $("footer").find(
-        '[data-element="privacy-policy-link"]',
-      );
-      const elementObj = $(privacyPolicyElement).attr();
-      items[0].link_name = privacyPolicyElement.text().trim() ?? "";
-      items[0].link = elementObj?.href ?? "";
+    if (
+      elementObj &&
+      "href" in elementObj &&
+      elementObj.href !== "#" &&
+      elementObj.href !== ""
+    ) {
+      const checkUrlHttps = await urlExists(url, elementObj.href, true);
 
-      if (
-        elementObj &&
-        "href" in elementObj &&
-        elementObj.href !== "#" &&
-        elementObj.href !== ""
-      ) {
-        const checkUrlHttps = await urlExists(url, elementObj.href, true);
+      items[0].link = checkUrlHttps.inspectedUrl;
 
-        items[0].link = checkUrlHttps.inspectedUrl;
-
-        if (checkUrlHttps.result) {
-          items[0].result = this.greenResult;
-          items[0].existing_page = "Sì";
-          items[0].secure_page = "Sì";
-          score = 1;
-        }
+      if (checkUrlHttps.result) {
+        items[0].result = this.greenResult;
+        items[0].existing_page = "Sì";
+        items[0].secure_page = "Sì";
+        score = 1;
       }
+    }
 
-      this.globalResults.score = score;
-      this.globalResults.id = this.auditId;
+    this.globalResults.score = score;
+    this.globalResults.id = this.auditId;
 
-      this.globalResults.pagesItems.pages = items;
-      this.globalResults.pagesItems.headings = [
-        "Risultato",
-        "Testo del link",
-        "Pagina di destinazione del link",
-        "Pagina esistente",
-        "Pagina sicura",
-      ];
+    this.globalResults.pagesItems.pages = items;
+    this.globalResults.pagesItems.headings = [
+      "Risultato",
+      "Testo del link",
+      "Pagina di destinazione del link",
+      "Pagina esistente",
+      "Pagina sicura",
+    ];
 
-      return {
-        score: score,
-      };
+    return {
+      score: score,
+    };
   }
 
   async getType() {

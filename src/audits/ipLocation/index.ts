@@ -8,7 +8,6 @@ import geoip from "geoip-lite";
 import { allowedCountries } from "../../storage/common/allowedCountries.js";
 import { Page } from "puppeteer";
 import { Audit, GlobalResults } from "../Audit.js";
-import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import * as ejs from "ejs";
 import { fileURLToPath } from "url";
 import path from "path";
@@ -49,41 +48,41 @@ class IpLocationAudit extends Audit {
   }
 
   async auditPage(page: Page, url: string) {
-      const hostname = new URL(url).hostname.replace("www.", "");
-      this.score = 0;
+    const hostname = new URL(url).hostname.replace("www.", "");
+    this.score = 0;
 
-      this.globalResults.pagesItems.headings = [
-        "Risultato",
-        "Città indirizzo IP",
-        "Paese indirizzo IP",
-      ];
-      const items = [{ result: redResult, ip_city: "", ip_country: "" }];
+    this.globalResults.pagesItems.headings = [
+      "Risultato",
+      "Città indirizzo IP",
+      "Paese indirizzo IP",
+    ];
+    const items = [{ result: redResult, ip_city: "", ip_country: "" }];
 
-      if (hostname) {
-        const lookup = util.promisify(dns.lookup);
-        const ip = await lookup(hostname);
+    if (hostname) {
+      const lookup = util.promisify(dns.lookup);
+      const ip = await lookup(hostname);
 
-        if (Boolean(ip) && Boolean(ip.address)) {
-          const ipInformation = geoip.lookup(ip.address);
+      if (Boolean(ip) && Boolean(ip.address)) {
+        const ipInformation = geoip.lookup(ip.address);
 
-          if (ipInformation !== null) {
-            if (allowedCountries.includes(ipInformation.country)) {
-              this.score = 1;
-              items[0].result = greenResult;
-            }
-
-            items[0].ip_city = ipInformation.city ?? "";
-            items[0].ip_country = ipInformation.country ?? "";
+        if (ipInformation !== null) {
+          if (allowedCountries.includes(ipInformation.country)) {
+            this.score = 1;
+            items[0].result = greenResult;
           }
+
+          items[0].ip_city = ipInformation.city ?? "";
+          items[0].ip_country = ipInformation.country ?? "";
         }
       }
+    }
 
-      this.globalResults.score = this.score;
-      this.globalResults.pagesItems.pages = items;
+    this.globalResults.score = this.score;
+    this.globalResults.pagesItems.pages = items;
 
-      return {
-        score: this.score,
-      };
+    return {
+      score: this.score,
+    };
   }
 
   async getType() {

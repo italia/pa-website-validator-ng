@@ -57,97 +57,97 @@ class FontAudit extends Audit {
       "Font errati individuati",
     ];
 
-      const item = {
-        link: url,
-        wrong_number_elements: 0,
-        wrong_fonts: "",
-      };
+    const item = {
+      link: url,
+      wrong_number_elements: 0,
+      wrong_fonts: "",
+    };
 
-      const badElements: Array<BadElement> = await page.evaluate(
-        (requiredFonts) => {
-          const badElements: Array<BadElement> = [];
-          const outerElems = window.document.body.querySelectorAll(
-            "h1, h2, h3, h4, h5, h6, p",
-          );
+    const badElements: Array<BadElement> = await page.evaluate(
+      (requiredFonts) => {
+        const badElements: Array<BadElement> = [];
+        const outerElems = window.document.body.querySelectorAll(
+          "h1, h2, h3, h4, h5, h6, p",
+        );
 
-          const wrongFonts = (e: Element) => {
-            const elementFonts = window
-              .getComputedStyle(e)
-              .fontFamily.split(",", 1)
-              .map((s) => s.replace(/^"|"$/g, ""));
-            return elementFonts.filter((x) => !requiredFonts.includes(x));
-          };
+        const wrongFonts = (e: Element) => {
+          const elementFonts = window
+            .getComputedStyle(e)
+            .fontFamily.split(",", 1)
+            .map((s) => s.replace(/^"|"$/g, ""));
+          return elementFonts.filter((x) => !requiredFonts.includes(x));
+        };
 
-          for (const e of outerElems) {
-            const elementWrongFonts = wrongFonts(e);
-            if (elementWrongFonts.length > 0) {
-              badElements.push([elementWrongFonts, false]);
-              continue;
-            }
+        for (const e of outerElems) {
+          const elementWrongFonts = wrongFonts(e);
+          if (elementWrongFonts.length > 0) {
+            badElements.push([elementWrongFonts, false]);
+            continue;
+          }
 
-            const children = [...e.querySelectorAll("*")];
-            for (const child of children) {
-              const wrongFontChild = wrongFonts(child);
-              if (wrongFontChild.length > 0) {
-                badElements.push([wrongFontChild, true]);
-                break;
-              }
+          const children = [...e.querySelectorAll("*")];
+          for (const child of children) {
+            const wrongFontChild = wrongFonts(child);
+            if (wrongFontChild.length > 0) {
+              badElements.push([wrongFontChild, true]);
+              break;
             }
           }
-          return badElements;
-        },
-        (this.constructor as typeof FontAudit).allowedFonts,
-      );
-
-      if (badElements.length === 0) {
-        this.correctItems.push(item);
-        return {
-          score: this.score,
-        };
-      }
-
-      const reallyBadElements = badElements.filter((e) => !e[1]);
-
-      const wrongFontsUnique = (arrays: Array<BadElement>) => {
-        const arrayUnique = (array: string[]) => {
-          const a = array.concat();
-          for (let i = 0; i < a.length; ++i) {
-            for (let j = i + 1; j < a.length; ++j) {
-              if (a[i] === a[j]) a.splice(j--, 1);
-            }
-          }
-          return a;
-        };
-
-        let arrayMerged: string[] = [];
-        for (const array of arrays) {
-          arrayMerged = arrayMerged.concat(array[0]);
         }
-        return arrayUnique(arrayMerged);
-      };
+        return badElements;
+      },
+      (this.constructor as typeof FontAudit).allowedFonts,
+    );
 
-      if (reallyBadElements.length > 0) {
-        if (this.score > 0) {
-          this.score = 0;
-        }
-        item.wrong_fonts = wrongFontsUnique(reallyBadElements).join(", ");
-        item.wrong_number_elements = reallyBadElements.length;
-        this.wrongItems.push(item);
-        return {
-          score: this.score,
-        };
-      }
-
-      if (this.score > 0.5) {
-        this.score = 0.5;
-      }
-      item.wrong_fonts = wrongFontsUnique(badElements).join(", ");
-      item.wrong_number_elements = badElements.length;
-      this.toleranceItems.push(item);
-
+    if (badElements.length === 0) {
+      this.correctItems.push(item);
       return {
         score: this.score,
       };
+    }
+
+    const reallyBadElements = badElements.filter((e) => !e[1]);
+
+    const wrongFontsUnique = (arrays: Array<BadElement>) => {
+      const arrayUnique = (array: string[]) => {
+        const a = array.concat();
+        for (let i = 0; i < a.length; ++i) {
+          for (let j = i + 1; j < a.length; ++j) {
+            if (a[i] === a[j]) a.splice(j--, 1);
+          }
+        }
+        return a;
+      };
+
+      let arrayMerged: string[] = [];
+      for (const array of arrays) {
+        arrayMerged = arrayMerged.concat(array[0]);
+      }
+      return arrayUnique(arrayMerged);
+    };
+
+    if (reallyBadElements.length > 0) {
+      if (this.score > 0) {
+        this.score = 0;
+      }
+      item.wrong_fonts = wrongFontsUnique(reallyBadElements).join(", ");
+      item.wrong_number_elements = reallyBadElements.length;
+      this.wrongItems.push(item);
+      return {
+        score: this.score,
+      };
+    }
+
+    if (this.score > 0.5) {
+      this.score = 0.5;
+    }
+    item.wrong_fonts = wrongFontsUnique(badElements).join(", ");
+    item.wrong_number_elements = badElements.length;
+    this.toleranceItems.push(item);
+
+    return {
+      score: this.score,
+    };
   }
 
   async getType() {
@@ -162,7 +162,6 @@ class FontAudit extends Audit {
     this.globalResults.wrongPages.pages = [];
 
     if (this.wrongItems.length > 0) {
-
       this.globalResults.wrongPages.headings = [
         this.subItem?.redResult ?? "",
         this.titleSubHeadings[0],
@@ -189,7 +188,6 @@ class FontAudit extends Audit {
     }
 
     if (this.correctItems.length > 0) {
-
       this.globalResults.correctPages.headings = [
         this.subItem?.greenResult ?? "",
         this.titleSubHeadings[0],
@@ -202,7 +200,9 @@ class FontAudit extends Audit {
     }
 
     this.globalResults.errorMessage =
-      this.globalResults.pagesInError.pages.length > 0 ? errorHandling.popupMessage : "";
+      this.globalResults.pagesInError.pages.length > 0
+        ? errorHandling.popupMessage
+        : "";
     this.globalResults.score = this.score;
     this.globalResults.id = this.auditId;
 

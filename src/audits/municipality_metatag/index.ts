@@ -80,87 +80,87 @@ class MetatagAudit extends Audit {
   async auditPage(page: Page, url: string) {
     this.titleSubHeadings = ["JSON valido", "Metatag non presenti o errati"];
 
-      let $: CheerioAPI = cheerio.load("<html><body></body></html>");
+    let $: CheerioAPI = cheerio.load("<html><body></body></html>");
 
-      const item = {
+    const item = {
+      link: url,
+      valid_json: "No",
+      missing_keys: "",
+    };
+
+    try {
+      const data = await page.content();
+      $ = await cheerio.load(data);
+    } catch (ex) {
+      if (!(ex instanceof Error)) {
+        throw ex;
+      }
+
+      let errorMessage = ex.message;
+      errorMessage = errorMessage.substring(
+        errorMessage.indexOf('"') + 1,
+        errorMessage.lastIndexOf('"'),
+      );
+
+      this.wrongItems.push({
         link: url,
-        valid_json: "No",
-        missing_keys: "",
+        in_index: errorMessage,
+        valid_json: "",
+      });
+    }
+    const metatagElement = $('[data-element="metatag"]');
+    const metatagJSON = metatagElement.html() ?? "";
+
+    if (!metatagJSON) {
+      this.score = 0;
+
+      return {
+        score: 0,
       };
+    }
 
-      try {
-        const data = await page.content();
-        $ = await cheerio.load(data);
-      } catch (ex) {
-        if (!(ex instanceof Error)) {
-          throw ex;
-        }
-
-        let errorMessage = ex.message;
-        errorMessage = errorMessage.substring(
-          errorMessage.indexOf('"') + 1,
-          errorMessage.lastIndexOf('"'),
-        );
-
-        this.wrongItems.push({
-          link: url,
-          in_index: errorMessage,
-          valid_json: ''
-        });
-      }
-      const metatagElement = $('[data-element="metatag"]');
-      const metatagJSON = metatagElement.html() ?? "";
-
-      if (!metatagJSON) {
+    let parsedMetatagJSON = {};
+    try {
+      parsedMetatagJSON = JSON.parse(metatagJSON.toString());
+    } catch {
+      if (this.score > 0) {
         this.score = 0;
-
-        return {
-          score: 0,
-        };
       }
+      this.wrongItems.push(item);
+    }
 
-      let parsedMetatagJSON = {};
-      try {
-        parsedMetatagJSON = JSON.parse(metatagJSON.toString());
-      } catch {
+    item.valid_json = "Sì";
+
+    const result: ValidatorResult = jsonschema.validate(
+      parsedMetatagJSON,
+      metatadaJSONStructure,
+    );
+    if (result.errors.length <= 0) {
+      this.correctItems.push(item);
+    } else {
+      const missingJSONVoices = await getMissingVoices(result);
+
+      const missingVoicesAmountPercentage = parseInt(
+        ((missingJSONVoices.length / totalJSONVoices) * 100).toFixed(0),
+      );
+      item.missing_keys = missingJSONVoices.join(", ");
+
+      if (missingVoicesAmountPercentage >= 50) {
         if (this.score > 0) {
           this.score = 0;
         }
         this.wrongItems.push(item);
-      }
-
-      item.valid_json = "Sì";
-
-      const result: ValidatorResult = jsonschema.validate(
-        parsedMetatagJSON,
-        metatadaJSONStructure,
-      );
-      if (result.errors.length <= 0) {
-        this.correctItems.push(item);
       } else {
-        const missingJSONVoices = await getMissingVoices(result);
-
-        const missingVoicesAmountPercentage = parseInt(
-          ((missingJSONVoices.length / totalJSONVoices) * 100).toFixed(0),
-        );
-        item.missing_keys = missingJSONVoices.join(", ");
-
-        if (missingVoicesAmountPercentage >= 50) {
-          if (this.score > 0) {
-            this.score = 0;
-          }
-          this.wrongItems.push(item);
-        } else {
-          if (this.score > 0.5) {
-            this.score = 0.5;
-          }
-          this.toleranceItems.push(item);
+        if (this.score > 0.5) {
+          this.score = 0.5;
         }
+        this.toleranceItems.push(item);
       }
+    }
 
-      return {
-        score: this.score,
-      };
+    return {
+      score: this.score,
+    };
   }
 
   async returnGlobal() {
@@ -171,7 +171,6 @@ class MetatagAudit extends Audit {
     this.globalResults.wrongPages.pages = [];
 
     if (this.wrongItems.length > 0) {
-
       this.globalResults.wrongPages.headings = [
         subItem.redResult,
         this.titleSubHeadings[0],
@@ -207,11 +206,12 @@ class MetatagAudit extends Audit {
       for (const item of this.correctItems) {
         this.globalResults.correctPages.pages.push(item);
       }
-
     }
 
     this.globalResults.errorMessage =
-      this.globalResults.pagesInError.pages.length > 0 ? errorHandling.popupMessage : "";
+      this.globalResults.pagesInError.pages.length > 0
+        ? errorHandling.popupMessage
+        : "";
     this.globalResults.score = this.score;
 
     return this.globalResults;

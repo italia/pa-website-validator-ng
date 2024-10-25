@@ -75,131 +75,130 @@ class BootstrapMunAudit extends Audit {
 
     this.subResults = ["Nessuna classe CSS trovata"];
 
-      const drupalClassesCheck = await isDrupal(url);
+    const drupalClassesCheck = await isDrupal(url);
 
-      let singleResult = 0;
-      const item = {
-        link: url,
-        library_name: "No",
-        library_version: "",
-        classes_found: "",
-      };
+    let singleResult = 0;
+    const item = {
+      link: url,
+      library_name: "No",
+      library_version: "",
+      classes_found: "",
+    };
 
-      try {
-        let bootstrapItaliaVariableVersion = await page.evaluate(
-          async function () {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            //@ts-ignore
-            return window.BOOTSTRAP_ITALIA_VERSION || null;
-          },
-        );
+    try {
+      let bootstrapItaliaVariableVersion = await page.evaluate(
+        async function () {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          //@ts-ignore
+          return window.BOOTSTRAP_ITALIA_VERSION || null;
+        },
+      );
 
-        if (bootstrapItaliaVariableVersion !== null)
-          bootstrapItaliaVariableVersion = bootstrapItaliaVariableVersion
-            .trim()
-            .replaceAll('"', "");
+      if (bootstrapItaliaVariableVersion !== null)
+        bootstrapItaliaVariableVersion = bootstrapItaliaVariableVersion
+          .trim()
+          .replaceAll('"', "");
 
-        let bootstrapItaliaSelectorVariableVersion = await page.evaluate(
-          async function () {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            //@ts-ignore
-            return (
-              getComputedStyle(document.body).getPropertyValue(
-                "--bootstrap-italia-version",
-              ) || null
-            );
-          },
-        );
+      let bootstrapItaliaSelectorVariableVersion = await page.evaluate(
+        async function () {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          //@ts-ignore
+          return (
+            getComputedStyle(document.body).getPropertyValue(
+              "--bootstrap-italia-version",
+            ) || null
+          );
+        },
+      );
 
-        if (bootstrapItaliaSelectorVariableVersion !== null)
-          bootstrapItaliaSelectorVariableVersion =
-            bootstrapItaliaSelectorVariableVersion.trim().replaceAll('"', "");
+      if (bootstrapItaliaSelectorVariableVersion !== null)
+        bootstrapItaliaSelectorVariableVersion =
+          bootstrapItaliaSelectorVariableVersion.trim().replaceAll('"', "");
+
+      if (
+        bootstrapItaliaVariableVersion !== null &&
+        bootstrapItaliaVariableVersion
+      ) {
+        item.library_version = bootstrapItaliaVariableVersion;
+        item.library_name = "Sì";
+
+        if (compareVersions(bootstrapItaliaVariableVersion, "2.0.0") >= 0) {
+          singleResult = 1;
+        }
+      } else if (
+        bootstrapItaliaSelectorVariableVersion !== null &&
+        bootstrapItaliaSelectorVariableVersion
+      ) {
+        item.library_version = bootstrapItaliaSelectorVariableVersion;
+        item.library_name = "Sì";
 
         if (
-          bootstrapItaliaVariableVersion !== null &&
-          bootstrapItaliaVariableVersion
+          compareVersions(bootstrapItaliaSelectorVariableVersion, "2.0.0") >= 0
         ) {
-          item.library_version = bootstrapItaliaVariableVersion;
-          item.library_name = "Sì";
-
-          if (compareVersions(bootstrapItaliaVariableVersion, "2.0.0") >= 0) {
-            singleResult = 1;
-          }
-        } else if (
-          bootstrapItaliaSelectorVariableVersion !== null &&
-          bootstrapItaliaSelectorVariableVersion
-        ) {
-          item.library_version = bootstrapItaliaSelectorVariableVersion;
-          item.library_name = "Sì";
-
-          if (
-            compareVersions(bootstrapItaliaSelectorVariableVersion, "2.0.0") >=
-            0
-          ) {
-            singleResult = 1;
-          }
+          singleResult = 1;
         }
-
-        const foundClasses = await page.evaluate(async () => {
-          const used = new Set<string>();
-          const elements = document.getElementsByTagName("*");
-          for (const element of elements) {
-            const elementClasses = element.getAttribute("class") ?? "";
-            for (const cssClass of elementClasses.split(" ")) {
-              if (cssClass) {
-                used.add(cssClass);
-              }
-            }
-          }
-          return [...used];
-        });
-
-        if (foundClasses.length === 0) {
-          singleResult = 0;
-          item.classes_found = this.subResults[0];
-        } else {
-          const correctClasses = [];
-          const baseClasses = [];
-          for (const cssClass of foundClasses) {
-            if (cssClasses.includes(cssClass)) {
-              correctClasses.push(cssClass);
-            }
-
-            if (!drupalClassesCheck) {
-              baseClasses.push(cssClass);
-            } else {
-              if (!drupalCoreClasses.some((rx) => rx.test(cssClass))) {
-                baseClasses.push(cssClass);
-              }
-            }
-          }
-
-          const percentage = Math.round(
-            (correctClasses.length / baseClasses.length) * 100,
-          );
-          item.classes_found = percentage + "%";
-          if (percentage < 30) {
-            singleResult = 0;
-          }
-        }
-      } catch (ex) {
-        console.error(`ERROR ${url}: ${ex}`);
-        if (!(ex instanceof Error)) {
-          throw ex;
-        }
-
-        this.wrongItems.push({
-          link: url,
-          library_name: ex.message,
-        });
       }
 
-      if (singleResult === 1) {
-        this.correctItems.push(item);
+      const foundClasses = await page.evaluate(async () => {
+        const used = new Set<string>();
+        const elements = document.getElementsByTagName("*");
+        for (const element of elements) {
+          const elementClasses = element.getAttribute("class") ?? "";
+          for (const cssClass of elementClasses.split(" ")) {
+            if (cssClass) {
+              used.add(cssClass);
+            }
+          }
+        }
+        return [...used];
+      });
+
+      if (foundClasses.length === 0) {
+        singleResult = 0;
+        item.classes_found = this.subResults[0];
       } else {
-        this.score = 0;
-        this.wrongItems.push(item);
+        const correctClasses = [];
+        const baseClasses = [];
+        for (const cssClass of foundClasses) {
+          if (cssClasses.includes(cssClass)) {
+            correctClasses.push(cssClass);
+          }
+
+          if (!drupalClassesCheck) {
+            baseClasses.push(cssClass);
+          } else {
+            if (!drupalCoreClasses.some((rx) => rx.test(cssClass))) {
+              baseClasses.push(cssClass);
+            }
+          }
+        }
+
+        const percentage = Math.round(
+          (correctClasses.length / baseClasses.length) * 100,
+        );
+        item.classes_found = percentage + "%";
+        if (percentage < 30) {
+          singleResult = 0;
+        }
       }
+    } catch (ex) {
+      console.error(`ERROR ${url}: ${ex}`);
+      if (!(ex instanceof Error)) {
+        throw ex;
+      }
+
+      this.wrongItems.push({
+        link: url,
+        library_name: ex.message,
+      });
+    }
+
+    if (singleResult === 1) {
+      this.correctItems.push(item);
+    } else {
+      this.score = 0;
+      this.wrongItems.push(item);
+    }
 
     return {
       score: this.score,
@@ -238,7 +237,9 @@ class BootstrapMunAudit extends Audit {
 
     this.globalResults.score = this.score;
     this.globalResults.errorMessage =
-      this.globalResults.pagesInError.pages.length > 0 ? errorHandling.popupMessage : "";
+      this.globalResults.pagesInError.pages.length > 0
+        ? errorHandling.popupMessage
+        : "";
 
     return this.globalResults;
   }

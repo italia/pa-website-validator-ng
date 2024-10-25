@@ -10,7 +10,6 @@ import {
 import { Page } from "puppeteer";
 
 import { Audit, GlobalResults } from "../Audit.js";
-import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import { detectLang, getSecondLevelPages } from "../../utils/school/utils.js";
 import {
   customPrimaryMenuItemsDataElement,
@@ -73,191 +72,187 @@ class SchoolSecondLevelMenuAudit extends Audit {
   }
 
   async auditPage(page: Page, url: string) {
+    const result = {
+      result: this.redResult,
+      correct_voices_percentage: "",
+      correct_voices: "",
+      wrong_voices: "",
+    };
 
-      let result = {
-        result: this.redResult,
-        correct_voices_percentage: "",
-        correct_voices: "",
-        wrong_voices: "",
+    let totalNumberOfTitleFound = 0;
+    const itemsPage: itemPage[] = [];
+
+    const data = await page.content();
+    const $: CheerioAPI = await cheerio.load(data);
+
+    const foundMenuElements = await getPageElementDataAttribute(
+      $,
+      '[data-element="menu"]',
+      "> li > a",
+    );
+
+    const lang = detectLang(foundMenuElements);
+
+    // "Panoramica"
+    const overviewText = (
+      await getPageElementDataAttribute(
+        $,
+        `[data-element="${primaryMenuDataElement}"]`,
+      )
+    )[0];
+
+    for (const [, secondaryMenuItem] of Object.entries(menuItems)) {
+      const item: itemPage = {
+        key: secondaryMenuItem.label[lang],
+        pagesInVocabulary: [],
+        pagesNotInVocabulary: [],
       };
 
-      let totalNumberOfTitleFound = 0;
-      const itemsPage: itemPage[] = [];
-
-      const data = await page.content();
-      const $: CheerioAPI = await cheerio.load(data);
-
-      const foundMenuElements = await getPageElementDataAttribute(
-        $,
-        '[data-element="menu"]',
-        "> li > a",
-      );
-
-      const lang = detectLang(foundMenuElements);
-
-      // "Panoramica"
-      const overviewText = (
-        await getPageElementDataAttribute(
-          $,
-          `[data-element="${primaryMenuDataElement}"]`,
-        )
-      )[0];
-
-      for (const [, secondaryMenuItem] of Object.entries(menuItems)) {
-        const item: itemPage = {
-          key: secondaryMenuItem.label[lang],
-          pagesInVocabulary: [],
-          pagesNotInVocabulary: [],
-        };
-
-        const menuDataElement = `[data-element="${secondaryMenuItem.data_element}"]`;
-
-        const headerUlTest = await getPageElementDataAttribute(
-          $,
-          menuDataElement,
-          "a",
-        );
-
-        if (headerUlTest.length === 0) {
-          return {
-            score: 0,
-            details: {
-              items: [
-                {
-                  result: this.nonExecuted,
-                },
-              ],
-              type: "table",
-              headings: [
-                { key: "result", itemType: "text", text: "Risultato" },
-              ],
-              summary: "",
-            },
-          };
-        }
-
-        for (const element of headerUlTest) {
-          if (element !== overviewText) {
-            const allowed = secondaryMenuItem.dictionary[lang].map((s) =>
-              s.toLowerCase(),
-            );
-            if (allowed.includes(element.toLowerCase())) {
-              item.pagesInVocabulary.push(element);
-            } else {
-              item.pagesNotInVocabulary.push(element);
-            }
-            totalNumberOfTitleFound++;
-          }
-        }
-
-        itemsPage.push(item);
-      }
-
-      const errorVoices = [];
+      const menuDataElement = `[data-element="${secondaryMenuItem.data_element}"]`;
 
       const headerUlTest = await getPageElementDataAttribute(
         $,
-        `[data-element="${customPrimaryMenuItemsDataElement}"]`,
+        menuDataElement,
         "a",
       );
 
-      if (headerUlTest.length > 0) {
-        for (const element of headerUlTest) {
-          if (element !== overviewText) {
-            errorVoices.push(element.toLowerCase());
+      if (headerUlTest.length === 0) {
+        return {
+          score: 0,
+          details: {
+            items: [
+              {
+                result: this.nonExecuted,
+              },
+            ],
+            type: "table",
+            headings: [{ key: "result", itemType: "text", text: "Risultato" }],
+            summary: "",
+          },
+        };
+      }
+
+      for (const element of headerUlTest) {
+        if (element !== overviewText) {
+          const allowed = secondaryMenuItem.dictionary[lang].map((s) =>
+            s.toLowerCase(),
+          );
+          if (allowed.includes(element.toLowerCase())) {
+            item.pagesInVocabulary.push(element);
+          } else {
+            item.pagesNotInVocabulary.push(element);
           }
+          totalNumberOfTitleFound++;
         }
       }
 
-      let pagesInVocabulary = 0;
-      let correctTitleFound = "";
-      let wrongTitleFound = "";
+      itemsPage.push(item);
+    }
 
-      for (const itemPage of itemsPage) {
-        pagesInVocabulary += itemPage.pagesInVocabulary.length;
+    const errorVoices = [];
 
-        if (itemPage.pagesInVocabulary.length > 0) {
-          correctTitleFound += itemPage.key + ": ";
-          correctTitleFound += itemPage.pagesInVocabulary.join(", ");
-          correctTitleFound += "; ";
-        }
+    const headerUlTest = await getPageElementDataAttribute(
+      $,
+      `[data-element="${customPrimaryMenuItemsDataElement}"]`,
+      "a",
+    );
 
-        if (itemPage.pagesNotInVocabulary.length > 0) {
-          wrongTitleFound += itemPage.key + ": ";
-          wrongTitleFound += itemPage.pagesNotInVocabulary.join(", ");
-          wrongTitleFound += "; ";
+    if (headerUlTest.length > 0) {
+      for (const element of headerUlTest) {
+        if (element !== overviewText) {
+          errorVoices.push(element.toLowerCase());
         }
       }
+    }
 
-      if (errorVoices.length > 0) {
-        wrongTitleFound += "ALTRE VOCI: ";
-        wrongTitleFound += errorVoices.join(", ");
+    let pagesInVocabulary = 0;
+    let correctTitleFound = "";
+    let wrongTitleFound = "";
+
+    for (const itemPage of itemsPage) {
+      pagesInVocabulary += itemPage.pagesInVocabulary.length;
+
+      if (itemPage.pagesInVocabulary.length > 0) {
+        correctTitleFound += itemPage.key + ": ";
+        correctTitleFound += itemPage.pagesInVocabulary.join(", ");
+        correctTitleFound += "; ";
+      }
+
+      if (itemPage.pagesNotInVocabulary.length > 0) {
+        wrongTitleFound += itemPage.key + ": ";
+        wrongTitleFound += itemPage.pagesNotInVocabulary.join(", ");
         wrongTitleFound += "; ";
       }
+    }
 
-      const presentVoicesPercentage: number = parseInt(
-        (
-          (pagesInVocabulary / (totalNumberOfTitleFound + errorVoices.length)) *
-          100
-        ).toFixed(0),
-      );
+    if (errorVoices.length > 0) {
+      wrongTitleFound += "ALTRE VOCI: ";
+      wrongTitleFound += errorVoices.join(", ");
+      wrongTitleFound += "; ";
+    }
 
-      let score = 0;
-      if (presentVoicesPercentage >= 30 && presentVoicesPercentage < 100) {
-        score = 0.5;
-        result.result = this.yellowResult;
-      } else if (presentVoicesPercentage === 100) {
-        score = 1;
-        result.result = this.greenResult;
-      }
+    const presentVoicesPercentage: number = parseInt(
+      (
+        (pagesInVocabulary / (totalNumberOfTitleFound + errorVoices.length)) *
+        100
+      ).toFixed(0),
+    );
 
-      result.correct_voices = correctTitleFound;
-      result.correct_voices_percentage =
-        presentVoicesPercentage.toString() + "%";
-      result.wrong_voices = wrongTitleFound;
+    let score = 0;
+    if (presentVoicesPercentage >= 30 && presentVoicesPercentage < 100) {
+      score = 0.5;
+      result.result = this.yellowResult;
+    } else if (presentVoicesPercentage === 100) {
+      score = 1;
+      result.result = this.greenResult;
+    }
 
-      if (this.globalResults.recapItems) {
-        this.globalResults.recapItems.headings = [
-          "Risultato",
-          "% di voci corrette tra quelle usate",
-          "Voci corrette identificate",
-          "Voci aggiuntive trovate",
-        ];
-        this.globalResults.recapItems.pages = [result];
-      }
+    result.correct_voices = correctTitleFound;
+    result.correct_voices_percentage = presentVoicesPercentage.toString() + "%";
+    result.wrong_voices = wrongTitleFound;
 
-      const secondLevelPages = await getSecondLevelPages(url);
-
-      this.globalResults.pagesItems.headings = [
-        "Voce di menù",
-        "Link trovato",
-        "Pagina interna al dominio",
+    if (this.globalResults.recapItems) {
+      this.globalResults.recapItems.headings = [
+        "Risultato",
+        "% di voci corrette tra quelle usate",
+        "Voci corrette identificate",
+        "Voci aggiuntive trovate",
       ];
+      this.globalResults.recapItems.pages = [result];
+    }
 
-      const host = new URL(url).hostname.replace("www.", "");
-      for (const page of secondLevelPages) {
-        const redirectedUrl = await getRedirectedUrl(page.linkUrl);
-        const pageHost = new URL(redirectedUrl).hostname.replace("www.", "");
-        const isInternal = pageHost.includes(host);
+    const secondLevelPages = await getSecondLevelPages(url);
 
-        if (!isInternal) {
-          score = 0;
-        }
+    this.globalResults.pagesItems.headings = [
+      "Voce di menù",
+      "Link trovato",
+      "Pagina interna al dominio",
+    ];
 
-        const item = {
-          menu_voice: page.linkName,
-          link: page.linkUrl,
-          external: isInternal ? "Sì" : "No",
-        };
-        this.globalResults.pagesItems.pages.push(item);
+    const host = new URL(url).hostname.replace("www.", "");
+    for (const page of secondLevelPages) {
+      const redirectedUrl = await getRedirectedUrl(page.linkUrl);
+      const pageHost = new URL(redirectedUrl).hostname.replace("www.", "");
+      const isInternal = pageHost.includes(host);
+
+      if (!isInternal) {
+        score = 0;
       }
 
-      this.globalResults.score = score;
-      this.globalResults.id = this.auditId;
-
-      return {
-        score: score,
+      const item = {
+        menu_voice: page.linkName,
+        link: page.linkUrl,
+        external: isInternal ? "Sì" : "No",
       };
+      this.globalResults.pagesItems.pages.push(item);
+    }
+
+    this.globalResults.score = score;
+    this.globalResults.id = this.auditId;
+
+    return {
+      score: score,
+    };
   }
 
   async getType() {

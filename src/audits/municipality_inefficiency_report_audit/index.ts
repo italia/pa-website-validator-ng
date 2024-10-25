@@ -7,7 +7,6 @@ import { buildUrl, isInternalUrl, urlExists } from "../../utils/utils.js";
 import isEmail from "validator/lib/isEmail.js";
 import { Page } from "puppeteer";
 import { Audit, GlobalResults } from "../Audit.js";
-import { notExecutedErrorMessage } from "../../config/commonAuditsParts.js";
 import * as ejs from "ejs";
 import { fileURLToPath } from "url";
 import path from "path";
@@ -52,100 +51,100 @@ class InefficiencyAudit extends Audit {
     };
   }
 
-  async auditPage(page: Page, url: string,) {
-      this.globalResults.pagesItems.headings = [
-        "Risultato",
-        "Testo del link",
-        "Pagina di destinazione",
-        "Pagina esistente",
-        "Viene usato il servizio dedicato",
-      ];
+  async auditPage(page: Page, url: string) {
+    this.globalResults.pagesItems.headings = [
+      "Risultato",
+      "Testo del link",
+      "Pagina di destinazione",
+      "Pagina esistente",
+      "Viene usato il servizio dedicato",
+    ];
 
-      const items = [
-        {
-          result: redResult,
-          link_name: "",
-          link: "",
-          existing_page: "No",
-          is_service: "No",
-        },
-      ];
+    const items = [
+      {
+        result: redResult,
+        link_name: "",
+        link: "",
+        existing_page: "No",
+        is_service: "No",
+      },
+    ];
 
-      const data = await page.content();
-      const $: CheerioAPI = await cheerio.load(data);
+    const data = await page.content();
+    const $: CheerioAPI = await cheerio.load(data);
 
-      const reportInefficiencyElement = $("footer").find(
-        '[data-element="report-inefficiency"]',
-      );
-      const elementObj = $(reportInefficiencyElement).attr();
+    const reportInefficiencyElement = $("footer").find(
+      '[data-element="report-inefficiency"]',
+    );
+    const elementObj = $(reportInefficiencyElement).attr();
 
-      const label = reportInefficiencyElement.text().trim().toLowerCase() ?? "";
-      items[0].link_name = label;
-      items[0].link = elementObj?.href ?? "";
+    const label = reportInefficiencyElement.text().trim().toLowerCase() ?? "";
+    items[0].link_name = label;
+    items[0].link = elementObj?.href ?? "";
 
-      if (
-        elementObj &&
-        "href" in elementObj &&
-        elementObj.href !== "#" &&
-        elementObj.href !== ""
-      ) {
-        if (isMailto(elementObj.href)) {
-          items[0].link = elementObj.href;
-          items[0].existing_page = "N/A";
-        } else {
-          let pageUrl = elementObj.href;
-          if ((await isInternalUrl(pageUrl)) && !pageUrl.includes(url)) {
-            pageUrl = await buildUrl(url, pageUrl);
-          }
-
-          const checkUrl = await urlExists(url, pageUrl);
-          items[0].link = checkUrl.inspectedUrl;
-
-          if (!checkUrl.result) {
-            this.score = 0;
-            this.globalResults.score = 0;
-
-            this.globalResults.pagesItems.pages = items;
-
-            return {
-              score: 0,
-            };
-          }
-
-          items[0].existing_page = "Sì";
-
-          const parts = new URL(pageUrl).pathname.split("/");
-          if (parts[1] === "servizi") {
-            items[0].is_service = "Sì";
-          }
+    if (
+      elementObj &&
+      "href" in elementObj &&
+      elementObj.href !== "#" &&
+      elementObj.href !== ""
+    ) {
+      if (isMailto(elementObj.href)) {
+        items[0].link = elementObj.href;
+        items[0].existing_page = "N/A";
+      } else {
+        let pageUrl = elementObj.href;
+        if ((await isInternalUrl(pageUrl)) && !pageUrl.includes(url)) {
+          pageUrl = await buildUrl(url, pageUrl);
         }
 
-        if (
-          label !== "disservizio" &&
-          label !== "segnala disservizio" &&
-          label !== "segnalazione disservizio"
-        ) {
-          items[0].result = yellowResult;
-          this.score = 0.5;
-          this.globalResults.score = 0.5;
+        const checkUrl = await urlExists(url, pageUrl);
+        items[0].link = checkUrl.inspectedUrl;
+
+        if (!checkUrl.result) {
+          this.score = 0;
+          this.globalResults.score = 0;
 
           this.globalResults.pagesItems.pages = items;
 
           return {
-            score: 0.5,
+            score: 0,
           };
         }
 
-        items[0].result = greenResult;
+        items[0].existing_page = "Sì";
 
-        this.score = 1;
-        this.globalResults.score = 1;
-        this.globalResults.pagesItems.pages = items;
+        const parts = new URL(pageUrl).pathname.split("/");
+        if (parts[1] === "servizi") {
+          items[0].is_service = "Sì";
+        }
       }
 
-      return {
-        score: this.score,
-      };
+      if (
+        label !== "disservizio" &&
+        label !== "segnala disservizio" &&
+        label !== "segnalazione disservizio"
+      ) {
+        items[0].result = yellowResult;
+        this.score = 0.5;
+        this.globalResults.score = 0.5;
+
+        this.globalResults.pagesItems.pages = items;
+
+        return {
+          score: 0.5,
+        };
+      }
+
+      items[0].result = greenResult;
+
+      this.score = 1;
+      this.globalResults.score = 1;
+      this.globalResults.pagesItems.pages = items;
+    }
+
+    return {
+      score: this.score,
+    };
   }
 
   async getType() {

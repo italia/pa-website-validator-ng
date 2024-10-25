@@ -50,11 +50,7 @@ const render = async () => {
         informativeAudits.push({
           ...auditMeta,
           auditHTML: await audit.returnGlobalHTML(),
-          status: infoScore
-            ? ""
-            : score >= 0.5
-              ? "pass"
-                  : "fail",
+          status: infoScore ? "" : score >= 0.5 ? "pass" : "fail",
         });
       } else if (error) {
         failedAudits.push({
@@ -64,7 +60,7 @@ const render = async () => {
         });
         if ("pagesInError" in audit.globalResults) {
           audit.globalResults.pagesInError.pages.forEach((p) => {
-            if(p.show){
+            if (p.show) {
               errorPages.push({
                 criteria: auditMeta.code + " - " + auditMeta.mainTitle,
                 ...p,
@@ -120,7 +116,7 @@ const render = async () => {
     const keys = Object.keys(p);
     const obj: Record<string, unknown> = {};
     keys.forEach((k) => {
-      if (k !== "weight" && k !== "id" && k !== 'show') {
+      if (k !== "weight" && k !== "id" && k !== "show") {
         obj[k] = p[k];
       }
     });

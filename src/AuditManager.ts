@@ -28,7 +28,11 @@ async function collectAudits() {
         const moduleId = extractFolderName(moduleName);
         if (!configAudits.includes(moduleId)) continue;
 
-        const module = await import((process.platform as string) == "win32" ? '../' + moduleName : moduleName);
+        const module = await import(
+          (process.platform as string) == "win32"
+            ? "../" + moduleName
+            : moduleName
+        );
         if (moduleId) {
           console.log("AUDIT MANAGER registered audit: " + moduleId);
           audits[moduleId] = module.default;

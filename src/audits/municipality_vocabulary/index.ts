@@ -66,132 +66,128 @@ class MunicipalityVocabulary extends Audit {
   }
 
   async auditPage(page: Page, url: string) {
-      this.globalResults.pagesItems.headings = [
-        "Risultato",
-        "% di argomenti presenti nell'elenco del modello",
-        "Argomenti non presenti nell'elenco del modello",
-        "% di argomenti presenti nell'elenco del modello o EuroVoc",
-        "Argomenti non presenti nell'elenco del modello o EuroVoc",
-      ];
+    this.globalResults.pagesItems.headings = [
+      "Risultato",
+      "% di argomenti presenti nell'elenco del modello",
+      "Argomenti non presenti nell'elenco del modello",
+      "% di argomenti presenti nell'elenco del modello o EuroVoc",
+      "Argomenti non presenti nell'elenco del modello o EuroVoc",
+    ];
 
-      const item = [
-        {
-          result: redResult,
-          element_in_municipality_model_percentage: "",
-          element_not_in_municipality_vocabulary: "",
-          element_in_union_percentage: "",
-          element_not_in_union_vocabulary: "",
-        },
-      ];
+    const item = [
+      {
+        result: redResult,
+        element_in_municipality_model_percentage: "",
+        element_not_in_municipality_vocabulary: "",
+        element_in_union_percentage: "",
+        element_not_in_union_vocabulary: "",
+      },
+    ];
 
-      const data = await page.content();
-      let $: CheerioAPI = await cheerio.load(data);
+    const data = await page.content();
+    let $: CheerioAPI = await cheerio.load(data);
 
-      const allArgumentsHREF = await getHREFValuesDataAttribute(
-        $,
-        '[data-element="all-topics"]',
-      );
+    const allArgumentsHREF = await getHREFValuesDataAttribute(
+      $,
+      '[data-element="all-topics"]',
+    );
 
-      if (allArgumentsHREF.length <= 0) {
-        item[0].result = notExecutedErrorMessage.replace(
-          "<LIST>",
-          "`all-topics",
-        );
-
-        this.globalResults.pagesItems.pages = item;
-        this.globalResults.score = 0;
-        this.score = 0;
-
-        return {
-          score: 0,
-        };
-      }
-
-      let allArgumentsPageUrl = allArgumentsHREF[0];
-      if (
-        (await isInternalUrl(allArgumentsPageUrl)) &&
-        !allArgumentsPageUrl.includes(url)
-      ) {
-        allArgumentsPageUrl = await buildUrl(url, allArgumentsHREF[0]);
-      }
-
-      $ = await loadPageData(allArgumentsPageUrl);
-      const argumentList = await getPageElementDataAttribute(
-        $,
-        '[data-element="topic-element"]',
-      );
-
-      if (argumentList.length === 0) {
-        this.globalResults.pagesItems.pages = item;
-        this.globalResults.score = 0;
-        this.score = 0;
-
-        return {
-          score: 0,
-        };
-      }
-
-      const elementInfoMunicipalityVocabulary =
-        await areAllElementsInVocabulary(
-          argumentList,
-          municipalityModelVocabulary,
-        );
-
-      const elementInMunicipalityModelPercentage = parseInt(
-        (
-          (elementInfoMunicipalityVocabulary.elementIncluded.length /
-            argumentList.length) *
-          100
-        ).toFixed(0),
-      );
-
-      const lowerCaseEurovoc = eurovocVocabulary.map((element) => {
-        return element.toLowerCase();
-      });
-      const lowerCaseModel = municipalityModelVocabulary.map((element) => {
-        return element.toLowerCase();
-      });
-      const uniq = [...new Set([...lowerCaseEurovoc, ...lowerCaseModel])];
-
-      const elementInUnionVocabulary = await areAllElementsInVocabulary(
-        argumentList,
-        uniq,
-      );
-
-      const elementInUnionVocabularyPercentage = parseInt(
-        (
-          (elementInUnionVocabulary.elementIncluded.length /
-            argumentList.length) *
-          100
-        ).toFixed(0),
-      );
-
-      if (elementInfoMunicipalityVocabulary.allArgumentsInVocabulary) {
-        this.score = 1;
-        item[0].result = greenResult;
-      } else if (elementInUnionVocabularyPercentage >= 50) {
-        item[0].result = yellowResult;
-        this.score = 0.5;
-      } else {
-        item[0].result = redResult;
-        this.score = 0;
-      }
-
-      item[0].element_in_municipality_model_percentage =
-        elementInMunicipalityModelPercentage + "%";
-      item[0].element_in_union_percentage =
-        elementInUnionVocabularyPercentage + "%";
-      item[0].element_not_in_municipality_vocabulary =
-        elementInfoMunicipalityVocabulary.elementNotIncluded.join(", ");
-      item[0].element_not_in_union_vocabulary =
-        elementInUnionVocabulary.elementNotIncluded.join(", ");
+    if (allArgumentsHREF.length <= 0) {
+      item[0].result = notExecutedErrorMessage.replace("<LIST>", "`all-topics");
 
       this.globalResults.pagesItems.pages = item;
-      this.globalResults.score = this.score;
+      this.globalResults.score = 0;
+      this.score = 0;
 
       return {
-        score: this.score,
+        score: 0,
       };
+    }
+
+    let allArgumentsPageUrl = allArgumentsHREF[0];
+    if (
+      (await isInternalUrl(allArgumentsPageUrl)) &&
+      !allArgumentsPageUrl.includes(url)
+    ) {
+      allArgumentsPageUrl = await buildUrl(url, allArgumentsHREF[0]);
+    }
+
+    $ = await loadPageData(allArgumentsPageUrl);
+    const argumentList = await getPageElementDataAttribute(
+      $,
+      '[data-element="topic-element"]',
+    );
+
+    if (argumentList.length === 0) {
+      this.globalResults.pagesItems.pages = item;
+      this.globalResults.score = 0;
+      this.score = 0;
+
+      return {
+        score: 0,
+      };
+    }
+
+    const elementInfoMunicipalityVocabulary = await areAllElementsInVocabulary(
+      argumentList,
+      municipalityModelVocabulary,
+    );
+
+    const elementInMunicipalityModelPercentage = parseInt(
+      (
+        (elementInfoMunicipalityVocabulary.elementIncluded.length /
+          argumentList.length) *
+        100
+      ).toFixed(0),
+    );
+
+    const lowerCaseEurovoc = eurovocVocabulary.map((element) => {
+      return element.toLowerCase();
+    });
+    const lowerCaseModel = municipalityModelVocabulary.map((element) => {
+      return element.toLowerCase();
+    });
+    const uniq = [...new Set([...lowerCaseEurovoc, ...lowerCaseModel])];
+
+    const elementInUnionVocabulary = await areAllElementsInVocabulary(
+      argumentList,
+      uniq,
+    );
+
+    const elementInUnionVocabularyPercentage = parseInt(
+      (
+        (elementInUnionVocabulary.elementIncluded.length /
+          argumentList.length) *
+        100
+      ).toFixed(0),
+    );
+
+    if (elementInfoMunicipalityVocabulary.allArgumentsInVocabulary) {
+      this.score = 1;
+      item[0].result = greenResult;
+    } else if (elementInUnionVocabularyPercentage >= 50) {
+      item[0].result = yellowResult;
+      this.score = 0.5;
+    } else {
+      item[0].result = redResult;
+      this.score = 0;
+    }
+
+    item[0].element_in_municipality_model_percentage =
+      elementInMunicipalityModelPercentage + "%";
+    item[0].element_in_union_percentage =
+      elementInUnionVocabularyPercentage + "%";
+    item[0].element_not_in_municipality_vocabulary =
+      elementInfoMunicipalityVocabulary.elementNotIncluded.join(", ");
+    item[0].element_not_in_union_vocabulary =
+      elementInUnionVocabulary.elementNotIncluded.join(", ");
+
+    this.globalResults.pagesItems.pages = item;
+    this.globalResults.score = this.score;
+
+    return {
+      score: this.score,
+    };
   }
 
   async getType() {
