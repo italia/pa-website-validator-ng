@@ -4,11 +4,12 @@ import { fileURLToPath } from "url";
 import path from "path";
 let audits: Record<string, () => Promise<Audit>> = {};
 import { Audit } from "./audits/Audit.js";
+import process from "process";
 
 function extractFolderName(path: string) {
   const fileNameWithoutExtension = path.replace(/\.[^/.]+$/, "");
   const systemFolderSeparator =
-    (process.platform as string) == "windows" ? "\\" : "/";
+    (process.platform as string) == "win32" ? "\\" : "/";
   const pathSegments = fileNameWithoutExtension.split(systemFolderSeparator);
   return pathSegments[pathSegments.length - 2];
 }
@@ -27,7 +28,7 @@ async function collectAudits() {
         const moduleId = extractFolderName(moduleName);
         if (!configAudits.includes(moduleId)) continue;
 
-        const module = await import(moduleName);
+        const module = await import((process.platform as string) == "win32" ? '../' : moduleName);
         if (moduleId) {
           console.log("AUDIT MANAGER registered audit: " + moduleId);
           audits[moduleId] = module.default;
