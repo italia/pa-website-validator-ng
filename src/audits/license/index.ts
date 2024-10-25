@@ -4,7 +4,7 @@ import { CheerioAPI } from "cheerio";
 
 import { initializePuppeteer } from "./../../PuppeteerInstance.js";
 import { buildUrl, isInternalUrl, urlExists } from "../../utils/utils.js";
-import { Page } from "puppeteer";
+import {Dialog, Page} from "puppeteer";
 
 import { Audit, GlobalResults } from "../Audit.js";
 import { errorHandling } from "../../config/commonAuditsParts.js";
@@ -92,24 +92,24 @@ class LicenceAudit extends Audit {
       items[0].page_section = "No";
       items[0].page_contains_correct_text = "No";
 
-        const browser = await initializePuppeteer();
-        const legalNotesPage = await browser.newPage();
+      const browser = await initializePuppeteer();
+      const legalNotesPage = await browser.newPage();
 
-        legalNotesPage.on("dialog", async (dialog: any) => {
-          console.log(
-            `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} Navigation to ${url} interrupted by dialog with message : "${dialog.message()}"`,
-          );
-          await dialog.dismiss();
-          console.log(
-            `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} Dismissed dialog`,
-          );
-        });
-
-        await Gatherer.gotoRetry(
-          legalNotesPage,
-          pageUrl,
-          errorHandling.gotoRetryTentative,
+      legalNotesPage.on("dialog", async (dialog: Dialog) => {
+        console.log(
+          `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} Navigation to ${url} interrupted by dialog with message : "${dialog.message()}"`,
         );
+        await dialog.dismiss();
+        console.log(
+          `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} Dismissed dialog`,
+        );
+      });
+
+      await Gatherer.gotoRetry(
+        legalNotesPage,
+        pageUrl,
+        errorHandling.gotoRetryTentative,
+      );
 
       const data = await legalNotesPage.content();
       const $: CheerioAPI = await cheerio.load(data);

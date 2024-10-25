@@ -2,7 +2,7 @@ import { Gatherer } from "../Gatherer.js";
 import { PageData } from "../../types/crawler-types.js";
 import { Page } from "puppeteer";
 import { getRandomNString } from "../../utils/utils.js";
-import { DataElementError } from "../../utils/DataElementError";
+import { DataElementError } from "../../utils/DataElementError.js";
 
 class firstLevelPageGatherer extends Gatherer {
   static dataElements: string[] = ["overview"];

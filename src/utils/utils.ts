@@ -4,7 +4,7 @@ import {
   VocabularyResult,
 } from "../types/crawler-types.js";
 import * as cheerio from "cheerio";
-import { HTTPResponse, Page, HTTPRequest, Dialog } from "puppeteer";
+import {HTTPResponse, Page, HTTPRequest, Dialog} from "puppeteer";
 import { CheerioAPI } from "cheerio";
 import axios from "axios";
 import { LRUCache } from "lru-cache";
@@ -29,27 +29,27 @@ const loadPageData = async (
   const browser = await initializePuppeteer();
   const page = await browser.newPage();
 
-    page.on("dialog", async (dialog: any) => {
-      console.log(
-        `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} Navigation to ${url} interrupted by dialog with message : "${dialog.message()}"`,
-      );
-      await dialog.dismiss();
-      console.log(
-        `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} Dismissed dialog`,
-      );
-    });
+  page.on("dialog", async (dialog: Dialog) => {
+    console.log(
+      `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} Navigation to ${url} interrupted by dialog with message : "${dialog.message()}"`,
+    );
+    await dialog.dismiss();
+    console.log(
+      `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} Dismissed dialog`,
+    );
+  });
 
-    await page.setRequestInterception(true);
-    page.on("request", (request: HTTPRequest) => {
-      if (
-        ["image", "imageset", "media"].indexOf(request.resourceType()) !== -1 ||
-        new URL(request.url()).pathname.endsWith(".pdf")
-      ) {
-        request.abort();
-      } else {
-        request.continue();
-      }
-    });
+  await page.setRequestInterception(true);
+  page.on("request", (request: HTTPRequest) => {
+    if (
+      ["image", "imageset", "media"].indexOf(request.resourceType()) !== -1 ||
+      new URL(request.url()).pathname.endsWith(".pdf")
+    ) {
+      request.abort();
+    } else {
+      request.continue();
+    }
+  });
 
   await gotoRetry(page, url, errorHandling.gotoRetryTentative);
 
@@ -81,7 +81,7 @@ const loadPage = async (url: string): Promise<Page> => {
     const browser = await initializePuppeteer();
     const page = await browser.newPage();
 
-    page.on("dialog", async (dialog: any) => {
+    page.on("dialog", async (dialog: Dialog) => {
       console.log(
         `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} Navigation to ${url} interrupted by dialog with message : "${dialog.message()}"`,
       );
@@ -485,7 +485,7 @@ const getRedirectedUrl = async (url: string): Promise<string> => {
     const browser = await initializePuppeteer();
     const page = await browser.newPage();
 
-    page.on("dialog", async (dialog: any) => {
+    page.on("dialog", async (dialog: Dialog) => {
       console.log(
         `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} Navigation to ${url} interrupted by dialog with message : "${dialog.message()}"`,
       );
