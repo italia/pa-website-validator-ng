@@ -10,27 +10,18 @@
 %>
 <%
 let icon = "";
-let message = "";
 switch (status) {
     case 'pass':
         icon = '#it-check-circle';
         message = "- Criterio superato";
         break;
 
-    case 'average':
-        icon = '#it-warning-circle';
-        message = "- Criterio nella media";
-        break;
-
-
     case 'fail':
         icon = '#it-error';
-        message = "- Criterio non superato";
         break;
 
     default:
         icon = '#it-info-circle';
-        message = "";
         break;
 } %>
 
@@ -50,7 +41,7 @@ switch (status) {
         <svg class="icon <%= status %>" aria-hidden="true">
             <use href="<%= icon %>"></use>
         </svg>
-        <%= code %> <%= message %>
+        <%=code%> - <%= mainTitle %>
     </h2>
     <div class="audit-description">
 
