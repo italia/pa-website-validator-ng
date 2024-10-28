@@ -227,6 +227,20 @@ const scan = async (pageData: PageData) => {
                 ` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: ERROR`,
               );
 
+              if (audit === undefined)
+                throw new Error(
+                  ` No audit found for id ${auditId}: check your configuration`,
+                );
+
+              await audit.returnErrors(
+                e instanceof DataElementError || e instanceof Error
+                  ? e.message
+                  : String(e),
+                pageData.url,
+                pageData.type,
+                !(e instanceof DataElementError) && !(typeof e === "string"),
+              );
+
               auditingErrors.push(
                 e instanceof Error || e instanceof DataElementError
                   ? e.message
