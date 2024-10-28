@@ -47,20 +47,27 @@ default:
         <%= mainTitle %>
     </h2>
   <div class="audit-description">
-
-
       <p>Il sito deve essere ospitato su datacenter localizzati su territorio europeo.</p>
-    <p>
-      <span class="h6 uppercase">Condizioni di successo:</span>
-        l'indirizzo IP fa riferimento a un datacenter localizzato su territorio europeo;
-    </p>
+      <div class="accordion inner" id="collapse">
+              <div class="accordion-item">
+                  <h2 class="accordion-header" id="accordion-inner-ip">
+                      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-ip" aria-expanded="false" aria-controls="accordion-collapse-ip">
+                          Condizioni di successo e Verifiche automatiche
+                      </button>
+                  </h2>
+                  <div id="accordion-collapse-ip" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-ip">
+                      <span class="h6 uppercase">Condizioni di successo:</span>
+                      l'indirizzo IP fa riferimento a un datacenter localizzato su territorio europeo;
+                      </p>
 
+                      <p>
+                          <span class="h6 uppercase">Verifiche automatiche:</span>
+                          verifica che la localizzazione dell'IP rientri all'interno di uno dei confini degli stati membri dell'UE; RIFERIMENTI TECNICI E NORMATIVI: GDPR.
+                      </p>
+                  </div>
+              </div>
+      </div>
     <p>
-      <span class="h6 uppercase">Verifiche automatiche:</span>
-        verifica che la localizzazione dell'IP rientri all'interno di uno dei confini degli stati membri dell'UE; RIFERIMENTI TECNICI E NORMATIVI: GDPR.
-    </p>
-    <div class="separator"></div>
-
       <p>
           <span class="h6"> <%= statusMessage %> </span> %>
       </p>

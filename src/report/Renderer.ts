@@ -56,7 +56,7 @@ const render = async () => {
         failedAudits.push({
           ...auditMeta,
           status: "fail",
-          auditHTML: (await audit.returnGlobalHTML()) + improvementPlanHTML,
+          auditHTML: (await audit.returnGlobalHTML()).replace("['replace-html']", improvementPlanHTML),
         });
         if ("pagesInError" in audit.globalResults) {
           audit.globalResults.pagesInError.pages.forEach((p) => {
@@ -75,20 +75,20 @@ const render = async () => {
             ...auditMeta,
             status: "pass",
             auditHTML:
-              (await audit.returnGlobalHTML(true)) + improvementPlanHTML,
+              (await audit.returnGlobalHTML(true)).replace("['replace-html']", improvementPlanHTML),
           });
         } else {
           successAudits.push({
             ...auditMeta,
             status: "pass",
-            auditHTML: (await audit.returnGlobalHTML()) + improvementPlanHTML,
+            auditHTML: (await audit.returnGlobalHTML()).replace("['replace-html']", improvementPlanHTML),
           });
         }
       } else {
         failedAudits.push({
           ...auditMeta,
           status: "fail",
-          auditHTML: (await audit.returnGlobalHTML()) + improvementPlanHTML,
+          auditHTML: (await audit.returnGlobalHTML()).replace("['replace-html']", improvementPlanHTML),
         });
       }
 

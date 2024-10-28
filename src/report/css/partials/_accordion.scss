@@ -2,7 +2,7 @@
   padding-bottom: 2rem;
 }
 
-.accordion-header .accordion-button {
+.accordion-header .accordion-button, .accordion-inner .accordion-button {
   display: block;
   color: $black;
 
