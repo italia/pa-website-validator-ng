@@ -43,7 +43,7 @@ const loadPageData = async (
   page.on("request", (request: HTTPRequest) => {
     if (
       ["image", "imageset", "media"].indexOf(request.resourceType()) !== -1 ||
-      new URL(request.url()).pathname.endsWith(".pdf")
+      new URL(request.url()).pathname.endsWith(".pdf") || request.url().includes('https://ingestion.webanalytics.italia.it')
     ) {
       request.abort();
     } else {
@@ -95,7 +95,7 @@ const loadPage = async (url: string): Promise<Page> => {
     await page.on("request", (request: HTTPRequest) => {
       if (
         ["image", "imageset", "media"].indexOf(request.resourceType()) !== -1 ||
-        new URL(request.url()).pathname.endsWith(".pdf")
+        new URL(request.url()).pathname.endsWith(".pdf") || request.url().includes('https://ingestion.webanalytics.italia.it')
       ) {
         request.abort();
       } else {
