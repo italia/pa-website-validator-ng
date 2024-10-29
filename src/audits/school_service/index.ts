@@ -312,7 +312,7 @@ class SchoolServiceAudit extends Audit {
       status = "pass";
       message = greenResult;
     } else if (this.score == 0.5) {
-      status = "average";
+      status = "pass";
       message = yellowResult;
     } else {
       status = "fail";

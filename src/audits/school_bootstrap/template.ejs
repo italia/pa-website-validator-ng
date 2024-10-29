@@ -47,16 +47,26 @@ default:
     <p>Il sito della scuola deve utilizzare la libreria Bootstrap Italia in una versione più recente di 1.6.</p>
     <div class="separator"></div>
 
-    <p>
-      <span class="h6 uppercase">CONDIZIONI DI SUCCESSO:</span>
-        la libreria Bootstrap Italia è presente e in uso in una versione uguale o superiore alla 1.6;
-    </p>
+      <div class="accordion inner" id="collapse">
+          <div class="accordion-item">
+              <h2 class="accordion-header" id="accordion-inner-ip">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-ip" aria-expanded="false" aria-controls="accordion-collapse-ip">
+                      Condizioni di successo e Verifiche automatiche
+                  </button>
+              </h2>
+              <div id="accordion-collapse-ip" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-ip">
+                  <p>
+                      <span class="h6 uppercase">CONDIZIONI DI SUCCESSO:</span>
+                      la libreria Bootstrap Italia è presente e in uso in una versione uguale o superiore alla 1.6;
+                  </p>
 
-    <p>
-        in ogni pagina analizzata viene verificata la presenza della libreria Bootstrap Italia e la versione in uso, individuando la proprietà CSS --bootstrap-italia-version all’interno del selettore :root o la variabile globale window.BOOTSTRAP_ITALIA_VERSION. Inoltre deve utilizzare almeno una tra le classi CSS di Bootstrap Italia indicate nella Documentazione dell'App di valutazione; RIFERIMENTI TECNICI E NORMATIVI:
-        <a href="https://docs.italia.it/italia/designers-italia/design-scuole-docs">Documentazione del Modello scuole</a>.
-    </p>
-    <div class="separator"></div>
+                  <p>
+                      in ogni pagina analizzata viene verificata la presenza della libreria Bootstrap Italia e la versione in uso, individuando la proprietà CSS --bootstrap-italia-version all’interno del selettore :root o la variabile globale window.BOOTSTRAP_ITALIA_VERSION. Inoltre deve utilizzare almeno una tra le classi CSS di Bootstrap Italia indicate nella Documentazione dell'App di valutazione; RIFERIMENTI TECNICI E NORMATIVI:
+                      <a href="https://docs.italia.it/italia/designers-italia/design-scuole-docs">Documentazione del Modello scuole</a>.
+                  </p>
+              </div>
+          </div>
+      </div>
 
     <p>
       <span class="h6"> <%= statusMessage %> </span> %>

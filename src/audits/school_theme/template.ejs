@@ -44,20 +44,31 @@ switch (status) {
     </h2>
     <div class="audit-description">
 
-
         <p>Nel caso in cui il sito utilizzi un tema messo a disposizione nella documentazione del modello di sito della scuola, lo utilizza nella versione 2.0 o successive.</p>
-        <p>
-            <span class="h6 uppercase">Condizioni di successo:</span>
-            se è in uso il tema CMS del modello scuole, la versione utilizzata è uguale o superiore alla 2.0;
-        </p>
 
-        <p>
-            <span class="h6 uppercase">Verifiche automatiche:</span>
-            viene verificato l'uso del tema CMS del modello e la versione in uso ricercando uno specifico testo all'interno di tutti i file .CSS presenti in pagina. Lo specifico testo ricercato viene indicato nella Documentazione delle App di valutazione; RIFERIMENTI TECNICI E NORMATIVI: 
-            <a href="https://docs.italia.it/italia/designers-italia/design-scuole-docs/it/versione-corrente/index.html">Documentazione del Modello scuole</a>,
-            <a href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/it/versione-attuale/index.html">Documentazione delle App di valutazione</a>.
-        </p>
         <div class="separator"></div>
+        <div class="accordion inner" id="collapse">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="accordion-inner-ip">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-ip" aria-expanded="false" aria-controls="accordion-collapse-ip">
+                        Condizioni di successo e Verifiche automatiche
+                    </button>
+                </h2>
+                <div id="accordion-collapse-ip" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-ip">
+                    <p>
+                        <span class="h6 uppercase">Condizioni di successo:</span>
+                        se è in uso il tema CMS del modello scuole, la versione utilizzata è uguale o superiore alla 2.0;
+                    </p>
+
+                    <p>
+                        <span class="h6 uppercase">Verifiche automatiche:</span>
+                        viene verificato l'uso del tema CMS del modello e la versione in uso ricercando uno specifico testo all'interno di tutti i file .CSS presenti in pagina. Lo specifico testo ricercato viene indicato nella Documentazione delle App di valutazione; RIFERIMENTI TECNICI E NORMATIVI:
+                        <a href="https://docs.italia.it/italia/designers-italia/design-scuole-docs/it/versione-corrente/index.html">Documentazione del Modello scuole</a>,
+                        <a href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/it/versione-attuale/index.html">Documentazione delle App di valutazione</a>.
+                    </p>
+                </div>
+            </div>
+        </div>
 
         <p>
             <span class="h6"> <%= statusMessage %> </span>

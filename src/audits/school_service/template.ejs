@@ -47,18 +47,28 @@ default:
     <p>Tutte le schede informative dei servizi devono mostrare le voci segnalate come obbligatorie all'interno dell'architettura dell'informazione, nell'ordine segnalato dal modello.</p>
     <div class="separator"></div>
 
-    <p>
-      <span class="h6 uppercase">CONDIZIONI DI SUCCESSO:</span>
-      nelle schede informative di servizio le voci obbligatorie e i relativi contenuti sono presenti e, dove richiesto, sono nell'ordine corretto;
-    </p>
+    <div class="accordion inner" id="collapse">
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="accordion-inner-ip">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-ip" aria-expanded="false" aria-controls="accordion-collapse-ip">
+            Condizioni di successo e Verifiche automatiche
+          </button>
+        </h2>
+        <div id="accordion-collapse-ip" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-ip">
+          <p>
+            <span class="h6 uppercase">CONDIZIONI DI SUCCESSO:</span>
+            nelle schede informative di servizio le voci obbligatorie e i relativi contenuti sono presenti e, dove richiesto, sono nell'ordine corretto;
+          </p>
 
-    <p>
-      <span class="h6 uppercase">Verifiche automatiche:</span>
-      ricercando specifici attributi \"data-element\" come spiegato nella Documentazione delle App di valutazione, la presenza e l'ordine delle voci richieste viene verificato ricercandoli all'interno della pagina e dell'indice. Per essere ritenute valide, le voci devono avere contenuti associati della tipologia indicata all'interno del documento di architettura dell'informazione. Maggiori dettagli sono indicati nella Documentazione delle App di valutazione; RIFERIMENTI TECNICI E NORMATIVI:
-      <a href="https://docs.italia.it/italia/designers-italia/design-scuole-docs">Documentazione del Modello scuole</a>,      
-      <a href="https://docs.google.com/spreadsheets/d/1MoayTY05SE4ixtgBsfsdngdrFJf_Z2KNvDkMF3tKfc8/edit#gid=0">Content type: scheda servizio</a>,      
-      <a href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>.     
-    <div class="separator"></div>
+          <p>
+            <span class="h6 uppercase">Verifiche automatiche:</span>
+            ricercando specifici attributi \"data-element\" come spiegato nella Documentazione delle App di valutazione, la presenza e l'ordine delle voci richieste viene verificato ricercandoli all'interno della pagina e dell'indice. Per essere ritenute valide, le voci devono avere contenuti associati della tipologia indicata all'interno del documento di architettura dell'informazione. Maggiori dettagli sono indicati nella Documentazione delle App di valutazione; RIFERIMENTI TECNICI E NORMATIVI:
+            <a href="https://docs.italia.it/italia/designers-italia/design-scuole-docs">Documentazione del Modello scuole</a>,
+            <a href="https://docs.google.com/spreadsheets/d/1MoayTY05SE4ixtgBsfsdngdrFJf_Z2KNvDkMF3tKfc8/edit#gid=0">Content type: scheda servizio</a>,
+            <a href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>.
+        </div>
+      </div>
+    </div>
 
     <p>
       <span class="h6"> <%= statusMessage %> </span> %>

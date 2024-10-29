@@ -290,7 +290,7 @@ class ServiceAudit extends Audit {
       status = "pass";
       message = this.greenResult;
     } else if (this.score == 0.5) {
-      status = "average";
+      status = "pass";
       message = this.yellowResult;
     } else {
       status = "fail";

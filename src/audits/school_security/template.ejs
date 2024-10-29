@@ -44,21 +44,31 @@ default:
       <%=code%> - <%= mainTitle %>
   </h2>
   <div class="audit-description">
-
-
       <p>Il sito della scuola deve avere un certificato https valido e attivo.</p>
-    <p>
-      <span class="h6 uppercase">Condizioni di successo:</span>
-        il sito utilizza un certificato https valido e non obsoleto secondo le raccomandazioni AgID;
-    </p>
 
-    <p>
-      <span class="h6 uppercase">Verifiche automatiche:</span>
-        viene verificato che il certificato https del sito sia valido e attivo; RIFERIMENTI TECNICI E NORMATIVI:
-        <a href="https://docs.italia.it/italia/designers-italia/design-scuole-docs">Documentazione del Modello scuole</a>,
-        <a href="https://cert-agid.gov.it/wp-content/uploads/2020/11/AgID-RACCSECTLS-01.pdf">Agid Raccomandazioni in merito allo standard Transport Layer Security (TLS)</a>.
-    </p>
-    <div class="separator"></div>
+      <div class="separator"></div>
+      <div class="accordion inner" id="collapse">
+          <div class="accordion-item">
+              <h2 class="accordion-header" id="accordion-inner-ip">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-ip" aria-expanded="false" aria-controls="accordion-collapse-ip">
+                      Condizioni di successo e Verifiche automatiche
+                  </button>
+              </h2>
+              <div id="accordion-collapse-ip" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-ip">
+                  <p>
+                      <span class="h6 uppercase">Condizioni di successo:</span>
+                      il sito utilizza un certificato https valido e non obsoleto secondo le raccomandazioni AgID;
+                  </p>
+
+                  <p>
+                      <span class="h6 uppercase">Verifiche automatiche:</span>
+                      viene verificato che il certificato https del sito sia valido e attivo; RIFERIMENTI TECNICI E NORMATIVI:
+                      <a href="https://docs.italia.it/italia/designers-italia/design-scuole-docs">Documentazione del Modello scuole</a>,
+                      <a href="https://cert-agid.gov.it/wp-content/uploads/2020/11/AgID-RACCSECTLS-01.pdf">Agid Raccomandazioni in merito allo standard Transport Layer Security (TLS)</a>.
+                  </p>
+              </div>
+          </div>
+      </div>
 
       <p>
           <span class="h6"> <%= statusMessage %> </span> %>

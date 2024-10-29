@@ -44,21 +44,32 @@ default:
   </h2>
   <div class="audit-description">
 
-
     <p>Il sito della scuola deve utilizzare argomenti forniti dal modello di sito scuola.</p>
-    <p>
-    <span class="h6 uppercase">Condizioni di successo:</span>
-    gli argomenti utilizzati appartengono alla lista indicata all'interno del documento di architettura dell'informazione del modello scuole alla voce \"Le parole della scuola\"  e l’elenco completo degli argomenti utilizzati è presente nella pagina dei risultati di ricerca;
-    </p>
 
-    <p>
-      <span class="h6 uppercase">Verifiche automatiche:</span>
-      gli argomenti identificati all'interno della funzione di ricerca del sito vengono confrontati con l'elenco di voci presente nel documento di architettura dell'informazione, ricercandoli usando specifici attributi \"data-element\" come spiegato nella Documentazione delle App di valutazione; RIFERIMENTI TECNICI E NORMATIVI: 
-      <a href="https://docs.italia.it/italia/designers-italia/design-scuole-docs">Documentazione del Modello scuole</a>,
-      <a href="https://docs.google.com/spreadsheets/d/1MoayTY05SE4ixtgBsfsdngdrFJf_Z2KNvDkMF3tKfc8/edit#gid=2135815526">Elenco degli argomenti del Modello scuole</a>,
-      <a href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>,
-    </p>
-    <div class="separator"></div>
+      <div class="separator"></div>
+      <div class="accordion inner" id="collapse">
+          <div class="accordion-item">
+              <h2 class="accordion-header" id="accordion-inner-ip">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-ip" aria-expanded="false" aria-controls="accordion-collapse-ip">
+                      Condizioni di successo e Verifiche automatiche
+                  </button>
+              </h2>
+              <div id="accordion-collapse-ip" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-ip">
+                  <p>
+                      <span class="h6 uppercase">Condizioni di successo:</span>
+                      gli argomenti utilizzati appartengono alla lista indicata all'interno del documento di architettura dell'informazione del modello scuole alla voce \"Le parole della scuola\"  e l’elenco completo degli argomenti utilizzati è presente nella pagina dei risultati di ricerca;
+                  </p>
+
+                  <p>
+                      <span class="h6 uppercase">Verifiche automatiche:</span>
+                      gli argomenti identificati all'interno della funzione di ricerca del sito vengono confrontati con l'elenco di voci presente nel documento di architettura dell'informazione, ricercandoli usando specifici attributi \"data-element\" come spiegato nella Documentazione delle App di valutazione; RIFERIMENTI TECNICI E NORMATIVI:
+                      <a href="https://docs.italia.it/italia/designers-italia/design-scuole-docs">Documentazione del Modello scuole</a>,
+                      <a href="https://docs.google.com/spreadsheets/d/1MoayTY05SE4ixtgBsfsdngdrFJf_Z2KNvDkMF3tKfc8/edit#gid=2135815526">Elenco degli argomenti del Modello scuole</a>,
+                      <a href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>,
+                  </p>
+              </div>
+          </div>
+      </div>
 
       <p>
           <span class="h6"> <%= statusMessage %> </span> %>

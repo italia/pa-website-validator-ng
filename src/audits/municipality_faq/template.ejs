@@ -46,19 +46,31 @@ default:
 
 
       <p>Il sito comunale deve contenere una sezione per le domande più frequenti (FAQ).</p>
-    <p>
-      <span class="h6 uppercase">CONDIZIONI DI SUCCESSO:</span>
-      nel footer del sito è presente un link contenente le espressioni "FAQ" oppure "domande frequenti" che invia a una pagina di domande frequenti 
-    </p>
-
-    <p>
-      <span class="h6 uppercase">Verifiche automatiche:</span>
-      viene verificata la presenza del link nel footer, ricercando uno specifico attributo "data-element" come spiegato nella Documentazione delle App di valutazione, che il link invii ad una pagina esistente e che il testo del link contenga almeno una delle espressioni richieste, senza fare distinzione tra caratteri minuscoli o maiuscoli; RIFERIMENTI TECNICI E NORMATIVI:
-      <a href="https://docs.italia.it/italia/designers-italia/design-comuni-docs/">Documentazione del Modello Comuni</a>, 
-      <a href="https://op.europa.eu/en/publication-detail/-/publication/333fe21f-4372-11ec-89db-01aa75ed71a1">eGovernment benchmark method paper 2020-2023</a>, 
-      <a href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>, 
-    </p>
     <div class="separator"></div>
+
+    <div class="accordion inner" id="collapse">
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="accordion-inner-ip">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-ip" aria-expanded="false" aria-controls="accordion-collapse-ip">
+            Condizioni di successo e Verifiche automatiche
+          </button>
+        </h2>
+        <div id="accordion-collapse-ip" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-ip">
+          <p>
+            <span class="h6 uppercase">CONDIZIONI DI SUCCESSO:</span>
+            nel footer del sito è presente un link contenente le espressioni "FAQ" oppure "domande frequenti" che invia a una pagina di domande frequenti
+          </p>
+
+          <p>
+            <span class="h6 uppercase">Verifiche automatiche:</span>
+            viene verificata la presenza del link nel footer, ricercando uno specifico attributo "data-element" come spiegato nella Documentazione delle App di valutazione, che il link invii ad una pagina esistente e che il testo del link contenga almeno una delle espressioni richieste, senza fare distinzione tra caratteri minuscoli o maiuscoli; RIFERIMENTI TECNICI E NORMATIVI:
+            <a href="https://docs.italia.it/italia/designers-italia/design-comuni-docs/">Documentazione del Modello Comuni</a>,
+            <a href="https://op.europa.eu/en/publication-detail/-/publication/333fe21f-4372-11ec-89db-01aa75ed71a1">eGovernment benchmark method paper 2020-2023</a>,
+            <a href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>,
+          </p>
+        </div>
+      </div>
+    </div>
 
       <p>
           <span class="h6"> <%= statusMessage %> </span> %>

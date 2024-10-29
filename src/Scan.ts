@@ -100,7 +100,11 @@ const scan = async (pageData: PageData) => {
           }
 
           if (navigatingError) {
-            console.log("navigating Error gatherer =", navigatingError);
+            console.log(
+              `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} `,
+              "navigating Error gatherer =",
+              navigatingError,
+            );
             throw new Error(
               navigatingError instanceof Error
                 ? navigatingError.message
@@ -117,7 +121,7 @@ const scan = async (pageData: PageData) => {
           gathererPages = [...gathererPages, ...fetchedPages];
         } catch (e) {
           console.log(
-            ` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: ERROR`,
+            `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: ERROR`,
           );
 
           await PageManager.addPage({
@@ -224,7 +228,7 @@ const scan = async (pageData: PageData) => {
               });
             } catch (e) {
               console.log(
-                ` SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: ERROR`,
+                `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: ERROR`,
               );
 
               if (audit === undefined)
@@ -271,7 +275,7 @@ const scan = async (pageData: PageData) => {
 
     if (!PageManager.hasRemainingPages()) {
       console.log(
-        "SCAN ENDED - navigated pages end:",
+        `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} SCAN ENDED - navigated pages end:`,
         pageData.url,
         pageData.type,
       );
@@ -281,7 +285,9 @@ const scan = async (pageData: PageData) => {
       await PageManager.closeScript(results);
     }
   } catch (err) {
-    console.log(`SCAN error: ${err}`);
+    console.log(
+      `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} SCAN error: ${err}`,
+    );
   }
 
   if (results) {

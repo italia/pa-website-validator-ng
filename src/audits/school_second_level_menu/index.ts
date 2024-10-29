@@ -271,7 +271,7 @@ class SchoolSecondLevelMenuAudit extends Audit {
       status = "pass";
       message = this.greenResult;
     } else if (this.globalResults.score == 0.5) {
-      status = "average";
+      status = "pass";
       message = this.yellowResult;
     } else {
       status = "fail";

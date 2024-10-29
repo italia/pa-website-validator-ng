@@ -46,20 +46,29 @@ default:
   
     <p>All'interno del sito comunale, nel contenuto della scheda servizio, devono essere comunicati i contatti dell'ufficio preposto all'erogazione del servizio.</p>
     <div class="separator"></div>
+      <div class="accordion inner" id="collapse">
+          <div class="accordion-item">
+              <h2 class="accordion-header" id="accordion-inner-ip">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-ip" aria-expanded="false" aria-controls="accordion-collapse-ip">
+                      Condizioni di successo e Verifiche automatiche
+                  </button>
+              </h2>
+              <div id="accordion-collapse-ip" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-ip">
+                  <p>
+                      <span class="h6 uppercase">CONDIZIONI DI SUCCESSO:</span>
+                      i contatti dell'ufficio preposto all'erogazione del servizio sono presenti in tutte le schede servizio;
+                  </p>
 
-    <p>
-      <span class="h6 uppercase">CONDIZIONI DI SUCCESSO:</span>
-      i contatti dell'ufficio preposto all'erogazione del servizio sono presenti in tutte le schede servizio;
-    </p>
-
-    <p>
-      <span class="h6 uppercase">Verifiche automatiche:</span>
-      viene verificata la presenza della voce \"Contatti\" all'interno dell'indice e nel corpo della pagina delle schede servizio analizzate, ricercando specifici attributi \"data-element\" come spiegato nella Documentazione delle App di valutazione; RIFERIMENTI TECNICI E NORMATIVI:
-      <a href="https://docs.italia.it/italia/designers-italia/design-comuni-docs/">Documentazione del Modello Comuni</a>,
-      <a href="https://op.europa.eu/en/publication-detail/-/publication/333fe21f-4372-11ec-89db-01aa75ed71a1">eGovernment benchmark method paper 2020-2023</a>,
-      <a href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>,
-    </p>
-    <div class="separator"></div>
+                  <p>
+                      <span class="h6 uppercase">Verifiche automatiche:</span>
+                      viene verificata la presenza della voce \"Contatti\" all'interno dell'indice e nel corpo della pagina delle schede servizio analizzate, ricercando specifici attributi \"data-element\" come spiegato nella Documentazione delle App di valutazione; RIFERIMENTI TECNICI E NORMATIVI:
+                      <a href="https://docs.italia.it/italia/designers-italia/design-comuni-docs/">Documentazione del Modello Comuni</a>,
+                      <a href="https://op.europa.eu/en/publication-detail/-/publication/333fe21f-4372-11ec-89db-01aa75ed71a1">eGovernment benchmark method paper 2020-2023</a>,
+                      <a href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>,
+                  </p>
+              </div>
+          </div>
+      </div>
 
     <p>
       <span class="h6"> <%= statusMessage %> </span> %>

@@ -44,19 +44,30 @@ switch (status) {
     </h2>
     <div class="audit-description">
 
-
         <p>Il sito comunale deve presentare tutte le voci di menù di primo livello, nell'esatto ordine descritto dalla documentazione del modello di sito comunale.</p>
-        <p>
-            <span class="h6 uppercase">Condizioni di successo:</span>
-            le voci del menù di primo livello del sito sono esattamente quelle indicate nel documento di architettura dell’informazione e sono nell’ordine indicato (ovvero «Amministrazione», «Novità», «Servizi», «Vivere il Comune» oppure «Vivere [nome del Comune]») e tutte le pagine raggiungibili dal menu di primo livello portano a pagine interne al dominio del Comune;
-        </p>
-        <p>
-            <span class="h6 uppercase">Verifiche automatiche:</span>
-            ricercando uno specifico attributo "data-element" come spiegato nella Documentazione delle App di valutazione, vengono identificate le voci presenti nel menù del sito e il loro ordine, confrontandole con quanto indicato nel documento di architettura dell'informazione. Viene inoltre verificato che tutte le pagine raggiungibili dal menu di primo livello portino a pagine interne al dominio del Comune; RIFERIMENTI TECNICI E NORMATIVI:
-            <a href="https://docs.italia.it/italia/designers-italia/design-comuni-docs/">Documentazione del Modello Comuni</a>,
-            <a href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>.
-        </p>
+
         <div class="separator"></div>
+        <div class="accordion inner" id="collapse">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="accordion-inner-ip">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-ip" aria-expanded="false" aria-controls="accordion-collapse-ip">
+                        Condizioni di successo e Verifiche automatiche
+                    </button>
+                </h2>
+                <div id="accordion-collapse-ip" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-ip">
+                    <p>
+                        <span class="h6 uppercase">Condizioni di successo:</span>
+                        le voci del menù di primo livello del sito sono esattamente quelle indicate nel documento di architettura dell’informazione e sono nell’ordine indicato (ovvero «Amministrazione», «Novità», «Servizi», «Vivere il Comune» oppure «Vivere [nome del Comune]») e tutte le pagine raggiungibili dal menu di primo livello portano a pagine interne al dominio del Comune;
+                    </p>
+                    <p>
+                        <span class="h6 uppercase">Verifiche automatiche:</span>
+                        ricercando uno specifico attributo "data-element" come spiegato nella Documentazione delle App di valutazione, vengono identificate le voci presenti nel menù del sito e il loro ordine, confrontandole con quanto indicato nel documento di architettura dell'informazione. Viene inoltre verificato che tutte le pagine raggiungibili dal menu di primo livello portino a pagine interne al dominio del Comune; RIFERIMENTI TECNICI E NORMATIVI:
+                        <a href="https://docs.italia.it/italia/designers-italia/design-comuni-docs/">Documentazione del Modello Comuni</a>,
+                        <a href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>.
+                    </p>
+                </div>
+            </div>
+        </div>
 
         <p>
             <span class="h6"> <%= statusMessage %> </span>

@@ -11,7 +11,7 @@ async function initializePuppeteer() {
 
     browser = await puppeteer
       .launch({
-        headless: true,
+        headless: "shell",
         args: ["--no-zygote", "--no-sandbox", "--accept-lang=it", "--v=1"],
       })
       .catch((err) => {
