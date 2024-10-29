@@ -92,23 +92,7 @@ class PageManager {
 
   async getGlobalResults() {
     const results = { ...this.globalResult };
-    return Object.keys(results.audits).map((key) => {
-      if (
-        typeof results.audits[key] === "object" &&
-        results.audits[key] !== null
-      ) {
-        const audit = results.audits[key] as {
-          score: number | null;
-          id: string;
-          title: string;
-        };
-        return {
-          id: audit.id,
-          title: audit.title,
-          score: audit.score,
-        };
-      }
-    });
+    return results
   }
 
   onPagesAdded(callback: (pageData: PageData) => void): void {

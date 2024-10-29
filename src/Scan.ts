@@ -126,7 +126,7 @@ const scan = async (pageData: PageData) => {
 
           await PageManager.addPage({
             id: "",
-            url: "https://temp" + gatherer.getPageType(),
+            url: "https://temppagenotavailable" + gatherer.getPageType(),
             type: gatherer.getPageType(),
             redirectUrl: "",
             internal: false,

@@ -14,7 +14,7 @@
                 <% Object.keys(item).forEach(element => { %>
                     <% if(element != 'show') { %>
                     <td>
-                        <% if(element == 'link' && item[element] && item[element].includes('temp')) { %>
+                        <% if(element == 'link' && item[element] && item[element].includes('temppagenotavailable')) { %>
                             Pagina non trovata
                         <% } else { %>
                         <% if(element == 'link' && item[element] && !!(new URL(item[element]))) { %>
