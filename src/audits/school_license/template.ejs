@@ -63,21 +63,27 @@ default:
 
                   <p>
                       <span class="h6 uppercase">Verifiche automatiche:</span>
-                      ricercando uno specifico attributo "data-element" come spiegato nella Documentazione delle App di valutazione, viene verificato che la pagina delle note legali sia raggiungibile dal footer e che questa contenga una sezione "Licenza dei contenuti" riportante la dicitura indicata nella Documentazione del modello; RIFERIMENTI TECNICI E NORMATIVI:
+                      ricercando uno specifico attributo "data-element" come spiegato nella Documentazione delle App di valutazione, viene verificato che la pagina delle note legali sia raggiungibile dal footer e che questa contenga una sezione "Licenza dei contenuti" riportante la dicitura indicata nella Documentazione del modello;
+                  </p>
+
+                  <p>
+                      <span class="h6 uppercase">RIFERIMENTI TECNICI E NORMATIVI:</span>
                       <a href="https://docs.italia.it/italia/designers-italia/design-scuole-docs">Documentazione del Modello scuole</a>,
                       <a href="https://docs.italia.it/italia/piano-triennale-ict/codice-amministrazione-digitale-docs/it/stabile/_rst/capo_V-sezione_I-articolo_52.html">CAD Art. 52 d.lgs. 82/2005</a>,
                       <a href="https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:decreto.legislativo:2013-03-14;33">art. 7, comma 1, D.Lgs. n. 33/2013</a>,
                       <a href="https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:decreto.legislativo:2006-01-24;36!vig=">d.lgs. n. 36/2006</a>,
                       <a href="https://www.agid.gov.it/it/design-servizi/riuso-open-source/linee-guida-acquisizione-riuso-software-pa">AgID Linee guida su acquisizione e riuso di software per le pubbliche amministrazioni</a>,
-                      <a href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>.
+                      <a href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>
                   </p>
               </div>
           </div>
       </div>
 
-      <p>
-          <span class="h6"> <%= statusMessage %> </span> %>
-      </p>
+      <% if( !table.pagesInError.pages.length ) { %>
+          <p>
+              <span class="h5"> <%= statusMessage %> </span>
+          </p>
+      <% } %>
 
       <% if( table.pagesInError.pages.length ) { %>
           <p>

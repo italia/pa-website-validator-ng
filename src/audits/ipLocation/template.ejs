@@ -47,13 +47,12 @@ default:
         <%= mainTitle %>
     </h2>
   <div class="audit-description">
-      <p>Il sito deve essere ospitato su datacenter localizzati su territorio europeo.</p>
       <div class="separator"></div>
       <div class="accordion inner" id="collapse">
               <div class="accordion-item">
                   <h2 class="accordion-header" id="accordion-inner-ip">
                       <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-ip" aria-expanded="false" aria-controls="accordion-collapse-ip">
-                          Condizioni di successo e Verifiche automatiche
+                          Il sito deve essere ospitato su datacenter localizzati su territorio europeo
                       </button>
                   </h2>
                   <div id="accordion-collapse-ip" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-ip">
@@ -63,16 +62,24 @@ default:
 
                       <p>
                           <span class="h6 uppercase">Verifiche automatiche:</span>
-                          verifica che la localizzazione dell'IP rientri all'interno di uno dei confini degli stati membri dell'UE; RIFERIMENTI TECNICI E NORMATIVI: GDPR.
+                          verifica che la localizzazione dell'IP rientri all'interno di uno dei confini degli stati membri dell'UE;
+                      </p>
+
+                      <p>
+                          <span class="h6 uppercase">RIFERIMENTI TECNICI E NORMATIVI:</span>
+                          GDPR
                       </p>
                   </div>
               </div>
       </div>
 
     <p>
+
+        <% if( !table.pagesInError.pages.length ) { %>
       <p>
-          <span class="h6"> <%= statusMessage %> </span> %>
+          <span class="h5"> <%= statusMessage %> </span>
       </p>
+      <% } %>
 
       <% if( table.pagesInError.pages.length ) { %>
           <p>

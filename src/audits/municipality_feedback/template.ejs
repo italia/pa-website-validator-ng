@@ -43,15 +43,12 @@ default:
       <%=code%> - <%= mainTitle %>
   </h2>
   <div class="audit-description">
-  
-    <p>Il sito comunale deve consentire al cittadino di fornire una valutazione della chiarezza di ogni pagina di primo e secondo livello.</p>
-    <div class="separator"></div>
 
     <div class="accordion inner" id="collapse">
       <div class="accordion-item">
         <h2 class="accordion-header" id="accordion-inner-ip">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-ip" aria-expanded="false" aria-controls="accordion-collapse-ip">
-            Condizioni di successo e Verifiche automatiche
+            Il sito comunale deve consentire al cittadino di fornire una valutazione della chiarezza di ogni pagina di primo e secondo livello
           </button>
         </h2>
         <div id="accordion-collapse-ip" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-ip">
@@ -61,18 +58,24 @@ default:
           </p>
           <p>
             <span class="h6 uppercase">Verifiche automatiche:</span>
-            ricercando specifici attributi "data-element" come spiegato nella Documentazione delle App di valutazione, viene verificata la presenza del componente di valutazione nelle pagine di primo e di secondo livello, controllando che la funzionalità abbia le caratteristiche richieste nella documentazione; RIFERIMENTI TECNICI E NORMATIVI:
+            ricercando specifici attributi "data-element" come spiegato nella Documentazione delle App di valutazione, viene verificata la presenza del componente di valutazione nelle pagine di primo e di secondo livello, controllando che la funzionalità abbia le caratteristiche richieste nella documentazione;
+
+          </p>
+          <p>
+            <span class="h6 uppercase">RIFERIMENTI TECNICI E NORMATIVI:</span>
             <a href="https://docs.italia.it/italia/designers-italia/design-comuni-docs/it/versione-corrente/index.html">Documentazione del Modello Comuni</a>,
             <a href="https://op.europa.eu/en/publication-detail/-/publication/333fe21f-4372-11ec-89db-01aa75ed71a1">eGovernment benchmark method paper 2020-2023</a>,
-            <a href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/it/versione-attuale/index.html">Documentazione delle App di valutazione</a>.
+            <a href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/it/versione-attuale/index.html">Documentazione delle App di valutazione</a>
           </p>
         </div>
       </div>
     </div>
 
-    <p>
-      <span class="h6"> <%= statusMessage %> </span> %>
-    </p>
+    <% if( !table.pagesInError.pages.length ) { %>
+      <p>
+        <span class="h5"> <%= statusMessage %> </span>
+      </p>
+    <% } %>
 
       <% if( table.pagesInError.pages.length ) { %>
     <p>

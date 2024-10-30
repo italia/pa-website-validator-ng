@@ -13,7 +13,7 @@ abstract class Gatherer {
 
   private requestTimeout = parseInt(process.env["requestTimeout"] ?? "60000");
 
-  protected constructor(id: string, timeout = this.requestTimeout) {
+  constructor(id: string, timeout = this.requestTimeout) {
     this.id = id;
     this.timeout = timeout;
     this.gatheredPages = [];

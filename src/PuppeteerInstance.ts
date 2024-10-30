@@ -7,7 +7,7 @@ let browser: Browser | null | void = null;
 
 async function initializePuppeteer() {
   if (!browser) {
-    console.error("Initializing Puppeteer Instance..");
+    console.log("Initializing Puppeteer Instance..");
 
     browser = await puppeteer
       .launch({
@@ -15,7 +15,7 @@ async function initializePuppeteer() {
         args: ["--no-zygote", "--no-sandbox", "--accept-lang=it", "--v=1"],
       })
       .catch((err) => {
-        console.error("Failed to launch Puppeteer:", err);
+        console.log("Failed to launch Puppeteer:", err);
         throw err;
       });
 

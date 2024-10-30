@@ -44,15 +44,11 @@ default:
   </h2>
   <div class="audit-description">
 
-    <p>Il sito comunale deve utilizzare argomenti forniti dal modello di sito comunale ovvero quelli appartenenti al vocabolario controllato europeo EuroVoc.</p>
-    <p>
-
-    <div class="separator"></div>
     <div class="accordion inner" id="collapse">
       <div class="accordion-item">
         <h2 class="accordion-header" id="accordion-inner-ip">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-ip" aria-expanded="false" aria-controls="accordion-collapse-ip">
-            Condizioni di successo e Verifiche automatiche
+            Il sito comunale deve utilizzare argomenti forniti dal modello di sito comunale ovvero quelli appartenenti al vocabolario controllato europeo EuroVoc
           </button>
         </h2>
         <div id="accordion-collapse-ip" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-ip">
@@ -63,19 +59,25 @@ default:
 
           <p>
             <span class="h6 uppercase">Verifiche automatiche:</span>
-            gli argomenti identificati all'interno della pagina contenente l'elenco degli argomenti vengono confrontati con l'elenco di voci presente nel documento di architettura dell'informazione e con il vocabolario controllato EuroVoc, ricercandoli usando specifici attributi \"data-element\" come spiegato nella Documentazione delle App di valutazione; RIFERIMENTI TECNICI E NORMATIVI:
+            gli argomenti identificati all'interno della pagina contenente l'elenco degli argomenti vengono confrontati con l'elenco di voci presente nel documento di architettura dell'informazione e con il vocabolario controllato EuroVoc, ricercandoli usando specifici attributi \"data-element\" come spiegato nella Documentazione delle App di valutazione;
+          </p>
+
+          <p>
+            <span class="h6 uppercase">RIFERIMENTI TECNICI E NORMATIVI:</span>
             <a href="https://docs.italia.it/italia/designers-italia/design-comuni-docs/">Documentazione del Modello Comuni</a>,
             <a href="https://docs.google.com/spreadsheets/d/1D4KbaA__xO9x_iBm08KvZASjrrFLYLKX/edit#gid=428595160">Elenco degli argomenti del Modello Comuni</a>,
             <a href="https://eur-lex.europa.eu/browse/eurovoc.html?locale=it">Vocabolario EuroVoc</a>,
-            <a href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>,
+            <a href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>
           </p>
         </div>
       </div>
     </div>
 
+    <% if( !table.pagesInError.pages.length ) { %>
       <p>
-          <span class="h6"> <%= statusMessage %> </span> %>
+        <span class="h5"> <%= statusMessage %> </span>
       </p>
+    <% } %>
 
     <% if( table.pagesInError.pages.length ) { %>
       <p>

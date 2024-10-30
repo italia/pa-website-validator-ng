@@ -1,6 +1,6 @@
-import { Gatherer } from "../Gatherer.js";
+import { pageGatherer } from "../page/index.js";
 
-class secondLevelPagesGatherer extends Gatherer {
+class secondLevelPagesGatherer extends pageGatherer {
   static pageType = "second-level";
   static dataElements = [
     "school-submenu",

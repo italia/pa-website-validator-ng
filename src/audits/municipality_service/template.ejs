@@ -44,15 +44,12 @@ default:
       <%=code%> - <%= mainTitle %>
   </h2>
   <div class="audit-description">
-  
-    <p>Tutte le schede informative dei servizi per il cittadino devono mostrare le voci segnalate come obbligatorie all'interno dell'architettura dell'informazione, nell'ordine segnalato dal modello.</p>
-    <div class="separator"></div>
 
     <div class="accordion inner" id="collapse">
       <div class="accordion-item">
         <h2 class="accordion-header" id="accordion-inner-ip">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-ip" aria-expanded="false" aria-controls="accordion-collapse-ip">
-            Condizioni di successo e Verifiche automatiche
+            Tutte le schede informative dei servizi per il cittadino devono mostrare le voci segnalate come obbligatorie all'interno dell'architettura dell'informazione, nell'ordine segnalato dal modello
           </button>
         </h2>
         <div id="accordion-collapse-ip" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-ip">
@@ -69,9 +66,11 @@ default:
       </div>
     </div>
 
-    <p>
-      <span class="h6"> <%= statusMessage %> </span> %>
-    </p>
+    <% if( !table.pagesInError.pages.length ) { %>
+      <p>
+        <span class="h5"> <%= statusMessage %> </span>
+      </p>
+    <% } %>
 
       <% if( table.pagesInError.pages.length ) { %>
     <p>
