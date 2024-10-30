@@ -92,7 +92,7 @@ class PageManager {
 
   async getGlobalResults() {
     const results = { ...this.globalResult };
-    return results
+    return results;
   }
 
   onPagesAdded(callback: (pageData: PageData) => void): void {

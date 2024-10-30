@@ -77,6 +77,8 @@ class lighthouseAudit extends Audit {
 
       const metricsResult = [];
 
+      const regex = /\[([^\]]+)\]\(([^)]+)\)/g;
+
       for (const metricId of this.displayMetrics) {
         if (Object.keys(lhrAudits).includes(metricId)) {
           const metric = lhrAudits[metricId];
@@ -95,7 +97,9 @@ class lighthouseAudit extends Audit {
             status: status,
             title: metric.title,
             result: metric.displayValue,
-            description: metric.description,
+            description: metric.description.replace(regex, (_, title, url) => {
+              return `<a href="${url}">${title}</a>`;
+            }),
           });
         }
       }
