@@ -13,7 +13,7 @@
     "type:check": "tsc --noEmit",
     "format:check": "prettier -c .",
     "format:write": "prettier --write .",
-    "server_ext": "cd external_files && http-server -p 9999",
+    "test:server": "cd external_files && http-server -p 9999",
     "test": "jest --detectOpenHandles --verbose --forceExit"
   },
   "author": "Presidenza del Consiglio dei Ministri",
