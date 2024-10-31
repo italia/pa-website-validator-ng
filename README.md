@@ -197,7 +197,7 @@ Questo comando eseguirà tutti i test definiti, fornendo un report dettagliato s
 Alcuni test necessitano che un server locale sia in esecuzione per poter accedere alle risorse richieste durante i test. Per avviare il server locale, utilizza il seguente comando:
 
 ```console
-npm run server_ext
+npm run test:server
 ```
 
 Questo comando avvia il server, permettendo l’esecuzione dei test che necessitano di una configurazione di rete locale. Una volta attivato il server, puoi eseguire i test normalmente con npm run test.
