@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  static-checks:
+  jest-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -16,7 +16,7 @@ jobs:
           node-version: 20
       - name: Install modules
         run: npm ci
-      - name: Start test server
-        run: npm run server_ext
+      #- name: Start test server
+      #  run: npm run server_ext
       - name: Run Jest tests
         run: npm run test

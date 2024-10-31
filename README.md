@@ -177,3 +177,111 @@ Note:
 [verifica-scuole]: https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/it/versione-attuale/requisiti-e-modalita-verifica-scuole.html
 [verifica-comuni]: https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/it/versione-attuale/requisiti-e-modalita-verifica-comuni.html
 [codici-http]: https://it.wikipedia.org/wiki/Codici_di_stato_HTTP
+
+## Test e Validazione
+
+Questo applicativo utilizza [Jest](https://jestjs.io/) come framework di testing per garantire che le funzionalità siano correttamente implementate e che ogni aggiornamento del codice non introduca regressioni.
+
+### Esecuzione dei Test
+Per eseguire i test è sufficiente utilizzare il comando:
+
+```console
+npm run test
+```
+
+Questo comando eseguirà tutti i test definiti, fornendo un report dettagliato sui risultati e mostrando eventuali errori.
+
+### Test che richiedono un server locale
+Alcuni test necessitano che un server locale sia in esecuzione per poter accedere alle risorse richieste durante i test. Per avviare il server locale, utilizza il seguente comando:
+
+```console
+npm run server_ext
+```
+
+Questo comando avvia il server, permettendo l’esecuzione dei test che necessitano di una configurazione di rete locale. Una volta attivato il server, puoi eseguire i test normalmente con npm run test.
+
+### Esempio di Output dei Test
+
+Quando esegui i test con Jest, potresti vedere un output simile nel terminale:
+
+```bash
+> pa-website-validator-ng@1.0.1 test
+> jest --detectOpenHandles --verbose --forceExit
+
+  console.log
+    Initializing Puppeteer Instance..
+
+      at initializePuppeteer (src/PuppeteerInstance.ts:10:13)
+
+ PASS  src/audits/school_theme/__test__/audit.test.ts (13.03 s)
+  school_theme
+    ✅  pass (5850 ms)
+    ✅  fail (2505 ms)
+    ✅  fail:0.5 (231 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       3 passed, 3 total
+Snapshots:   0 total
+Time:        13.11 s
+Ran all test suites.
+```
+
+In questo esempio:
+
+- **PASS** indica che il test suite (school_theme) è passato.
+- Ogni test ha un indicatore ✅ per mostrare che è stato completato con successo, assieme al tempo di esecuzione (in millisecondi).
+- **Test Suites**: Riporta il numero di suite di test completate con successo (in questo caso, 1 passed).
+- **Tests**: Riporta il numero totale di test passati rispetto al totale eseguito (ad es. 3 passed, 3 total).
+
+### Esempio di Test con Fallimento
+
+Se uno o più test non dovessero superare i criteri previsti, l’output potrebbe apparire come segue:
+```bash
+> pa-website-validator-ng@1.0.1 test
+> jest --detectOpenHandles --verbose --forceExit
+
+  console.log
+    Initializing Puppeteer Instance..
+
+      at initializePuppeteer (src/PuppeteerInstance.ts:10:13)
+
+ FAIL  src/audits/school_theme/__test__/audit.test.ts (6.041 s)
+  school_theme
+    ✅ pass (1285 ms)
+    ❌ fail (939 ms)
+    ✅ fail:0.5 (220 ms)
+
+  ● school_theme › fail
+
+    expect(received).toEqual(expected) // deep equality
+
+    Expected: 0
+    Received: 0.5
+
+      34 |   }
+      35 |
+   > 36 |   expect(result?.score).toEqual(expectedScore);
+          |                        ^
+      37 | };
+      38 |
+      39 | export const testGatherer = async (
+
+      at testAudit (jest.setup.ts:36:25)
+      at Object.<anonymous> (src/audits/school_theme/__test__/audit.test.ts:27:5)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 2 passed, 3 total
+Snapshots:   0 total
+Time:        6.126 s, estimated 14 s
+Ran all test suites.
+```
+
+In questo esempio:
+
+- **FAIL** indica che almeno uno dei test ha fallito.
+- Il simbolo ❌ accanto a fail mostra il test che non ha superato il controllo.
+- Sotto la sezione ● school_theme › fail trovi un resoconto dettagliato dell’errore, inclusa la differenza tra il valore Expected e quello Received.
+- **Test Suites**: Riporta il numero di suite di test fallite (qui, 1 failed).
+- **Tests**: Riporta il numero di test falliti rispetto al totale eseguito (es. 1 failed, 2 passed, 3 total).
+
+In questo modo puoi monitorare facilmente il progresso e gli esiti dei tuoi test, identificando rapidamente le aree che necessitano di correzioni.

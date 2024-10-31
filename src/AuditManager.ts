@@ -5,6 +5,7 @@ import path from "path";
 let audits: Record<string, () => Promise<Audit>> = {};
 import { Audit } from "./audits/Audit.js";
 import process from "process";
+import { __dirname } from '../src/audits/esmHelpers.js';
 
 function extractFolderName(path: string) {
   const fileNameWithoutExtension = path.replace(/\.[^/.]+$/, "");
@@ -18,7 +19,6 @@ async function collectAudits() {
   const configAudits = await getAudits();
   try {
     if (!Object.keys(audits).length) {
-      const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
       const files = sync(__dirname + "/audits/**/index.**");
 

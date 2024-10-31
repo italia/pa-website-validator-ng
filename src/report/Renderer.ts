@@ -7,6 +7,7 @@ import PageManager from "../PageManager.js";
 import { municipalityWeights, schoolWeights } from "../config/weights.js";
 import { collectAudits } from "../AuditManager.js";
 import { fileURLToPath } from "url";
+import { __dirname } from '../audits/esmHelpers.js';
 
 const render = async () => {
   const website = process.env.website;
@@ -148,8 +149,6 @@ const render = async () => {
     });
     return obj;
   });
-
-  const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
   const reportHtml = await ejs.renderFile(__dirname + "/index.ejs", {
     crawler_version: VERSION,
