@@ -33,20 +33,19 @@ async function initializePuppeteer() {
   return browser;
 }
 
-async function getBrowser ():Promise<Browser | void | null>{
-  if(!browser){
-    await initializePuppeteer()
+async function getBrowser(): Promise<Browser | void | null> {
+  if (!browser) {
+    await initializePuppeteer();
   }
 
   return browser;
 }
 
-
 async function closeBrowsers() {
-  if(browser){
-    await browser.close()
+  if (browser) {
+    await browser.close();
     browser = null;
   }
 }
 
-export { getBrowser, initializePuppeteer, closeBrowsers }
+export { getBrowser, initializePuppeteer, closeBrowsers };

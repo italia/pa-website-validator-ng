@@ -1,11 +1,10 @@
 import { sync } from "glob";
 import { getAudits } from "./config/config.js";
-import { fileURLToPath } from "url";
-import path from "path";
 let audits: Record<string, () => Promise<Audit>> = {};
 import { Audit } from "./audits/Audit.js";
 import process from "process";
-import { __dirname } from '../src/audits/esmHelpers.js';
+import path from "path";
+import { fileURLToPath } from "url";
 
 function extractFolderName(path: string) {
   const fileNameWithoutExtension = path.replace(/\.[^/.]+$/, "");
@@ -19,8 +18,9 @@ async function collectAudits() {
   const configAudits = await getAudits();
   try {
     if (!Object.keys(audits).length) {
-
-      const files = sync(__dirname + "/audits/**/index.**");
+      const files = sync(
+        path.dirname(fileURLToPath(import.meta.url)) + "/audits/**/index.**",
+      );
 
       audits = {};
       for (const file of files) {

@@ -54,7 +54,7 @@ switch (status) {
                 </h2>
                 <div id="accordion-collapse-mun-inefficiency" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-mun-inefficiency">
                     <p>
-                        <span class="h6 uppercase">Condizioni di successo:</span>
+                        <span class="h6 uppercase">Requisito minimo:</span>
                         nel footer del sito è presente un link contenente le espressioni "disservizio" oppure "segnala disservizio" oppure "segnalazione disservizio" che invia alla funzionalità di segnalazione di un disservizio. Se viene usata una funzionalità dedicata di segnalazione disservizio, devono essere presenti i campi richiesti nella Documentazione del modello;
                     </p>
                     <p>
@@ -70,12 +70,6 @@ switch (status) {
                 </div>
             </div>
         </div>
-
-        <% if( !table.pagesInError.pages.length ) { %>
-            <p>
-                <span class="h5"> <%= statusMessage %> </span>
-            </p>
-        <% } %>
 
         <% if( table.pagesInError.pages.length ) { %>
             <p>

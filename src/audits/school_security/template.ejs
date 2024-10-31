@@ -54,7 +54,7 @@ default:
               </h2>
               <div id="accordion-collapse-sch-security" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-sch-security">
                   <p>
-                      <span class="h6 uppercase">Condizioni di successo:</span>
+                      <span class="h6 uppercase">Requisito minimo:</span>
                       il sito utilizza un certificato https valido e non obsoleto secondo le raccomandazioni AgID;
                   </p>
 
@@ -71,12 +71,6 @@ default:
               </div>
           </div>
       </div>
-
-      <% if( !table.pagesInError.pages.length ) { %>
-          <p>
-              <span class="h5"> <%= statusMessage %> </span>
-          </p>
-      <% } %>
 
       <% if( table.pagesInError.pages.length ) { %>
           <p>

@@ -85,10 +85,8 @@ class lighthouseAudit extends Audit {
           const score = metric.score;
           let status = "fail";
           if (score) {
-            if (score * 100 > 90) {
+            if (score * 100 > 50) {
               status = "pass";
-            } else if (score * 100 > 50) {
-              status = "average";
             }
           }
 
@@ -151,8 +149,6 @@ class lighthouseAudit extends Audit {
       status = "pass_plan";
     } else if (score * 100 < 50) {
       status = "fail";
-    } else if (score * 100 < 90) {
-      status = "average";
     }
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));

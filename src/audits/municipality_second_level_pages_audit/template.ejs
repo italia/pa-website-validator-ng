@@ -54,7 +54,7 @@ switch (status) {
                 </h2>
                 <div id="accordion-collapse-mun-second-level" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-mun-second-level">
                     <p>
-                        <span class="h6 uppercase">Condizioni di successo:</span>
+                        <span class="h6 uppercase">Requisito minimo:</span>
                         i titoli delle pagine di secondo livello corrispondono a quelli indicati nel capitolo "Conformità al modello Comuni" della Documentazione del Modello Comuni
                     </p>
                     <p>
@@ -70,12 +70,6 @@ switch (status) {
                 </div>
             </div>
         </div>
-
-        <% if( !table.pagesInError.pages.length ) { %>
-            <p>
-                <span class="h5"> <%= statusMessage %> </span>
-            </p>
-        <% } %>
 
         <% if( table.pagesInError.pages.length ) { %>
             <p>

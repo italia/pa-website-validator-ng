@@ -52,12 +52,12 @@ default:
           <div class="accordion-item">
               <h2 class="accordion-header" id="accordion-inner-sch-lic">
                   <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-sch-lic" aria-expanded="false" aria-controls="accordion-collapse-sch-lic">
-                      Condizioni di successo e Verifiche automatiche
+                      Requisito minimo e Verifiche automatiche
                   </button>
               </h2>
               <div id="accordion-collapse-sch-lic" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-sch-lic">
                   <p>
-                      <span class="h6 uppercase">Condizioni di successo:</span>
+                      <span class="h6 uppercase">Requisito minimo:</span>
                       nella pagina delle noti legali viene indicato che i dati, documenti e informazioni riportati sul sito sono rilasciati con licenza CC-BY 4.0;
                   </p>
 
@@ -78,12 +78,6 @@ default:
               </div>
           </div>
       </div>
-
-      <% if( !table.pagesInError.pages.length ) { %>
-          <p>
-              <span class="h5"> <%= statusMessage %> </span>
-          </p>
-      <% } %>
 
       <% if( table.pagesInError.pages.length ) { %>
           <p>

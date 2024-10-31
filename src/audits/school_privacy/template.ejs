@@ -54,7 +54,7 @@ default:
               </h2>
               <div id="accordion-collapse-sch-privacy" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-sch-privacy">
                   <p>
-                      <span class="h6 uppercase">Condizioni di successo:</span>
+                      <span class="h6 uppercase">Requisito minimo:</span>
                       il sito presenta una voce nel footer che riporta a una pagina sicura riguardante l\'informativa sulla privacy;
                   </p>
 
@@ -72,12 +72,6 @@ default:
               </div>
           </div>
       </div>
-
-      <% if( !table.pagesInError.pages.length ) { %>
-          <p>
-              <span class="h5"> <%= statusMessage %> </span>
-          </p>
-      <% } %>
 
       <% if( table.pagesInError.pages.length ) { %>
           <p>

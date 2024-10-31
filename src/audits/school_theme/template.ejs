@@ -53,7 +53,7 @@ switch (status) {
                 </h2>
                 <div id="accordion-collapse-sch-theme" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-sch-theme">
                     <p>
-                        <span class="h6 uppercase">Condizioni di successo:</span>
+                        <span class="h6 uppercase">Requisito minimo:</span>
                         se è in uso il tema CMS del modello scuole, la versione utilizzata è uguale o superiore alla 2.0;
                     </p>
 
@@ -69,12 +69,6 @@ switch (status) {
                 </div>
             </div>
         </div>
-
-        <% if( !table.pagesInError.pages.length ) { %>
-            <p>
-                <span class="h5"> <%= statusMessage %> </span>
-            </p>
-        <% } %>
 
         <% if( table.pagesInError.pages.length ) { %>
             <p>

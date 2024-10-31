@@ -52,7 +52,7 @@ default:
               </h2>
               <div id="accordion-collapse-sch-first-level" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-sch-first-level">
                   <p>
-                      <span class="h6 uppercase">Condizioni di successo:</span>
+                      <span class="h6 uppercase">Requisito minimo:</span>
                       le voci del menù di primo livello del sito sono esattamente quelle indicate nel documento di architettura dell’informazione e sono nell’ordine indicato (ovvero Scuola, Servizi, Novità, Didattica) e tutte le pagine raggiungibili dal menu di primo livello appartengono al dominio della scuola;
                   </p>
 
@@ -69,12 +69,6 @@ default:
               </div>
           </div>
       </div>
-
-      <% if( !table.pagesInError.pages.length ) { %>
-          <p>
-              <span class="h5"> <%= statusMessage %> </span>
-          </p>
-      <% } %>
 
       <% if( table.pagesInError.pages.length ) { %>
           <p>

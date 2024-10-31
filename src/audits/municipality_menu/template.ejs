@@ -53,7 +53,7 @@ switch (status) {
                 </h2>
                 <div id="accordion-collapse-mun-menu" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-mun-menu">
                     <p>
-                        <span class="h6 uppercase">Condizioni di successo:</span>
+                        <span class="h6 uppercase">Requisito minimo:</span>
                         le voci del menù di primo livello del sito sono esattamente quelle indicate nel documento di architettura dell’informazione e sono nell’ordine indicato (ovvero «Amministrazione», «Novità», «Servizi», «Vivere il Comune» oppure «Vivere [nome del Comune]») e tutte le pagine raggiungibili dal menu di primo livello portano a pagine interne al dominio del Comune;
                     </p>
                     <p>
@@ -69,12 +69,6 @@ switch (status) {
                 </div>
             </div>
         </div>
-
-        <% if( !table.pagesInError.pages.length ) { %>
-            <p>
-                <span class="h5"> <%= statusMessage %> </span>
-            </p>
-        <% } %>
 
         <% if( table.pagesInError.pages.length ) { %>
             <p>

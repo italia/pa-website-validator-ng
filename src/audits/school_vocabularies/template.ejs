@@ -53,7 +53,7 @@ default:
               </h2>
               <div id="accordion-collapse-sch-voc" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-sch-voc">
                   <p>
-                      <span class="h6 uppercase">Condizioni di successo:</span>
+                      <span class="h6 uppercase">Requisito minimo:</span>
                       gli argomenti utilizzati appartengono alla lista indicata all'interno del documento di architettura dell'informazione del modello scuole alla voce \"Le parole della scuola\"  e l’elenco completo degli argomenti utilizzati è presente nella pagina dei risultati di ricerca;
                   </p>
 
@@ -71,12 +71,6 @@ default:
               </div>
           </div>
       </div>
-
-      <% if( !table.pagesInError.pages.length ) { %>
-          <p>
-              <span class="h5"> <%= statusMessage %> </span>
-          </p>
-      <% } %>
 
       <% if( table.pagesInError.pages.length ) { %>
           <p>

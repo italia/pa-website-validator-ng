@@ -7,7 +7,6 @@ import PageManager from "../PageManager.js";
 import { municipalityWeights, schoolWeights } from "../config/weights.js";
 import { collectAudits } from "../AuditManager.js";
 import { fileURLToPath } from "url";
-import { __dirname } from '../audits/esmHelpers.js';
 
 const render = async () => {
   const website = process.env.website;
@@ -150,24 +149,27 @@ const render = async () => {
     return obj;
   });
 
-  const reportHtml = await ejs.renderFile(__dirname + "/index.ejs", {
-    crawler_version: VERSION,
-    date: date,
-    results: {
-      status: status,
-      passed_audits: successAudits.length,
-      failed_audits: failedAudits.length,
-      total_audits: successAudits.length + failedAudits.length,
+  const reportHtml = await ejs.renderFile(
+    path.dirname(fileURLToPath(import.meta.url)) + "/index.ejs",
+    {
+      crawler_version: VERSION,
+      date: date,
+      results: {
+        status: status,
+        passed_audits: successAudits.length,
+        failed_audits: failedAudits.length,
+        total_audits: successAudits.length + failedAudits.length,
+      },
+      audits: {
+        passed: successAudits,
+        info: informativeAudits,
+        failed: failedAudits,
+      },
+      pagesInError: errorPages,
+      url_comune: website,
+      lighthouseIFrame: lighthouseIFrame,
     },
-    audits: {
-      passed: successAudits,
-      info: informativeAudits,
-      failed: failedAudits,
-    },
-    pagesInError: errorPages,
-    url_comune: website,
-    lighthouseIFrame: lighthouseIFrame,
-  });
+  );
 
   if (saveFile == "false") {
     return {

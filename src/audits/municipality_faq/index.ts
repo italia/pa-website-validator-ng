@@ -6,9 +6,7 @@ import { urlExists } from "../../utils/utils.js";
 import { Audit, GlobalResults } from "../Audit.js";
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
-import { fileURLToPath } from "url";
-import path from "path";
-import { __dirname } from '../esmHelpers.js';
+import { __dirname } from "../esmHelpers.js";
 
 const auditId = "municipality-faq-is-present";
 const code = "C.SI.2.3";
@@ -142,7 +140,7 @@ class FaqAudit extends Audit {
       message = redResult;
     }
 
-    return await ejs.renderFile(__dirname + "/template.ejs", {
+    return await ejs.renderFile(__dirname + "/municipality_faq/template.ejs", {
       ...(await this.meta()),
       code: code,
       table: this.globalResults,

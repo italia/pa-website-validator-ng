@@ -183,6 +183,7 @@ Note:
 Questo applicativo utilizza [Jest](https://jestjs.io/) come framework di testing per garantire che le funzionalità siano correttamente implementate e che ogni aggiornamento del codice non introduca regressioni.
 
 ### Esecuzione dei Test
+
 Per eseguire i test è sufficiente utilizzare il comando:
 
 ```console
@@ -192,6 +193,7 @@ npm run test
 Questo comando eseguirà tutti i test definiti, fornendo un report dettagliato sui risultati e mostrando eventuali errori.
 
 ### Test che richiedono un server locale
+
 Alcuni test necessitano che un server locale sia in esecuzione per poter accedere alle risorse richieste durante i test. Per avviare il server locale, utilizza il seguente comando:
 
 ```console
@@ -236,6 +238,7 @@ In questo esempio:
 ### Esempio di Test con Fallimento
 
 Se uno o più test non dovessero superare i criteri previsti, l’output potrebbe apparire come segue:
+
 ```bash
 > pa-website-validator-ng@1.0.1 test
 > jest --detectOpenHandles --verbose --forceExit
