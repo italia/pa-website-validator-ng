@@ -8,7 +8,7 @@ import { DataElementError } from "../../utils/DataElementError.js";
 class servicesGatherer extends Gatherer {
   static dataElement: string = "service-link";
   static pageType: string = "service";
-  static pageTitle: string = 'Servizio';
+  static pageTitle: string = "Servizio";
 
   async navigateAndFetchPages(
     url: string,

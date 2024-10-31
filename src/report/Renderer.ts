@@ -50,7 +50,13 @@ const render = async () => {
         informativeAudits.push({
           ...auditMeta,
           auditHTML: await audit.returnGlobalHTML(),
-          status: infoScore ? "" : score >= 0.5 ? "pass" : error ? 'error' : "fail",
+          status: infoScore
+            ? ""
+            : score >= 0.5
+              ? "pass"
+              : error
+                ? "error"
+                : "fail",
         });
       } else if (error) {
         failedAudits.push({
@@ -64,17 +70,19 @@ const render = async () => {
         if ("pagesInError" in audit.globalResults) {
           audit.globalResults.pagesInError.pages.forEach((p) => {
             if (p.show) {
-              if(errorPages.find(page => page.link === p.link)){
-                const foundPage = errorPages.find(page => page.link === p.link);
-                if(foundPage){
-                  foundPage.criteria = foundPage.criteria + ', ' + auditMeta.code
+              if (errorPages.find((page) => page.link === p.link)) {
+                const foundPage = errorPages.find(
+                  (page) => page.link === p.link,
+                );
+                if (foundPage) {
+                  foundPage.criteria =
+                    foundPage.criteria + ", " + auditMeta.code;
                 }
-              }else{
+              } else {
                 errorPages.push({
                   ...p,
                   criteria: auditMeta.code,
-
-                })
+                });
               }
             }
           });

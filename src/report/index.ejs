@@ -22,6 +22,7 @@
     .accordion-header .accordion-button {
       display: block;
       color: #000000;
+      padding: 16px 24px;
     }
 
     .accordion-header .accordion-button.focus--mouse {
@@ -42,6 +43,7 @@
       display: flex;
       justify-content: space-between;
       gap: 16px;
+      padding: 11px 24px;
     }
 
     .accordion-header .accordion-button.lighthouse-button:hover{
@@ -53,14 +55,23 @@
       display: none;
     }
 
-    .accordion-header .accordion-button.lighthouse-button:after .btn-outline-primary{
-      color: #0066cc;
-      border-color: #0066cc;
+    .accordion-header .accordion-button.lighthouse-button .btn-primary{
+      background-color: #0066cc;
+      padding: 5px 24px;
     }
 
-    .accordion-header .accordion-button.lighthouse-button .btn-outline-primary:hover{
-      color: #FFFFFF;
-      background-color: #0066cc;
+    .accordion-header .accordion-button.lighthouse-button .btn-primary:hover{
+      background-color: #FFFFFF;
+      color: #0066cc;
+      box-shadow: inset 0 0 0 2px #0066cc;
+    }
+
+    .accordion-header .accordion-button.lighthouse-button .btn-primary:focus:not(:focus-visible){
+      outline: none;
+    }
+
+    .accordion-header .accordion-button.lighthouse-button .btn-primary:focus{
+      outline: none;
     }
 
     .accordion.inner {
@@ -666,14 +677,14 @@
         <h2 class="accordion-header" id="accordion-header-lighthouse-audits">
           <div class="accordion-button collapsed lighthouse-button">
             Report di lighthouse (non oggetto di verifica della misura)
-            <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#iframeModal" aria-expanded="false" aria-controls="accordion-collapse-lighthouse-audits" data-focus-mouse="false">Apri il report</button>
+            <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#iframeModal" aria-expanded="false" aria-controls="accordion-collapse-lighthouse-audits" data-focus-mouse="false">Apri il report</button>
           </div>
         </h2>
         <div class="modal fade" id="iframeModal" tabindex="-1" aria-labelledby="iframeModalLabel" data-focus-mouse="false" style="display: none;" aria-hidden="true">
           <div class="modal-dialog modal-lg">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="iframeModalLabel">Lighthouse Report</h5>
+                <h5 class="modal-title" id="iframeModalLabel">Report di lighthouse (non oggetto di verifica della misura)</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" data-focus-mouse="false"></button>
               </div>
               <div class="modal-body">
