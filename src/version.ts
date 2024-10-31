@@ -1,7 +1,6 @@
 import { readFileSync } from "fs";
 import path, { join } from "path";
 import { fileURLToPath } from "url";
-import { __dirname } from '../src/audits/esmHelpers.js';
 
 interface PackageJson {
   name: string;
@@ -10,7 +9,7 @@ interface PackageJson {
 
 function readPackageJson(): PackageJson {
 
-  const packageJsonPath = join(__dirname, "../package.json");
+  const packageJsonPath = join(path.dirname(fileURLToPath(import.meta.url)), "../package.json");
 
   const packageJsonString = readFileSync(packageJsonPath, "utf-8");
 
