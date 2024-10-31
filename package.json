@@ -13,6 +13,7 @@
     "type:check": "tsc --noEmit",
     "format:check": "prettier -c .",
     "format:write": "prettier --write .",
+    "test:server": "cd external_files && http-server -p 9999",
     "test": "jest --detectOpenHandles --verbose --forceExit"
   },
   "author": "Presidenza del Consiglio dei Ministri",
@@ -47,6 +48,7 @@
     "geoip-lite": "^1.4.10",
     "get-ssl-certificate": "^2.3.3",
     "glob": "^11.0.0",
+    "http-server": "^14.1.1",
     "inquirer": "^10.1.8",
     "jsonschema": "^1.4.1",
     "lighthouse": "^12.2.0",
