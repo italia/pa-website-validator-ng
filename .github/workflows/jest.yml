@@ -16,7 +16,7 @@ jobs:
           node-version: 20
       - name: Install modules
         run: npm ci
-      #- name: Start test server
-      #  run: npm run server_ext
+      - name: Start test server
+        run: npm run server_ext
       - name: Run Jest tests
         run: npm run test
