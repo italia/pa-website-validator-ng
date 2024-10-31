@@ -1,0 +1,22 @@
+name: Jest Tests
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  static-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install modules
+        run: npm ci
+      - name: Start test server
+        run: npm run server_ext
+      - name: Run Jest tests
+        run: npm run test
