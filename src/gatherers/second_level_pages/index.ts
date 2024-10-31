@@ -7,6 +7,7 @@ import { DataElementError } from "../../utils/DataElementError.js";
 class SecondLevelPagesGatherer extends Gatherer {
   static dataElements: string[] = ["custom-submenu"];
   static pageType: string = "second-level-page";
+  static pageTitle: string = 'Pagina di secondo livello';
 
   static getInstance(): SecondLevelPagesGatherer {
     if (!SecondLevelPagesGatherer.instance) {

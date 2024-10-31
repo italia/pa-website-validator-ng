@@ -47,12 +47,12 @@ default:
 
     <div class="accordion inner" id="collapse">
       <div class="accordion-item">
-        <h2 class="accordion-header" id="accordion-inner-ip">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-ip" aria-expanded="false" aria-controls="accordion-collapse-ip">
+        <h2 class="accordion-header" id="accordion-inner-mun-service">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-mun-service" aria-expanded="false" aria-controls="accordion-collapse-mun-service">
             Tutte le schede informative dei servizi per il cittadino devono mostrare le voci segnalate come obbligatorie all'interno dell'architettura dell'informazione, nell'ordine segnalato dal modello
           </button>
         </h2>
-        <div id="accordion-collapse-ip" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-ip">
+        <div id="accordion-collapse-mun-service" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-mun-service">
           <p>
             <span class="h6 uppercase">CONDIZIONI DI SUCCESSO:</span>
             sono presenti almeno <%= serviceNum %> schede informative di servizio e in queste le voci obbligatorie e i relativi contenuti sono presenti e, dove richiesto, sono nell'ordine corretto;
@@ -74,7 +74,7 @@ default:
 
       <% if( table.pagesInError.pages.length ) { %>
     <p>
-      <span class="h6 uppercase">Elementi di fallimento: <%=table.pagesInError.message %></span> %>
+      <span class="h6 uppercase">Elementi di fallimento: </span> <%=table.pagesInError.message %>
         <%-  include('../../report/partials/audit/table', {table: table.pagesInError}) %>
     </p>
     <% } %>

@@ -8,6 +8,7 @@ class servicesPageGatherer extends Gatherer {
   static dataElements: string[] = ["service-type"];
   static pageType: string = "service";
   static serviceDataElement = "service-link";
+  static pageTitle: string = 'Servizio';
 
   async navigateAndFetchPages(
     url: string,

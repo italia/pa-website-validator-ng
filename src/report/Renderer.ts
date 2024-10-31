@@ -50,12 +50,12 @@ const render = async () => {
         informativeAudits.push({
           ...auditMeta,
           auditHTML: await audit.returnGlobalHTML(),
-          status: infoScore ? "" : score >= 0.5 ? "pass" : "fail",
+          status: infoScore ? "" : score >= 0.5 ? "pass" : error ? 'error' : "fail",
         });
       } else if (error) {
         failedAudits.push({
           ...auditMeta,
-          status: "fail",
+          status: "error",
           auditHTML: (await audit.returnGlobalHTML()).replace(
             "['replace-html']",
             improvementPlanHTML,
@@ -64,11 +64,18 @@ const render = async () => {
         if ("pagesInError" in audit.globalResults) {
           audit.globalResults.pagesInError.pages.forEach((p) => {
             if (p.show) {
-              errorPages.push({
-                criteria: auditMeta.code + " - " + auditMeta.mainTitle,
-                ...p,
-                id: auditMeta.id,
-              });
+              if(errorPages.find(page => page.link === p.link)){
+                const foundPage = errorPages.find(page => page.link === p.link);
+                if(foundPage){
+                  foundPage.criteria = foundPage.criteria + ', ' + auditMeta.code
+                }
+              }else{
+                errorPages.push({
+                  ...p,
+                  criteria: auditMeta.code,
+
+                })
+              }
             }
           });
         }
@@ -123,7 +130,7 @@ const render = async () => {
   failedAudits = sortByWeights(failedAudits);
   informativeAudits = sortByWeights(informativeAudits);
 
-  errorPages = sortByWeights(errorPages).map((p) => {
+  errorPages = errorPages.map((p) => {
     const keys = Object.keys(p);
     const obj: Record<string, unknown> = {};
     keys.forEach((k) => {

@@ -46,12 +46,12 @@ switch (status) {
 
         <div class="accordion inner" id="collapse">
             <div class="accordion-item">
-                <h2 class="accordion-header" id="accordion-inner-ip">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-ip" aria-expanded="false" aria-controls="accordion-collapse-ip">
+                <h2 class="accordion-header" id="accordion-inner-mun-menu">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-mun-menu" aria-expanded="false" aria-controls="accordion-collapse-mun-menu">
                         Il sito comunale deve presentare tutte le voci di menù di primo livello, nell'esatto ordine descritto dalla documentazione del modello di sito comunale
                     </button>
                 </h2>
-                <div id="accordion-collapse-ip" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-ip">
+                <div id="accordion-collapse-mun-menu" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-mun-menu">
                     <p>
                         <span class="h6 uppercase">Condizioni di successo:</span>
                         le voci del menù di primo livello del sito sono esattamente quelle indicate nel documento di architettura dell’informazione e sono nell’ordine indicato (ovvero «Amministrazione», «Novità», «Servizi», «Vivere il Comune» oppure «Vivere [nome del Comune]») e tutte le pagine raggiungibili dal menu di primo livello portano a pagine interne al dominio del Comune;
@@ -63,8 +63,8 @@ switch (status) {
 
                     <p>
                         <span class="h6 uppercase">RIFERIMENTI TECNICI E NORMATIVI:</span>
-                        <a href="https://docs.italia.it/italia/designers-italia/design-comuni-docs/">Documentazione del Modello Comuni</a>,
-                        <a href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>
+                        <a target="_blank" href="https://docs.italia.it/italia/designers-italia/design-comuni-docs/">Documentazione del Modello Comuni</a>,
+                        <a target="_blank" href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>
                     </p>
                 </div>
             </div>
@@ -78,8 +78,7 @@ switch (status) {
 
         <% if( table.pagesInError.pages.length ) { %>
             <p>
-                <span class="h6 uppercase">Elementi di fallimento: <%= table.pagesInError.message %></span>
-                %>
+                <span class="h6 uppercase">Elementi di fallimento: </span><%= table.pagesInError.message %>
                 <%- include('../../report/partials/audit/table', {table: table.pagesInError}) %>
             </p>
         <% } %>

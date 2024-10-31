@@ -6,7 +6,11 @@
   <% if(status){ %>
     <div class="result">
       Risultato
-      <div class="circle <%= status %>"></div>
+      <% if(status === 'error'){ %>
+        <div class="circle <%= status %>">x</div>
+      <% } else { %>
+        <div class="circle <%= status %>"></div>
+      <% } %>
     </div>
   <% } %>
 </a>

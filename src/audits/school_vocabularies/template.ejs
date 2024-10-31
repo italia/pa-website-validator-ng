@@ -46,12 +46,12 @@ default:
 
       <div class="accordion inner" id="collapse">
           <div class="accordion-item">
-              <h2 class="accordion-header" id="accordion-inner-ip">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-ip" aria-expanded="false" aria-controls="accordion-collapse-ip">
+              <h2 class="accordion-header" id="accordion-inner-sch-voc">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-sch-voc" aria-expanded="false" aria-controls="accordion-collapse-sch-voc">
                       Il sito della scuola deve utilizzare argomenti forniti dal modello di sito scuola
                   </button>
               </h2>
-              <div id="accordion-collapse-ip" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-ip">
+              <div id="accordion-collapse-sch-voc" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-sch-voc">
                   <p>
                       <span class="h6 uppercase">Condizioni di successo:</span>
                       gli argomenti utilizzati appartengono alla lista indicata all'interno del documento di architettura dell'informazione del modello scuole alla voce \"Le parole della scuola\"  e l’elenco completo degli argomenti utilizzati è presente nella pagina dei risultati di ricerca;
@@ -64,9 +64,9 @@ default:
 
                   <p>
                       <span class="h6 uppercase">RIFERIMENTI TECNICI E NORMATIVI:</span>
-                      <a href="https://docs.italia.it/italia/designers-italia/design-scuole-docs">Documentazione del Modello scuole</a>,
-                      <a href="https://docs.google.com/spreadsheets/d/1MoayTY05SE4ixtgBsfsdngdrFJf_Z2KNvDkMF3tKfc8/edit#gid=2135815526">Elenco degli argomenti del Modello scuole</a>,
-                      <a href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>
+                      <a target="_blank" href="https://docs.italia.it/italia/designers-italia/design-scuole-docs">Documentazione del Modello scuole</a>,
+                      <a target="_blank" href="https://docs.google.com/spreadsheets/d/1MoayTY05SE4ixtgBsfsdngdrFJf_Z2KNvDkMF3tKfc8/edit#gid=2135815526">Elenco degli argomenti del Modello scuole</a>,
+                      <a target="_blank" href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>
                   </p>
               </div>
           </div>
@@ -80,8 +80,7 @@ default:
 
       <% if( table.pagesInError.pages.length ) { %>
           <p>
-              <span class="h6 uppercase">Elementi di fallimento: <%= table.pagesInError.message %></span>
-              %>
+              <span class="h6 uppercase">Elementi di fallimento: </span><%= table.pagesInError.message %>
               <%- include('../../report/partials/audit/table', {table: table.pagesInError}) %>
           </p>
       <% } %>

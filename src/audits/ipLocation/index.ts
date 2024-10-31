@@ -15,8 +15,8 @@ import path from "path";
 const auditId = "common-security-ip-location";
 const greenResult = "L'hosting è su territorio europeo.";
 const redResult = "L'hosting non è su territorio europeo.";
-const code = "LOCALIZZAZIONE IP";
-const mainTitle = "LOCALIZZAZIONE IP";
+const code = "Localizzazione IP";
+const mainTitle = "Localizzazione IP";
 
 class IpLocationAudit extends Audit {
   public globalResults: GlobalResults = {

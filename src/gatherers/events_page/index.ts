@@ -6,6 +6,7 @@ import { DataElementError } from "../../utils/DataElementError.js";
 class eventsPageGatherer extends Gatherer {
   static dataElements: string[] = ["live-button-events"];
   static pageType: string = "events-page";
+  static pageTitle: string = 'Pagina eventi';
 
   async navigateAndFetchPages(
     url: string,

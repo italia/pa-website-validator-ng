@@ -9,6 +9,7 @@ abstract class Gatherer {
   gatheredPages: PageData[];
   protected static instance: Gatherer;
   static pageType: string;
+  static pageTitle: string;
   static dataElements: string[];
 
   private requestTimeout = parseInt(process.env["requestTimeout"] ?? "60000");
@@ -366,6 +367,11 @@ abstract class Gatherer {
   getPageType() {
     const currentClass = this.constructor as typeof Gatherer;
     return currentClass.pageType;
+  }
+
+  getPageTitle() {
+    const currentClass = this.constructor as typeof Gatherer;
+    return currentClass.pageTitle ?? 'n.d.';
   }
 }
 

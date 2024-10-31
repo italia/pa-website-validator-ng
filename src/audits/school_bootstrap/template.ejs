@@ -46,12 +46,12 @@ default:
 
       <div class="accordion inner" id="collapse">
           <div class="accordion-item">
-              <h2 class="accordion-header" id="accordion-inner-ip">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-ip" aria-expanded="false" aria-controls="accordion-collapse-ip">
+              <h2 class="accordion-header" id="accordion-inner-sch-boot">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-sch-boot" aria-expanded="false" aria-controls="accordion-collapse-sch-boot">
                       Il sito della scuola deve utilizzare la libreria Bootstrap Italia in una versione più recente di 1.6
                   </button>
               </h2>
-              <div id="accordion-collapse-ip" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-ip">
+              <div id="accordion-collapse-sch-boot" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-sch-boot">
                   <p>
                       <span class="h6 uppercase">CONDIZIONI DI SUCCESSO:</span>
                       la libreria Bootstrap Italia è presente e in uso in una versione uguale o superiore alla 1.6;
@@ -63,7 +63,7 @@ default:
 
                   <p>
                       <span class="h6 uppercase">RIFERIMENTI TECNICI E NORMATIVI:</span>
-                      <a href="https://docs.italia.it/italia/designers-italia/design-scuole-docs">Documentazione del Modello scuole</a>
+                      <a target="_blank" href="https://docs.italia.it/italia/designers-italia/design-scuole-docs">Documentazione del Modello scuole</a>
                   </p>
               </div>
           </div>
@@ -77,7 +77,7 @@ default:
 
     <% if( table.pagesInError.pages.length ) { %>
         <p>
-        <span class="h6 uppercase">Elementi di fallimento: <%=table.pagesInError.message %></span> %>
+        <span class="h6 uppercase">Elementi di fallimento: </span> <%=table.pagesInError.message %>
             <%-  include('../../report/partials/audit/table', {table: table.pagesInError}) %>
         </p>
     <% } %>

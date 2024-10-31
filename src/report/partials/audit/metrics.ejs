@@ -10,10 +10,10 @@
 %>
 <% 
   const statusColor = totalPercentage * 100 < 50 
-  ? '#c68700' // fail 
+  ? '#976700' // fail
   : totalPercentage * 100 < 90  
-    ? '#c68700' // average 
-    : '#5cc98d'; // pass
+    ? '#976700' // average
+    : '#3c825c'; // pass
 
   const getIconFromStatus = (status) => {
   switch (status) {
@@ -31,13 +31,15 @@
 <section class="metrics">
   <div class="accordion inner" id="collapse">
     <div class="accordion-item">
-      <h2 class="accordion-header" id="accordion-inner-ip">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-ip" aria-expanded="false" aria-controls="accordion-collapse-ip">
+      <h2 class="accordion-header" id="accordion-inner-lighthouse-acc">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-lighthouse-acc" aria-expanded="false" aria-controls="accordion-collapse-lighthouse-acc">
           Condizioni di successo e Verifiche automatiche
         </button>
       </h2>
-      <div id="accordion-collapse-ip" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-ip">
-        <p><span class="h6">CONDIZIONI DI SUCCESSO:</span> il sito presenta livelli di prestazioni (media pesata di 6 metriche standard) pari o superiori a 50. Se il punteggio è inferiore a 50, il Comune deve pubblicare sul sito un “Piano di miglioramento del sito” raggiungibile dal footer che mostri, per ciascuna voce che impatta negativamente le prestazioni, le azioni future di miglioramento e le relative tempistiche di realizzazione attese; RIFERIMENTI TECNICI E NORMATIVI: <a rel="noopener" target="_blank" href="https://docs.italia.it/italia/designers-italia/design-comuni-docs/">Documentazione del Modello Comuni</a>.
+      <div id="accordion-collapse-lighthouse-acc" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-lighthouse-acc">
+        <p><span class="h6">CONDIZIONI DI SUCCESSO:</span> il sito presenta livelli di prestazioni (media pesata di 6 metriche standard) pari o superiori a 50. Se il punteggio è inferiore a 50, il Comune deve pubblicare sul sito un “Piano di miglioramento del sito” raggiungibile dal footer che mostri, per ciascuna voce che impatta negativamente le prestazioni, le azioni future di miglioramento e le relative tempistiche di realizzazione attese;
+        </p>
+        <p><span class="h6">RIFERIMENTI TECNICI E NORMATIVI:</span> <a rel="noopener" target="_blank" href="https://docs.italia.it/italia/designers-italia/design-comuni-docs/">Documentazione del Modello Comuni</a>
         </p>
       </div>
     </div>

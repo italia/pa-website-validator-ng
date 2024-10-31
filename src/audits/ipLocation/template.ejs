@@ -47,7 +47,6 @@ default:
         <%= mainTitle %>
     </h2>
   <div class="audit-description">
-      <div class="separator"></div>
       <div class="accordion inner" id="collapse">
               <div class="accordion-item">
                   <h2 class="accordion-header" id="accordion-inner-ip">
@@ -56,6 +55,7 @@ default:
                       </button>
                   </h2>
                   <div id="accordion-collapse-ip" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-ip">
+                      <p>
                       <span class="h6 uppercase">Condizioni di successo:</span>
                       l'indirizzo IP fa riferimento a un datacenter localizzato su territorio europeo;
                       </p>
@@ -83,8 +83,7 @@ default:
 
       <% if( table.pagesInError.pages.length ) { %>
           <p>
-              <span class="h6 uppercase">Elementi di fallimento: <%= table.pagesInError.message %></span>
-              %>
+              <span class="h6 uppercase">Elementi di fallimento: </span> <%= table.pagesInError.message %>
               <%- include('../../report/partials/audit/table', {table: table.pagesInError}) %>
           </p>
       <% } %>

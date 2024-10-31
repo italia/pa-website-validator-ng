@@ -7,6 +7,7 @@ import { DataElementError } from "../../utils/DataElementError.js";
 class locationsGatherer extends Gatherer {
   static dataElements: string[] = ["location-link"];
   static pageType: string = "location";
+  static pageTitle: string = 'Luogo';
 
   async navigateAndFetchPages(
     url: string,

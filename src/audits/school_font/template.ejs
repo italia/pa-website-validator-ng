@@ -46,12 +46,12 @@ switch (status) {
 
         <div class="accordion inner" id="collapse">
             <div class="accordion-item">
-                <h2 class="accordion-header" id="accordion-inner-ip">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-ip" aria-expanded="false" aria-controls="accordion-collapse-ip">
+                <h2 class="accordion-header" id="accordion-inner-sch-font">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-sch-font" aria-expanded="false" aria-controls="accordion-collapse-sch-font">
                         Il sito della scuola deve utilizzare i font indicati dalla documentazione del modello di sito della scuola
                     </button>
                 </h2>
-                <div id="accordion-collapse-ip" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-ip">
+                <div id="accordion-collapse-sch-font" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-sch-font">
                     <p>
                         <span class="h6 uppercase">CONDIZIONI DI SUCCESSO: </span>
                         tutti i titoli (heading) e tutti i paragrafi delle pagine del sito in lingua italiana utilizzano esclusivamente i font Titillium Web, Lora o Roboto Mono come font di default;
@@ -64,8 +64,8 @@ switch (status) {
 
                     <p>
                         <span class="h6 uppercase">RIFERIMENTI TECNICI E NORMATIVI:</span>
-                        <a href="https://docs.italia.it/italia/designers-italia/design-scuole-docs">Documentazione del Modello scuole</a>,
-                        <a href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>
+                        <a target="_blank" href="https://docs.italia.it/italia/designers-italia/design-scuole-docs">Documentazione del Modello scuole</a>,
+                        <a target="_blank" href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>
                     </p>
                 </div>
             </div>
@@ -79,7 +79,7 @@ switch (status) {
 
         <% if( table.pagesInError.pages.length ) { %>
         <p>
-            <span class="h6 uppercase">Elementi di fallimento: <%= table.pagesInError.message %></span>
+            <span class="h6 uppercase">Elementi di fallimento: </span><%= table.pagesInError.message %>
             %>
             <%- include('../../report/partials/audit/table', {table: table.pagesInError}) %>
         </p>

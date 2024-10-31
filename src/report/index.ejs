@@ -4,11 +4,134 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <title>Crawler</title>
+  <title>Crawler <%=crawler_version%> - <%=url_comune%> </title>
   <link rel="stylesheet" href="https://unpkg.com/bootstrap-italia@2.9.1/dist/css/bootstrap-italia.min.css" />
-  <link rel="stylesheet" href="css/style.css" />
 
   <style>
+    /* Titillium+Web:300,400,600,700 */
+
+    /* titillium-web-300 - latin-ext_latin */
+    @font-face {
+      font-family: "Titillium Web";
+      font-style: normal;
+      font-weight: 300;
+      font-display: swap;
+      src: url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-300.eot");
+      src: local(""),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-300.eot?#iefix") format("embedded-opentype"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-300.woff2") format("woff2"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-300.woff") format("woff"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-300.ttf") format("truetype"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-300.svg#TitilliumWeb") format("svg");
+    }
+
+    /* titillium-web-300italic - latin-ext_latin */
+    @font-face {
+      font-family: "Titillium Web";
+      font-style: italic;
+      font-weight: 300;
+      font-display: swap;
+      src: url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-300italic.eot");
+      src: local(""),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-300italic.eot?#iefix")
+      format("embedded-opentype"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-300italic.woff2") format("woff2"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-300italic.woff") format("woff"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-300italic.ttf") format("truetype"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-300italic.svg#TitilliumWeb") format("svg");
+    }
+
+    /* titillium-web-regular - latin-ext_latin */
+    @font-face {
+      font-family: "Titillium Web";
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-regular.eot");
+      src: local(""),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-regular.eot?#iefix") format("embedded-opentype"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-regular.woff2") format("woff2"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-regular.woff") format("woff"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-regular.ttf") format("truetype"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-regular.svg#TitilliumWeb") format("svg");
+    }
+
+    /* titillium-web-italic - latin-ext_latin */
+    @font-face {
+      font-family: "Titillium Web";
+      font-style: italic;
+      font-weight: 400;
+      font-display: swap;
+      src: url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-italic.eot");
+      src: local(""),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-italic.eot?#iefix") format("embedded-opentype"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-italic.woff2") format("woff2"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-italic.woff") format("woff"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-italic.ttf") format("truetype"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-italic.svg#TitilliumWeb") format("svg");
+    }
+
+    /* titillium-web-700 - latin-ext_latin */
+    @font-face {
+      font-family: "Titillium Web";
+      font-style: normal;
+      font-weight: 700;
+      font-display: swap;
+      src: url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-700.eot");
+      src: local(""),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-700.eot?#iefix") format("embedded-opentype"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-700.woff2") format("woff2"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-700.woff") format("woff"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-700.ttf") format("truetype"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-700.svg#TitilliumWeb") format("svg");
+    }
+
+    /* titillium-web-700italic - latin-ext_latin */
+    @font-face {
+      font-family: "Titillium Web";
+      font-style: italic;
+      font-weight: 700;
+      font-display: swap;
+      src: url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-700italic.eot");
+      src: local(""),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-700italic.eot?#iefix")
+      format("embedded-opentype"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-700italic.woff2") format("woff2"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-700italic.woff") format("woff"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-700italic.ttf") format("truetype"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-700italic.svg#TitilliumWeb") format("svg");
+    }
+    /* titillium-web-600 - latin-ext_latin */
+    @font-face {
+      font-family: "Titillium Web";
+      font-style: normal;
+      font-weight: 600;
+      font-display: swap;
+      src: url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-600.eot");
+      src: local(""),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-600.eot?#iefix") format("embedded-opentype"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-600.woff2") format("woff2"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-600.woff") format("woff"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-600.ttf") format("truetype"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-600.svg#TitilliumWeb") format("svg");
+    }
+
+    /* titillium-web-600italic - latin-ext_latin */
+    @font-face {
+      font-family: "Titillium Web";
+      font-style: italic;
+      font-weight: 600;
+      font-display: swap;
+      src: url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-600italic.eot");
+      src: local(""),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-600italic.eot?#iefix")
+      format("embedded-opentype"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-600italic.woff2") format("woff2"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-600italic.woff") format("woff"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-600italic.ttf") format("truetype"),
+      url("./fonts/Titillium_Web/titillium-web-v10-latin-ext_latin-600italic.svg#TitilliumWeb") format("svg");
+    }
+
     .accordion-collapse.collapse.show {
       padding-bottom: 2rem;
     }
@@ -16,7 +139,6 @@
     .accordion-header .accordion-button {
       display: block;
       color: #000000;
-      font-size: 16px;
     }
 
     .accordion-header .accordion-button.focus--mouse {
@@ -33,12 +155,61 @@
       color: #c5c7c9;
     }
 
+    .accordion-header .accordion-button.lighthouse-button{
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .accordion-header .accordion-button.lighthouse-button:hover{
+      text-decoration: none;
+      cursor: auto;
+    }
+
+    .accordion-header .accordion-button.lighthouse-button:after{
+      display: none;
+    }
+
+    .accordion-header .accordion-button.lighthouse-button:after .btn-outline-primary{
+      color: #0066cc;
+      border-color: #0066cc;
+    }
+
+    .accordion-header .accordion-button.lighthouse-button .btn-outline-primary:hover{
+      color: #FFFFFF;
+      background-color: #0066cc;
+    }
+
     .accordion.inner {
       margin-bottom: 20px;
     }
 
     .accordion.inner .accordion-collapse.inner{
       padding: 20px 20px 0;
+    }
+
+    .accordion.inner .accordion-item .accordion-header .accordion-button{
+      display: flex;
+      font-size: 16px;
+      gap: 16px;
+    }
+
+    .modal .modal-dialog{
+      max-height: 95% !important;
+      height: 100% !important;
+      max-width: 95% !important;
+      top: 50% !important;
+      left: 50% !important;
+      margin: 0 !important;
+      transform: translate(-50%, -50%) !important;
+    }
+
+    .modal .modal-dialog .modal-content{
+      height: 100%;
+    }
+
+    .modal .modal-dialog .modal-content .modal-body iframe{
+      height: 100%;
     }
 
     .accordion-body {
@@ -54,6 +225,7 @@
       justify-content: space-between;
       gap: 6px;
       padding: 12px;
+      align-items: flex-start;
     }
 
     .accordion-body .nav-link:hover {
@@ -70,6 +242,7 @@
       flex-flow: column;
       align-items: start;
       gap: 6px;
+      line-height: 20px;
     }
 
     .accordion-body .nav-link .title span {
@@ -101,21 +274,16 @@
     }
 
     .accordion-body .nav-link .result .circle.error {
-      background-color: #FFFFFF;
-      position: relative;
-    }
-
-    .accordion-body .nav-link .result .circle.error .icon {
-     position: absolute;
-      top: 0;
-      left:0;
-      width: 20px;
-      height: 20px;
-      stroke: #bc4050;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #bc4050;
+      text-transform: uppercase;
+      border: 2px solid #bc4050;
     }
 
     .accordion-body .nav-link .result .circle.pass {
-      background-color: #5cc98d;
+      background-color: #3c825c;
     }
 
     .accordion-body .nav-link .result .circle.pass .icon{
@@ -123,7 +291,7 @@
     }
 
     .accordion-body .nav-link .result .circle.average {
-      background-color: #c68700;
+      background-color: #976700;
     }
 
     .accordion-body .nav-link .result .circle.average .icon{
@@ -140,7 +308,7 @@
     }
 
     .audit-content .audit-description .h5{
-      font-size: 22px;
+      font-size: 20px;
     }
 
     .audit-content p {
@@ -159,11 +327,11 @@
     }
 
     .audit-content .audit-title svg.pass {
-      stroke: #5cc98d;
+      stroke: #3c825c;
     }
 
     .audit-content .audit-title svg.average {
-      stroke: #c68700;
+      stroke: #976700;
     }
 
     .audit-content .audit-title svg.fail {
@@ -171,11 +339,11 @@
     }
 
     .audit-content .top svg.pass {
-      stroke: #5cc98d;
+      stroke: #3c825c;
     }
 
     .audit-content .top svg.average {
-      stroke: #c68700;
+      stroke: #976700;
     }
 
     .audit-content .top svg.fail {
@@ -210,17 +378,22 @@
 
     .cards-container .card-wrapper .card .card-body.error .card-title {
       color: #ffffff;
+      width: 100%;
+      text-align: center;
     }
 
     .cards-container .card-wrapper .card .card-body .card-title {
+      text-align: center;
+      width: 100%;
       font-size: 20px;
       margin: 0;
       color: var(--bs-primary);
     }
 
     .cards-container .card-wrapper .card .card-body .card-content .result-point {
-      width: 130px;
-      height: 130px;
+      width: 128px;
+      height: 128px;
+      margin-inline: 26px;
       border-radius: 150px;
       display: flex;
       align-items: center;
@@ -231,12 +404,18 @@
       text-transform: uppercase;
     }
 
+    @media screen and (max-width: 768px) {
+      .cards-container .card-wrapper .card .card-body .card-content .result-point {
+        margin-inline: 0;
+      }
+    }
+
     .cards-container .card-wrapper .card .card-body .card-content .result-point.ko {
       background-color: #bc4050;
     }
 
     .cards-container .card-wrapper .card .card-body .card-content .result-point.ok {
-      background-color: #5cc98d;
+      background-color: #3c825c;
     }
 
     .cards-container .card-wrapper .card .card-body .card-content .result-point.error {
@@ -257,7 +436,7 @@
     .cards-container .card-wrapper .card .card-body .card-content .result-donut span {
       font-size: 18px;
       font-weight: bold;
-      color: #5cc98d;
+      color: #3c825c;
     }
 
     footer {
@@ -293,11 +472,11 @@
     }
 
     .text--average {
-      color: #c68700;
+      color: #976700;
     }
 
     .text--pass {
-      color: #5cc98d;
+      color: #3c825c;
     }
 
     /* SEPARATOR */
@@ -342,11 +521,11 @@
     }
 
     section.metrics .legend-item.average::before {
-      background-color: #c68700;
+      background-color: #976700;
     }
 
     section.metrics .legend-item.pass::before {
-      background-color: #5cc98d;
+      background-color: #3c825c;
     }
 
     .metrics-container {
@@ -376,8 +555,8 @@
     }
 
     .metrics-container .metric-wrapper .pass {
-      color: #5cc98d;
-      stroke: #5cc98d;
+      color: #3c825c;
+      stroke: #3c825c;
     }
 
     .metrics-container .metric-wrapper .fail {
@@ -386,8 +565,8 @@
     }
 
     .metrics-container .metric-wrapper .average {
-      color: #c68700;
-      stroke: #c68700;
+      color: #976700;
+      stroke: #976700;
     }
 
     .metrics-container .metric-wrapper .icon {
@@ -403,7 +582,6 @@
     }
 
     .table-wrapper {
-      max-height: 500px;
       overflow: auto;
     }
 
@@ -422,12 +600,12 @@
 
     .table-wrapper .table thead th {
       border-bottom: 3px solid var(--bs-secondary);
-      white-space: nowrap;
     }
 
     .table-wrapper .table tr th,
     .table-wrapper .table tr td {
       padding: 0.75rem;
+      min-width: 250px;
     }
 
     .table-wrapper .table tr th:first-child,
@@ -438,6 +616,73 @@
     .table-wrapper .table tr th:last-child,
     .table-wrapper .table tr td:last-child {
       padding-right: 1.5rem;
+    }
+
+    @media screen and (max-width: 992px) {
+      .cards-container {
+        flex-direction: column;
+        row-gap: 24px !important;
+      }
+
+      .cards-container .card-wrapper {
+        width: 100%;
+      }
+
+      .cards-container .card-wrapper .card .card-body {
+        padding: 24px;
+        column-gap: 16px !important;
+      }
+
+      .card .progress-donut-wrapper {
+        margin-inline: auto;
+      }
+
+      .audit-content {
+        padding: 2rem 0 1rem;
+      }
+
+      .audit-content .audit-title svg {
+        position: initial;
+        margin-top: -5px;
+      }
+    }
+
+    @media screen and (max-width: 768px) {
+      .it-header-center-wrapper {
+        height: auto;
+        padding-block: 8px;
+      }
+
+      .it-header-center-wrapper .it-header-center-content-wrapper {
+        flex-direction: column;
+        align-items: flax-start;
+        row-gap: 8px;
+      }
+
+      .it-header-center-wrapper .it-header-center-content-wrapper .it-right-zone {
+        flex-direction: row;
+        column-gap: 16px;
+      }
+    }
+
+    @media screen and (max-width: 576px) {
+      .it-header-center-wrapper {
+        padding-inline: 0;
+      }
+
+      .it-header-center-wrapper .it-header-center-content-wrapper .it-brand-wrapper {
+        word-break: break-all;
+      }
+
+      .it-header-center-wrapper .it-header-center-content-wrapper .it-right-zone {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .it-header-center-wrapper .it-header-center-content-wrapper .it-right-zone p {
+        font-size: 0.875rem;
+        line-height: 1.3;
+      }
     }
 
     /*# sourceMappingURL=style.css.map */
@@ -520,17 +765,26 @@
       <% if ( lighthouseIFrame ) { %>
       <div class="accordion-item">
         <h2 class="accordion-header" id="accordion-header-lighthouse-audits">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-lighthouse-audits" aria-expanded="false" aria-controls="accordion-collapse-lighthouse-audits">
-            Test aggiuntivi non oggetto di verifica della misura
-          </button>
+          <div class="accordion-button collapsed lighthouse-button">
+            Report di lighthouse (non oggetto di verifica della misura)
+            <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#iframeModal" aria-expanded="false" aria-controls="accordion-collapse-lighthouse-audits" data-focus-mouse="false">Apri il report</button>
+          </div>
         </h2>
-        <div id="accordion-collapse-lighthouse-audits" class="accordion-collapse collapse" role="region" aria-labelledby="accordion-header-lighthouse-audits">
-          <div class="accordion-body">
-            <iframe title="Lighthouse report" width="100%" height="500px" srcdoc="<%= lighthouseIFrame %>"></iframe>
+        <div class="modal fade" id="iframeModal" tabindex="-1" aria-labelledby="iframeModalLabel" data-focus-mouse="false" style="display: none;" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="iframeModalLabel">Lighthouse Report</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" data-focus-mouse="false"></button>
+              </div>
+              <div class="modal-body">
+                <iframe title="Lighthouse report" width="100%" height="500px" srcdoc="<%= lighthouseIFrame %>"></iframe>
+              </div>
             </div>
           </div>
         </div>
       <% } %>
+    </div>
     </div>
   </main>
 

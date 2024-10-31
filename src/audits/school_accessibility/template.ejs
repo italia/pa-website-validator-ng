@@ -47,12 +47,12 @@ default:
 
       <div class="accordion inner" id="collapse">
           <div class="accordion-item">
-              <h2 class="accordion-header" id="accordion-inner-ip">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-ip" aria-expanded="false" aria-controls="accordion-collapse-ip">
+              <h2 class="accordion-header" id="accordion-inner-sch-acc">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-sch-acc" aria-expanded="false" aria-controls="accordion-collapse-sch-acc">
                       Il sito della scuola deve esporre la dichiarazione di accessibilità
                   </button>
               </h2>
-              <div id="accordion-collapse-ip" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-ip">
+              <div id="accordion-collapse-sch-acc" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-sch-acc">
                   <p>
                       <span class="h6 uppercase">Condizioni di successo:</span>
                       il sito presenta una voce nel footer che riporta a una dichiarazione di accessibilità AgID valida per il sito;
@@ -65,13 +65,13 @@ default:
 
                   <p>
                       <span class="h6 uppercase">RIFERIMENTI TECNICI E NORMATIVI:</span>
-                      <a href="https://docs.italia.it/italia/designers-italia/design-scuole-docs">Documentazione del Modello scuole</a>,
-                      <a href="https://docs.italia.it/AgID/documenti-in-consultazione/lg-accessibilita-docs/it/">AgID Linee guida sull’accessibilità degli strumenti informatici</a>,
-                      <a href="https://eur-lex.europa.eu/legal-content/IT/TXT/?uri=CELEX%3A32016L2102">Direttiva UE n. 2102/2016</a>,
-                      <a href="https://www.normattiva.it/atto/caricaDettaglioAtto?atto.dataPubblicazioneGazzetta=2004-01-17&atto.codiceRedazionale=004G0015&atto.articolo.numero=0&atto.articolo.sottoArticolo=1&atto.articolo.sottoArticolo1=10&qId=cb6b9a05-f5c3-40ac-81b8-f89e73e5b4c7&tabID=0.029511124589268523&title=lbl.dettaglioAtto">Legge 9 gennaio 2004 n. 4</a>,
-                      <a href="https://www.w3.org/Translations/WCAG21-it/#background-on-wcag-2">Web Content Accessibility Guidelines WCAG 2.1</a>,
-                      <a href="https://www.agid.gov.it/it/design-servizi/accessibilita/dichiarazione-accessibilita">AgID dichiarazione di accessibilità</a>,
-                      <a href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>
+                      <a target="_blank" href="https://docs.italia.it/italia/designers-italia/design-scuole-docs">Documentazione del Modello scuole</a>,
+                      <a target="_blank" href="https://docs.italia.it/AgID/documenti-in-consultazione/lg-accessibilita-docs/it/">AgID Linee guida sull’accessibilità degli strumenti informatici</a>,
+                      <a target="_blank" href="https://eur-lex.europa.eu/legal-content/IT/TXT/?uri=CELEX%3A32016L2102">Direttiva UE n. 2102/2016</a>,
+                      <a target="_blank" href="https://www.normattiva.it/atto/caricaDettaglioAtto?atto.dataPubblicazioneGazzetta=2004-01-17&atto.codiceRedazionale=004G0015&atto.articolo.numero=0&atto.articolo.sottoArticolo=1&atto.articolo.sottoArticolo1=10&qId=cb6b9a05-f5c3-40ac-81b8-f89e73e5b4c7&tabID=0.029511124589268523&title=lbl.dettaglioAtto">Legge 9 gennaio 2004 n. 4</a>,
+                      <a target="_blank" href="https://www.w3.org/Translations/WCAG21-it/#background-on-wcag-2">Web Content Accessibility Guidelines WCAG 2.1</a>,
+                      <a target="_blank" href="https://www.agid.gov.it/it/design-servizi/accessibilita/dichiarazione-accessibilita">AgID dichiarazione di accessibilità</a>,
+                      <a target="_blank" href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>
                   </p>
               </div>
           </div>
@@ -85,8 +85,7 @@ default:
 
       <% if( table.pagesInError.pages.length ) { %>
           <p>
-              <span class="h6 uppercase">Elementi di fallimento: <%= table.pagesInError.message %></span>
-              %>
+              <span class="h6 uppercase">Elementi di fallimento: </span><%= table.pagesInError.message %>
               <%- include('../../report/partials/audit/table', {table: table.pagesInError}) %>
           </p>
       <% } %>
