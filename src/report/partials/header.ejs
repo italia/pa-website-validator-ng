@@ -5,10 +5,14 @@
         <div class="it-header-center-content-wrapper">
           <div class="it-brand-wrapper">
             <a target="_blank" href="<%= url_comune %>">
-              <svg class="icon" aria-hidden="true">
-                <use href="#it-pa"></use>
-              </svg>
-              <div class="it-brand-text">
+              <% if (url_comune && url_comune.includes('comune')) { %>
+              <div class="icon city">
+              </div>
+                <% } else { %>
+                  <div class="icon school">
+                  </div>
+                <% } %>
+                <div class="it-brand-text">
                 <div class="it-brand-title">
                   <%= url_comune %>
                 </div>
