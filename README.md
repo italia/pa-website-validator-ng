@@ -191,15 +191,6 @@ npm run test
 
 Questo comando eseguirà tutti i test definiti, fornendo un report dettagliato sui risultati e mostrando eventuali errori.
 
-### Test che richiedono un server locale
-Alcuni test necessitano che un server locale sia in esecuzione per poter accedere alle risorse richieste durante i test. Per avviare il server locale, utilizza il seguente comando:
-
-```console
-npm run server_ext
-```
-
-Questo comando avvia il server, permettendo l’esecuzione dei test che necessitano di una configurazione di rete locale. Una volta attivato il server, puoi eseguire i test normalmente con npm run test.
-
 ### Esempio di Output dei Test
 
 Quando esegui i test con Jest, potresti vedere un output simile nel terminale:
