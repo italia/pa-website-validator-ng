@@ -1,9 +1,8 @@
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
-import path from "path";
-import { fileURLToPath } from "url";
 import { errorHandling } from "../config/commonAuditsParts.js";
 import { DataElementError } from "../utils/DataElementError.js";
+import { __dirname } from './esmHelpers.js';
 
 export interface GlobalResults {
   score: number;
@@ -165,8 +164,6 @@ abstract class Audit {
       status = "fail";
       message = this.redResult;
     }
-
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
     return await ejs.renderFile(
       __dirname + "../report/partials/audit/template.ejs",

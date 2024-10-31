@@ -34,5 +34,9 @@ export default [
       ecmaVersion: "latest",
       sourceType: "module",
     },
+
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+    },
   },
 ];

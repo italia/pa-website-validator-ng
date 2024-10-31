@@ -8,6 +8,7 @@ import { Page } from "puppeteer";
 import * as ejs from "ejs";
 import { fileURLToPath } from "url";
 import path from "path";
+import { __dirname } from '../esmHelpers.js';
 
 const auditId = "municipality-faq-is-present";
 const code = "C.SI.2.3";
@@ -140,8 +141,6 @@ class FaqAudit extends Audit {
       status = "fail";
       message = redResult;
     }
-
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
     return await ejs.renderFile(__dirname + "/template.ejs", {
       ...(await this.meta()),
