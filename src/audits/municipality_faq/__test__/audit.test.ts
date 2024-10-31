@@ -20,7 +20,7 @@ describe('municipality_faq', () => {
   });
 
   test('pass', async () => {
-    await testAudit(page, audit, path.join(__dirname, 'pass.html'), 0);
+    await testAudit(page, audit, path.join(__dirname, 'pass.html'), 1);
   }, 30000);
 
   test('fail', async () => {
