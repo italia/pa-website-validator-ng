@@ -2,7 +2,7 @@ import { Page } from "puppeteer";
 import * as ejs from "ejs";
 import { errorHandling } from "../config/commonAuditsParts.js";
 import { DataElementError } from "../utils/DataElementError.js";
-import { __dirname } from './esmHelpers.js';
+import { __dirname } from "./esmHelpers.js";
 
 export interface GlobalResults {
   score: number;

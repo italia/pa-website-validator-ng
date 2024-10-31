@@ -2,7 +2,7 @@
 
 import { ThemeAudit } from "../theme/index.js";
 import * as ejs from "ejs";
-import { __dirname } from '../esmHelpers.js';
+import { __dirname } from "../esmHelpers.js";
 
 class SchoolThemeAudit extends ThemeAudit {
   auditId = "school-ux-ui-consistency-theme-version-check";

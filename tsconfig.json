@@ -8,7 +8,7 @@
     "strict": true,
     "target": "ES2022",
     "declaration": false,
-    "types": ["jest"],
+    "types": ["jest"]
   },
   "exclude": ["dist", "**/__test__", "**/__mocks__"],
   "include": ["src", "node_modules/lighthouse/types/**/*.d.ts"]

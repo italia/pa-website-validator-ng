@@ -78,7 +78,7 @@ class ThemeAudit extends Audit {
         }
 
         const match = CSSContent.match(cmsThemeRx);
-        
+
         if (match === null || !match.groups) {
           continue;
         }

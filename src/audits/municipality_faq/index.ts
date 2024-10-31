@@ -6,7 +6,7 @@ import { urlExists } from "../../utils/utils.js";
 import { Audit, GlobalResults } from "../Audit.js";
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
-import { __dirname } from '../esmHelpers.js';
+import { __dirname } from "../esmHelpers.js";
 
 const auditId = "municipality-faq-is-present";
 const code = "C.SI.2.3";

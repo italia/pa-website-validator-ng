@@ -1,13 +1,13 @@
-import {SchoolThemeAudit} from "../index.js";
-import path from 'path';
+import { SchoolThemeAudit } from "../index.js";
+import path from "path";
 import { browser, testAudit } from "../../../../jest.setup.js";
-import { Page } from 'puppeteer';
+import { Page } from "puppeteer";
 import { Audit } from "../../Audit.js";
 
 let page: Page | null;
 let audit: Audit | null;
 
-describe('school_theme', () => {
+describe("school_theme", () => {
   beforeEach(async () => {
     audit = new SchoolThemeAudit();
     page = browser ? await browser.newPage() : null;
@@ -19,15 +19,15 @@ describe('school_theme', () => {
     }
   });
 
-  test('pass', async () => {
-    await testAudit(page, audit, path.join(__dirname, 'pass.html'), 1);
+  test("pass", async () => {
+    await testAudit(page, audit, path.join(__dirname, "pass.html"), 1);
   }, 30000);
 
-  test('fail', async () => {
-    await testAudit(page, audit, path.join(__dirname, 'fail.html'), 0);
+  test("fail", async () => {
+    await testAudit(page, audit, path.join(__dirname, "fail.html"), 0);
   }, 30000);
 
-  test('fail:0.5', async () => {
-    await testAudit(page, audit, path.join(__dirname, 'fail_05.html'), 0.5);
+  test("fail:0.5", async () => {
+    await testAudit(page, audit, path.join(__dirname, "fail_05.html"), 0.5);
   }, 30000);
 });

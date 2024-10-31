@@ -8,8 +8,10 @@ interface PackageJson {
 }
 
 function readPackageJson(): PackageJson {
-
-  const packageJsonPath = join(path.dirname(fileURLToPath(import.meta.url)), "../package.json");
+  const packageJsonPath = join(
+    path.dirname(fileURLToPath(import.meta.url)),
+    "../package.json",
+  );
 
   const packageJsonString = readFileSync(packageJsonPath, "utf-8");
 

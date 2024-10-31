@@ -18,8 +18,9 @@ async function collectAudits() {
   const configAudits = await getAudits();
   try {
     if (!Object.keys(audits).length) {
-
-      const files = sync(path.dirname(fileURLToPath(import.meta.url)) + "/audits/**/index.**");
+      const files = sync(
+        path.dirname(fileURLToPath(import.meta.url)) + "/audits/**/index.**",
+      );
 
       audits = {};
       for (const file of files) {
