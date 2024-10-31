@@ -55,7 +55,37 @@ default:
         <div id="accordion-collapse-mun-service" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-mun-service">
           <p>
             <span class="h6 uppercase">Requisito minimo:</span>
-            sono presenti almeno <%= serviceNum %> schede informative di servizio e in queste le voci obbligatorie e i relativi contenuti sono presenti e, dove richiesto, sono nell'ordine corretto;
+            Anche solo in una scheda servizio fino a 2 delle seguenti voci obbligatorie e i relativi contenuti non sono presenti:
+
+          <ul class="simple">
+            <li>Categoria del servizio (la tipologia di servizio indicata nella breadcrumb),</li>
+            <li>Titolo del servizio,</li>
+            <li>Stato del servizio (nel caso in cui il servizio non è attivo deve essere indicato il Motivo dello stato),</li>
+            <li>Descrizione breve,</li>
+            <li>A chi è rivolto,</li>
+            <li>Come fare,</li>
+            <li>Cosa serve,</li>
+            <li>Cosa si ottiene,</li>
+            <li>Tempi e scadenze,</li>
+            <li>Accedi al servizio,</li>
+            <li>Condizioni di servizio,</li>
+            <li>Contatti (indicando l’Unità Organizzativa responsabile),</li>
+            <li>Argomenti</li>
+          </ul>
+            e in tutte le schede servizio fino a 1 delle voci utilizzate tra le seguenti non è nell’ordine corretto:
+
+          <ul class="simple">
+            <li>A chi è rivolto;</li>
+            <li>Come fare;</li>
+            <li>Cosa serve;</li>
+            <li>Cosa si ottiene;</li>
+            <li>Tempi e scadenze;</li>
+            <li>Accedi al servizio;</li>
+            <li>Condizioni di servizio;</li>
+            <li>Contatti</li>
+          </ul>
+            e devono essere presenti almeno 10 schede servizio accessibili dalla pagina «Servizi» e se il servizio prevede un pagamento è necessario indicare l’informazione sul pagamento (in formato testuale) e i relativi costi e tutti i servizi comunali messi a disposizione nel sito o in altre piattaforme devono essere indicizzati all’interno della pagina di primo livello “servizi” e presentati utilizzando schede servizio che abbiano le caratteristiche richieste e il sito presenta i data attribute indicati
+          nella <a target="_blank" href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione dell’adesione ai modelli per questo criterio</a>
           </p>
 
           <p>
