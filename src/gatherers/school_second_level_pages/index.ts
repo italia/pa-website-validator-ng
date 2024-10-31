@@ -8,7 +8,7 @@ class secondLevelPagesGatherer extends pageGatherer {
     "news-submenu",
     "services-submenu",
   ];
-  static pageTitle: string = 'Pagina di secondo livello';
+  static pageTitle: string = "Pagina di secondo livello";
 
   static getInstance(): secondLevelPagesGatherer {
     if (!secondLevelPagesGatherer.instance) {

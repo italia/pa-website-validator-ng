@@ -7,7 +7,7 @@ import { DataElementError } from "../../utils/DataElementError.js";
 class firstLevelPageGatherer extends Gatherer {
   static dataElements: string[] = ["overview"];
   static pageType: string = "first-level";
-  static pageTitle: string = 'Pagina di primo livello';
+  static pageTitle: string = "Pagina di primo livello";
 
   async navigateAndFetchPages(
     url: string,

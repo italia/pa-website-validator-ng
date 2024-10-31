@@ -7,7 +7,7 @@ import { PageData } from "../../types/crawler-types.js";
 class bookingAppointmentGatherer extends Gatherer {
   static dataElements: string[] = ["appointment-booking"];
   static pageType: string = "appointment-booking";
-  static pageTitle: string = 'Prenotazione appuntamento';
+  static pageTitle: string = "Prenotazione appuntamento";
 
   static getInstance(): bookingAppointmentGatherer {
     if (!bookingAppointmentGatherer.instance) {

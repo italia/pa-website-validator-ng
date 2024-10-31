@@ -3,7 +3,7 @@ import { pageGatherer } from "../page/index.js";
 class locationsPageGatherer extends pageGatherer {
   static dataElements: string[] = ["school-locations"];
   static pageType: string = "locations-page";
-  static pageTitle: string = 'Listato luoghi';
+  static pageTitle: string = "Listato luoghi";
 
   static getInstance(): locationsPageGatherer {
     if (!locationsPageGatherer.instance) {

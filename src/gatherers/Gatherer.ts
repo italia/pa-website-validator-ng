@@ -371,7 +371,7 @@ abstract class Gatherer {
 
   getPageTitle() {
     const currentClass = this.constructor as typeof Gatherer;
-    return currentClass.pageTitle ?? 'n.d.';
+    return currentClass.pageTitle ?? "n.d.";
   }
 }
 

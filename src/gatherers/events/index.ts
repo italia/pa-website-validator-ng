@@ -12,7 +12,7 @@ class eventsGatherer extends Gatherer {
   static dataElements = ["event-link"];
   static dataElement: string = "event-link";
   static pageType: string = "event";
-  static pageTitle: string = 'Evento';
+  static pageTitle: string = "Evento";
 
   async navigateAndFetchPages(
     url: string,
