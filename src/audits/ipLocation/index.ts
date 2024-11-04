@@ -9,8 +9,9 @@ import { allowedCountries } from "../../storage/common/allowedCountries.js";
 import { Page } from "puppeteer";
 import { Audit, GlobalResults } from "../Audit.js";
 import * as ejs from "ejs";
-import { fileURLToPath } from "url";
 import path from "path";
+import { fileURLToPath } from "url";
+import { __basename } from "../esmHelpers.js";
 
 const auditId = "common-security-ip-location";
 const greenResult = "L'hosting è su territorio europeo.";
@@ -84,9 +85,8 @@ class IpLocationAudit extends Audit {
   }
 
   getFolderName(): string {
-    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+    return __basename;
   }
-
   async getType() {
     return auditId;
   }

@@ -5,8 +5,7 @@ import { errorHandling } from "../../config/commonAuditsParts.js";
 import { Audit, GlobalResultsMulti } from "../Audit.js";
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
-import path from "path";
-import { fileURLToPath } from "url";
+import { __dirname, __basename } from "../esmHelpers.js";
 
 const auditId = "municipality-user-experience-evaluation";
 const code = "C.SI.2.6";
@@ -72,9 +71,8 @@ class UserExperienceEvaluationAudit extends Audit {
   }
 
   getFolderName(): string {
-    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+    return __basename;
   }
-
   async auditPage(page: Page, url: string) {
     this.titleSubHeadings = ["Elementi errati o non trovati"];
 
@@ -191,17 +189,18 @@ class UserExperienceEvaluationAudit extends Audit {
       message = redResult;
     }
 
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-    return await ejs.renderFile(__dirname + "/template.ejs", {
-      ...(await this.meta()),
-      code: code,
-      table: this.globalResults,
-      status,
-      statusMessage: message,
-      metrics: null,
-      totalPercentage: null,
-    });
+    return await ejs.renderFile(
+      __dirname + "/municipality_user_experience_evaluation/template.ejs",
+      {
+        ...(await this.meta()),
+        code: code,
+        table: this.globalResults,
+        status,
+        statusMessage: message,
+        metrics: null,
+        totalPercentage: null,
+      },
+    );
   }
 
   static getInstance(): UserExperienceEvaluationAudit {

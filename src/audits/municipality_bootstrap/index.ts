@@ -9,8 +9,7 @@ import { Page } from "puppeteer";
 import { errorHandling } from "../../config/commonAuditsParts.js";
 import { Audit, GlobalResultsMulti } from "../Audit.js";
 import * as ejs from "ejs";
-import { fileURLToPath } from "url";
-import path from "path";
+import { __dirname, __basename } from "../esmHelpers.js";
 
 class BootstrapMunAudit extends Audit {
   auditId = "municipality-ux-ui-consistency-bootstrap-italia-double-check";
@@ -67,7 +66,7 @@ class BootstrapMunAudit extends Audit {
   }
 
   getFolderName(): string {
-    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+    return __basename;
   }
 
   async auditPage(page: Page, url: string) {
@@ -260,17 +259,18 @@ class BootstrapMunAudit extends Audit {
       message = this.redResult;
     }
 
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-    return await ejs.renderFile(__dirname + "/template.ejs", {
-      ...(await this.meta()),
-      code: this.code,
-      table: this.globalResults,
-      status,
-      statusMessage: message,
-      metrics: null,
-      totalPercentage: null,
-    });
+    return await ejs.renderFile(
+      __dirname + "/municipality_bootstrap/template.ejs",
+      {
+        ...(await this.meta()),
+        code: this.code,
+        table: this.globalResults,
+        status,
+        statusMessage: message,
+        metrics: null,
+        totalPercentage: null,
+      },
+    );
   }
 
   async getType() {

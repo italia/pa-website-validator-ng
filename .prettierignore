@@ -1,3 +1,5 @@
 /.direnv
 /CHANGELOG.md
 /dist
+**/__test__/**/*.html
+/external_files/*.html

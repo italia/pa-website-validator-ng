@@ -8,8 +8,7 @@ import { errorHandling } from "../../config/commonAuditsParts.js";
 import { Audit, GlobalResultsMulti } from "../Audit.js";
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
-import { fileURLToPath } from "url";
-import path from "path";
+import { __dirname, __basename } from "../esmHelpers.js";
 
 const auditId = "municipality-contacts-assistency";
 const code = "C.SI.2.2";
@@ -64,9 +63,8 @@ class ContactAssistencyAudit extends Audit {
   }
 
   getFolderName(): string {
-    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+    return __basename;
   }
-
   async auditPage(page: Page, url: string) {
     this.titleSubHeadings = [
       "La voce è presente nell'indice",
@@ -182,17 +180,18 @@ class ContactAssistencyAudit extends Audit {
       message = redResult;
     }
 
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-    return await ejs.renderFile(__dirname + "/template.ejs", {
-      ...(await this.meta()),
-      code: code,
-      table: this.globalResults,
-      status,
-      statusMessage: message,
-      metrics: null,
-      totalPercentage: null,
-    });
+    return await ejs.renderFile(
+      __dirname + "/municipality_contacts_assistency_audit/template.ejs",
+      {
+        ...(await this.meta()),
+        code: code,
+        table: this.globalResults,
+        status,
+        statusMessage: message,
+        metrics: null,
+        totalPercentage: null,
+      },
+    );
   }
 
   async getType() {

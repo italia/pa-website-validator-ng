@@ -19,8 +19,7 @@ import * as cheerio from "cheerio";
 import { CheerioAPI } from "cheerio";
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
-import path from "path";
-import { fileURLToPath } from "url";
+import { __dirname, __basename } from "../esmHelpers.js";
 
 const auditId = "municipality-controlled-vocabularies";
 const code = "C.SI.1.5";
@@ -66,7 +65,7 @@ class MunicipalityVocabulary extends Audit {
   }
 
   getFolderName(): string {
-    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+    return __basename;
   }
 
   async auditPage(page: Page, url: string) {
@@ -217,17 +216,18 @@ class MunicipalityVocabulary extends Audit {
       message = redResult;
     }
 
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-    return await ejs.renderFile(__dirname + "/template.ejs", {
-      ...(await this.meta()),
-      code: code,
-      table: this.globalResults,
-      status,
-      statusMessage: message,
-      metrics: null,
-      totalPercentage: null,
-    });
+    return await ejs.renderFile(
+      __dirname + "/municipality_vocabulary/template.ejs",
+      {
+        ...(await this.meta()),
+        code: code,
+        table: this.globalResults,
+        status,
+        statusMessage: message,
+        metrics: null,
+        totalPercentage: null,
+      },
+    );
   }
 
   static getInstance(): MunicipalityVocabulary {

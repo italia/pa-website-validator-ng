@@ -2,8 +2,7 @@
 
 import { ThemeAudit } from "../theme/index.js";
 import * as ejs from "ejs";
-import path from "path";
-import { fileURLToPath } from "url";
+import { __dirname, __basename } from "../esmHelpers.js";
 
 class MunicipalityThemeAudit extends ThemeAudit {
   auditId = "municipality-ux-ui-consistency-theme-version-check";
@@ -26,9 +25,8 @@ class MunicipalityThemeAudit extends ThemeAudit {
   }
 
   getFolderName(): string {
-    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+    return __basename;
   }
-
   async returnGlobalHTML() {
     let status = "fail";
     let message = "";
@@ -44,17 +42,18 @@ class MunicipalityThemeAudit extends ThemeAudit {
       message = this.redResult;
     }
 
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-    return await ejs.renderFile(__dirname + "/template.ejs", {
-      ...(await this.meta()),
-      code: this.code,
-      table: this.globalResults,
-      status,
-      statusMessage: message,
-      metrics: null,
-      totalPercentage: null,
-    });
+    return await ejs.renderFile(
+      __dirname + "/municipality_theme/template.ejs",
+      {
+        ...(await this.meta()),
+        code: this.code,
+        table: this.globalResults,
+        status,
+        statusMessage: message,
+        metrics: null,
+        totalPercentage: null,
+      },
+    );
   }
 }
 
