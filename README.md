@@ -207,13 +207,8 @@ Questo comando avvia il server, permettendo l’esecuzione dei test che necessit
 Quando esegui i test con Jest, potresti vedere un output simile nel terminale:
 
 ```bash
-> pa-website-validator-ng@1.0.1 test
-> jest --detectOpenHandles --verbose --forceExit
-
-  console.log
-    Initializing Puppeteer Instance..
-
-      at initializePuppeteer (src/PuppeteerInstance.ts:10:13)
+> pa-website-validator-ng@1.0.5 test
+> jest --detectOpenHandles --forceExit
 
  PASS  src/audits/school_theme/__test__/audit.test.ts (13.03 s)
   school_theme
@@ -225,7 +220,6 @@ Test Suites: 1 passed, 1 total
 Tests:       3 passed, 3 total
 Snapshots:   0 total
 Time:        13.11 s
-Ran all test suites.
 ```
 
 In questo esempio:
@@ -240,13 +234,8 @@ In questo esempio:
 Se uno o più test non dovessero superare i criteri previsti, l’output potrebbe apparire come segue:
 
 ```bash
-> pa-website-validator-ng@1.0.1 test
-> jest --detectOpenHandles --verbose --forceExit
-
-  console.log
-    Initializing Puppeteer Instance..
-
-      at initializePuppeteer (src/PuppeteerInstance.ts:10:13)
+> pa-website-validator-ng@1.0.5 test
+> jest --detectOpenHandles --forceExit
 
  FAIL  src/audits/school_theme/__test__/audit.test.ts (6.041 s)
   school_theme
@@ -261,22 +250,10 @@ Se uno o più test non dovessero superare i criteri previsti, l’output potrebb
     Expected: 0
     Received: 0.5
 
-      34 |   }
-      35 |
-   > 36 |   expect(result?.score).toEqual(expectedScore);
-          |                        ^
-      37 | };
-      38 |
-      39 | export const testGatherer = async (
-
-      at testAudit (jest.setup.ts:36:25)
-      at Object.<anonymous> (src/audits/school_theme/__test__/audit.test.ts:27:5)
-
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 2 passed, 3 total
 Snapshots:   0 total
 Time:        6.126 s, estimated 14 s
-Ran all test suites.
 ```
 
 In questo esempio:
