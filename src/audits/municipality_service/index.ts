@@ -23,8 +23,7 @@ import {
 import { Audit, GlobalResultsMulti } from "../Audit.js";
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
-import path from "path";
-import { fileURLToPath } from "url";
+import { __dirname, __basename } from "../esmHelpers.js";
 
 class ServiceAudit extends Audit {
   auditId = "municipality-servizi-structure-match-model";
@@ -86,9 +85,8 @@ class ServiceAudit extends Audit {
   }
 
   getFolderName(): string {
-    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+    return __basename;
   }
-
   async auditPage(page: Page, url: string) {
     this.titleSubHeadings = [
       "Voci mancanti o senza contenuto",
@@ -301,18 +299,19 @@ class ServiceAudit extends Audit {
       message = this.redResult;
     }
 
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-    return await ejs.renderFile(__dirname + "/template.ejs", {
-      ...(await this.meta()),
-      code: this.code,
-      table: this.globalResults,
-      status,
-      statusMessage: message,
-      metrics: null,
-      totalPercentage: null,
-      serviceNum: process.env["numberOfServicePages"] ?? minNumberOfServices,
-    });
+    return await ejs.renderFile(
+      __dirname + "/municipality_service/template.ejs",
+      {
+        ...(await this.meta()),
+        code: this.code,
+        table: this.globalResults,
+        status,
+        statusMessage: message,
+        metrics: null,
+        totalPercentage: null,
+        serviceNum: process.env["numberOfServicePages"] ?? minNumberOfServices,
+      },
+    );
   }
 
   static getInstance(): ServiceAudit {

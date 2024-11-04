@@ -1,8 +1,7 @@
 import { allowedFonts } from "./allowedFonts.js";
 import { FontAudit } from "../font/index.js";
 import * as ejs from "ejs";
-import { fileURLToPath } from "url";
-import path from "path";
+import { __dirname, __basename } from "../esmHelpers.js";
 
 class MunicipalityFontAudit extends FontAudit {
   auditId = "municipality-ux-ui-consistency-fonts-check";
@@ -35,9 +34,8 @@ class MunicipalityFontAudit extends FontAudit {
   }
 
   getFolderName(): string {
-    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+    return __basename;
   }
-
   async returnGlobalHTML() {
     let status = "fail";
     let message = "";
@@ -53,9 +51,7 @@ class MunicipalityFontAudit extends FontAudit {
       message = this.redResult;
     }
 
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-    return await ejs.renderFile(__dirname + "/template.ejs", {
+    return await ejs.renderFile(__dirname + "/municipality_font/template.ejs", {
       ...(await this.meta()),
       code: this.code,
       table: this.globalResults,

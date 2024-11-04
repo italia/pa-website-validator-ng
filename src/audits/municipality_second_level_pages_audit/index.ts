@@ -20,9 +20,8 @@ import { Audit, GlobalResults } from "../Audit.js";
 import { Page } from "puppeteer";
 import { errorHandling } from "../../config/commonAuditsParts.js";
 import * as ejs from "ejs";
-import path from "path";
-import { fileURLToPath } from "url";
 import { MunicipalitySecondLevelPages } from "../../types/crawler-types.js";
+import { __dirname, __basename } from "../esmHelpers.js";
 
 const auditId = "municipality-second-level-pages";
 const greenResult = "Tutti i titoli usati sono corretti.";
@@ -77,7 +76,7 @@ class SecondLevelAudit extends Audit {
   }
 
   getFolderName(): string {
-    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+    return __basename;
   }
 
   async auditPage(page: Page, url: string) {
@@ -265,17 +264,18 @@ class SecondLevelAudit extends Audit {
       message = redResult;
     }
 
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-    return await ejs.renderFile(__dirname + "/template.ejs", {
-      ...(await this.meta()),
-      code: code,
-      table: this.globalResults,
-      status,
-      statusMessage: message,
-      metrics: null,
-      totalPercentage: null,
-    });
+    return await ejs.renderFile(
+      __dirname + "/municipality_second_level_pages_audit/template.ejs",
+      {
+        ...(await this.meta()),
+        code: code,
+        table: this.globalResults,
+        status,
+        statusMessage: message,
+        metrics: null,
+        totalPercentage: null,
+      },
+    );
   }
 
   async getType() {

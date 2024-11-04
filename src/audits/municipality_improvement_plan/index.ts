@@ -3,8 +3,7 @@ import { Page } from "puppeteer";
 import * as cheerio from "cheerio";
 import { CheerioAPI } from "cheerio";
 import * as ejs from "ejs";
-import { fileURLToPath } from "url";
-import path from "path";
+import { __dirname, __basename } from "../esmHelpers.js";
 
 const auditId = "municipality-performance-improvement-plan";
 
@@ -41,7 +40,7 @@ class ImprovementPlanAudit extends Audit {
   }
 
   getFolderName(): string {
-    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+    return __basename;
   }
 
   async auditPage(page: Page) {
@@ -78,16 +77,17 @@ class ImprovementPlanAudit extends Audit {
       status = "average";
     }
 
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-    return await ejs.renderFile(__dirname + "/template.ejs", {
-      ...(await this.meta()),
-      code: this.code,
-      table: this.globalResults,
-      status,
-      metrics: null,
-      totalPercentage: null,
-    });
+    return await ejs.renderFile(
+      __dirname + "/municipality_improvement_plan/template.ejs",
+      {
+        ...(await this.meta()),
+        code: this.code,
+        table: this.globalResults,
+        status,
+        metrics: null,
+        totalPercentage: null,
+      },
+    );
   }
 
   static getInstance(): ImprovementPlanAudit {

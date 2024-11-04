@@ -11,8 +11,7 @@ import { getFirstLevelPages } from "../../utils/municipality/utils.js";
 import { Audit, GlobalResults } from "../Audit.js";
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
-import path from "path";
-import { fileURLToPath } from "url";
+import { __dirname, __basename } from "../esmHelpers.js";
 
 const auditId = "municipality-menu-structure-match-model";
 const greenResult =
@@ -59,7 +58,7 @@ class MenuAudit extends Audit {
   }
 
   getFolderName(): string {
-    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+    return __basename;
   }
 
   async auditPage(page: Page, url: string) {
@@ -175,9 +174,7 @@ class MenuAudit extends Audit {
       message = redResult;
     }
 
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-    return await ejs.renderFile(__dirname + "/template.ejs", {
+    return await ejs.renderFile(__dirname + "/municipality_menu/template.ejs", {
       ...(await this.meta()),
       code: code,
       table: this.globalResults,

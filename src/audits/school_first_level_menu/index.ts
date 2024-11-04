@@ -16,6 +16,7 @@ import { MenuItem, primaryMenuItems } from "./menuItem.js";
 import * as ejs from "ejs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { __basename } from "../esmHelpers.js";
 
 class SchoolFirstLevelMenuAudit extends Audit {
   public globalResults: GlobalResults = {
@@ -63,9 +64,8 @@ class SchoolFirstLevelMenuAudit extends Audit {
   }
 
   getFolderName(): string {
-    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+    return __basename;
   }
-
   async auditPage(page: Page, url: string) {
     let score = 0;
 
