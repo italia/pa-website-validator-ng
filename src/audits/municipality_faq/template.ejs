@@ -1,0 +1,99 @@
+<%# 
+    PARAMETERS NEEDED:
+    - status: pass | average | fails
+    - code: string
+    - description?: string
+    - minRequirement?: string
+    - automaticChecks?: string
+    - failures?: string
+    - content: HTML template
+%>
+<%
+let icon = "";
+switch (status) {
+  case 'pass':
+    icon = '#it-check-circle';
+    break;
+
+  case 'fail':
+    icon = '#it-error';
+    break;
+
+default:
+    icon = '#it-info-circle';
+    break;
+} %>
+
+
+<!-- {
+    code: this.code,
+    id: this.auditId,
+    title: this.auditData.title,
+    failureTitle: this.auditData.failureTitle,
+    description: this.auditData.description,
+    scoreDisplayMode: this.SCORING_MODES.BINARY,
+    requiredArtifacts: ["origin"],
+}; -->
+
+<div class="audit-content">
+  <h2 class="h3 audit-title">
+    <svg class="icon <%= status %>" aria-hidden="true">
+      <use href="<%= icon %>"></use>
+    </svg>
+    <%=code%> - <%= mainTitle %>
+  </h2>
+  <div class="audit-description">
+
+    <div class="accordion inner" id="collapse">
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="accordion-inner-mun-faq">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-mun-faq" aria-expanded="false" aria-controls="accordion-collapse-mun-faq">
+            Il sito comunale deve contenere una sezione per le domande più frequenti (FAQ)
+          </button>
+        </h2>
+        <div id="accordion-collapse-mun-faq" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-mun-faq">
+          <p>
+            <span class="h6 uppercase">Requisito minimo:</span>
+            Nel footer del sito è presente un link per segnalare un disservizio inviando un’email o utilizzando la funzionalità dedicata di segnalazione disservizio e la pagina di destinazione del link esiste e il testo del link non include le espressioni «disservizio» oppure «segnala disservizio» oppure «segnalazione disservizio» e, se viene usata la funzionalità dedicata di segnalazione disservizio, il cittadino deve avere la possibilità di:
+          <ul class="simple">
+            <li>assegnare una categoria alla segnalazione;</li>
+            <li>indicare il luogo a cui la segnalazione si riferisce, attraverso l’immissione di un indirizzo o con la funzione di geotag su una mappa;</li>
+            <li>indicare l’oggetto della segnalazione;</li>
+            <li>aggiungere una breve descrizione;</li>
+            <li>aggiungere delle immagini;</li>
+            <li>allegare uno o più documenti;</li>
+          </ul>
+          e il sito presenta i <em>data attribute</em> indicati nella <a class="reference external" href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione dell’adesione ai modelli</a> per questo criterio.
+          </p>
+
+          <p>
+            <span class="h6 uppercase">Verifiche automatiche:</span>
+            viene verificata la presenza del link nel footer, ricercando uno specifico attributo "data-element" come spiegato nella Documentazione delle App di valutazione, che il link invii ad una pagina esistente e che il testo del link contenga almeno una delle espressioni richieste, senza fare distinzione tra caratteri minuscoli o maiuscoli;
+          </p>
+
+          <p>
+            <span class="h6 uppercase">RIFERIMENTI TECNICI E NORMATIVI:</span>
+            <a target="_blank" href="https://docs.italia.it/italia/designers-italia/design-comuni-docs/">Documentazione del Modello Comuni</a>,
+            <a target="_blank" href="https://op.europa.eu/en/publication-detail/-/publication/333fe21f-4372-11ec-89db-01aa75ed71a1">eGovernment benchmark method paper 2020-2023</a>,
+            <a target="_blank" href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <% if( table.pagesInError.pages.length ) { %>
+      <p>
+        <span class="h6 uppercase">Elementi di fallimento: </span><%= table.pagesInError.message %>
+        %>
+        <%- include('../../report/partials/audit/table', {table: table.pagesInError}) %>
+      </p>
+    <% } %>
+
+
+      <% if( table.pagesItems.pages.length ) { %>
+      <p>
+          <%-  include('../../report/partials/audit/table', {table: table.pagesItems}) %>
+      </p>
+      <% } %>
+  </div>
+</div>

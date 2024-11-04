@@ -1,0 +1,33 @@
+<div class="table-wrapper">
+    <table class="table table-striped">
+        <thead>
+        <tr> <% table.headings.forEach(h => { %>
+                <th>
+                    <%= h %>
+                </th>
+            <% }); %>
+        </tr>
+        </thead>
+        <tbody>
+        <% table.pages.forEach(item => { %>
+            <tr>
+                <% Object.keys(item).forEach(element => { %>
+                    <% if(element != 'show') { %>
+                    <td>
+                        <% if(element == 'link' && item[element] && item[element].includes('https://temppagenotavailable/')) { %>
+                            Pagina non trovata (<%= item[element].replace('https://temppagenotavailable/', '') %>)
+                        <% } else { %>
+                        <% if(element == 'link' && item[element] && !!(new URL(item[element]))) { %>
+                        <a target="_blank" href="<%=item[element]%>"><%= new URL(item[element]).pathname === '/' ? new URL(item[element]) : new URL(item[element]).pathname %></a>
+                        <% }else{ %>
+                        <%=item[element]%>
+                        <%} %>
+                            <%} %>
+                    </td>
+                    <%} %>
+                <%}); %>
+            </tr>
+        <% }); %>
+        </tbody>
+    </table>
+</div>

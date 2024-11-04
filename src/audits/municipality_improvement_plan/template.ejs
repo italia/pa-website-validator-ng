@@ -1,0 +1,42 @@
+<%# 
+    PARAMETERS NEEDED:
+    - status: pass | average | fails
+    - code: string
+    - description?: string
+    - minRequirement?: string
+    - automaticChecks?: string
+    - failures?: string
+    - content: HTML template
+%>
+<%
+let icon = "";
+let message = "";
+switch (status) {
+    case 'average':
+        icon = '#it-warning-circle';
+        message = failureTitle;
+        break;
+
+    default:
+        icon = '#it-info-circle';
+        message = title;
+        break;
+} %>
+
+
+<!-- {
+    code: this.code,
+    id: this.auditId,
+    title: this.auditData.title,
+    failureTitle: this.auditData.failureTitle,
+    description: this.auditData.description,
+    scoreDisplayMode: this.SCORING_MODES.BINARY,
+    requiredArtifacts: ["origin"],
+}; -->
+
+<div class="audit-content-info">
+    <h2 class="h5 audit-title">
+        <%= message %>
+    </h2>
+    <div class="separator"></div>
+</div>

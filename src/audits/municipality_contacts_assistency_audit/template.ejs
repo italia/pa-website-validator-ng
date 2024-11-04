@@ -1,0 +1,99 @@
+<%# 
+    PARAMETERS NEEDED:
+    - status: pass | average | fails
+    - code: string
+    - description?: string
+    - minRequirement?: string
+    - automaticChecks?: string
+    - failures?: string
+    - content: HTML template
+%>
+<%
+let icon = "";
+switch (status) {
+case 'pass':
+    icon = '#it-check-circle';
+    break;
+
+case 'fail':
+    icon = '#it-error';
+    break;
+
+default:
+    icon = '#it-info-circle';
+    break;
+} %>
+
+
+<!-- {
+    code: this.code,
+    id: this.auditId,
+    title: this.auditData.title,
+    failureTitle: this.auditData.failureTitle,
+    description: this.auditData.description,
+    scoreDisplayMode: this.SCORING_MODES.BINARY,
+    requiredArtifacts: ["origin"],
+}; -->
+
+<div class="audit-content">
+  <h2 class="h3 audit-title">
+    <svg class="icon <%= status %>" aria-hidden="true">
+      <use href="<%= icon %>"></use>
+    </svg>
+      <%=code%> - <%= mainTitle %>
+  </h2>
+  <div class="audit-description">
+
+      <div class="accordion inner" id="collapse">
+          <div class="accordion-item">
+              <h2 class="accordion-header" id="accordion-inner-cont-ass">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-cont-ass" aria-expanded="false" aria-controls="accordion-collapse-cont-ass">
+                      All'interno del sito comunale, nel contenuto della scheda servizio, devono essere comunicati i contatti dell'ufficio preposto all'erogazione del servizio
+                  </button>
+              </h2>
+              <div id="accordion-collapse-cont-ass" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-cont-ass">
+                  <p>
+                      <span class="h6 uppercase">Requisito minimo:</span>
+                      Tutte le schede servizio presentano i contatti dell’ufficio preposto all’erogazione del servizio e il sito presenta i <em>data attribute</em> indicati nella <a class="reference external" href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione dell’adesione ai modelli</a> per questo criterio.
+                  </p>
+
+                  <p>
+                      <span class="h6 uppercase">Verifiche automatiche:</span>
+                      viene verificata la presenza della voce "Contatti" all'interno dell'indice e nel corpo della pagina delle schede servizio analizzate, ricercando specifici attributi "data-element" come spiegato nella Documentazione delle App di valutazione;
+
+                  </p>
+                  <p>
+                      <span class="h6 uppercase">RIFERIMENTI TECNICI E NORMATIVI:</span>
+                      <a target="_blank" href="https://docs.italia.it/italia/designers-italia/design-comuni-docs/">Documentazione del Modello Comuni</a>,
+                      <a target="_blank" href="https://op.europa.eu/en/publication-detail/-/publication/333fe21f-4372-11ec-89db-01aa75ed71a1">eGovernment benchmark method paper 2020-2023</a>,
+                      <a target="_blank" href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>
+                  </p>
+              </div>
+          </div>
+      </div>
+
+      <% if( !table.pagesInError.pages.length ) { %>
+          <p>
+              <span class="h5"> <%= statusMessage %> </span>
+          </p>
+      <% } %>
+
+    <% if( table.pagesInError.pages.length ) { %>
+        <p>
+        <span class="h6 uppercase">Elementi di fallimento: </span> <%=table.pagesInError.message %>
+            <%-  include('../../report/partials/audit/table', {table: table.pagesInError}) %>
+        </p>
+    <% } %>
+    <% if( table.wrongPages.pages.length ) { %>
+      <p>
+          <%-  include('../../report/partials/audit/table', {table : table.wrongPages}) %>
+      </p>
+    <% } %>
+    <% if( table.correctPages.pages.length ) { %>
+      <p>
+          <%-  include('../../report/partials/audit/table', {table: table.correctPages}) %>
+      </p>
+    <% } %>
+
+  </div>
+</div>

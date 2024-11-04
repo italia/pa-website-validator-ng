@@ -1,0 +1,128 @@
+<%# 
+    PARAMETERS NEEDED:
+    - status: pass | average | fails
+    - code: string
+    - description?: string
+    - minRequirement?: string
+    - automaticChecks?: string
+    - failures?: string
+    - content: HTML template
+%>
+<%
+let icon = "";
+let message = "";
+switch (status) {
+case 'pass':
+    icon = '#it-check-circle';
+    break;
+
+case 'fail':
+    icon = '#it-error';
+    break;
+
+default:
+    icon = '#it-info-circle';
+    break;
+} %>
+
+
+<!-- {
+    code: this.code,
+    id: this.auditId,
+    title: this.auditData.title,
+    failureTitle: this.auditData.failureTitle,
+    description: this.auditData.description,
+    scoreDisplayMode: this.SCORING_MODES.BINARY,
+    requiredArtifacts: ["origin"],
+}; -->
+
+<div class="audit-content">
+  <h2 class="h3 audit-title">
+    <svg class="icon <%= status %>" aria-hidden="true">
+      <use href="<%= icon %>"></use>
+    </svg>
+      <%=code%> - <%= mainTitle %>
+  </h2>
+  <div class="audit-description">
+
+    <div class="accordion inner" id="collapse">
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="accordion-inner-mun-service">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-mun-service" aria-expanded="false" aria-controls="accordion-collapse-mun-service">
+            Tutte le schede informative dei servizi per il cittadino devono mostrare le voci segnalate come obbligatorie all'interno dell'architettura dell'informazione, nell'ordine segnalato dal modello
+          </button>
+        </h2>
+        <div id="accordion-collapse-mun-service" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-mun-service">
+          <p>
+            <span class="h6 uppercase">Requisito minimo:</span>
+            Anche solo in una scheda servizio fino a 2 delle seguenti voci obbligatorie e i relativi contenuti non sono presenti:
+
+          <ul class="simple">
+            <li>Categoria del servizio (la tipologia di servizio indicata nella breadcrumb),</li>
+            <li>Titolo del servizio,</li>
+            <li>Stato del servizio (nel caso in cui il servizio non è attivo deve essere indicato il Motivo dello stato),</li>
+            <li>Descrizione breve,</li>
+            <li>A chi è rivolto,</li>
+            <li>Come fare,</li>
+            <li>Cosa serve,</li>
+            <li>Cosa si ottiene,</li>
+            <li>Tempi e scadenze,</li>
+            <li>Accedi al servizio,</li>
+            <li>Condizioni di servizio,</li>
+            <li>Contatti (indicando l’Unità Organizzativa responsabile),</li>
+            <li>Argomenti</li>
+          </ul>
+            e in tutte le schede servizio fino a 1 delle voci utilizzate tra le seguenti non è nell’ordine corretto:
+
+          <ul class="simple">
+            <li>A chi è rivolto;</li>
+            <li>Come fare;</li>
+            <li>Cosa serve;</li>
+            <li>Cosa si ottiene;</li>
+            <li>Tempi e scadenze;</li>
+            <li>Accedi al servizio;</li>
+            <li>Condizioni di servizio;</li>
+            <li>Contatti</li>
+          </ul>
+            e devono essere presenti almeno 10 schede servizio accessibili dalla pagina «Servizi» e se il servizio prevede un pagamento è necessario indicare l’informazione sul pagamento (in formato testuale) e i relativi costi e tutti i servizi comunali messi a disposizione nel sito o in altre piattaforme devono essere indicizzati all’interno della pagina di primo livello “servizi” e presentati utilizzando schede servizio che abbiano le caratteristiche richieste e il sito presenta i data attribute indicati
+          nella <a target="_blank" href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione dell’adesione ai modelli per questo criterio</a>
+          </p>
+
+          <p>
+            <span class="h6 uppercase">Verifiche automatiche:</span>
+            ricercando specifici attributi "data-element" come spiegato nella Documentazione delle App di valutazione, la presenza e l'ordine delle voci richieste viene verificato ricercandoli all'interno della pagina e dell'indice. Per essere ritenute valide, le voci devono avere contenuti associati della tipologia indicata all'interno del documento di architettura dell'informazione. Maggiori dettagli sono indicati nella Documentazione delle App di valutazione;
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <% if( !table.pagesInError.pages.length ) { %>
+      <p>
+        <span class="h5"> <%= statusMessage %> </span>
+      </p>
+    <% } %>
+
+      <% if( table.pagesInError.pages.length ) { %>
+    <p>
+      <span class="h6 uppercase">Elementi di fallimento: </span> <%=table.pagesInError.message %>
+        <%-  include('../../report/partials/audit/table', {table: table.pagesInError}) %>
+    </p>
+    <% } %>
+      <% if( table.wrongPages.pages.length ) { %>
+      <p>
+          <%-  include('../../report/partials/audit/table', {table : table.wrongPages}) %>
+      </p>
+      <% } %>
+      <% if( table.tolerancePages.pages.length ) { %>
+      <p>
+          <%-  include('../../report/partials/audit/table', {table: table.tolerancePages}) %>
+      </p>
+      <% } %>
+      <% if( table.correctPages.pages.length ) { %>
+      <p>
+          <%-  include('../../report/partials/audit/table', {table: table.correctPages}) %>
+      </p>
+      <% } %>
+
+  </div>
+</div>

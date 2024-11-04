@@ -1,0 +1,89 @@
+<%# 
+    PARAMETERS NEEDED:
+    - status: pass | average | fails
+    - code: string
+    - description?: string
+    - minRequirement?: string
+    - automaticChecks?: string
+    - failures?: string
+    - content: HTML template
+%>
+<%
+
+let icon = "";
+switch (status) {
+case 'pass':
+    icon = '#it-check-circle';
+    break;
+
+case 'fail':
+    icon = '#it-error';
+    break;
+
+default:
+    icon = '#it-info-circle';
+    break;
+} %>
+
+
+<!-- {
+    code: this.code,
+    id: this.auditId,
+    title: this.auditData.title,
+    failureTitle: this.auditData.failureTitle,
+    description: this.auditData.description,
+    scoreDisplayMode: this.SCORING_MODES.BINARY,
+    requiredArtifacts: ["origin"],
+}; -->
+
+<div class="audit-content">
+  <h2 class="h3 audit-title">
+    <svg class="icon <%= status %>" aria-hidden="true">
+      <use href="<%= icon %>"></use>
+    </svg>
+      <%=code%> - <%= mainTitle %>
+  </h2>
+  <div class="audit-description">
+
+      <div class="accordion inner" id="collapse">
+          <div class="accordion-item">
+              <h2 class="accordion-header" id="accordion-inner-sch-security">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-sch-security" aria-expanded="false" aria-controls="accordion-collapse-sch-security">
+                      Il sito della scuola deve avere un certificato https valido e attivo
+                  </button>
+              </h2>
+              <div id="accordion-collapse-sch-security" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-sch-security">
+                  <p>
+                      <span class="h6 uppercase">Requisito minimo:</span>
+                      Tutte le pagine del sito utilizzano il protocollo https e il certificato https è valido e il certificato https non è obsoleto (la versione del TLS e la suite di cifratura associata sono adatte).
+                  </p>
+
+                  <p>
+                      <span class="h6 uppercase">Verifiche automatiche:</span>
+                      viene verificato che il certificato https del sito sia valido e attivo;
+                  </p>
+
+                  <p>
+                      <span class="h6 uppercase">RIFERIMENTI TECNICI E NORMATIVI:</span>
+                      <a target="_blank" href="https://docs.italia.it/italia/designers-italia/design-scuole-docs">Documentazione del Modello scuole</a>,
+                      <a target="_blank" href="https://cert-agid.gov.it/wp-content/uploads/2020/11/AgID-RACCSECTLS-01.pdf">Agid Raccomandazioni in merito allo standard Transport Layer Security (TLS)</a>
+                  </p>
+              </div>
+          </div>
+      </div>
+
+      <% if( table.pagesInError.pages.length ) { %>
+          <p>
+              <span class="h6 uppercase">Elementi di fallimento: </span><%= table.pagesInError.message %>
+              %>
+              <%- include('../../report/partials/audit/table', {table: table.pagesInError}) %>
+          </p>
+      <% } %>
+
+      <% if( table.pagesItems.pages.length ) { %>
+      <p>
+          <%-  include('../../report/partials/audit/table', {table: table.pagesItems}) %>
+      </p>
+      <% } %>
+  </div>
+</div>

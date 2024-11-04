@@ -1,0 +1,96 @@
+<%# 
+    PARAMETERS NEEDED:
+    - status: pass | average | fails
+    - code: string
+    - description?: string
+    - minRequirement?: string
+    - automaticChecks?: string
+    - failures?: string
+    - content: HTML template
+%>
+<%
+
+let icon = "";
+switch (status) {
+case 'pass':
+    icon = '#it-check-circle';
+    break;
+
+case 'fail':
+    icon = '#it-error';
+    break;
+
+default:
+    icon = '#it-info-circle';
+    break;
+} %>
+
+
+<!-- {
+    code: this.code,
+    id: this.auditId,
+    title: this.auditData.title,
+    failureTitle: this.auditData.failureTitle,
+    description: this.auditData.description,
+    scoreDisplayMode: this.SCORING_MODES.BINARY,
+    requiredArtifacts: ["origin"],
+}; -->
+
+<div class="audit-content">
+  <h2 class="h3 audit-title">
+    <svg class="icon <%= status %>" aria-hidden="true">
+      <use href="<%= icon %>"></use>
+    </svg>
+      <%=code%> - <%= mainTitle %>
+  </h2>
+  <div class="audit-description">
+
+      <div class="separator"></div>
+      <div class="accordion inner" id="collapse">
+          <div class="accordion-item">
+              <h2 class="accordion-header" id="accordion-inner-mun-lic">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-mun-lic" aria-expanded="false" aria-controls="accordion-collapse-mun-lic">
+                      Il sito comunale deve pubblicare dati, documenti e informazioni con licenza aperta comunicandolo come descritto nella documentazione del modello di sito comunale
+                  </button>
+              </h2>
+              <div id="accordion-collapse-mun-lic" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-mun-lic">
+                  <p>
+                      <span class="h6 uppercase">Requisito minimo:</span>
+                      Il Comune pubblica dati, documenti o informazioni e la licenza viene comunicata nella pagina delle “note legali“ raggiungibile da un link nel footer del sito e all’interno della pagina delle “note legali” è presente la sezione “Licenza dei contenuti” che riporta la dicitura:
+                      “In applicazione del principio open by default ai sensi dell’articolo 52 del decreto legislativo 7 marzo 2005, n. 82 (CAD) e salvo dove diversamente specificato (compresi i contenuti incorporati di terzi), i dati, i documenti e le informazioni pubblicati sul sito sono rilasciati con <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/legalcode.it">licenza CC-BY 4.0</a>. Gli utenti sono quindi liberi di condividere (riprodurre, distribuire, comunicare al pubblico, esporre in pubblico), rappresentare, eseguire e recitare questo materiale con qualsiasi mezzo e formato e modificare (trasformare il materiale e utilizzarlo per opere derivate) per qualsiasi fine, anche commerciale con il solo onere di attribuzione, senza apporre restrizioni aggiuntive.”
+
+                      e il sito presenta i <em>data attribute</em> indicati nella <a class="reference external" href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione dell’adesione ai modelli</a> per questo criterio.
+                  </p>
+
+                  <p>
+                      <span class="h6 uppercase">Verifiche automatiche:</span>
+                      ricercando uno specifico attributo "data-element" come spiegato nella Documentazione delle App di valutazione, viene verificato che la pagina delle note legali sia raggiungibile dal footer e che questa contenga una sezione "Licenza dei contenuti" riportante la dicitura indicata nella Documentazione del modello;
+                  </p>
+
+                  <p>
+                      <span class="h6 uppercase">RIFERIMENTI TECNICI E NORMATIVI:</span>
+                      <a target="_blank" href="https://docs.italia.it/italia/designers-italia/design-comuni-docs/">Documentazione del Modello Comuni</a>,
+                      <a target="_blank" href="https://docs.italia.it/italia/piano-triennale-ict/codice-amministrazione-digitale-docs/it/stabile/_rst/capo_V-sezione_I-articolo_52.html">CAD Art. 52 d.lgs. 82/2005</a>,
+                      <a target="_blank" href="https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:decreto.legislativo:2013-03-14;33">art. 7, comma 1, D.Lgs. n. 33/2013</a>,
+                      <a target="_blank" href="https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:decreto.legislativo:2006-01-24;36!vig=">d.lgs. n. 36/2006</a>,
+                      <a target="_blank" href="https://www.agid.gov.it/it/design-servizi/riuso-open-source/linee-guida-acquisizione-riuso-software-pa">AgID Linee guida su acquisizione e riuso di software per le pubbliche amministrazioni</a>,
+                      <a target="_blank" href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>
+                  </p>
+              </div>
+          </div>
+      </div>
+
+      <% if( table.pagesInError.pages.length ) { %>
+          <p>
+              <span class="h6 uppercase">Elementi di fallimento: </span><%= table.pagesInError.message %>
+              <%- include('../../report/partials/audit/table', {table: table.pagesInError}) %>
+          </p>
+      <% } %>
+
+      <% if( table.pagesItems.pages.length ) { %>
+      <p>
+          <%-  include('../../report/partials/audit/table', {table: table.pagesItems}) %>
+      </p>
+      <% } %>
+  </div>
+</div>

@@ -1,0 +1,87 @@
+<%# 
+    PARAMETERS NEEDED:
+    - status: pass | average | fails
+    - code: string
+    - description?: string
+    - minRequirement?: string
+    - automaticChecks?: string
+    - failures?: string
+    - content: HTML template
+%>
+<%
+let icon = "";
+let message = "";
+switch (status) {
+    case 'pass':
+        icon = '#it-check-circle';
+        break;
+
+    case 'fail':
+        icon = '#it-error';
+        break;
+
+    default:
+        icon = '#it-info-circle';
+        break;
+} %>
+
+
+<!-- {
+    code: this.code,
+    id: this.auditId,
+    title: this.auditData.title,
+    failureTitle: this.auditData.failureTitle,
+    description: this.auditData.description,
+    scoreDisplayMode: this.SCORING_MODES.BINARY,
+    requiredArtifacts: ["origin"],
+}; -->
+
+<div class="audit-content">
+    <h2 class="h3 audit-title">
+        <svg class="icon <%= status %>" aria-hidden="true">
+            <use href="<%= icon %>"></use>
+        </svg>
+        <%=code%> - <%= mainTitle %>
+    </h2>
+    <div class="audit-description">
+
+        <div class="accordion inner" id="collapse">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="accordion-inner-mun-second-level">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-mun-second-level" aria-expanded="false" aria-controls="accordion-collapse-mun-second-level">
+                        Nel sito comunale, i titoli delle pagine di secondo livello devono rispettare il vocabolario descritto dalla documentazione del modello di sito comunale
+                    </button>
+                </h2>
+                <div id="accordion-collapse-mun-second-level" class="accordion-collapse inner collapse" role="region" aria-labelledby="accordion-inner-mun-second-level">
+                    <p>
+                        <span class="h6 uppercase">Requisito minimo:</span>
+                        Almeno il 50% dei titoli delle pagine di secondo livello usati rispecchiano quelli presenti nel <a class="reference external" href="https://designers.italia.it/files/resources/modelli/comuni/adotta-il-modello-di-sito-comunale/definisci-architettura-e-contenuti/Architettura-informazione-sito-Comuni.ods">documento di Architettura dell’informazione</a> e i titoli delle pagine di secondo livello e i rispettivi titoli usati nelle breadcrumb devono corrispondere e la posizione della pagina deve essere indicata nella struttura delle breadcrumb ed essere al livello corretto (es: Home/Servizi/Ambiente) e le pagine e le relative sezioni di pagina hanno un contenuto coerente con i titoli delle pagine e il sito presenta i <em>data attribute</em> indicati nella <a class="reference external" href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione dell’adesione ai modelli</a> per questo criterio.
+                    </p>
+                    <p>
+                        <span class="h6 uppercase">Verifiche automatiche:</span>
+                        ricercando specifici attributi "data-element" come spiegato nella Documentazione delle App di valutazione, viene verificato che i titoli delle card usate per rimandare alle pagine di secondo livello siano corretti e presenti sulle rispettive pagine genitore di primo livello. Nel caso della pagina di primo livello "Vivere il Comune", viene verificato che i titoli delle pagine di secondo livello raggiungibili da questa siano corretti. Nel conteggio vengono incluse anche le pagine di secondo livello raggiungibili da pagine di primo livello non indicate nella documentazione;
+                    </p>
+
+                    <p>
+                        <span class="h6 uppercase">RIFERIMENTI TECNICI E NORMATIVI:</span>
+                        <a target="_blank" href="https://docs.italia.it/italia/designers-italia/design-comuni-docs/">Documentazione del Modello Comuni</a>,
+                        <a target="_blank" href="https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/">Documentazione delle App di valutazione</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <% if( table.pagesInError.pages.length ) { %>
+            <p>
+                <span class="h6 uppercase">Elementi di fallimento: </span><%= table.pagesInError.message %>
+                <%- include('../../report/partials/audit/table', {table: table.pagesInError}) %>
+            </p>
+        <% } %>
+
+        <% if( table.pagesItems.pages.length ) { %>
+            <p>
+                <%- include('../../report/partials/audit/table', {table: table.pagesItems}) %>
+            </p>
+        <% } %>
+    </div>
+</div>

@@ -1,0 +1,67 @@
+<%# 
+    PARAMETERS NEEDED:
+    - status: pass | average | fails
+    - code: string
+    - description?: string
+    - minRequirement?: string
+    - automaticChecks?: string
+    - failures?: string
+    - content: HTML template
+%>
+<% 
+const  {status, code, description, minRequirement, automaticChecks, failures, content} = audit;
+
+let icon = "";
+let message = "";
+switch (status) {
+case 'pass':
+    icon = '#it-check-circle';
+    message = "- Criterio superato";
+    break;
+
+case 'average':
+    icon = '#it-warning-circle';
+    message = "- Criterio nella media";
+    break;
+
+case 'fail':
+    icon = '#it-error';
+    message = "- Criterio non superato";
+    break;
+
+default:
+    icon = '#it-info-circle';
+    message = "";
+    break;
+} %>
+
+<div class="audit-content">
+  <h2 class="h3 audit-title">
+    <svg class="icon <%= status %>" aria-hidden="true">
+      <use href="<%= icon %>"></use>
+    </svg>
+    <%= code %> <%= message %>
+  </h2>
+  <div class="audit-description">
+    <% if (description) { %>
+    <p><%= description %></p>
+    <div class="separator"></div>
+    <% } %>
+    <% if (minRequirement) { %>
+    <p>
+      <span class="h6 uppercase">Requisito minimo da rispettare:</span> <%= minRequirement %>
+    </p>
+    <% } if (automaticChecks) { %>
+    <p>
+      <span class="h6 uppercase">Verifiche automatiche:</span> <%= automaticChecks %>
+    </p>
+    <% } if (minRequirement || automaticChecks) {  %>
+    <div class="separator"></div>
+    <% } if (failures) {  %>
+    <p>
+      <span class="h6 uppercase">Elementi di fallimento:</span> <%= failures %>
+    </p>
+    <% } %>
+    <%- content %>
+  </div>
+</div>

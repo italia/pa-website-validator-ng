@@ -7,8 +7,9 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "ES2022",
-    "declaration": true
+    "declaration": false,
+    "types": ["jest"]
   },
-  "exclude": ["src/audits", "dist", "src/gatherers", "__tests__"],
+  "exclude": ["dist", "**/__test__", "**/__mocks__"],
   "include": ["src", "node_modules/lighthouse/types/**/*.d.ts"]
 }

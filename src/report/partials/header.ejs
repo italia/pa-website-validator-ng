@@ -1,0 +1,34 @@
+<div class="it-header-center-wrapper">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="it-header-center-content-wrapper">
+          <div class="it-brand-wrapper">
+            <a target="_blank" href="<%= url_comune %>">
+              <% if (url_comune && url_comune.includes('comune')) { %>
+              <div class="icon city">
+              </div>
+                <% } else { %>
+                  <div class="icon school">
+                  </div>
+                <% } %>
+                <div class="it-brand-text">
+                <div class="it-brand-title">
+                  <%= url_comune %>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="it-right-zone">
+            <p><b>Report generato:</b>
+              <%= date %>
+            </p>
+            <p><b>Versione:</b>
+              <%= crawler_version %>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
