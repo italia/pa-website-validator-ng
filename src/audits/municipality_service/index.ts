@@ -85,6 +85,10 @@ class ServiceAudit extends Audit {
     };
   }
 
+  getFolderName(): string {
+    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+  }
+
   async auditPage(page: Page, url: string) {
     this.titleSubHeadings = [
       "Voci mancanti o senza contenuto",

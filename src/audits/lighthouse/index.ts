@@ -41,6 +41,10 @@ class lighthouseAudit extends Audit {
     errorMessage: "",
   };
 
+  getFolderName(): string {
+    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+  }
+
   async auditPage(page: Page) {
     const browser = await initializePuppeteer();
     const browserWSEndpoint = browser.wsEndpoint();

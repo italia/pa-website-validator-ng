@@ -71,6 +71,10 @@ class UserExperienceEvaluationAudit extends Audit {
     };
   }
 
+  getFolderName(): string {
+    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+  }
+
   async auditPage(page: Page, url: string) {
     this.titleSubHeadings = ["Elementi errati o non trovati"];
 

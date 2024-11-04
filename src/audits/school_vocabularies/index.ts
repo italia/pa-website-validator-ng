@@ -52,10 +52,13 @@ class SchoolVocabularies extends Audit {
     };
   }
 
+  getFolderName(): string {
+    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+  }
+
   async auditPage(page: Page, url: string) {
     const item = [
       {
-        result: this.redResult,
         element_in_school_model_percentage: "",
         element_not_in_school_model: "",
       },
@@ -98,10 +101,8 @@ class SchoolVocabularies extends Audit {
 
     let score = 0;
     if (schoolModelCheck.allArgumentsInVocabulary) {
-      item[0].result = this.greenResult;
       score = 1;
     } else if (numberOfElementsNotInScuoleModelPercentage <= 50) {
-      item[0].result = this.yellowResult;
       score = 0.5;
     }
 

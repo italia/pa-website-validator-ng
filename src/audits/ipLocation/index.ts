@@ -52,11 +52,10 @@ class IpLocationAudit extends Audit {
     this.score = 0;
 
     this.globalResults.pagesItems.headings = [
-      "Risultato",
       "Città indirizzo IP",
       "Paese indirizzo IP",
     ];
-    const items = [{ result: redResult, ip_city: "", ip_country: "" }];
+    const items = [{ ip_city: "", ip_country: "" }];
 
     if (hostname) {
       const lookup = util.promisify(dns.lookup);
@@ -68,7 +67,6 @@ class IpLocationAudit extends Audit {
         if (ipInformation !== null) {
           if (allowedCountries.includes(ipInformation.country)) {
             this.score = 1;
-            items[0].result = greenResult;
           }
 
           items[0].ip_city = ipInformation.city ?? "";
@@ -83,6 +81,10 @@ class IpLocationAudit extends Audit {
     return {
       score: this.score,
     };
+  }
+
+  getFolderName(): string {
+    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
   }
 
   async getType() {

@@ -40,7 +40,6 @@ class A11yAudit extends Audit {
 
   async auditPage(page: Page, url: string) {
     this.globalResults.pagesItems.headings = [
-      "Risultato",
       "Testo del link",
       "Pagina di destinazione del link",
       "Pagina esistente",
@@ -50,7 +49,6 @@ class A11yAudit extends Audit {
 
     const items = [
       {
-        result: this.redResult,
         link_name: "",
         link: "",
         existing_page: "No",
@@ -131,7 +129,6 @@ class A11yAudit extends Audit {
         items[0].wcag = "Sì";
       }
 
-      items[0].result = this.greenResult;
       this.globalResults.score = 1;
     }
 

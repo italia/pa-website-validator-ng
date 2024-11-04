@@ -64,6 +64,10 @@ class DomainAudit extends Audit {
     };
   }
 
+  getFolderName(): string {
+    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+  }
+
   async returnErrors(
     error: DataElementError | Error | string,
     url: string,

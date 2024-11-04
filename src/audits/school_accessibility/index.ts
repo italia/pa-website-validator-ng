@@ -28,6 +28,10 @@ class SchoolA11yAudit extends A11yAudit {
     };
   }
 
+  getFolderName(): string {
+    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+  }
+
   async returnGlobalHTML() {
     let status = "fail";
     let message = "";

@@ -41,6 +41,7 @@ class SecurityAudit extends Audit {
   mainTitle = "";
   title = "";
   url = "";
+  message = "";
 
   async meta() {
     return {
@@ -58,7 +59,6 @@ class SecurityAudit extends Audit {
 
     const item = [
       {
-        result: redResult,
         protocol: "",
         certificate_validation: "",
         tls_version: "",
@@ -71,7 +71,7 @@ class SecurityAudit extends Audit {
     const protocol = await getProtocol(url);
     if (protocol !== "https") {
       item[0].protocol = protocol;
-      item[0].result = redResult + errorLogging[0];
+      this.message = redResult + errorLogging[0];
       return {
         score: 0,
         details: {
@@ -102,7 +102,7 @@ class SecurityAudit extends Audit {
       cipherSuite = await checkCipherSuite(url);
     } catch {
       item[0].protocol = protocol;
-      item[0].result = redResult + " Certificato non trovato";
+      this.message = redResult + " Certificato non trovato";
       return {
         score: 0,
         details: {
@@ -145,7 +145,7 @@ class SecurityAudit extends Audit {
 
     if (certificate.valid && tls.valid && cipherSuite.valid) {
       score = 1;
-      item[0].result = greenResult;
+      this.message = greenResult;
     } else {
       let errors: string[] = [];
       if (!certificate.valid) {
@@ -164,7 +164,7 @@ class SecurityAudit extends Audit {
         errors = [...errors, errorLogging[4]];
       }
 
-      item[0].result = redResult + errors.join(", ");
+      this.message = redResult + errors.join(", ");
     }
 
     const protocolInPage = await page.evaluate(async function () {
@@ -180,7 +180,6 @@ class SecurityAudit extends Audit {
 
     this.globalResults.pagesItems.pages = item;
     this.globalResults.pagesItems.headings = [
-      "Risultato",
       "Protocollo usato dal dominio",
       "Validità del certificato",
       "Versione TLS",

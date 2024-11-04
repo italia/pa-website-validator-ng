@@ -62,11 +62,14 @@ class SchoolFirstLevelMenuAudit extends Audit {
     };
   }
 
+  getFolderName(): string {
+    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+  }
+
   async auditPage(page: Page, url: string) {
     let score = 0;
 
     const result = {
-      result: this.redResult,
       found_menu_voices: "",
       missing_menu_voices: "",
       wrong_order_menu_voices: "",
@@ -142,7 +145,6 @@ class SchoolFirstLevelMenuAudit extends Audit {
       mandatoryElementsCorrectOrder
     ) {
       score = 1;
-      result.result = this.greenResult;
     } else if (
       foundMenuElements.length > 4 &&
       foundMenuElements.length < 8 &&
@@ -150,12 +152,10 @@ class SchoolFirstLevelMenuAudit extends Audit {
       mandatoryElementsCorrectOrder
     ) {
       score = 0.5;
-      result.result = this.yellowResult;
     }
 
     if (this.globalResults.recapItems) {
       this.globalResults.recapItems.headings = [
-        "Risultato",
         "Voci del menù identificate",
         "Voci obbligatorie del menù mancanti",
         "Voci del menù in ordine errato",

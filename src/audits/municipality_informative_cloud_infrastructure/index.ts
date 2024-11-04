@@ -22,6 +22,10 @@ class MunicipalityInfoCloudAudit extends InfoCloudAudit {
     return <MunicipalityInfoCloudAudit>MunicipalityInfoCloudAudit.instance;
   }
 
+  getFolderName(): string {
+    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+  }
+
   async returnGlobalHTML() {
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

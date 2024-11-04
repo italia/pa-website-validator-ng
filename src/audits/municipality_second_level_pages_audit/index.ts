@@ -72,7 +72,12 @@ class SecondLevelAudit extends Audit {
       title: title,
       code: code,
       mainTitle: mainTitle,
+      auditId: auditId,
     };
+  }
+
+  getFolderName(): string {
+    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
   }
 
   async auditPage(page: Page, url: string) {
@@ -179,7 +184,6 @@ class SecondLevelAudit extends Audit {
       );
     }
     results.push({
-      result: redResult,
       correct_title_percentage: "",
       correct_title_found: "",
       wrong_title_found: "",
@@ -220,13 +224,11 @@ class SecondLevelAudit extends Audit {
     );
 
     if (pagesFoundInVocabularyPercentage === 100) {
-      results[0].result = greenResult;
       this.score = 1;
     } else if (
       pagesFoundInVocabularyPercentage > 50 &&
       pagesFoundInVocabularyPercentage < 100
     ) {
-      results[0].result = yellowResult;
       this.score = 0.5;
     }
 
@@ -239,7 +241,6 @@ class SecondLevelAudit extends Audit {
     this.globalResults.score = this.score;
 
     this.globalResults.pagesItems.headings = [
-      "Risultato",
       "% di titoli corretti tra quelli usati",
       "Titoli corretti identificati",
       "Titoli aggiuntivi trovat",

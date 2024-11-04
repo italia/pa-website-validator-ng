@@ -32,10 +32,16 @@ class ImprovementPlanAudit extends Audit {
     return {
       id: auditId,
       title: "Il sito ha un link al piano di miglioramento nel footer",
+      code: "",
+      mainTitle: "",
+      auditId: auditId,
       failureTitle:
         "Il sito non ha un link al piano di miglioramento nel footer",
-      requiredArtifacts: ["origin"],
     };
+  }
+
+  getFolderName(): string {
+    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
   }
 
   async auditPage(page: Page) {

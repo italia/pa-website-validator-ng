@@ -45,6 +45,10 @@ class MunicipalityA11yAudit extends A11yAudit {
     });
   }
 
+  getFolderName(): string {
+    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+  }
+
   static getInstance(): MunicipalityA11yAudit {
     if (!MunicipalityA11yAudit.instance) {
       MunicipalityA11yAudit.instance = new MunicipalityA11yAudit();

@@ -2,7 +2,7 @@
 
 import { ThemeAudit } from "../theme/index.js";
 import * as ejs from "ejs";
-import { __dirname } from "../esmHelpers.js";
+import { __dirname, __basename } from "../esmHelpers.js";
 
 class SchoolThemeAudit extends ThemeAudit {
   auditId = "school-ux-ui-consistency-theme-version-check";
@@ -22,6 +22,10 @@ class SchoolThemeAudit extends ThemeAudit {
       SchoolThemeAudit.instance = new SchoolThemeAudit();
     }
     return <SchoolThemeAudit>SchoolThemeAudit.instance;
+  }
+
+  getFolderName(): string {
+    return __basename;
   }
 
   async returnGlobalHTML() {

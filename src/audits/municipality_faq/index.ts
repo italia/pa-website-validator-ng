@@ -6,7 +6,7 @@ import { urlExists } from "../../utils/utils.js";
 import { Audit, GlobalResults } from "../Audit.js";
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
-import { __dirname } from "../esmHelpers.js";
+import { __dirname, __basename } from "../esmHelpers.js";
 
 const auditId = "municipality-faq-is-present";
 const code = "C.SI.2.3";
@@ -48,13 +48,16 @@ class FaqAudit extends Audit {
     };
   }
 
+  getFolderName(): string {
+    return __basename;
+  }
+
   async getType() {
     return auditId;
   }
 
   async auditPage(page: Page, url: string) {
     this.globalResults.pagesItems.headings = [
-      "Risultato",
       "Testo del link",
       "Pagina di destinazione",
       "Pagina esistente",
@@ -62,7 +65,6 @@ class FaqAudit extends Audit {
 
     const items = [
       {
-        result: redResult,
         link_name: "",
         link: "",
         existing_page: "No",
@@ -101,7 +103,6 @@ class FaqAudit extends Audit {
       items[0].existing_page = "Sì";
 
       if (!label.includes("faq") && !label.includes("domande frequenti")) {
-        items[0].result = yellowResult;
         this.globalResults.pagesItems.pages = items;
         this.globalResults.score = 0.5;
         this.score = 0.5;
@@ -110,7 +111,6 @@ class FaqAudit extends Audit {
         };
       }
 
-      items[0].result = greenResult;
       this.globalResults.pagesItems.pages = items;
       this.globalResults.score = 1;
       this.score = 1;

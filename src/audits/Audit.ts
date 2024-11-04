@@ -4,6 +4,15 @@ import { errorHandling } from "../config/commonAuditsParts.js";
 import { DataElementError } from "../utils/DataElementError.js";
 import { __dirname } from "./esmHelpers.js";
 
+export interface Meta {
+  id: string;
+  auditId: string;
+  title: string;
+  code: string;
+  mainTitle: string;
+  failureTitle?: string;
+}
+
 export interface GlobalResults {
   score: number;
   pagesItems: {
@@ -72,6 +81,7 @@ abstract class Audit {
     errorMessage: "",
     id: "",
   };
+  message = "";
   code = "";
   info = false;
   reportHTML = "";
@@ -136,8 +146,18 @@ abstract class Audit {
     return {};
   }
 
-  async meta() {
-    return {};
+  getFolderName(): string {
+    return "";
+  }
+
+  async meta(): Promise<Meta> {
+    return {
+      id: "",
+      auditId: "",
+      title: "",
+      code: "",
+      mainTitle: "",
+    };
   }
 
   async getType() {

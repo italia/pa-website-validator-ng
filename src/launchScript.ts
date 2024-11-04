@@ -28,11 +28,12 @@ async function run(
   requestTimeout = 30000,
   numberOfServicePages?: number,
   concurrentPages?: number,
+  subset?: string[],
 ) {
   let finalResults: Record<string, unknown> = {};
 
   try {
-    const config = await initializeConfig(type, scope);
+    const config = await initializeConfig(type, scope, subset);
 
     process.env["accuracy"] = accuracy;
     process.env["logsLevel"] = logLevel;

@@ -58,9 +58,12 @@ class MenuAudit extends Audit {
     };
   }
 
+  getFolderName(): string {
+    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+  }
+
   async auditPage(page: Page, url: string) {
     const result = {
-      result: redResult,
       found_menu_voices: "",
       missing_menu_voices: "",
       wrong_order_menu_voices: "",
@@ -102,7 +105,6 @@ class MenuAudit extends Audit {
       orderResult.numberOfElementsNotInSequence === 0
     ) {
       this.score = 1;
-      result.result = greenResult;
     } else if (
       foundMenuElements.length > 4 &&
       foundMenuElements.length < 8 &&
@@ -110,12 +112,10 @@ class MenuAudit extends Audit {
       orderResult.numberOfElementsNotInSequence === 0
     ) {
       this.score = 0.5;
-      result.result = yellowResult;
     }
 
     if (this.globalResults.recapItems) {
       this.globalResults.recapItems.headings = [
-        "Risultato",
         "Voci del menù identificate",
         "Voci del menù mancanti",
         "Voci del menù in ordine errato",

@@ -51,9 +51,12 @@ class InefficiencyAudit extends Audit {
     };
   }
 
+  getFolderName(): string {
+    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+  }
+
   async auditPage(page: Page, url: string) {
     this.globalResults.pagesItems.headings = [
-      "Risultato",
       "Testo del link",
       "Pagina di destinazione",
       "Pagina esistente",
@@ -62,7 +65,6 @@ class InefficiencyAudit extends Audit {
 
     const items = [
       {
-        result: redResult,
         link_name: "",
         link: "",
         existing_page: "No",
@@ -124,7 +126,6 @@ class InefficiencyAudit extends Audit {
         label !== "segnala disservizio" &&
         label !== "segnalazione disservizio"
       ) {
-        items[0].result = yellowResult;
         this.score = 0.5;
         this.globalResults.score = 0.5;
 
@@ -134,8 +135,6 @@ class InefficiencyAudit extends Audit {
           score: 0.5,
         };
       }
-
-      items[0].result = greenResult;
 
       this.score = 1;
       this.globalResults.score = 1;

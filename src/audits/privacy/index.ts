@@ -43,7 +43,6 @@ class PrivacyAudit extends Audit {
 
     const items = [
       {
-        result: this.redResult,
         link_name: "",
         link: "",
         existing_page: "No",
@@ -72,7 +71,6 @@ class PrivacyAudit extends Audit {
       items[0].link = checkUrlHttps.inspectedUrl;
 
       if (checkUrlHttps.result) {
-        items[0].result = this.greenResult;
         items[0].existing_page = "Sì";
         items[0].secure_page = "Sì";
         score = 1;
@@ -84,7 +82,6 @@ class PrivacyAudit extends Audit {
 
     this.globalResults.pagesItems.pages = items;
     this.globalResults.pagesItems.headings = [
-      "Risultato",
       "Testo del link",
       "Pagina di destinazione del link",
       "Pagina esistente",

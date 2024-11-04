@@ -22,6 +22,10 @@ class SchoolInfoReuseAudit extends InfoReuseAudit {
     return <SchoolInfoReuseAudit>SchoolInfoReuseAudit.instance;
   }
 
+  getFolderName(): string {
+    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+  }
+
   async returnGlobalHTML() {
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

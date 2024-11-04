@@ -44,7 +44,6 @@ class LicenceAudit extends Audit {
 
   async auditPage(page: Page, url: string) {
     this.globalResults.pagesItems.headings = [
-      "Risultato",
       "Testo del link",
       "Pagina di destinazione del link",
       "Il titolo della sezione è corretto",
@@ -55,7 +54,6 @@ class LicenceAudit extends Audit {
 
     const items = [
       {
-        result: this.redResult,
         link_name: "",
         link: "",
         page_section: "",
@@ -145,7 +143,6 @@ class LicenceAudit extends Audit {
         items[0].page_section === "Sì" &&
         items[0].page_contains_correct_text === "Sì"
       ) {
-        items[0].result = this.greenResult;
         score = 1;
       }
     }

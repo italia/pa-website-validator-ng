@@ -13,6 +13,7 @@ class InfoCloudAudit extends Audit {
       title: this.title,
       code: this.code,
       mainTitle: this.mainTitle,
+      auditId: this.auditId,
     };
   }
 

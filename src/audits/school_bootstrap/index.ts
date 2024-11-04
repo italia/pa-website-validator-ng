@@ -56,7 +56,12 @@ class SchoolBootstrap extends Audit {
       title: title,
       mainTitle: mainTitle,
       code: code,
+      auditId: auditId,
     };
+  }
+
+  getFolderName(): string {
+    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
   }
 
   async auditPage(page: Page, url: string) {

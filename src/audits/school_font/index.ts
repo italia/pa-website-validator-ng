@@ -34,6 +34,10 @@ class SchoolFontAudit extends FontAudit {
     return <SchoolFontAudit>SchoolFontAudit.instance;
   }
 
+  getFolderName(): string {
+    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+  }
+
   async returnGlobalHTML() {
     let status = "fail";
     let message = "";

@@ -67,6 +67,10 @@ default:
           </div>
       </div>
 
+      <p>
+          <span class="h5"> <%= statusMessage %> </span>
+      </p>
+
       <% if( table.pagesInError.pages.length ) { %>
           <p>
               <span class="h6 uppercase">Elementi di fallimento: </span><%= table.pagesInError.message %>

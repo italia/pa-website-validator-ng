@@ -68,6 +68,12 @@ const parser = yargs(hideBin(process.argv))
     type: "number",
     demandOption: false,
     default: 20,
+  })
+  .option("auditsSubset", {
+    describe: "Subset of audits to be executed",
+    type: "string",
+    demandOption: false,
+    default: "",
   });
 
 try {
@@ -78,6 +84,8 @@ try {
     await mkdir(args.destination, { recursive: true });
     console.log("[INFO] Directory created at: " + args.destination);
   }
+
+  const subset = args.auditsSubset ? args.auditsSubset.split(",") : undefined;
 
   await run(
     args.website,
@@ -92,6 +100,7 @@ try {
     args.timeout,
     args["number-of-service-pages"],
     args.concurrentPages,
+    subset,
   );
 
   process.exit(0);

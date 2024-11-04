@@ -192,7 +192,6 @@ const config = {
           "school_first_level_pages",
           "school_second_level_pages",
         ],
-
         "locations-page": ["locations"],
       },
       audits: {
@@ -230,14 +229,18 @@ const config = {
   },
 };
 
-async function initializeConfig(siteType?: string, scope?: string) {
+async function initializeConfig(
+  siteType?: string,
+  scope?: string,
+  subset?: string[],
+) {
   if (!exportedConfig && siteType && scope) {
     if (
       !exportedConfig &&
       siteType &&
+      scope &&
       (siteType === "school" || siteType === "municipality") &&
-      (scope === "local" || scope === "online") &&
-      scope
+      (scope === "local" || scope === "online")
     ) {
       exportedConfig =
         config[scope as keyof typeof config][
@@ -246,7 +249,26 @@ async function initializeConfig(siteType?: string, scope?: string) {
     }
   }
 
-  return exportedConfig;
+  const finalConfig = exportedConfig;
+
+  if (subset && subset.length) {
+    Object.keys(finalConfig.audits).forEach((key) => {
+      const newAudits: string[] = [];
+      subset.forEach((id) => {
+        if (finalConfig.audits[key].find((v) => v === id)) {
+          newAudits.push(id);
+        }
+      });
+
+      if (!newAudits.length) {
+        delete finalConfig.audits[key];
+      } else {
+        finalConfig.audits[key] = newAudits;
+      }
+    });
+  }
+
+  return finalConfig;
 }
 
 const getAudits = async () => {

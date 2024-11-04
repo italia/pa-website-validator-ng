@@ -71,9 +71,12 @@ class SchoolSecondLevelMenuAudit extends Audit {
     };
   }
 
+  getFolderName(): string {
+    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+  }
+
   async auditPage(page: Page, url: string) {
     const result = {
-      result: this.redResult,
       correct_voices_percentage: "",
       correct_voices: "",
       wrong_voices: "",
@@ -93,7 +96,6 @@ class SchoolSecondLevelMenuAudit extends Audit {
 
     const lang = detectLang(foundMenuElements);
 
-    // "Panoramica"
     const overviewText = (
       await getPageElementDataAttribute(
         $,
@@ -201,10 +203,8 @@ class SchoolSecondLevelMenuAudit extends Audit {
     let score = 0;
     if (presentVoicesPercentage >= 30 && presentVoicesPercentage < 100) {
       score = 0.5;
-      result.result = this.yellowResult;
     } else if (presentVoicesPercentage === 100) {
       score = 1;
-      result.result = this.greenResult;
     }
 
     result.correct_voices = correctTitleFound;
@@ -213,7 +213,6 @@ class SchoolSecondLevelMenuAudit extends Audit {
 
     if (this.globalResults.recapItems) {
       this.globalResults.recapItems.headings = [
-        "Risultato",
         "% di voci corrette tra quelle usate",
         "Voci corrette identificate",
         "Voci aggiuntive trovate",

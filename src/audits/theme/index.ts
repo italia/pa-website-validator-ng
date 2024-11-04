@@ -47,7 +47,6 @@ class ThemeAudit extends Audit {
     let score = 0.5;
     const items = [
       {
-        result: this.yellowResult,
         cms_name: "Nessuno",
         theme_version: "N/A",
       },
@@ -88,11 +87,9 @@ class ThemeAudit extends Audit {
         items[0].theme_version = version;
 
         score = 0;
-        items[0].result = this.redResult;
 
         if (compareVersions(version, this.minVersion) >= 0) {
           score = 1;
-          items[0].result = this.greenResult;
         }
         break;
       }
@@ -103,7 +100,6 @@ class ThemeAudit extends Audit {
 
     this.globalResults.pagesItems.pages = items;
     this.globalResults.pagesItems.headings = [
-      "Risultato",
       "Tema CMS del modello in uso",
       "Versione del tema CMS in uso",
     ];

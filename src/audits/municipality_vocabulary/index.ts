@@ -65,9 +65,12 @@ class MunicipalityVocabulary extends Audit {
     };
   }
 
+  getFolderName(): string {
+    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+  }
+
   async auditPage(page: Page, url: string) {
     this.globalResults.pagesItems.headings = [
-      "Risultato",
       "% di argomenti presenti nell'elenco del modello",
       "Argomenti non presenti nell'elenco del modello",
       "% di argomenti presenti nell'elenco del modello o EuroVoc",
@@ -76,7 +79,6 @@ class MunicipalityVocabulary extends Audit {
 
     const item = [
       {
-        result: redResult,
         element_in_municipality_model_percentage: "",
         element_not_in_municipality_vocabulary: "",
         element_in_union_percentage: "",
@@ -93,7 +95,12 @@ class MunicipalityVocabulary extends Audit {
     );
 
     if (allArgumentsHREF.length <= 0) {
-      item[0].result = notExecutedErrorMessage.replace("<LIST>", "`all-topics");
+      this.globalResults.pagesItems.pages = [
+        {
+          result: notExecutedErrorMessage.replace("<LIST>", "all-topics"),
+        },
+      ];
+      this.globalResults.pagesItems.headings = ["Risultato", "Errori"];
 
       this.globalResults.pagesItems.pages = item;
       this.globalResults.score = 0;
@@ -164,12 +171,9 @@ class MunicipalityVocabulary extends Audit {
 
     if (elementInfoMunicipalityVocabulary.allArgumentsInVocabulary) {
       this.score = 1;
-      item[0].result = greenResult;
     } else if (elementInUnionVocabularyPercentage >= 50) {
-      item[0].result = yellowResult;
       this.score = 0.5;
     } else {
-      item[0].result = redResult;
       this.score = 0;
     }
 

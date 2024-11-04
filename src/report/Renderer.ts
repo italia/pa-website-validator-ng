@@ -28,7 +28,7 @@ const render = async () => {
     if (auditId !== "municipality_improvement_plan") {
       const audit = await audits[auditId]();
 
-      const auditMeta: Record<string, unknown> = await audit.meta();
+      const auditMeta = await audit.meta();
       const auditResult = audit.globalResults;
       let score = auditResult.score;
       const infoScore = audit.infoScore;
