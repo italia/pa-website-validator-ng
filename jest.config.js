@@ -17,4 +17,12 @@ export default {
   },
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
   testMatch: [`<rootDir>/${path}/**/__test__/**/*.test.ts`],
+  noStackTrace: true,
+  errorOnDeprecated: false,
+  verbose: true,
+  silent: true,
+  forceExit: true,
+  detectOpenHandles: true
 };
+
+
