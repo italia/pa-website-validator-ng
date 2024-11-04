@@ -22,7 +22,5 @@ export default {
   verbose: true,
   silent: true,
   forceExit: true,
-  detectOpenHandles: true
+  detectOpenHandles: true,
 };
-
-
