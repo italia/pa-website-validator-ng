@@ -2,7 +2,7 @@
 
 import { LicenceAudit } from "../license/index.js";
 import * as ejs from "ejs";
-import { __dirname, __basename } from "../esmHelpers.js";
+import { __dirname } from "../esmHelpers.js";
 
 class MunicipalityLicenceAudit extends LicenceAudit {
   auditId = "municipality-license-and-attribution";
@@ -23,7 +23,7 @@ class MunicipalityLicenceAudit extends LicenceAudit {
   }
 
   getFolderName(): string {
-    return __basename;
+    return "municipality_license";
   }
   async returnGlobalHTML() {
     let status = "fail";

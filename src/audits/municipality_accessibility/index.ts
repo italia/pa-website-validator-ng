@@ -2,7 +2,7 @@
 
 import { A11yAudit } from "../accessibility/index.js";
 import * as ejs from "ejs";
-import { __dirname, __basename } from "../esmHelpers.js";
+import { __dirname } from "../esmHelpers.js";
 
 class MunicipalityA11yAudit extends A11yAudit {
   auditId = "municipality-legislation-accessibility-declaration-is-present";
@@ -46,7 +46,7 @@ class MunicipalityA11yAudit extends A11yAudit {
   }
 
   getFolderName(): string {
-    return __basename;
+    return "municipality_accessibility";
   }
 
   static getInstance(): MunicipalityA11yAudit {

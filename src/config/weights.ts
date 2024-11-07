@@ -147,7 +147,7 @@ export const schoolWeights = [
     weight: 88,
   },
   {
-    id: "lighthouse",
+    id: "lighthouse_school",
     weight: 87,
   },
   {

@@ -5,7 +5,7 @@ import { errorHandling } from "../../config/commonAuditsParts.js";
 import { Audit, GlobalResultsMulti } from "../Audit.js";
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
-import { __dirname, __basename } from "../esmHelpers.js";
+import { __dirname } from "../esmHelpers.js";
 
 const auditId = "municipality-user-experience-evaluation";
 const code = "C.SI.2.6";
@@ -71,7 +71,7 @@ class UserExperienceEvaluationAudit extends Audit {
   }
 
   getFolderName(): string {
-    return __basename;
+    return "municipality_user_experience_evaluation";
   }
   async auditPage(page: Page, url: string) {
     this.titleSubHeadings = ["Elementi errati o non trovati"];

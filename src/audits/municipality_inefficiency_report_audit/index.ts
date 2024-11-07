@@ -8,7 +8,7 @@ import isEmail from "validator/lib/isEmail.js";
 import { Page } from "puppeteer";
 import { Audit, GlobalResults } from "../Audit.js";
 import * as ejs from "ejs";
-import { __dirname, __basename } from "../esmHelpers.js";
+import { __dirname } from "../esmHelpers.js";
 
 const auditId = "municipality-inefficiency-report";
 const code = "C.SI.2.4";
@@ -51,7 +51,7 @@ class InefficiencyAudit extends Audit {
   }
 
   getFolderName(): string {
-    return __basename;
+    return "municipality_inefficiency_report_audit";
   }
 
   async auditPage(page: Page, url: string) {

@@ -2,7 +2,7 @@
 
 import { ThemeAudit } from "../theme/index.js";
 import * as ejs from "ejs";
-import { __dirname, __basename } from "../esmHelpers.js";
+import { __dirname } from "../esmHelpers.js";
 
 class MunicipalityThemeAudit extends ThemeAudit {
   auditId = "municipality-ux-ui-consistency-theme-version-check";
@@ -25,7 +25,7 @@ class MunicipalityThemeAudit extends ThemeAudit {
   }
 
   getFolderName(): string {
-    return __basename;
+    return "municipality_theme";
   }
   async returnGlobalHTML() {
     let status = "fail";

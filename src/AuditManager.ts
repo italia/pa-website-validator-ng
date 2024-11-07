@@ -20,6 +20,9 @@ async function collectAudits() {
     if (!Object.keys(audits).length) {
       const files = sync(
         path.dirname(fileURLToPath(import.meta.url)) + "/audits/**/index.**",
+        {
+          ignore: ["**/index.d.ts"],
+        },
       );
 
       audits = {};
@@ -47,4 +50,4 @@ async function collectAudits() {
   return audits;
 }
 
-export { collectAudits };
+export { collectAudits, extractFolderName };

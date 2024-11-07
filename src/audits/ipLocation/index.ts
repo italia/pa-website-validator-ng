@@ -11,7 +11,6 @@ import { Audit, GlobalResults } from "../Audit.js";
 import * as ejs from "ejs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { __basename } from "../esmHelpers.js";
 
 const auditId = "common-security-ip-location";
 const greenResult = "L'hosting è su territorio europeo.";
@@ -85,7 +84,7 @@ class IpLocationAudit extends Audit {
   }
 
   getFolderName(): string {
-    return __basename;
+    return "ipLocation";
   }
   async getType() {
     return auditId;

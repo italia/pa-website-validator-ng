@@ -2,7 +2,7 @@
 
 import { A11yAudit } from "../accessibility/index.js";
 import * as ejs from "ejs";
-import { __dirname, __basename } from "../esmHelpers.js";
+import { __dirname } from "../esmHelpers.js";
 
 class SchoolA11yAudit extends A11yAudit {
   code = "C.SC.2.2";
@@ -28,7 +28,7 @@ class SchoolA11yAudit extends A11yAudit {
   }
 
   getFolderName(): string {
-    return __basename;
+    return "school_accessibility";
   }
   async returnGlobalHTML() {
     let status = "fail";

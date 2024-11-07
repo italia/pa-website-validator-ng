@@ -7,7 +7,7 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "ES2022",
-    "declaration": false,
+    "declaration": true,
     "types": ["jest"]
   },
   "exclude": ["dist", "**/__test__", "**/__mocks__"],

@@ -7,7 +7,7 @@ import { errorHandling } from "../../config/commonAuditsParts.js";
 import { Audit, GlobalResultsMulti } from "../Audit.js";
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
-import { __dirname, __basename } from "../esmHelpers.js";
+import { __dirname } from "../esmHelpers.js";
 
 const auditId = "municipality-metatag";
 const code = "R.SI.1.1";
@@ -77,7 +77,7 @@ class MetatagAudit extends Audit {
   }
 
   getFolderName(): string {
-    return __basename;
+    return "municipality_metatag";
   }
   async auditPage(page: Page, url: string) {
     this.titleSubHeadings = ["JSON valido", "Metatag non presenti o errati"];

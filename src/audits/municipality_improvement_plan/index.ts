@@ -3,7 +3,7 @@ import { Page } from "puppeteer";
 import * as cheerio from "cheerio";
 import { CheerioAPI } from "cheerio";
 import * as ejs from "ejs";
-import { __dirname, __basename } from "../esmHelpers.js";
+import { __dirname } from "../esmHelpers.js";
 
 const auditId = "municipality-performance-improvement-plan";
 
@@ -40,7 +40,7 @@ class ImprovementPlanAudit extends Audit {
   }
 
   getFolderName(): string {
-    return __basename;
+    return "municipality_improvement_plan";
   }
 
   async auditPage(page: Page) {

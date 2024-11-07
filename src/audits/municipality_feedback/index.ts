@@ -9,7 +9,7 @@ import { errorHandling } from "../../config/commonAuditsParts.js";
 import { Page } from "puppeteer";
 import { Audit, GlobalResultsMulti } from "../Audit.js";
 import * as ejs from "ejs";
-import { __dirname, __basename } from "../esmHelpers.js";
+import { __dirname } from "../esmHelpers.js";
 
 const auditId = "municipality-feedback-element";
 const code = "C.SI.2.5";
@@ -75,7 +75,7 @@ class FeedbackAudit extends Audit {
   }
 
   getFolderName(): string {
-    return __basename;
+    return "municipality_feedback";
   }
   async auditPage(page: Page, url: string) {
     this.titleSubHeadings = ["Elementi errati o non trovati"];

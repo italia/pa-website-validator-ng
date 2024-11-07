@@ -1,4 +1,4 @@
-interface ConfigInterface {
+export interface ConfigInterface {
   gatherers: Record<string, string[]>;
   audits: Record<string, string[]>;
   accuracy: Record<string, number>;
@@ -289,4 +289,4 @@ const getGatherers = async () => {
   return gathererIds;
 };
 
-export { initializeConfig, getAudits, getGatherers };
+export { initializeConfig, getAudits, getGatherers, config };

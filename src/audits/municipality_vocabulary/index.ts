@@ -19,7 +19,7 @@ import * as cheerio from "cheerio";
 import { CheerioAPI } from "cheerio";
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
-import { __dirname, __basename } from "../esmHelpers.js";
+import { __dirname } from "../esmHelpers.js";
 
 const auditId = "municipality-controlled-vocabularies";
 const code = "C.SI.1.5";
@@ -65,7 +65,7 @@ class MunicipalityVocabulary extends Audit {
   }
 
   getFolderName(): string {
-    return __basename;
+    return "municipality_vocabulary";
   }
 
   async auditPage(page: Page, url: string) {

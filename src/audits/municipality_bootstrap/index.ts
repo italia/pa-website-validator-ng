@@ -9,7 +9,7 @@ import { Page } from "puppeteer";
 import { errorHandling } from "../../config/commonAuditsParts.js";
 import { Audit, GlobalResultsMulti } from "../Audit.js";
 import * as ejs from "ejs";
-import { __dirname, __basename } from "../esmHelpers.js";
+import { __dirname } from "../esmHelpers.js";
 
 class BootstrapMunAudit extends Audit {
   auditId = "municipality-ux-ui-consistency-bootstrap-italia-double-check";
@@ -66,7 +66,7 @@ class BootstrapMunAudit extends Audit {
   }
 
   getFolderName(): string {
-    return __basename;
+    return "municipality_bootstrap";
   }
 
   async auditPage(page: Page, url: string) {

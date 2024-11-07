@@ -8,7 +8,7 @@ import { errorHandling } from "../../config/commonAuditsParts.js";
 import { Audit, GlobalResultsMulti } from "../Audit.js";
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
-import { __dirname, __basename } from "../esmHelpers.js";
+import { __dirname } from "../esmHelpers.js";
 
 const auditId = "municipality-contacts-assistency";
 const code = "C.SI.2.2";
@@ -63,7 +63,7 @@ class ContactAssistencyAudit extends Audit {
   }
 
   getFolderName(): string {
-    return __basename;
+    return "municipality_contacts_assistency_audit";
   }
   async auditPage(page: Page, url: string) {
     this.titleSubHeadings = [

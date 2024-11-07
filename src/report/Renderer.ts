@@ -8,6 +8,14 @@ import { municipalityWeights, schoolWeights } from "../config/weights.js";
 import { collectAudits } from "../AuditManager.js";
 import { fileURLToPath } from "url";
 
+export interface ConfigExportInterface {
+  title: string;
+  code: string;
+  id: string;
+  innerId: string;
+  weight: number;
+}
+
 const render = async () => {
   const website = process.env.website;
   const destination = process.env.destination;
@@ -21,6 +29,7 @@ const render = async () => {
   let informativeAudits = [];
   let lighthouseIFrame = null;
   let errorPages: Record<string, unknown>[] = [];
+  const reportJSON = await PageManager.getGlobalResults();
 
   const audits = await collectAudits();
   /** get data from report instances */
@@ -36,6 +45,8 @@ const render = async () => {
 
       let improvementPlanHTML = "";
       let improvementPlanScore = 0;
+
+      const auditIdValue = (await audit.meta()).id;
 
       if (auditId === "lighthouse" && audits["municipality_improvement_plan"]) {
         const improvementAudit =
@@ -87,6 +98,11 @@ const render = async () => {
             }
           });
         }
+
+        reportJSON.audits[auditIdValue] = {
+          ...(reportJSON.audits[auditIdValue] as object),
+          specificScore: -1,
+        };
       } else if (score >= 0.5) {
         if (improvementPlanScore > 0.5) {
           successAudits.push({
@@ -107,6 +123,11 @@ const render = async () => {
             ),
           });
         }
+
+        reportJSON.audits[auditIdValue] = {
+          ...(reportJSON.audits[auditIdValue] as object),
+          specificScore: 1,
+        };
       } else {
         failedAudits.push({
           ...auditMeta,
@@ -116,6 +137,11 @@ const render = async () => {
             improvementPlanHTML,
           ),
         });
+
+        reportJSON.audits[auditIdValue] = {
+          ...(reportJSON.audits[auditIdValue] as object),
+          specificScore: 0,
+        };
       }
 
       /** LIGHTHOUSE AUDIT specific flow */
@@ -124,8 +150,6 @@ const render = async () => {
       }
     }
   }
-
-  const reportJSON = await PageManager.getGlobalResults();
 
   let status = "ko";
   if (!failedAudits.length) {
@@ -234,6 +258,28 @@ const sortByWeights = (audits: Record<string, unknown>[]) => {
   });
 
   return audits.sort((a, b) => Number(b.weight) - Number(a.weight));
+};
+
+export const sortObjectByWeights = (
+  audits: Record<string, ConfigExportInterface>,
+  type: string,
+) => {
+  const referenceArray =
+    type === "municipality" ? municipalityWeights : schoolWeights;
+
+  Object.keys(audits).forEach((key) => {
+    const referenceItem = referenceArray.find(
+      (el) => el.id === audits[key].innerId,
+    );
+    audits[key]["weight"] =
+      referenceItem && referenceItem.weight ? referenceItem.weight : 1;
+  });
+
+  const itemsArray = Object.entries(audits);
+
+  itemsArray.sort(([, a], [, b]) => b.weight - a.weight);
+
+  return Object.fromEntries(itemsArray);
 };
 
 export default render;

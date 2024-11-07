@@ -9,7 +9,7 @@ import { Audit, GlobalResultsMulti } from "../Audit.js";
 import * as cheerio from "cheerio";
 import { CheerioAPI } from "cheerio";
 import * as ejs from "ejs";
-import { __dirname, __basename } from "../esmHelpers.js";
+import { __dirname } from "../esmHelpers.js";
 
 class BookingAppointment extends Audit {
   code = "C.SI.2.1";
@@ -67,7 +67,7 @@ class BookingAppointment extends Audit {
   }
 
   getFolderName(): string {
-    return __basename;
+    return "municipality_booking_appointment";
   }
 
   async auditPage(page: Page, url: string, pageType?: string | null) {

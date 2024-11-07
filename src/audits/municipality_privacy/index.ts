@@ -2,7 +2,7 @@
 
 import { PrivacyAudit } from "../privacy/index.js";
 import * as ejs from "ejs";
-import { __dirname, __basename } from "../esmHelpers.js";
+import { __dirname } from "../esmHelpers.js";
 
 class MunicipalityPrivacyAudit extends PrivacyAudit {
   auditId = "municipality-legislation-privacy-is-present";
@@ -22,7 +22,7 @@ class MunicipalityPrivacyAudit extends PrivacyAudit {
   }
 
   getFolderName(): string {
-    return __basename;
+    return "municipality_privacy";
   }
   async returnGlobalHTML() {
     let status = "fail";

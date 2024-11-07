@@ -21,7 +21,7 @@ import { Page } from "puppeteer";
 import { errorHandling } from "../../config/commonAuditsParts.js";
 import * as ejs from "ejs";
 import { MunicipalitySecondLevelPages } from "../../types/crawler-types.js";
-import { __dirname, __basename } from "../esmHelpers.js";
+import { __dirname } from "../esmHelpers.js";
 
 const auditId = "municipality-second-level-pages";
 const greenResult = "Tutti i titoli usati sono corretti.";
@@ -76,7 +76,7 @@ class SecondLevelAudit extends Audit {
   }
 
   getFolderName(): string {
-    return __basename;
+    return "municipality_second_level_pages_audit";
   }
 
   async auditPage(page: Page, url: string) {

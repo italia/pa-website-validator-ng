@@ -22,7 +22,9 @@ async function collectGatherers() {
     if (!Object.keys(gatherers).length) {
       const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-      const files = sync(__dirname + "/gatherers/**/*.**");
+      const files = sync(__dirname + "/gatherers/**/*.**", {
+        ignore: ["**/index.d.ts"],
+      });
 
       gatherers = {};
       for (const file of files) {

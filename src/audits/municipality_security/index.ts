@@ -2,7 +2,7 @@
 
 import { SecurityAudit } from "../security/index.js";
 import * as ejs from "ejs";
-import { __dirname, __basename } from "../esmHelpers.js";
+import { __dirname } from "../esmHelpers.js";
 
 class MunicipalitySecurityAudit extends SecurityAudit {
   auditId = "municipality-security";
@@ -21,7 +21,7 @@ class MunicipalitySecurityAudit extends SecurityAudit {
   }
 
   getFolderName(): string {
-    return __basename;
+    return "municipality_security";
   }
   async returnGlobalHTML() {
     let status = "fail";

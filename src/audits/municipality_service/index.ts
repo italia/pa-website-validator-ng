@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import * as cheerio from "cheerio";
-import { CheerioAPI, text } from "cheerio";
+import { CheerioAPI } from "cheerio";
 
 import {
   checkBreadcrumb,
@@ -23,7 +23,7 @@ import {
 import { Audit, GlobalResultsMulti } from "../Audit.js";
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
-import { __dirname, __basename } from "../esmHelpers.js";
+import { __dirname } from "../esmHelpers.js";
 
 class ServiceAudit extends Audit {
   auditId = "municipality-servizi-structure-match-model";
@@ -85,7 +85,7 @@ class ServiceAudit extends Audit {
   }
 
   getFolderName(): string {
-    return __basename;
+    return "municipality_service";
   }
   async auditPage(page: Page, url: string) {
     this.titleSubHeadings = [
@@ -118,7 +118,7 @@ class ServiceAudit extends Audit {
 
     for (const mandatoryVoiceDataElement of mandatoryVoicesDataElements.paragraph) {
       const dataElement = `[data-element="${mandatoryVoiceDataElement.data_element}"]`;
-      const textContent = text($(dataElement));
+      const textContent = $(dataElement).text();
       if (textContent.length >= 3) {
         indexElementsWithContent.push(mandatoryVoiceDataElement.key);
       }

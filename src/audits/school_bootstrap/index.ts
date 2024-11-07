@@ -4,7 +4,7 @@ import { Page } from "puppeteer";
 import { compareVersions } from "compare-versions";
 import { cssClasses } from "./cssClasses.js";
 import * as ejs from "ejs";
-import { __dirname, __basename } from "../esmHelpers.js";
+import { __dirname } from "../esmHelpers.js";
 
 const auditId = "school-ux-ui-consistency-bootstrap-italia-double-check";
 const greenResult =
@@ -60,7 +60,7 @@ class SchoolBootstrap extends Audit {
   }
 
   getFolderName(): string {
-    return __basename;
+    return "school_bootstrap";
   }
 
   async auditPage(page: Page, url: string) {
