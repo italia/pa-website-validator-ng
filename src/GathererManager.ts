@@ -23,7 +23,7 @@ async function collectGatherers() {
       const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
       const files = sync(__dirname + "/gatherers/**/*.**", {
-        ignore: ["**/index.d.ts"],
+        ignore: ["**/*.d.ts"],
       });
 
       gatherers = {};
