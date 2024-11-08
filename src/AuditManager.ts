@@ -21,7 +21,7 @@ async function collectAudits() {
       const files = sync(
         path.dirname(fileURLToPath(import.meta.url)) + "/audits/**/index.**",
         {
-          ignore: ["**/index.d.ts"],
+          ignore: ["**/*.d.ts"],
         },
       );
 

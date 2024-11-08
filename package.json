@@ -1,6 +1,6 @@
 {
   "name": "pa-website-validator-ng",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "main": "index.js",
   "type": "module",
   "scripts": {
