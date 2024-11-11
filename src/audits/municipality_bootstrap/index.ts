@@ -14,6 +14,8 @@ import { redirectUrlIsInternal } from "../../utils/utils.js";
 
 const FOLDER_NAME = "municipality_bootstrap";
 
+const FOLDER_NAME = "municipality_bootstrap";
+
 class BootstrapMunAudit extends Audit {
   auditId = "municipality-ux-ui-consistency-bootstrap-italia-double-check";
   code = "C.SI.1.2";

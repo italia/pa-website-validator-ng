@@ -14,6 +14,8 @@ import { redirectUrlIsInternal } from "../../utils/utils.js";
 
 const FOLDER_NAME = "municipality_booking_appointment";
 
+const FOLDER_NAME = "municipality_booking_appointment";
+
 class BookingAppointment extends Audit {
   code = "C.SI.2.1";
   mainTitle = "PRENOTAZIONE APPUNTAMENTI";
