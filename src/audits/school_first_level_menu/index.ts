@@ -18,6 +18,8 @@ import { __dirname } from "../esmHelpers.js";
 
 const FOLDER_NAME = "school_first_level_menu";
 
+
+
 class SchoolFirstLevelMenuAudit extends Audit {
   public globalResults: GlobalResults = {
     score: 0,

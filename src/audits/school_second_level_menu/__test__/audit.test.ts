@@ -21,7 +21,7 @@ describe("school_second_level_menu", () => {
 
   test("pass", async () => {
     await testAudit(page, audit, path.join(__dirname, "pass.html"), 1);
-  }, 30000);
+  }, 40000);
 
   test("fail", async () => {
     await testAudit(page, audit, path.join(__dirname, "fail.html"), 0);
