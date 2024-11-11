@@ -50,7 +50,7 @@ export const testGatherer = async (
 
     await page.goto(url);
     try {
-      await gathererInstance.navigateAndFetchPages(url, 1, "", page);
+      await gathererInstance.navigateAndFetchPages(url, 1, page);
       result = 1;
     } catch {
       result = 0;
