@@ -551,6 +551,10 @@ const getRedirectedUrl = async (url: string): Promise<string> => {
 };
 
 const redirectUrlIsInternal = async (page: Page) => {
+  if (!process.env["website"]) {
+    return true;
+  }
+
   const host = new URL(process.env["website"] ?? "").hostname.replace(
     "www.",
     "",
