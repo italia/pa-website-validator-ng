@@ -4,6 +4,8 @@ import { ThemeAudit } from "../theme/index.js";
 import * as ejs from "ejs";
 import { __dirname } from "../esmHelpers.js";
 
+const FOLDER_NAME = "school_theme";
+
 class SchoolThemeAudit extends ThemeAudit {
   auditId = "school-ux-ui-consistency-theme-version-check";
   greenResult =
@@ -25,7 +27,7 @@ class SchoolThemeAudit extends ThemeAudit {
   }
 
   getFolderName(): string {
-    return "school_theme";
+    return FOLDER_NAME;
   }
 
   async returnGlobalHTML() {
@@ -43,7 +45,7 @@ class SchoolThemeAudit extends ThemeAudit {
       message = this.redResult;
     }
 
-    return await ejs.renderFile(__dirname + "/school_theme/template.ejs", {
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
       ...(await this.meta()),
       code: this.code,
       table: this.globalResults,

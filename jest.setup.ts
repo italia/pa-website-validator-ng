@@ -1,6 +1,7 @@
 import { Browser, Page } from "puppeteer";
 import { getBrowser, closeBrowsers } from "./src/PuppeteerInstance.js";
 import { Audit } from "./src/audits/Audit.js";
+import { Gatherer } from "./src/gatherers/Gatherer.js";
 
 let browser: Browser | void | null;
 
@@ -33,4 +34,28 @@ export const testAudit = async (
   }
 
   expect(result?.score).toEqual(expectedScore);
+};
+
+export const testGatherer = async (
+  page: Page | null,
+  gathererInstance: Gatherer | null,
+  filePath: string,
+  expectedScore: number,
+): Promise<void> => {
+  let result: number = 0;
+
+  if (page && gathererInstance) {
+    //check if is an external url
+    const url = filePath.startsWith("http") ? filePath : `file://${filePath}`;
+
+    await page.goto(url);
+    try {
+      await gathererInstance.navigateAndFetchPages(url, 1, "", page);
+      result = 1;
+    } catch {
+      result = 0;
+    }
+  }
+
+  expect(result).toEqual(expectedScore);
 };

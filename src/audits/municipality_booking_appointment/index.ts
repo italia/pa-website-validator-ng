@@ -11,6 +11,8 @@ import { CheerioAPI } from "cheerio";
 import * as ejs from "ejs";
 import { __dirname } from "../esmHelpers.js";
 
+const FOLDER_NAME = "municipality_booking_appointment";
+
 class BookingAppointment extends Audit {
   code = "C.SI.2.1";
   mainTitle = "PRENOTAZIONE APPUNTAMENTI";
@@ -67,7 +69,7 @@ class BookingAppointment extends Audit {
   }
 
   getFolderName(): string {
-    return "municipality_booking_appointment";
+    return FOLDER_NAME;
   }
 
   async auditPage(page: Page, url: string, pageType?: string | null) {
@@ -223,18 +225,15 @@ class BookingAppointment extends Audit {
       message = this.redResult;
     }
 
-    return await ejs.renderFile(
-      __dirname + "/municipality_booking_appointment/template.ejs",
-      {
-        ...(await this.meta()),
-        code: this.code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
+      ...(await this.meta()),
+      code: this.code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 }
 

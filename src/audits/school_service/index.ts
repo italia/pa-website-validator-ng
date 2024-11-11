@@ -23,8 +23,7 @@ import {
   contentTypeItemsMetadata,
 } from "./contentTypeItems.js";
 import * as ejs from "ejs";
-import { fileURLToPath } from "url";
-import path from "path";
+import { __dirname } from "../esmHelpers.js";
 
 const auditId = "school-servizi-structure-match-model";
 const greenResult =
@@ -45,6 +44,8 @@ const title =
   "R.SC.1.2 - SCHEDE INFORMATIVE DI SERVIZIO - Tutte le schede informative dei servizi devono mostrare le voci segnalate come obbligatorie all'interno dell'architettura dell'informazione, nell'ordine segnalato dal modello.";
 const code = "R.SC.1.2";
 const mainTitle = "SCHEDE INFORMATIVE DI SERVIZIO";
+
+const FOLDER_NAME = "school_service";
 
 class SchoolServiceAudit extends Audit {
   info = true;
@@ -91,7 +92,7 @@ class SchoolServiceAudit extends Audit {
   }
 
   getFolderName(): string {
-    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+    return FOLDER_NAME;
   }
 
   async auditPage(page: Page, url: string) {
@@ -323,9 +324,7 @@ class SchoolServiceAudit extends Audit {
       message = redResult;
     }
 
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-    return await ejs.renderFile(__dirname + "/template.ejs", {
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
       ...(await this.meta()),
       code: code,
       table: this.globalResults,

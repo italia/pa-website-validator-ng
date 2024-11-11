@@ -22,6 +22,8 @@ const redResult =
 const title =
   "C.SI.2.4 - SEGNALAZIONE DISSERVIZIO - Il sito comunale deve fornire al cittadino la possibilità di segnalare un disservizio, tramite email o servizio dedicato.";
 
+const FOLDER_NAME = "municipality_inefficiency_report_audit";
+
 class InefficiencyAudit extends Audit {
   public globalResults: GlobalResults = {
     score: 0,
@@ -51,7 +53,7 @@ class InefficiencyAudit extends Audit {
   }
 
   getFolderName(): string {
-    return "municipality_inefficiency_report_audit";
+    return FOLDER_NAME;
   }
 
   async auditPage(page: Page, url: string) {
@@ -168,18 +170,15 @@ class InefficiencyAudit extends Audit {
       message = redResult;
     }
 
-    return await ejs.renderFile(
-      __dirname + "/municipality_inefficiency_report_audit/template.ejs",
-      {
-        ...(await this.meta()),
-        code: code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
+      ...(await this.meta()),
+      code: code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 
   static getInstance(): InefficiencyAudit {

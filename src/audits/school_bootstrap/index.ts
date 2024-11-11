@@ -23,6 +23,8 @@ const title =
 const code = "C.SC.1.2";
 const mainTitle = "LIBRERIA DI ELEMENTI DI INTERFACCIA";
 
+const FOLDER_NAME = "school_bootstrap";
+
 class SchoolBootstrap extends Audit {
   public globalResults: GlobalResultsMulti = {
     score: 1,
@@ -60,7 +62,7 @@ class SchoolBootstrap extends Audit {
   }
 
   getFolderName(): string {
-    return "school_bootstrap";
+    return FOLDER_NAME;
   }
 
   async auditPage(page: Page, url: string) {
@@ -234,7 +236,7 @@ class SchoolBootstrap extends Audit {
       message = redResult;
     }
 
-    return await ejs.renderFile(__dirname + "/school_bootstrap/template.ejs", {
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
       ...(await this.meta()),
       code: code,
       table: this.globalResults,

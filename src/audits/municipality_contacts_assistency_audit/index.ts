@@ -10,6 +10,8 @@ import { Page } from "puppeteer";
 import * as ejs from "ejs";
 import { __dirname } from "../esmHelpers.js";
 
+const FOLDER_NAME = "municipality_contacts_assistency_audit";
+
 const auditId = "municipality-contacts-assistency";
 const code = "C.SI.2.2";
 const mainTitle = "RICHIESTA DI ASSISTENZA / CONTATTI";
@@ -63,8 +65,9 @@ class ContactAssistencyAudit extends Audit {
   }
 
   getFolderName(): string {
-    return "municipality_contacts_assistency_audit";
+    return FOLDER_NAME;
   }
+
   async auditPage(page: Page, url: string) {
     this.titleSubHeadings = [
       "La voce è presente nell'indice",
@@ -180,18 +183,15 @@ class ContactAssistencyAudit extends Audit {
       message = redResult;
     }
 
-    return await ejs.renderFile(
-      __dirname + "/municipality_contacts_assistency_audit/template.ejs",
-      {
-        ...(await this.meta()),
-        code: code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
+      ...(await this.meta()),
+      code: code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 
   async getType() {

@@ -11,6 +11,8 @@ import { Audit, GlobalResultsMulti } from "../Audit.js";
 import * as ejs from "ejs";
 import { __dirname } from "../esmHelpers.js";
 
+const FOLDER_NAME = "municipality_bootstrap";
+
 class BootstrapMunAudit extends Audit {
   auditId = "municipality-ux-ui-consistency-bootstrap-italia-double-check";
   code = "C.SI.1.2";
@@ -66,7 +68,7 @@ class BootstrapMunAudit extends Audit {
   }
 
   getFolderName(): string {
-    return "municipality_bootstrap";
+    return FOLDER_NAME;
   }
 
   async auditPage(page: Page, url: string) {
@@ -259,18 +261,15 @@ class BootstrapMunAudit extends Audit {
       message = this.redResult;
     }
 
-    return await ejs.renderFile(
-      __dirname + "/municipality_bootstrap/template.ejs",
-      {
-        ...(await this.meta()),
-        code: this.code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
+      ...(await this.meta()),
+      code: this.code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 
   async getType() {

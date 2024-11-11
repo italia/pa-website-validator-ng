@@ -3,6 +3,8 @@ import { FontAudit } from "../font/index.js";
 import * as ejs from "ejs";
 import { __dirname } from "../esmHelpers.js";
 
+const FOLDER_NAME = "municipality_font";
+
 class MunicipalityFontAudit extends FontAudit {
   auditId = "municipality-ux-ui-consistency-fonts-check";
   greenResult =
@@ -34,8 +36,9 @@ class MunicipalityFontAudit extends FontAudit {
   }
 
   getFolderName(): string {
-    return "municipality_font";
+    return FOLDER_NAME;
   }
+
   async returnGlobalHTML() {
     let status = "fail";
     let message = "";
@@ -51,7 +54,7 @@ class MunicipalityFontAudit extends FontAudit {
       message = this.redResult;
     }
 
-    return await ejs.renderFile(__dirname + "/municipality_font/template.ejs", {
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
       ...(await this.meta()),
       code: this.code,
       table: this.globalResults,

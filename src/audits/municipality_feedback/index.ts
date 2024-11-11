@@ -32,6 +32,8 @@ const subItem = {
     "Pagine nelle quali il componente non è presente o non rispetta le caratteristiche richieste:",
 };
 
+const FOLDER_NAME = "municipality_feedback";
+
 class FeedbackAudit extends Audit {
   public globalResults: GlobalResultsMulti = {
     score: 1,
@@ -75,8 +77,9 @@ class FeedbackAudit extends Audit {
   }
 
   getFolderName(): string {
-    return "municipality_feedback";
+    return FOLDER_NAME;
   }
+
   async auditPage(page: Page, url: string) {
     this.titleSubHeadings = ["Elementi errati o non trovati"];
 
@@ -208,18 +211,15 @@ class FeedbackAudit extends Audit {
       message = redResult;
     }
 
-    return await ejs.renderFile(
-      __dirname + "/municipality_feedback/template.ejs",
-      {
-        ...(await this.meta()),
-        code: code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
+      ...(await this.meta()),
+      code: code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 }
 

@@ -33,6 +33,8 @@ const title =
 // @ts-ignore
 const totalJSONVoices = 10;
 
+const FOLDER_NAME = "municipality_metatag";
+
 class MetatagAudit extends Audit {
   public globalResults: GlobalResultsMulti = {
     score: 1,
@@ -77,7 +79,7 @@ class MetatagAudit extends Audit {
   }
 
   getFolderName(): string {
-    return "municipality_metatag";
+    return FOLDER_NAME;
   }
   async auditPage(page: Page, url: string) {
     this.titleSubHeadings = ["JSON valido", "Metatag non presenti o errati"];
@@ -234,18 +236,15 @@ class MetatagAudit extends Audit {
       message = redResult;
     }
 
-    return await ejs.renderFile(
-      __dirname + "/municipality_metatag/template.ejs",
-      {
-        ...(await this.meta()),
-        code: code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
+      ...(await this.meta()),
+      code: code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 
   static getInstance(): MetatagAudit {

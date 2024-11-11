@@ -4,6 +4,8 @@ import { LicenceAudit } from "../license/index.js";
 import * as ejs from "ejs";
 import { __dirname } from "../esmHelpers.js";
 
+const FOLDER_NAME = "municipality_license";
+
 class MunicipalityLicenceAudit extends LicenceAudit {
   auditId = "municipality-license-and-attribution";
   greenResult =
@@ -23,8 +25,9 @@ class MunicipalityLicenceAudit extends LicenceAudit {
   }
 
   getFolderName(): string {
-    return "municipality_license";
+    return FOLDER_NAME;
   }
+
   async returnGlobalHTML() {
     let status = "fail";
     let message = "";
@@ -37,18 +40,15 @@ class MunicipalityLicenceAudit extends LicenceAudit {
       message = this.redResult;
     }
 
-    return await ejs.renderFile(
-      __dirname + "/municipality_license/template.ejs",
-      {
-        ...(await this.meta()),
-        code: this.code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
+      ...(await this.meta()),
+      code: this.code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 }
 

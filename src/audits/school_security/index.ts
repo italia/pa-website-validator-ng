@@ -2,8 +2,9 @@
 
 import { SecurityAudit } from "../security/index.js";
 import * as ejs from "ejs";
-import { fileURLToPath } from "url";
-import path from "path";
+import { __dirname } from "../esmHelpers.js";
+
+const FOLDER_NAME = "school_security";
 
 class SchoolSecurityAudit extends SecurityAudit {
   auditId = "school-security";
@@ -23,7 +24,7 @@ class SchoolSecurityAudit extends SecurityAudit {
   }
 
   getFolderName(): string {
-    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+    return FOLDER_NAME;
   }
 
   async returnGlobalHTML() {
@@ -38,9 +39,7 @@ class SchoolSecurityAudit extends SecurityAudit {
       message = this.redResult.replace("[url]", this.url);
     }
 
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-    return await ejs.renderFile(__dirname + "/template.ejs", {
+    return await ejs.renderFile(__dirname + "/school_security/template.ejs", {
       ...(await this.meta()),
       code: this.code,
       table: this.globalResults,

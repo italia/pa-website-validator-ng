@@ -1,6 +1,6 @@
 {
   "name": "pa-website-validator-ng",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -15,6 +15,8 @@
     "format:write": "prettier --write .",
     "test:server": "cd external_files && http-server -p 9999",
     "test": "jest --detectOpenHandles --forceExit",
+    "test:audits": "JEST_PATH=src/audits jest --detectOpenHandles --verbose --forceExit",
+    "test:gatherers": "JEST_PATH=src/gatherers jest --detectOpenHandles --verbose --forceExit",
     "updateGeoIPData": "npm explore geoip-lite -- npm run updatedb"
   },
   "author": "Presidenza del Consiglio dei Ministri",

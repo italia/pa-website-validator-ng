@@ -25,6 +25,8 @@ const title =
 const code = "C.SI.1.6";
 const mainTitle = "VOCI DI MENÙ DI PRIMO LIVELLO";
 
+const FOLDER_NAME = "municipality_menu";
+
 class MenuAudit extends Audit {
   public globalResults: GlobalResults = {
     score: 0,
@@ -58,7 +60,7 @@ class MenuAudit extends Audit {
   }
 
   getFolderName(): string {
-    return "municipality_menu";
+    return FOLDER_NAME;
   }
 
   async auditPage(page: Page, url: string) {
@@ -174,7 +176,7 @@ class MenuAudit extends Audit {
       message = redResult;
     }
 
-    return await ejs.renderFile(__dirname + "/municipality_menu/template.ejs", {
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
       ...(await this.meta()),
       code: code,
       table: this.globalResults,

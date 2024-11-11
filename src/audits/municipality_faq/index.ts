@@ -20,6 +20,8 @@ const yellowResult =
 const redResult =
   "Il link non è nel footer o la pagina di destinazione è inesistente.";
 
+const FOLDER_NAME = "municipality_faq";
+
 class FaqAudit extends Audit {
   public globalResults: GlobalResults = {
     score: 0,
@@ -49,7 +51,7 @@ class FaqAudit extends Audit {
   }
 
   getFolderName(): string {
-    return "municipality_faq";
+    return FOLDER_NAME;
   }
 
   async getType() {
@@ -140,7 +142,7 @@ class FaqAudit extends Audit {
       message = redResult;
     }
 
-    return await ejs.renderFile(__dirname + "/municipality_faq/template.ejs", {
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
       ...(await this.meta()),
       code: code,
       table: this.globalResults,

@@ -9,6 +9,8 @@ const auditId = "municipality-performance-improvement-plan";
 
 const improvementPlan = /piano di miglioramento del sito/i;
 
+const FOLDER_NAME = "municipality_improvement_plan";
+
 class ImprovementPlanAudit extends Audit {
   public score = 0;
 
@@ -40,7 +42,7 @@ class ImprovementPlanAudit extends Audit {
   }
 
   getFolderName(): string {
-    return "municipality_improvement_plan";
+    return FOLDER_NAME;
   }
 
   async auditPage(page: Page) {
@@ -77,17 +79,14 @@ class ImprovementPlanAudit extends Audit {
       status = "average";
     }
 
-    return await ejs.renderFile(
-      __dirname + "/municipality_improvement_plan/template.ejs",
-      {
-        ...(await this.meta()),
-        code: this.code,
-        table: this.globalResults,
-        status,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
+      ...(await this.meta()),
+      code: this.code,
+      table: this.globalResults,
+      status,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 
   static getInstance(): ImprovementPlanAudit {

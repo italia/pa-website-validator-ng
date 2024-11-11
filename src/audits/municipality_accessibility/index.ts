@@ -4,6 +4,8 @@ import { A11yAudit } from "../accessibility/index.js";
 import * as ejs from "ejs";
 import { __dirname } from "../esmHelpers.js";
 
+const FOLDER_NAME = "municipality_accessibility";
+
 class MunicipalityA11yAudit extends A11yAudit {
   auditId = "municipality-legislation-accessibility-declaration-is-present";
   greenResult =
@@ -31,22 +33,19 @@ class MunicipalityA11yAudit extends A11yAudit {
       message = this.redResult;
     }
 
-    return await ejs.renderFile(
-      __dirname + "/municipality_accessibility/template.ejs",
-      {
-        ...(await this.meta()),
-        code: this.code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
+      ...(await this.meta()),
+      code: this.code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 
   getFolderName(): string {
-    return "municipality_accessibility";
+    return FOLDER_NAME;
   }
 
   static getInstance(): MunicipalityA11yAudit {
