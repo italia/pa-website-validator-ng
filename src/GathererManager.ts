@@ -1,7 +1,7 @@
 import { sync } from "glob";
 import { getGatherers } from "./config/config.js";
 import * as process from "process";
-import { fileURLToPath } from "url";
+import { fileURLToPath, pathToFileURL } from "url";
 import path from "path";
 import { Gatherer } from "./gatherers/Gatherer.js";
 
@@ -22,7 +22,14 @@ async function collectGatherers() {
     if (!Object.keys(gatherers).length) {
       const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-      const files = sync(__dirname + "/gatherers/**/*.**", {
+      const searchPattern = path.posix.join(
+        __dirname.replace(/\\/g, "/"),
+        "gatherers",
+        "**",
+        "index.*",
+      );
+
+      const files = sync(searchPattern, {
         ignore: ["**/*.d.ts"],
       });
 
@@ -31,11 +38,18 @@ async function collectGatherers() {
         const moduleName = file.replace(".ts", ".js");
         const moduleId = extractFolderName(moduleName);
         if (!configGatherers.includes(moduleId)) continue;
-        const module = await import(
-          (process.platform as string) == "win32"
-            ? "../" + moduleName
-            : moduleName
+
+        const baseDir = path.resolve(
+          process.cwd(),
+          "node_modules/pa-website-validator-ng/dist/gatherers",
         );
+
+        const modulePath = path.resolve(baseDir, moduleName);
+
+        const moduleURL = pathToFileURL(modulePath).href;
+
+        const module = await import(moduleURL);
+
         if (moduleId) {
           console.log("GATHERER MANAGER registered gatherer: " + moduleId);
           gatherers[moduleId] = module.default;
