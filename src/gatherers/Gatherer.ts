@@ -23,7 +23,6 @@ abstract class Gatherer {
   async navigateAndFetchPages(
     url: string,
     numberOfPages?: number,
-    website?: string,
     page?: Page | null,
   ): Promise<PageData[]> {
     if (this.gatheredPages.length > 0 || !page) {
@@ -43,8 +42,6 @@ abstract class Gatherer {
         type: currentClass.pageType,
         gathered: false,
         audited: false,
-        redirectUrl: "",
-        internal: true,
       };
     });
 

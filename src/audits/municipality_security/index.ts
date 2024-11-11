@@ -4,6 +4,8 @@ import { SecurityAudit } from "../security/index.js";
 import * as ejs from "ejs";
 import { __dirname } from "../esmHelpers.js";
 
+const FOLDER_NAME = "municipality_security";
+
 class MunicipalitySecurityAudit extends SecurityAudit {
   auditId = "municipality-security";
   greenResult = "Il certificato del sito [url] è attivo e valido.";
@@ -21,8 +23,9 @@ class MunicipalitySecurityAudit extends SecurityAudit {
   }
 
   getFolderName(): string {
-    return "municipality_security";
+    return FOLDER_NAME;
   }
+
   async returnGlobalHTML() {
     let status = "fail";
     let message = "";
@@ -35,18 +38,15 @@ class MunicipalitySecurityAudit extends SecurityAudit {
       message = this.redResult.replace("[url]", this.url);
     }
 
-    return await ejs.renderFile(
-      __dirname + "/municipality_security/template.ejs",
-      {
-        ...(await this.meta()),
-        code: this.code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
+      ...(await this.meta()),
+      code: this.code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 }
 

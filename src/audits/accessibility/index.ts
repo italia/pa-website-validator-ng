@@ -2,7 +2,11 @@
 
 import { CheerioAPI } from "cheerio";
 
-import { getAllPageHTML, urlExists } from "../../utils/utils.js";
+import {
+  getAllPageHTML,
+  redirectUrlIsInternal,
+  urlExists,
+} from "../../utils/utils.js";
 import { Page } from "puppeteer";
 
 import { Audit, GlobalResults } from "../Audit.js";
@@ -39,6 +43,10 @@ class A11yAudit extends Audit {
   }
 
   async auditPage(page: Page, url: string) {
+    if (!(await redirectUrlIsInternal(page))) {
+      return;
+    }
+
     this.globalResults.pagesItems.headings = [
       "Testo del link",
       "Pagina di destinazione del link",

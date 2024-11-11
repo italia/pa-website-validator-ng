@@ -37,6 +37,8 @@ interface itemPage {
   pagesNotInVocabulary: string[];
 }
 
+const FOLDER_NAME = "municipality_second_level_pages_audit";
+
 class SecondLevelAudit extends Audit {
   public globalResults: GlobalResults = {
     score: 0,
@@ -76,7 +78,7 @@ class SecondLevelAudit extends Audit {
   }
 
   getFolderName(): string {
-    return "municipality_second_level_pages_audit";
+    return FOLDER_NAME;
   }
 
   async auditPage(page: Page, url: string) {
@@ -264,18 +266,15 @@ class SecondLevelAudit extends Audit {
       message = redResult;
     }
 
-    return await ejs.renderFile(
-      __dirname + "/municipality_second_level_pages_audit/template.ejs",
-      {
-        ...(await this.meta()),
-        code: code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
+      ...(await this.meta()),
+      code: code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 
   async getType() {

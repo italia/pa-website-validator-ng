@@ -5,6 +5,7 @@ import {
   checkOrder,
   getRedirectedUrl,
   missingMenuItems,
+  redirectUrlIsInternal,
 } from "../../utils/utils.js";
 import { MenuItem } from "../../types/menuItem.js";
 import { getFirstLevelPages } from "../../utils/municipality/utils.js";
@@ -24,6 +25,8 @@ const title =
   "C.SI.1.6 - VOCI DI MENÙ DI PRIMO LIVELLO - Il sito comunale deve presentare tutte le voci di menù di primo livello, nell'esatto ordine descritto dalla documentazione del modello di sito comunale.";
 const code = "C.SI.1.6";
 const mainTitle = "VOCI DI MENÙ DI PRIMO LIVELLO";
+
+const FOLDER_NAME = "municipality_menu";
 
 class MenuAudit extends Audit {
   public globalResults: GlobalResults = {
@@ -58,10 +61,14 @@ class MenuAudit extends Audit {
   }
 
   getFolderName(): string {
-    return "municipality_menu";
+    return FOLDER_NAME;
   }
 
   async auditPage(page: Page, url: string) {
+    if (!(await redirectUrlIsInternal(page))) {
+      return;
+    }
+
     const result = {
       found_menu_voices: "",
       missing_menu_voices: "",
@@ -174,7 +181,7 @@ class MenuAudit extends Audit {
       message = redResult;
     }
 
-    return await ejs.renderFile(__dirname + "/municipality_menu/template.ejs", {
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
       ...(await this.meta()),
       code: code,
       table: this.globalResults,

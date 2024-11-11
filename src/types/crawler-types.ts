@@ -19,8 +19,6 @@ export interface PageData {
   id: string;
   url: string;
   type: string;
-  redirectUrl: string | undefined;
-  internal: boolean | undefined;
   gathered: boolean;
   audited: boolean;
   errors?: (Error | DataElementError | string)[];

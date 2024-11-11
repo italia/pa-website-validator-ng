@@ -4,6 +4,8 @@ import { PrivacyAudit } from "../privacy/index.js";
 import * as ejs from "ejs";
 import { __dirname } from "../esmHelpers.js";
 
+const FOLDER_NAME = "municipality_privacy";
+
 class MunicipalityPrivacyAudit extends PrivacyAudit {
   auditId = "municipality-legislation-privacy-is-present";
   greenResult = "Il link è nel footer e invia a una pagina esistente e sicura.";
@@ -22,8 +24,9 @@ class MunicipalityPrivacyAudit extends PrivacyAudit {
   }
 
   getFolderName(): string {
-    return "municipality_privacy";
+    return FOLDER_NAME;
   }
+
   async returnGlobalHTML() {
     let status = "fail";
     let message = "";
@@ -36,18 +39,15 @@ class MunicipalityPrivacyAudit extends PrivacyAudit {
       message = this.redResult;
     }
 
-    return await ejs.renderFile(
-      __dirname + "/municipality_privacy/template.ejs",
-      {
-        ...(await this.meta()),
-        code: this.code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
+      ...(await this.meta()),
+      code: this.code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 }
 

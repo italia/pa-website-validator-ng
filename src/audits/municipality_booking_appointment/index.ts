@@ -10,6 +10,9 @@ import * as cheerio from "cheerio";
 import { CheerioAPI } from "cheerio";
 import * as ejs from "ejs";
 import { __dirname } from "../esmHelpers.js";
+import { redirectUrlIsInternal } from "../../utils/utils.js";
+
+const FOLDER_NAME = "municipality_booking_appointment";
 
 class BookingAppointment extends Audit {
   code = "C.SI.2.1";
@@ -67,10 +70,14 @@ class BookingAppointment extends Audit {
   }
 
   getFolderName(): string {
-    return "municipality_booking_appointment";
+    return FOLDER_NAME;
   }
 
   async auditPage(page: Page, url: string, pageType?: string | null) {
+    if (!(await redirectUrlIsInternal(page))) {
+      return;
+    }
+
     this.titleSubHeadings = [
       "Componente individuato",
       'Nella sezione "Accedi al servizio" della scheda servizio è presente il pulsante di prenotazione appuntamento',
@@ -223,18 +230,15 @@ class BookingAppointment extends Audit {
       message = this.redResult;
     }
 
-    return await ejs.renderFile(
-      __dirname + "/municipality_booking_appointment/template.ejs",
-      {
-        ...(await this.meta()),
-        code: this.code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
+      ...(await this.meta()),
+      code: this.code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 }
 

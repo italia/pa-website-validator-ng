@@ -2,8 +2,9 @@
 
 import { PrivacyAudit } from "../privacy/index.js";
 import * as ejs from "ejs";
-import { fileURLToPath } from "url";
-import path from "path";
+import { __dirname } from "../esmHelpers.js";
+
+const FOLDER_NAME = "school_privacy";
 
 class SchoolPrivacyAudit extends PrivacyAudit {
   auditId = "school-legislation-privacy-is-present";
@@ -24,7 +25,7 @@ class SchoolPrivacyAudit extends PrivacyAudit {
   }
 
   getFolderName(): string {
-    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+    return FOLDER_NAME;
   }
 
   async returnGlobalHTML() {
@@ -39,9 +40,7 @@ class SchoolPrivacyAudit extends PrivacyAudit {
       message = this.redResult;
     }
 
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-    return await ejs.renderFile(__dirname + "/template.ejs", {
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
       ...(await this.meta()),
       code: this.code,
       table: this.globalResults,

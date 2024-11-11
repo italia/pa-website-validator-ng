@@ -1,6 +1,7 @@
 import PageManager from "./PageManager.js";
 
 import { PageData } from "./types/crawler-types.js";
+import { setTimeout } from "timers/promises";
 import { initializeConfig } from "./config/config.js";
 import { loadPage } from "./utils/utils.js";
 import { Page } from "puppeteer";
@@ -65,7 +66,12 @@ const scan = async (pageData: PageData) => {
         try {
           page = await loadPage(pageData.url);
           if (page) {
-            await page.waitForNetworkIdle();
+            await Promise.race([
+              setTimeout(5000),
+              page.waitForNetworkIdle({
+                idleTime: 2000,
+              }),
+            ]);
           }
         } catch (e) {
           navigatingError = e instanceof Error ? e : String(e);
@@ -115,7 +121,6 @@ const scan = async (pageData: PageData) => {
           const fetchedPages = await gatherer.navigateAndFetchPages(
             pageData.url,
             configAccuracy,
-            "",
             page,
           );
           gathererPages = [...gathererPages, ...fetchedPages];
@@ -128,8 +133,6 @@ const scan = async (pageData: PageData) => {
             id: "",
             url: "https://temppagenotavailable/" + gatherer.getPageTitle(),
             type: gatherer.getPageType(),
-            redirectUrl: "",
-            internal: false,
             gathered: true,
             audited: true,
             errors: [
@@ -171,7 +174,12 @@ const scan = async (pageData: PageData) => {
         try {
           page = await loadPage(pageData.url);
           if (page) {
-            await page.waitForNetworkIdle();
+            await Promise.race([
+              setTimeout(5000),
+              page.waitForNetworkIdle({
+                idleTime: 2000,
+              }),
+            ]);
           }
         } catch (e) {
           navigatingError = e instanceof Error ? e.message : String(e);

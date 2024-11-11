@@ -10,8 +10,9 @@ import {
 } from "../../utils/utils.js";
 import { schoolModelVocabulary } from "./controlledVocabulary.js";
 import * as ejs from "ejs";
-import path from "path";
-import { fileURLToPath } from "url";
+import { __dirname } from "../esmHelpers.js";
+
+const FOLDER_NAME = "school_vocabularies";
 
 class SchoolVocabularies extends Audit {
   info = true;
@@ -53,7 +54,7 @@ class SchoolVocabularies extends Audit {
   }
 
   getFolderName(): string {
-    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+    return FOLDER_NAME;
   }
 
   async auditPage(page: Page, url: string) {
@@ -149,9 +150,7 @@ class SchoolVocabularies extends Audit {
       message = this.redResult;
     }
 
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-    return await ejs.renderFile(__dirname + "/template.ejs", {
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
       ...(await this.meta()),
       code: this.code,
       table: this.globalResults,

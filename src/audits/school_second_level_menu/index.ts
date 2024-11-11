@@ -17,8 +17,9 @@ import {
   primaryMenuDataElement,
 } from "./menuItem.js";
 import * as ejs from "ejs";
-import path from "path";
-import { fileURLToPath } from "url";
+import { __dirname } from "../esmHelpers.js";
+
+const FOLDER_NAME = "school_second_level_menu";
 
 interface itemPage {
   key: string;
@@ -72,7 +73,7 @@ class SchoolSecondLevelMenuAudit extends Audit {
   }
 
   getFolderName(): string {
-    return path.basename(path.dirname(fileURLToPath(import.meta.url)));
+    return FOLDER_NAME;
   }
 
   async auditPage(page: Page, url: string) {
@@ -277,9 +278,7 @@ class SchoolSecondLevelMenuAudit extends Audit {
       message = this.redResult;
     }
 
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-    return await ejs.renderFile(__dirname + "/template.ejs", {
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
       ...(await this.meta()),
       code: this.code,
       table: this.globalResults,

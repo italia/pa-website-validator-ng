@@ -10,6 +10,7 @@ import { Page } from "puppeteer";
 import { Audit, GlobalResultsMulti } from "../Audit.js";
 import * as ejs from "ejs";
 import { __dirname } from "../esmHelpers.js";
+import { redirectUrlIsInternal } from "../../utils/utils.js";
 
 const auditId = "municipality-feedback-element";
 const code = "C.SI.2.5";
@@ -31,6 +32,8 @@ const subItem = {
   redResult:
     "Pagine nelle quali il componente non è presente o non rispetta le caratteristiche richieste:",
 };
+
+const FOLDER_NAME = "municipality_feedback";
 
 class FeedbackAudit extends Audit {
   public globalResults: GlobalResultsMulti = {
@@ -75,9 +78,14 @@ class FeedbackAudit extends Audit {
   }
 
   getFolderName(): string {
-    return "municipality_feedback";
+    return FOLDER_NAME;
   }
+
   async auditPage(page: Page, url: string) {
+    if (!(await redirectUrlIsInternal(page))) {
+      return;
+    }
+
     this.titleSubHeadings = ["Elementi errati o non trovati"];
 
     const item = {
@@ -208,18 +216,15 @@ class FeedbackAudit extends Audit {
       message = redResult;
     }
 
-    return await ejs.renderFile(
-      __dirname + "/municipality_feedback/template.ejs",
-      {
-        ...(await this.meta()),
-        code: code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
+      ...(await this.meta()),
+      code: code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 }
 

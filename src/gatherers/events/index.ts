@@ -17,7 +17,6 @@ class eventsGatherer extends Gatherer {
   async navigateAndFetchPages(
     url: string,
     numberOfPages: number,
-    website: string,
     page: Page,
   ): Promise<PageData[]> {
     const currentClass = this.constructor as typeof Gatherer;
@@ -77,8 +76,6 @@ class eventsGatherer extends Gatherer {
         type: currentClass.pageType,
         gathered: false,
         audited: false,
-        internal: true,
-        redirectUrl: "",
       };
     });
 

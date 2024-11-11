@@ -19,7 +19,6 @@ class SecondLevelPagesGatherer extends Gatherer {
   async navigateAndFetchPages(
     url: string,
     numberOfPages = 5,
-    website: "",
     page: Page,
   ): Promise<PageData[]> {
     if (this.gatheredPages.length > 0) return this.gatheredPages;
@@ -42,8 +41,6 @@ class SecondLevelPagesGatherer extends Gatherer {
         type: currentClass.pageType,
         gathered: false,
         audited: false,
-        internal: true,
-        redirectUrl: "",
       };
     });
 

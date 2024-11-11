@@ -12,7 +12,6 @@ class pageGatherer extends Gatherer {
   async navigateAndFetchPages(
     url: string,
     numberOfPages: number,
-    website: string,
     page: Page,
   ): Promise<PageData[]> {
     if (this.gatheredPages.length > 0) return this.gatheredPages;
@@ -40,8 +39,6 @@ class pageGatherer extends Gatherer {
         type: currentClass.pageType,
         gathered: false,
         audited: false,
-        internal: true,
-        redirectUrl: "",
       };
     });
 

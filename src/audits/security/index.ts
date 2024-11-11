@@ -8,8 +8,9 @@ import { allowedCiphers } from "./allowedCiphers.js";
 import https from "https";
 import { TLSSocket } from "tls";
 import { Cipher, CipherInfo } from "../../types/crawler-types.js";
+import { redirectUrlIsInternal } from "../../utils/utils.js";
 
-const allowedTlsVersions = ["TLSv1.2", "TLSv1.3"];
+const allowedTlsVersions = ["TLSv1.2", "TLSv1.3", "TLSv1/SSLv2", "TLSv1/SSLv3"];
 
 const errorLogging = [
   "il sito non utilizza il protocollo HTTPS",
@@ -54,6 +55,10 @@ class SecurityAudit extends Audit {
   }
 
   async auditPage(page: Page, url: string) {
+    if (!(await redirectUrlIsInternal(page))) {
+      return;
+    }
+
     const greenResult = this.greenResult.replace("[url]", url);
     const redResult = this.redResult.replace("[url]", url);
 
@@ -133,9 +138,9 @@ class SecurityAudit extends Audit {
         validTo.getFullYear();
     }
 
-    if (tls.tls_version === "TLSv1.2") {
+    if (["TLSv1/SSLv2", "TLSv1.2"].includes(tls.tls_version)) {
       item[0].tls_version = "1.2";
-    } else if (tls.tls_version === "TLSv1.3") {
+    } else if (["TLSv1/SSLv3", "TLSv1.3"].includes(tls.tls_version)) {
       item[0].tls_version = "1.3";
     } else {
       item[0].tls_version = "";
@@ -297,11 +302,13 @@ async function checkCipherSuite(
 
   switch (cipherInfo.version) {
     case "TLSv1.2":
+    case "TLSv1/SSLv2":
       if (allowedCiphers.tls12.includes(cipherInfo.standardName)) {
         returnObj.valid = true;
       }
       break;
     case "TLSv1.3":
+    case "TLSv1/SSLv3":
       if (allowedCiphers.tls13.includes(cipherInfo.standardName)) {
         returnObj.valid = true;
       }

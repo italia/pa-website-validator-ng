@@ -1,4 +1,5 @@
 import { initializeConfig } from "./config/config.js";
+import { setTimeout } from "timers/promises";
 import { collectAudits } from "./AuditManager.js";
 import { collectGatherers } from "./GathererManager.js";
 import { initializePuppeteer } from "./PuppeteerInstance.js";
@@ -96,7 +97,12 @@ async function run(
       try {
         page = await loadPage(website);
         if (page) {
-          await page.waitForNetworkIdle();
+          await Promise.race([
+            setTimeout(5000),
+            page.waitForNetworkIdle({
+              idleTime: 2000,
+            }),
+          ]);
         }
       } catch (e) {
         if (e instanceof Error || e instanceof DataElementError) {
@@ -128,8 +134,6 @@ async function run(
       id: "homepage",
       url: website,
       type: "homepage",
-      redirectUrl: "",
-      internal: true,
       gathered: false,
       audited: false,
     });

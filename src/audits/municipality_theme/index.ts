@@ -4,6 +4,8 @@ import { ThemeAudit } from "../theme/index.js";
 import * as ejs from "ejs";
 import { __dirname } from "../esmHelpers.js";
 
+const FOLDER_NAME = "municipality_theme";
+
 class MunicipalityThemeAudit extends ThemeAudit {
   auditId = "municipality-ux-ui-consistency-theme-version-check";
   greenResult =
@@ -25,8 +27,9 @@ class MunicipalityThemeAudit extends ThemeAudit {
   }
 
   getFolderName(): string {
-    return "municipality_theme";
+    return FOLDER_NAME;
   }
+
   async returnGlobalHTML() {
     let status = "fail";
     let message = "";
@@ -42,18 +45,15 @@ class MunicipalityThemeAudit extends ThemeAudit {
       message = this.redResult;
     }
 
-    return await ejs.renderFile(
-      __dirname + "/municipality_theme/template.ejs",
-      {
-        ...(await this.meta()),
-        code: this.code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
+      ...(await this.meta()),
+      code: this.code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 }
 

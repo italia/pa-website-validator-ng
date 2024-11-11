@@ -3,6 +3,7 @@ import { Audit, GlobalResultsMulti } from "../Audit.js";
 import { Page, Cookie as CookieProtocol } from "puppeteer";
 import { Cookie } from "../../types/crawler-types";
 import { DataElementError } from "../../utils/DataElementError.js";
+import { redirectUrlIsInternal } from "../../utils/utils.js";
 
 class CookieAudit extends Audit {
   public globalResults: GlobalResultsMulti = {
@@ -82,6 +83,10 @@ class CookieAudit extends Audit {
   }
 
   async auditPage(page: Page, url: string) {
+    if (!(await redirectUrlIsInternal(page))) {
+      return;
+    }
+
     this.titleSubHeadings = [
       "Dominio del cookie",
       "Nome del cookie",

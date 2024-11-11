@@ -3,7 +3,12 @@
 import { CheerioAPI } from "cheerio";
 
 import { initializePuppeteer } from "./../../PuppeteerInstance.js";
-import { buildUrl, isInternalUrl, urlExists } from "../../utils/utils.js";
+import {
+  buildUrl,
+  isInternalUrl,
+  redirectUrlIsInternal,
+  urlExists,
+} from "../../utils/utils.js";
 import { Dialog, Page } from "puppeteer";
 
 import { Audit, GlobalResults } from "../Audit.js";
@@ -43,6 +48,10 @@ class LicenceAudit extends Audit {
   }
 
   async auditPage(page: Page, url: string) {
+    if (!(await redirectUrlIsInternal(page))) {
+      return;
+    }
+
     this.globalResults.pagesItems.headings = [
       "Testo del link",
       "Pagina di destinazione del link",

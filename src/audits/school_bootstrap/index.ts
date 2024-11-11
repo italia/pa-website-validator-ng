@@ -5,6 +5,7 @@ import { compareVersions } from "compare-versions";
 import { cssClasses } from "./cssClasses.js";
 import * as ejs from "ejs";
 import { __dirname } from "../esmHelpers.js";
+import { redirectUrlIsInternal } from "../../utils/utils.js";
 
 const auditId = "school-ux-ui-consistency-bootstrap-italia-double-check";
 const greenResult =
@@ -22,6 +23,8 @@ const title =
   "C.SC.1.2 - LIBRERIA DI ELEMENTI DI INTERFACCIA - Il sito della scuola deve utilizzare la libreria Bootstrap Italia in una versione più recente di 1.6.";
 const code = "C.SC.1.2";
 const mainTitle = "LIBRERIA DI ELEMENTI DI INTERFACCIA";
+
+const FOLDER_NAME = "school_bootstrap";
 
 class SchoolBootstrap extends Audit {
   public globalResults: GlobalResultsMulti = {
@@ -60,10 +63,14 @@ class SchoolBootstrap extends Audit {
   }
 
   getFolderName(): string {
-    return "school_bootstrap";
+    return FOLDER_NAME;
   }
 
   async auditPage(page: Page, url: string) {
+    if (!(await redirectUrlIsInternal(page))) {
+      return;
+    }
+
     this.titleSubHeadings = [
       "La libreria Bootstrap Italia è presente",
       "Versione in uso",
@@ -234,7 +241,7 @@ class SchoolBootstrap extends Audit {
       message = redResult;
     }
 
-    return await ejs.renderFile(__dirname + "/school_bootstrap/template.ejs", {
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
       ...(await this.meta()),
       code: code,
       table: this.globalResults,

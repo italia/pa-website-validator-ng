@@ -33,6 +33,8 @@ const yellowResult =
 const redResult =
   "Meno del 50% degli argomenti appartengono alle voci del modello Comuni o al vocabolario EuroVoc o l'elenco degli argomenti non è presente nella pagina indicata.";
 
+const FOLDER_NAME = "municipality_vocabulary";
+
 class MunicipalityVocabulary extends Audit {
   public globalResults: GlobalResults = {
     score: 0,
@@ -65,7 +67,7 @@ class MunicipalityVocabulary extends Audit {
   }
 
   getFolderName(): string {
-    return "municipality_vocabulary";
+    return FOLDER_NAME;
   }
 
   async auditPage(page: Page, url: string) {
@@ -216,18 +218,15 @@ class MunicipalityVocabulary extends Audit {
       message = redResult;
     }
 
-    return await ejs.renderFile(
-      __dirname + "/municipality_vocabulary/template.ejs",
-      {
-        ...(await this.meta()),
-        code: code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
+      ...(await this.meta()),
+      code: code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 
   static getInstance(): MunicipalityVocabulary {

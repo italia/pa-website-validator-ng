@@ -3,6 +3,7 @@ import {
   OrderResult as OrderType,
   VocabularyResult,
 } from "../types/crawler-types.js";
+import { setTimeout } from "timers/promises";
 import * as cheerio from "cheerio";
 import { HTTPResponse, Page, HTTPRequest, Dialog } from "puppeteer";
 import { CheerioAPI } from "cheerio";
@@ -63,7 +64,12 @@ const loadPageData = async (
   }
 
   if (wait) {
-    await page.waitForNetworkIdle();
+    await Promise.race([
+      setTimeout(5000),
+      page.waitForNetworkIdle({
+        idleTime: 2000,
+      }),
+    ]);
   }
 
   data = await page.content();
@@ -107,7 +113,12 @@ const loadPage = async (url: string): Promise<Page> => {
 
     await gotoRetry(page, url, 3);
 
-    await page.waitForNetworkIdle();
+    await Promise.race([
+      setTimeout(5000),
+      page.waitForNetworkIdle({
+        idleTime: 2000,
+      }),
+    ]);
 
     return page;
   } catch (ex) {
@@ -539,6 +550,20 @@ const getRedirectedUrl = async (url: string): Promise<string> => {
   return redirectedUrl;
 };
 
+const redirectUrlIsInternal = async (page: Page) => {
+  const host = new URL(process.env["website"] ?? "").hostname.replace(
+    "www.",
+    "",
+  );
+
+  const redirectedUrl = await page.evaluate(async () => {
+    return window.location.href;
+  });
+
+  const redirectedHost = new URL(redirectedUrl).hostname.replace("www.", "");
+  return redirectedHost.includes(host);
+};
+
 export {
   toMenuItem,
   checkOrder,
@@ -559,4 +584,5 @@ export {
   getAllPageHTML,
   requestTimeout,
   getRedirectedUrl,
+  redirectUrlIsInternal,
 };

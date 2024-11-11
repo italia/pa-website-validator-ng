@@ -13,7 +13,6 @@ class servicesGatherer extends Gatherer {
   async navigateAndFetchPages(
     url: string,
     numberOfPages = 5,
-    website: "",
     page: Page,
   ): Promise<PageData[]> {
     let maxCountPages = 0;
@@ -131,8 +130,6 @@ class servicesGatherer extends Gatherer {
         type: "service",
         gathered: false,
         audited: false,
-        internal: true,
-        redirectUrl: "",
       } as PageData;
     });
 

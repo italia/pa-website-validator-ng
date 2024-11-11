@@ -46,8 +46,6 @@ class bookingAppointmentGatherer extends Gatherer {
         type: currentClass.pageType,
         gathered: false,
         audited: false,
-        internal: true,
-        redirectUrl: "",
       };
     });
 

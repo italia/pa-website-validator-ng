@@ -4,6 +4,8 @@ import { A11yAudit } from "../accessibility/index.js";
 import * as ejs from "ejs";
 import { __dirname } from "../esmHelpers.js";
 
+const FOLDER_NAME = "school_accessibility";
+
 class SchoolA11yAudit extends A11yAudit {
   code = "C.SC.2.2";
   mainTitle = "DICHIARAZIONE DI ACCESSIBILITÀ ";
@@ -28,8 +30,9 @@ class SchoolA11yAudit extends A11yAudit {
   }
 
   getFolderName(): string {
-    return "school_accessibility";
+    return FOLDER_NAME;
   }
+
   async returnGlobalHTML() {
     let status = "fail";
     let message = "";
@@ -45,18 +48,15 @@ class SchoolA11yAudit extends A11yAudit {
       message = this.redResult;
     }
 
-    return await ejs.renderFile(
-      __dirname + "/school_accessibility/template.ejs",
-      {
-        ...(await this.meta()),
-        code: this.code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
+      ...(await this.meta()),
+      code: this.code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 
   static getInstance(): SchoolA11yAudit {

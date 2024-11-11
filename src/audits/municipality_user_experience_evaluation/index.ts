@@ -6,6 +6,7 @@ import { Audit, GlobalResultsMulti } from "../Audit.js";
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
 import { __dirname } from "../esmHelpers.js";
+import { redirectUrlIsInternal } from "../../utils/utils.js";
 
 const auditId = "municipality-user-experience-evaluation";
 const code = "C.SI.2.6";
@@ -27,6 +28,8 @@ const subItem = {
 };
 const title =
   "C.SI.2.6 - VALUTAZIONE DELL’ESPERIENZA D’USO, CHIAREZZA INFORMATIVA DELLA SCHEDA DI SERVIZIO - Il sito comunale deve permettere la valutazione della chiarezza informativa per ogni scheda di servizio secondo le modalità indicate nella documentazione del modello di sito comunale.";
+
+const FOLDER_NAME = "municipality_user_experience_evaluation";
 
 class UserExperienceEvaluationAudit extends Audit {
   public globalResults: GlobalResultsMulti = {
@@ -71,9 +74,14 @@ class UserExperienceEvaluationAudit extends Audit {
   }
 
   getFolderName(): string {
-    return "municipality_user_experience_evaluation";
+    return FOLDER_NAME;
   }
+
   async auditPage(page: Page, url: string) {
+    if (!(await redirectUrlIsInternal(page))) {
+      return;
+    }
+
     this.titleSubHeadings = ["Elementi errati o non trovati"];
 
     const item = {
@@ -189,18 +197,15 @@ class UserExperienceEvaluationAudit extends Audit {
       message = redResult;
     }
 
-    return await ejs.renderFile(
-      __dirname + "/municipality_user_experience_evaluation/template.ejs",
-      {
-        ...(await this.meta()),
-        code: code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
+      ...(await this.meta()),
+      code: code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 
   static getInstance(): UserExperienceEvaluationAudit {

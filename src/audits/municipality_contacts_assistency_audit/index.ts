@@ -1,7 +1,10 @@
 "use strict";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { getPageElementDataAttribute } from "../../utils/utils.js";
+import {
+  getPageElementDataAttribute,
+  redirectUrlIsInternal,
+} from "../../utils/utils.js";
 import * as cheerio from "cheerio";
 import { CheerioAPI } from "cheerio";
 import { errorHandling } from "../../config/commonAuditsParts.js";
@@ -9,6 +12,8 @@ import { Audit, GlobalResultsMulti } from "../Audit.js";
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
 import { __dirname } from "../esmHelpers.js";
+
+const FOLDER_NAME = "municipality_contacts_assistency_audit";
 
 const auditId = "municipality-contacts-assistency";
 const code = "C.SI.2.2";
@@ -63,9 +68,14 @@ class ContactAssistencyAudit extends Audit {
   }
 
   getFolderName(): string {
-    return "municipality_contacts_assistency_audit";
+    return FOLDER_NAME;
   }
+
   async auditPage(page: Page, url: string) {
+    if (!(await redirectUrlIsInternal(page))) {
+      return;
+    }
+
     this.titleSubHeadings = [
       "La voce è presente nell'indice",
       "Il componente è presente in pagina",
@@ -180,18 +190,15 @@ class ContactAssistencyAudit extends Audit {
       message = redResult;
     }
 
-    return await ejs.renderFile(
-      __dirname + "/municipality_contacts_assistency_audit/template.ejs",
-      {
-        ...(await this.meta()),
-        code: code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
+      ...(await this.meta()),
+      code: code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 
   async getType() {

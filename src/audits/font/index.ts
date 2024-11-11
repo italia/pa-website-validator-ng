@@ -2,6 +2,7 @@ import { errorHandling } from "../../config/commonAuditsParts.js";
 import { Audit, GlobalResultsMulti } from "../Audit.js";
 import { Page } from "puppeteer";
 import { allowedFonts } from "./allowedFonts.js";
+import { redirectUrlIsInternal } from "../../utils/utils.js";
 
 type BadElement = [string[], boolean]; // First value is element snippet, second is whether it is tolerable
 
@@ -52,6 +53,10 @@ class FontAudit extends Audit {
   }
 
   async auditPage(page: Page, url: string) {
+    if (!(await redirectUrlIsInternal(page))) {
+      return;
+    }
+
     this.titleSubHeadings = [
       "Numero di <h> o <p> con font errati",
       "Font errati individuati",

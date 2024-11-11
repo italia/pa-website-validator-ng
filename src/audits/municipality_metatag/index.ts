@@ -8,6 +8,7 @@ import { Audit, GlobalResultsMulti } from "../Audit.js";
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
 import { __dirname } from "../esmHelpers.js";
+import { redirectUrlIsInternal } from "../../utils/utils.js";
 
 const auditId = "municipality-metatag";
 const code = "R.SI.1.1";
@@ -32,6 +33,8 @@ const title =
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const totalJSONVoices = 10;
+
+const FOLDER_NAME = "municipality_metatag";
 
 class MetatagAudit extends Audit {
   public globalResults: GlobalResultsMulti = {
@@ -77,9 +80,13 @@ class MetatagAudit extends Audit {
   }
 
   getFolderName(): string {
-    return "municipality_metatag";
+    return FOLDER_NAME;
   }
   async auditPage(page: Page, url: string) {
+    if (!(await redirectUrlIsInternal(page))) {
+      return;
+    }
+
     this.titleSubHeadings = ["JSON valido", "Metatag non presenti o errati"];
 
     let $: CheerioAPI = cheerio.load("<html><body></body></html>");
@@ -234,18 +241,15 @@ class MetatagAudit extends Audit {
       message = redResult;
     }
 
-    return await ejs.renderFile(
-      __dirname + "/municipality_metatag/template.ejs",
-      {
-        ...(await this.meta()),
-        code: code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
+      ...(await this.meta()),
+      code: code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 
   static getInstance(): MetatagAudit {

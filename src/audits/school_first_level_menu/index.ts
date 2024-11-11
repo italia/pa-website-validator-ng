@@ -14,8 +14,9 @@ import { Audit, GlobalResults } from "../Audit.js";
 import { detectLang, getFirstLevelPages } from "../../utils/school/utils.js";
 import { MenuItem, primaryMenuItems } from "./menuItem.js";
 import * as ejs from "ejs";
-import path from "path";
-import { fileURLToPath } from "url";
+import { __dirname } from "../esmHelpers.js";
+
+const FOLDER_NAME = "school_first_level_menu";
 
 class SchoolFirstLevelMenuAudit extends Audit {
   public globalResults: GlobalResults = {
@@ -63,8 +64,9 @@ class SchoolFirstLevelMenuAudit extends Audit {
   }
 
   getFolderName(): string {
-    return "school_first_level_menu";
+    return FOLDER_NAME;
   }
+
   async auditPage(page: Page, url: string) {
     let score = 0;
 
@@ -220,9 +222,7 @@ class SchoolFirstLevelMenuAudit extends Audit {
       message = this.redResult;
     }
 
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-    return await ejs.renderFile(__dirname + "/template.ejs", {
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
       ...(await this.meta()),
       code: this.code,
       table: this.globalResults,

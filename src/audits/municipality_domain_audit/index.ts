@@ -2,7 +2,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { domains } from "./allowedDomain.js";
-import { urlExists } from "../../utils/utils.js";
+import { redirectUrlIsInternal, urlExists } from "../../utils/utils.js";
 import { errorHandling } from "../../config/commonAuditsParts.js";
 import { Audit, GlobalResultsMulti } from "../Audit.js";
 import { Page } from "puppeteer";
@@ -107,6 +107,10 @@ class DomainAudit extends Audit {
   }
 
   async auditPage(page: Page, url: string) {
+    if (!(await redirectUrlIsInternal(page))) {
+      return;
+    }
+
     this.titleSubHeadings = [
       "Dominio utilizzato",
       'Viene usato il sottodominio "comune." seguito da un dominio istituzionale riservato',

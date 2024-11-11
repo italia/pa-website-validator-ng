@@ -3,7 +3,12 @@
 // @ts-ignore
 import * as cheerio from "cheerio";
 import { CheerioAPI } from "cheerio";
-import { buildUrl, isInternalUrl, urlExists } from "../../utils/utils.js";
+import {
+  buildUrl,
+  isInternalUrl,
+  redirectUrlIsInternal,
+  urlExists,
+} from "../../utils/utils.js";
 import isEmail from "validator/lib/isEmail.js";
 import { Page } from "puppeteer";
 import { Audit, GlobalResults } from "../Audit.js";
@@ -21,6 +26,8 @@ const redResult =
   "Il link non è nel footer o la pagina di destinazione è inesistente.";
 const title =
   "C.SI.2.4 - SEGNALAZIONE DISSERVIZIO - Il sito comunale deve fornire al cittadino la possibilità di segnalare un disservizio, tramite email o servizio dedicato.";
+
+const FOLDER_NAME = "municipality_inefficiency_report_audit";
 
 class InefficiencyAudit extends Audit {
   public globalResults: GlobalResults = {
@@ -51,10 +58,14 @@ class InefficiencyAudit extends Audit {
   }
 
   getFolderName(): string {
-    return "municipality_inefficiency_report_audit";
+    return FOLDER_NAME;
   }
 
   async auditPage(page: Page, url: string) {
+    if (!(await redirectUrlIsInternal(page))) {
+      return;
+    }
+
     this.globalResults.pagesItems.headings = [
       "Testo del link",
       "Pagina di destinazione",
@@ -168,18 +179,15 @@ class InefficiencyAudit extends Audit {
       message = redResult;
     }
 
-    return await ejs.renderFile(
-      __dirname + "/municipality_inefficiency_report_audit/template.ejs",
-      {
-        ...(await this.meta()),
-        code: code,
-        table: this.globalResults,
-        status,
-        statusMessage: message,
-        metrics: null,
-        totalPercentage: null,
-      },
-    );
+    return await ejs.renderFile(__dirname + `/${FOLDER_NAME}/template.ejs`, {
+      ...(await this.meta()),
+      code: code,
+      table: this.globalResults,
+      status,
+      statusMessage: message,
+      metrics: null,
+      totalPercentage: null,
+    });
   }
 
   static getInstance(): InefficiencyAudit {
