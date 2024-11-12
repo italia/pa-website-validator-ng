@@ -69,6 +69,13 @@ const render = async () => {
                 ? "error"
                 : "fail",
         });
+
+        if (!infoScore) {
+          reportJSON.audits[auditIdValue] = {
+            ...(reportJSON.audits[auditIdValue] as object),
+            specificScore: score >= 0.5 ? 1 : error ? -1 : 0,
+          };
+        }
       } else if (error) {
         failedAudits.push({
           ...auditMeta,
