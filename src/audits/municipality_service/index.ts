@@ -5,7 +5,7 @@ import { CheerioAPI } from "cheerio";
 
 import {
   checkBreadcrumb,
-  checkOrder,
+  checkOrderLoose,
   getPageElementDataAttribute,
   missingMenuItems,
   redirectUrlIsInternal,
@@ -120,7 +120,7 @@ class ServiceAudit extends Audit {
     let indexElements = await getServicesFromIndex($, mandatoryIndexVoices);
 
     const mandatoryMenuItems = mandatoryIndexVoices.map(toMenuItem);
-    const orderResult = checkOrder(mandatoryMenuItems, indexElements);
+    const orderResult = checkOrderLoose(mandatoryMenuItems, indexElements);
 
     const indexElementsWithContent: string[] = [];
 

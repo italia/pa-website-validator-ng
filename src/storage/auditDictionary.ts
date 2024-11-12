@@ -614,7 +614,7 @@ export const auditDictionary = {
   },
   "school-menu-structure-match-model": {
     greenResult:
-      "Le voci del menù sono corrett, nell'ordine giusto e inviano a pagine interne al dominio della scuola.",
+      "Le voci del menù sono corrette, nell'ordine giusto e inviano a pagine interne al dominio della scuola.",
     yellowResult:
       "L'ordine delle voci del menu è corretto ma sono presenti fino a 3 voci aggiuntive. Tutte le voci inviano a pagine interne al dominio della scuola.",
     redResult:

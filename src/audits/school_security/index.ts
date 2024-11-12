@@ -37,6 +37,10 @@ class SchoolSecurityAudit extends SecurityAudit {
     } else {
       status = "fail";
       message = this.redResult.replace("[url]", this.url);
+
+      if (this.message !== "") {
+        message += this.message;
+      }
     }
 
     return await ejs.renderFile(__dirname + "/school_security/template.ejs", {

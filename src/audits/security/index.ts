@@ -107,7 +107,7 @@ class SecurityAudit extends Audit {
       cipherSuite = await checkCipherSuite(url);
     } catch {
       item[0].protocol = protocol;
-      this.message = redResult + " Certificato non trovato";
+      this.message = " certificato non trovato";
       return {
         score: 0,
         details: {
