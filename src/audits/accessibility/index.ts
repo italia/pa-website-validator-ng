@@ -2,10 +2,7 @@
 
 import { CheerioAPI } from "cheerio";
 
-import {
-  getAllPageHTML,
-  urlExists,
-} from "../../utils/utils.js";
+import { getAllPageHTML, urlExists } from "../../utils/utils.js";
 import { Page } from "puppeteer";
 
 import { Audit, GlobalResults } from "../Audit.js";
