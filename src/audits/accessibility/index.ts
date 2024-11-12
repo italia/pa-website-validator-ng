@@ -4,7 +4,6 @@ import { CheerioAPI } from "cheerio";
 
 import {
   getAllPageHTML,
-  redirectUrlIsInternal,
   urlExists,
 } from "../../utils/utils.js";
 import { Page } from "puppeteer";
