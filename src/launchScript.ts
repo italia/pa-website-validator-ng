@@ -82,11 +82,11 @@ async function run(
     });
 
     if (
-      config.audits["homepage"].find(
+      config.audits["homepage"]?.find(
         (i: string) => i === "lighthouse" || i === "lighthouse_school",
       )
     ) {
-      const lighthouseId = config.audits["homepage"].find(
+      const lighthouseId = config.audits["homepage"]?.find(
         (i: string) => i === "lighthouse_school",
       )
         ? "lighthouse_school"
