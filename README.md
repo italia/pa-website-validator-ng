@@ -61,6 +61,7 @@ PA Website Validator utilizza le seguenti tecnologie
 ## Requirements
 
 PA Website Validator necessita [Node.js](https://nodejs.org/it/) v18+ (LTS), [npm] e [Google Chrome](https://www.google.com/chrome/).
+L'applicativo necessita un computer con almeno 16GB di RAM per una corretta esecuzione.
 
 ## Plugins
 
@@ -90,13 +91,13 @@ La directory `dist` sarà popolata con l’output del processo di build.
 Utilizzo:
 
 ```console
-node dist --type <type> --destination <folder> --report <report_name> --website <url> --scope <local|online> --view <true|false> --timeout <number> --number-of-service-pages <number> --concurrentPages <number>
+node --max-old-space-size=8192 dist --type <type> --destination <folder> --report <report_name> --website <url> --scope <local|online> --view <true|false> --timeout <number> --number-of-service-pages <number> --concurrentPages <number>
 ```
 
 Esempio:
 
 ```console
-node dist --type school --destination ~/pa-italia-crawler-reports --report myreport --website https://www.ismonnet.edu.it/ --scope online --view false --accuracy all concurrentPages 10
+node --max-old-space-size=8192 dist --type school --destination ~/pa-italia-crawler-reports --report myreport --website https://www.ismonnet.edu.it/ --scope online --view false --accuracy all concurrentPages 10
 ```
 
 ## Installazione globale
@@ -118,13 +119,13 @@ npm cache clean
 Utilizzo:
 
 ```console
-pa-website-validator-ng --type <type> --destination <folder> --report <report_name> --website <url> --scope <local|online> --view <boolean> --timeout <number> --number-of-service-pages <number> --concurrentPages <number>
+pa-website-validator-ng --max-old-space-size=8192 --type <type> --destination <folder> --report <report_name> --website <url> --scope <local|online> --view <boolean> --timeout <number> --number-of-service-pages <number> --concurrentPages <number>
 ```
 
 Esempio:
 
 ```console
-pa-website-validator-ng --type school --destination ~/pa-italia-crawler-reports --report myreport --website https://www.ismonnet.edu.it/ --scope online --view --accuracy all
+pa-website-validator-ng --max-old-space-size=8192 --type school --destination ~/pa-italia-crawler-reports --report myreport --website https://www.ismonnet.edu.it/ --scope online --view --accuracy all
 ```
 
 ## Opzioni comando
