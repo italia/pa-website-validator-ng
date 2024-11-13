@@ -73,6 +73,7 @@ class SchoolServiceAudit extends Audit {
       pages: [],
     },
     errorMessage: "",
+    info: true,
   };
 
   public wrongItems: Record<string, unknown>[] = [];

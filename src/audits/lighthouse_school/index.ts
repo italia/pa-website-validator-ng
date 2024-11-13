@@ -39,6 +39,7 @@ class lighthouseAudit extends Audit {
       pages: [],
     },
     errorMessage: "",
+    info: true,
   };
 
   getFolderName(): string {

@@ -125,9 +125,13 @@ async function run(
       const result = await audit.returnGlobal();
       const meta = await audit.meta();
 
-      await PageManager.setGlobalResults({
-        lighthouse: { ...result, ...meta },
-      });
+      await PageManager.setGlobalResults(
+        lighthouseId === "lighthouse"
+          ? {
+              lighthouse: { ...result, ...meta },
+            }
+          : { lighthouse_school: { ...result, ...meta } },
+      );
     }
 
     await PageManager.addPage({

@@ -166,7 +166,7 @@ class LicenceAudit extends Audit {
   }
 
   async returnGlobal() {
-    return this.globalResults;
+    return { ...this.globalResults, info: this.info };
   }
 
   async getType() {

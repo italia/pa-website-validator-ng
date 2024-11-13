@@ -29,6 +29,7 @@ class SchoolVocabularies extends Audit {
       pages: [],
     },
     errorMessage: "",
+    info: true,
   };
 
   auditId = "school-controlled-vocabularies";
