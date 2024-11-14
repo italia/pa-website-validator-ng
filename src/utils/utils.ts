@@ -13,8 +13,8 @@ import { MenuItem } from "../types/menuItem.js";
 import { errorHandling } from "../config/commonAuditsParts.js";
 import { initializePuppeteer } from "../PuppeteerInstance.js";
 
-const cache = new LRUCache<string, CheerioAPI>({ max: 1000 });
-const redirectUrlCache = new LRUCache<string, string>({ max: 1000 });
+const cache = new LRUCache<string, CheerioAPI>({ max: 50 });
+const redirectUrlCache = new LRUCache<string, string>({ max: 50 });
 const requestTimeout = parseInt(process.env["requestTimeout"] ?? "300000");
 
 const loadPageData = async (
