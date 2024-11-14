@@ -1,5 +1,6 @@
 import * as ejs from "ejs";
-import { mkdir, writeFile } from "fs/promises";
+import { mkdir } from "fs/promises";
+import { writeFileSync } from "fs";
 import open from "open";
 import path, { format } from "path";
 import VERSION from "../version.js";
@@ -226,8 +227,8 @@ const render = async () => {
     ext: ".json",
   });
 
-  await writeFile(htmlPath, reportHtml);
-  await writeFile(jsonPath, JSON.stringify(reportJSON));
+  writeFileSync(htmlPath, reportHtml);
+  writeFileSync(jsonPath, JSON.stringify(reportJSON));
 
   if (view && view === "true") {
     await open(htmlPath);
