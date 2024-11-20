@@ -2,6 +2,7 @@ import { Gatherer } from "../Gatherer.js";
 import { PageData } from "../../types/crawler-types.js";
 import { Page } from "puppeteer";
 import { DataElementError } from "../../utils/DataElementError.js";
+import { getRandomNString } from "../../utils/utils.js";
 
 const requestTimeout = parseInt(process.env["requestTimeout"] ?? "300000");
 
@@ -31,6 +32,8 @@ class pageGatherer extends Gatherer {
         `Non è stato possibile trovare l'attributo ${currentClass.dataElements.toString()}`,
       );
     }
+
+    fetchedUrls = await getRandomNString(fetchedUrls, numberOfPages);
 
     this.gatheredPages = fetchedUrls.map((url: string) => {
       return {
