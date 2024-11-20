@@ -88,7 +88,7 @@ class servicesGatherer extends Gatherer {
       }),
     );
 
-    if (foundElementSecondHref.length) {
+    if (foundElementSecondHref.length && foundElementSecondHref[0] != "") {
       const secondPage: Page | null = await loadPage(foundElementSecondHref[0]);
 
       if (secondPage) {

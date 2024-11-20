@@ -139,7 +139,7 @@ pa-website-validator-ng --max-old-space-size=8192 --type school --destination ~/
 | - -report                  | Nome da assegnare al report                                      | ✅           |                                   |             |
 | - -website                 | Url sito web da analizzare                                       | ✅           |                                   |             |
 | - -scope                   | Scope di esecuzione                                              | ❌           | "local" "online"                  | "online"    |
-| - -view                    | Visualizzazione istantanea report                                | ❌           |                                   |             |
+| - -view                    | Visualizzazione istantanea report                                | ❌           | "true","false"                    | "false"     |
 | - -accuracy                | Definisce la morbosità della scansione                           | ✅           | "min", "suggested", "high", "all" | "suggested" |
 | - -concurrentPages         | Definisce il numero di pagine in parallelo                       | ❌           |                                   | 20          |
 | - -timeout                 | Definisce il timeout per dichiarare una pagina non raggiungibile | ❌           |                                   | 300000      |
@@ -154,7 +154,7 @@ Note:
   - `local` se il tool è lanciato su un sito web in ambiente locale: esegue tutti gli audit che lavorano sulla struttura del sito ispezionato e mostra dei messaggi informativi per alcuni audit che non producono risultati se eseguiti in un ambiente locale.
   - `online` esegue tutti gli audit disponibili.
 
-- `--view` se passato al comando alla fine dell'auditing lancia un'istanza di chrome che mostra automaticamente la reportistica generata.
+- `--view` indica se alla fine dell'auditing deve essere lanciata un'istanza di chrome che mostra automaticamente la reportistica generata.
 - `--accuracy` indica la precisione della scansione, definita come il numero di pagina analizzate:
   - `all` la scansione è effettuata su tutte le pagine disponibili.
 - `--timeout` timeout utilizzato per dichiarare la pagina non raggiungibile
