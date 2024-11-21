@@ -354,7 +354,7 @@ const getRandomThirdLevelPagesUrl = async (
         }
 
         await Promise.race([
-          setTimeout(5000),
+          setTimeout(10000),
           page.waitForNetworkIdle({
             idleTime: 2000,
           }),
@@ -529,7 +529,7 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
         );
 
         await Promise.race([
-          setTimeout(5000),
+          setTimeout(10000),
           page.waitForNetworkIdle({
             idleTime: 2000,
           }),

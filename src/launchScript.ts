@@ -98,7 +98,7 @@ async function run(
         page = await loadPage(website);
         if (page) {
           await Promise.race([
-            setTimeout(5000),
+            setTimeout(10000),
             page.waitForNetworkIdle({
               idleTime: 2000,
             }),

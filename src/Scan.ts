@@ -67,7 +67,7 @@ const scan = async (pageData: PageData) => {
           page = await loadPage(pageData.url);
           if (page) {
             await Promise.race([
-              setTimeout(5000),
+              setTimeout(10000),
               page.waitForNetworkIdle({
                 idleTime: 2000,
               }),
@@ -181,7 +181,7 @@ const scan = async (pageData: PageData) => {
           page = await loadPage(pageData.url);
           if (page) {
             await Promise.race([
-              setTimeout(5000),
+              setTimeout(10000),
               page.waitForNetworkIdle({
                 idleTime: 2000,
               }),

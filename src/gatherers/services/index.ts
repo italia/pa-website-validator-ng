@@ -46,8 +46,6 @@ class servicesGatherer extends Gatherer {
         }),
       ]);
 
-      await page.waitForNetworkIdle();
-
       foundElements = await page.$$(
         `[data-element="${servicesGatherer.dataElement}"]`,
       );

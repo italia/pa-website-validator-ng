@@ -65,7 +65,7 @@ const loadPageData = async (
 
   if (wait) {
     await Promise.race([
-      setTimeout(5000),
+      setTimeout(10000),
       page.waitForNetworkIdle({
         idleTime: 2000,
       }),
@@ -116,7 +116,7 @@ const loadPage = async (url: string): Promise<Page> => {
     await gotoRetry(page, url, 3);
 
     await Promise.race([
-      setTimeout(5000),
+      setTimeout(10000),
       page.waitForNetworkIdle({
         idleTime: 2000,
       }),
