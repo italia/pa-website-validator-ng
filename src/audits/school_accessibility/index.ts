@@ -11,7 +11,7 @@ class SchoolA11yAudit extends A11yAudit {
   mainTitle = "DICHIARAZIONE DI ACCESSIBILITÀ ";
   auditId = "school-legislation-accessibility-declaration-is-present";
   greenResult = "Il link è nel footer e invia alla pagina corretta.";
-  yellowResult = "";
+  yellowResult = "Non è stato trovato il data-element 'accessibility-link'";
   redResult =
     "Il link non è nel footer o non invia alla pagina corretta o la pagina non esiste.";
   nonExecuted =
@@ -40,8 +40,8 @@ class SchoolA11yAudit extends A11yAudit {
     if (this.globalResults.score > 0.5) {
       status = "pass";
       message = this.greenResult;
-    } else if (this.globalResults.score == 0.5) {
-      status = "pass";
+    } else if (this.globalResults.intermediateMessage) {
+      status = "fail";
       message = this.yellowResult;
     } else {
       status = "fail";

@@ -129,20 +129,26 @@ const scan = async (pageData: PageData) => {
             `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} SCAN \x1b[32m ${pageData.type}\x1b[0m  ${pageData.url}: ERROR`,
           );
 
-          await PageManager.addPage({
-            id: "",
-            url: "https://temppagenotavailable/" + gatherer.getPageTitle(),
-            type: gatherer.getPageType(),
-            gathered: true,
-            audited: true,
-            errors: [
-              e instanceof Error || e instanceof DataElementError
-                ? e
-                : String(e),
-            ],
-            temporaryGatherer: true,
-            temporaryAudit: true,
-          });
+          if (
+            gatherer.getPageType() !== "personal-area-login" ||
+            (gatherer.getPageType() === "personal-area-login" &&
+              !(e instanceof DataElementError))
+          ) {
+            await PageManager.addPage({
+              id: "",
+              url: "https://temppagenotavailable/" + gatherer.getPageTitle(),
+              type: gatherer.getPageType(),
+              gathered: true,
+              audited: true,
+              errors: [
+                e instanceof Error || e instanceof DataElementError
+                  ? e
+                  : String(e),
+              ],
+              temporaryGatherer: true,
+              temporaryAudit: true,
+            });
+          }
         }
       }
 

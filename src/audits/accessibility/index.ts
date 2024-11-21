@@ -67,6 +67,10 @@ class A11yAudit extends Audit {
     items[0].link_name = accessibilityDeclarationElement.text().trim() ?? "";
     items[0].link = elementObj?.href ?? url;
 
+    if (!elementObj) {
+      this.globalResults.intermediateMessage = true;
+    }
+
     if (
       elementObj &&
       "href" in elementObj &&

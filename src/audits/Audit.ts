@@ -34,6 +34,7 @@ export interface GlobalResults {
   info?: boolean;
   error?: boolean;
   id?: string;
+  intermediateMessage?: boolean;
 }
 
 export interface GlobalResultsMulti {
@@ -62,6 +63,7 @@ export interface GlobalResultsMulti {
   info?: boolean;
   error?: boolean;
   id?: string;
+  intermediateMessage?: boolean;
 }
 
 abstract class Audit {

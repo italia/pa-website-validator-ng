@@ -103,7 +103,9 @@ const loadPage = async (url: string): Promise<Page> => {
       if (
         ["image", "imageset", "media"].indexOf(request.resourceType()) !== -1 ||
         new URL(request.url()).pathname.endsWith(".pdf") ||
-        request.url().includes("https://ingestion.webanalytics.italia.it")
+        request.url().includes("https://ingestion.webanalytics.italia.it") ||
+        request.url().includes("https://www.gstatic.com/recaptcha") ||
+        request.url().includes("https://www.google.com/recaptcha")
       ) {
         request.abort();
       } else {
