@@ -22,6 +22,8 @@ const greenResult =
   "Il link è nel footer, la pagina di destinazione esiste e la label è nominata correttamente.";
 const yellowResult =
   "Il link è nel footer, la pagina di destinazione esiste ma la label non è nominata correttamente.";
+const dataElementResult =
+  "Non è stato trovato il data-element 'report-inefficiency'";
 const redResult =
   "Il link non è nel footer o la pagina di destinazione è inesistente.";
 const title =
@@ -88,7 +90,12 @@ class InefficiencyAudit extends Audit {
     const reportInefficiencyElement = $("footer").find(
       '[data-element="report-inefficiency"]',
     );
+
     const elementObj = $(reportInefficiencyElement).attr();
+
+    if (!elementObj) {
+      this.globalResults.intermediateMessage = true;
+    }
 
     const label = reportInefficiencyElement.text().trim().toLowerCase() ?? "";
     items[0].link_name = label;
@@ -100,7 +107,7 @@ class InefficiencyAudit extends Audit {
       elementObj.href !== "#" &&
       elementObj.href !== ""
     ) {
-      if (isMailto(elementObj.href)) {
+      if (isMailto(elementObj.href.replace(" ", ""))) {
         items[0].link = elementObj.href;
         items[0].existing_page = "N/A";
       } else {
@@ -174,6 +181,9 @@ class InefficiencyAudit extends Audit {
     } else if (this.score == 0.5) {
       status = "pass";
       message = yellowResult;
+    } else if (this.globalResults.intermediateMessage) {
+      status = "fail";
+      message = dataElementResult;
     } else {
       status = "fail";
       message = redResult;

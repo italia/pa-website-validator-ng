@@ -6,11 +6,9 @@
   <% if(status){ %>
     <div class="result">
       Risultato
-      <% if(status === 'error'){ %>
-        <div class="circle <%= status %>">x</div>
-      <% } else { %>
-        <div class="circle <%= status %>"></div>
-      <% } %>
+      <span aria-labelledby="legend-<%- status %>" class="circle <%= status %>">
+        <%- status === 'error' ? '&times;' : '' %>
+      </span>
     </div>
   <% } %>
 </a>

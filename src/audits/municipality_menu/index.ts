@@ -2,7 +2,7 @@
 
 import { primaryMenuItems } from "./menuItems.js";
 import {
-  checkOrder,
+  checkOrderLoose,
   getRedirectedUrl,
   missingMenuItems,
   redirectUrlIsInternal,
@@ -75,7 +75,7 @@ class MenuAudit extends Audit {
       wrong_order_menu_voices: "",
     };
 
-    const firstLevelPages = await getFirstLevelPages(url, false, page);
+    const firstLevelPages = await getFirstLevelPages(url, true, page);
 
     const foundMenuElements = firstLevelPages.map((page) => {
       return page.linkName;
@@ -98,7 +98,7 @@ class MenuAudit extends Audit {
     );
     result.missing_menu_voices = missingMandatoryElements.join(", ");
 
-    const orderResult = checkOrder(menuItem, foundMenuElements);
+    const orderResult = checkOrderLoose(menuItem, foundMenuElements);
     result.wrong_order_menu_voices =
       orderResult.elementsNotInSequence.join(", ");
 

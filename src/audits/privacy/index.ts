@@ -64,6 +64,10 @@ class PrivacyAudit extends Audit {
     items[0].link_name = privacyPolicyElement.text().trim() ?? "";
     items[0].link = elementObj?.href ?? "";
 
+    if (!elementObj) {
+      this.globalResults.intermediateMessage = true;
+    }
+
     if (
       elementObj &&
       "href" in elementObj &&

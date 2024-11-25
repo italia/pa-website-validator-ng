@@ -9,6 +9,8 @@ const FOLDER_NAME = "school_privacy";
 class SchoolPrivacyAudit extends PrivacyAudit {
   auditId = "school-legislation-privacy-is-present";
   greenResult = "Il link è nel footer e invia a una pagina esistente e sicura.";
+  dataElementResult =
+    "Non è stato trovato il data-element 'privacy-policy-link'";
   yellowResult = "";
   redResult =
     "Il link non è nel footer o non invia a una pagina esistente o sicura.";
@@ -35,6 +37,9 @@ class SchoolPrivacyAudit extends PrivacyAudit {
     if (this.globalResults.score > 0.5) {
       status = "pass";
       message = this.greenResult;
+    } else if (this.globalResults.intermediateMessage) {
+      status = "fail";
+      message = this.dataElementResult;
     } else {
       status = "fail";
       message = this.redResult;

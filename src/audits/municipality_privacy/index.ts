@@ -11,6 +11,8 @@ class MunicipalityPrivacyAudit extends PrivacyAudit {
   greenResult = "Il link è nel footer e invia a una pagina esistente e sicura.";
   redResult =
     "Il link non è nel footer o non invia a una pagina esistente o sicura.";
+  dataElementResult =
+    "Non è stato trovato il data-element 'privacy-policy-link'";
   code = "C.SI.3.3";
   mainTitle = "INFORMATIVA PRIVACY";
   title =
@@ -34,6 +36,9 @@ class MunicipalityPrivacyAudit extends PrivacyAudit {
     if (this.globalResults.score > 0.5) {
       status = "pass";
       message = this.greenResult;
+    } else if (this.globalResults.intermediateMessage) {
+      status = "fail";
+      message = this.dataElementResult;
     } else {
       status = "fail";
       message = this.redResult;

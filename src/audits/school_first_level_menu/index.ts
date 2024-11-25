@@ -4,7 +4,7 @@ import * as cheerio from "cheerio";
 import { CheerioAPI } from "cheerio";
 
 import {
-  checkOrder,
+  checkOrderLoose,
   getPageElementDataAttribute,
   getRedirectedUrl,
   missingMenuItems,
@@ -126,7 +126,7 @@ class SchoolFirstLevelMenuAudit extends Audit {
     );
     result.missing_menu_voices = missingMandatoryElements.join(", ");
 
-    const orderResult = checkOrder(
+    const orderResult = checkOrderLoose(
       mandatoryPrimaryMenuItems,
       foundMenuElements,
     );
