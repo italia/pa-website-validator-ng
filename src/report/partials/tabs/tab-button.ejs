@@ -1,14 +1,17 @@
 <a class="nav-link <%= index === 0 ? 'active' : '' %>" id="id-<%= id %>-btn" data-bs-toggle="tab" href="#id-<%= id %>" role="tab" aria-controls="id-<%= id %>">
   <div class="title">
-    Criterio <%= code %>
+    <%= label %> <%= code %>
     <span><%= mainTitle %></span>
   </div>
-  <div class="result">
-    Risultato
-    <% if(status === 'error'){ %>
-    <div class="circle <%= status %>">x</div>
-    <% } else { %>
-      <div class="circle <%= status %>"></div>
-    <% } %>
-  </div>
+  <% if (status) { %>
+    <div class="result">
+      Risultato
+      <span
+              aria-labelledby="legend-<%- status %>"
+              class="circle <%= status %>"
+              title="<%- status === 'error' ? 'Errore' : status === 'fail' ? 'Fallito' : 'Superato' %>"
+      >
+      </span>
+    </div>
+  <% } %>
 </a>

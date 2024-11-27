@@ -25,6 +25,43 @@
   <% } %>
 
   <style>
+    @charset "UTF-8";
+
+    :root {
+      --fs-72px: 4.5rem;
+      --fs-70px: 4.375rem;
+      --fs-68px: 4.25rem;
+      --fs-66px: 4.125rem;
+      --fs-64px: 4rem;
+      --fs-62px: 3.875rem;
+      --fs-60px: 3.75rem;
+      --fs-58px: 3.625rem;
+      --fs-56px: 3.5rem;
+      --fs-54px: 3.375rem;
+      --fs-52px: 3.25rem;
+      --fs-50px: 3.125rem;
+      --fs-48px: 3rem;
+      --fs-46px: 2.875rem;
+      --fs-44px: 2.75rem;
+      --fs-42px: 2.625rem;
+      --fs-40px: 2.5rem;
+      --fs-38px: 2.375rem;
+      --fs-36px: 2.25rem;
+      --fs-34px: 2.125rem;
+      --fs-32px: 2rem;
+      --fs-30px: 1.875rem;
+      --fs-28px: 1.75rem;
+      --fs-26px: 1.625rem;
+      --fs-24px: 1.5rem;
+      --fs-22px: 1.375rem;
+      --fs-20px: 1.25rem;
+      --fs-18px: 1.125rem;
+      --fs-16px: 1rem;
+      --fs-14px: 0.875rem;
+      --fs-12px: 0.75rem;
+      --fs-10px: 0.625rem;
+      --fs-8px: 0.5rem;
+    }
 
     body{
       font-family: 'Titillium Web', sans-serif;
@@ -112,7 +149,7 @@
 
     .accordion.inner .accordion-item .accordion-header .accordion-button{
       display: flex;
-      font-size: 16px;
+      font-size: var(--fs-16px);
       gap: 16px;
     }
 
@@ -168,9 +205,10 @@
     }
 
     .accordion-body .nav-link .title span {
-      font-size: 10px;
+      font-size: var(--fs-12px);
       color: #000000;
       text-transform: uppercase;
+      line-height: 1.3;
     }
 
     .accordion-body .nav-link .result {
@@ -178,7 +216,7 @@
       flex-flow: column;
       align-items: end;
       gap: 6px;
-      font-size: 12px;
+      font-size: var(--fs-12px);
     }
 
     .legend {
@@ -204,7 +242,7 @@
       }
     }
     .legend b {
-      font-size: 18px;
+      font-size: var(--fs-18px);
     }
     .legend .legend-item {
       display: flex;
@@ -213,7 +251,7 @@
     }
     .legend .legend-item p {
       margin: 0;
-      font-size: 15px;
+      font-size: var(--fs-14px);
       line-height: 1;
     }
 
@@ -222,29 +260,47 @@
       height: 20px;
       border-radius: 50%;
       flex-shrink: 0;
+      display: flex;
+      justify-content: center;
+    }
+    .circle::before {
+      font-size: var(--fs-14px);
+      line-height: 1.42857;
+      font-weight: bold;
     }
     .circle.pass {
       background-color: #5cc98d;
     }
+    .circle.pass::before {
+      content: "✓"; /* check */
+      color: #ffffff;
+    }
     .circle.fail {
       background-color: #b42d43;
     }
-    .circle.error, .circle.undone {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-transform: uppercase;
-      padding-bottom: 4px;
-      font-weight: bold;
-      font-size: 20px;
+    .circle.fail::before {
+      content: "✕"; /* times */
+      color: #ffffff;
     }
     .circle.error {
       color: #b42d43;
-      border: 2px solid #b42d43;
+      outline: 2px solid #b42d43;
+      outline-offset: -2px;
+    }
+    .circle.error::before {
+      content: "✕"; /* times */
+      color: #b42d43;
     }
     .circle.undone {
       color: #545151;
-      border: 2px solid #545151;
+      outline: 2px solid #545151;
+      outline-offset: -2px;
+    }
+    .circle.undone::before {
+      content: "−"; /* minus */
+      color: #545151;
+      font-size: var(--fs-16px);
+      line-height: 1;
     }
 
     ul[role=list] {
@@ -307,7 +363,7 @@
     }
 
     .audit-content .audit-description .h5{
-      font-size: 20px;
+      font-size: var(--fs-20px);
     }
 
     .audit-content p {
@@ -351,7 +407,7 @@
 
     .top-text p {
       margin: 0;
-      font-size: 14px;
+      font-size: var(--fs-14px);
       line-height: 22px;
     }
 
@@ -381,7 +437,7 @@
       stroke-width: 2px;
     }
     .cards-container .card-wrapper .card .card-body .card-title {
-      font-size: 20px;
+      font-size: var(--fs-20px);
       margin: 0;
       color: var(--bs-primary);
       width: 100%;
@@ -395,7 +451,7 @@
       align-items: center;
       justify-content: center;
       color: #ffffff;
-      font-size: 44px;
+      font-size: var(--fs-44px);
       font-weight: bold;
       text-transform: uppercase;
     }
@@ -421,12 +477,12 @@
       font-size: 1.25rem;
     }
     .cards-container .card-wrapper .card .card-body .card-content .result-donut {
-      font-size: 16px;
+      font-size: var(--fs-16px);
       margin-top: 8px;
       text-align: center;
     }
     .cards-container .card-wrapper .card .card-body .card-content .result-donut span {
-      font-size: 18px;
+      font-size: var(--fs-18px);
       font-weight: bold;
       color: #3c825c;
     }
@@ -619,7 +675,7 @@
     }
 
     .metrics-container .metric-wrapper p.result {
-      font-size: 32px;
+      font-size: var(--fs-32px);
       font-weight: 700;
     }
 
@@ -774,17 +830,17 @@
     <b aria-hidden="true">Legenda:</b>
     <ul class="legend" role="list" title="Legenda risultato">
       <li class="legend-item">
-        <div class="circle pass"></div>
+        <div class="circle pass" aria-hidden="true"></div>
         <p id="legend-pass">Il controllo del criterio è superato</p>
       </li>
 
       <li class="legend-item">
-        <div class="circle fail"></div>
+        <div class="circle fail" aria-hidden="true"></div>
         <p id="legend-fail">Il controllo del criterio è fallito</p>
       </li>
 
       <li class="legend-item">
-        <div class="circle error" aria-hidden="true">&times;</div>
+        <div class="circle error" aria-hidden="true"></div>
         <p id="legend-error">Il controllo del criterio ha generato un errore</p>
       </li>
     </ul>
@@ -815,7 +871,7 @@
           </button>
         </h2>
         <div id="accordion-collapse-failed-audits" class="accordion-collapse collapse <%= !pagesInError.length ? 'show' : ''%>" role="region" aria-labelledby="accordion-header-failed-audits">
-          <%- include('partials/accordion-body', { items: audits.failed }); %>
+          <%- include('partials/accordion-body', { items: audits.failed, label: 'Criterio' }); %>
         </div>
       </div>
     <% } %>
@@ -831,7 +887,7 @@
           </button>
         </h2>
         <div id="accordion-collapse-passed-audits" class="accordion-collapse collapse <%= !pagesInError.length && !audits.failed.length ? 'show' : ''%>" role="region" aria-labelledby="accordion-header-passed-audits">
-          <%- include('partials/accordion-body', { items: audits.passed }); %>
+          <%- include('partials/accordion-body', { items: audits.passed, label: 'Criterio' }); %>
         </div>
       </div>
     <%  } %>
@@ -844,7 +900,7 @@
           </button>
         </h2>
         <div id="accordion-collapse-info-audits" class="accordion-collapse collapse" role="region" aria-labelledby="accordion-header-info-audits">
-          <%- include('partials/accordion-body-info', { items: audits.info }); %>
+          <%- include('partials/accordion-body', { items: audits.info, label: 'Raccomandazione' }); %>
         </div>
       </div>
     <%  } %>
@@ -861,7 +917,7 @@
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="iframeModalLabel">Report di Lighthouse (non oggetto di verifica della misura)</h5>
+              <h2 class="modal-title h5" id="iframeModalLabel">Report di Lighthouse (non oggetto di verifica della misura)</h2>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" data-focus-mouse="false"></button>
             </div>
             <div class="modal-body">

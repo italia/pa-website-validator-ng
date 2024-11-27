@@ -3,14 +3,14 @@
     <div class="col-3">
       <div class="nav nav-tabs nav-tabs-vertical" role="tablist" aria-orientation="vertical">
         <% items.forEach(({ id, code, mainTitle, status }, index) => { %>
-        <%- include('tabs/tab-button', { id, code, mainTitle, status, index }); %>
+          <%- include('tabs/tab-button', { id, code, mainTitle, status, index, label }); %>
         <% }) %>
       </div>
     </div>
     <div class="col-9" style="padding-right: 0;">
       <div class="tab-content">
         <% items.forEach((audit, index) => { %>
-        <%- include('tabs/tab-pane', { audit, index }); %>
+          <%- include('tabs/tab-pane', { audit, index }); %>
         <% }) %>
       </div>
     </div>
