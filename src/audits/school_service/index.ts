@@ -222,13 +222,26 @@ class SchoolServiceAudit extends Audit {
     }
 
     item.missing_elements = missingMandatoryItems.join(", ");
-    item.wrong_order_elements = orderResult.elementsNotInSequence.join(", ");
+    if (!orderResult.inOrder) {
+      if (
+        orderResult.singleMove.length > 0 &&
+        orderResult.singleMove.length <= 2
+      ) {
+        item.wrong_order_elements = orderResult.singleMove.join(", ");
+      } else {
+        item.wrong_order_elements = "Più di una voce non in ordine";
+      }
+    }
 
     const missingVoicesAmount = missingMandatoryItems.length;
-    const voicesNotInCorrectOrderAmount =
-      orderResult.numberOfElementsNotInSequence;
+    const moreThanAVoice =
+      !orderResult.inOrder && orderResult.singleMove.length === 0;
+    const onlyOneVoice =
+      !orderResult.inOrder &&
+      orderResult.singleMove.length > 0 &&
+      orderResult.singleMove.length <= 2;
 
-    if (missingVoicesAmount > 2 || voicesNotInCorrectOrderAmount > 1) {
+    if (missingVoicesAmount > 2 || moreThanAVoice) {
       if (this.score > 0) {
         this.score = 0;
       }
@@ -236,7 +249,7 @@ class SchoolServiceAudit extends Audit {
       this.wrongItems.push(item);
     } else if (
       (missingVoicesAmount > 0 && missingVoicesAmount <= 2) ||
-      voicesNotInCorrectOrderAmount === 1
+      onlyOneVoice
     ) {
       if (this.score > 0.5) {
         this.score = 0.5;

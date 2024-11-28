@@ -99,8 +99,16 @@ class MenuAudit extends Audit {
     result.missing_menu_voices = missingMandatoryElements.join(", ");
 
     const orderResult = checkOrderLoose(menuItem, foundMenuElements);
-    result.wrong_order_menu_voices =
-      orderResult.elementsNotInSequence.join(", ");
+    if (!orderResult.inOrder) {
+      if (
+        orderResult.singleMove.length > 0 &&
+        orderResult.singleMove.length <= 2
+      ) {
+        result.wrong_order_menu_voices = orderResult.singleMove.join(", ");
+      } else {
+        result.wrong_order_menu_voices = "Più di una voce non in ordine";
+      }
+    }
 
     const containsMandatoryElementsResult =
       missingMandatoryElements.length === 0;
@@ -108,14 +116,14 @@ class MenuAudit extends Audit {
     if (
       foundMenuElements.length === 4 &&
       containsMandatoryElementsResult &&
-      orderResult.numberOfElementsNotInSequence === 0
+      orderResult.inOrder
     ) {
       this.score = 1;
     } else if (
       foundMenuElements.length > 4 &&
       foundMenuElements.length < 8 &&
       containsMandatoryElementsResult &&
-      orderResult.numberOfElementsNotInSequence === 0
+      orderResult.inOrder
     ) {
       this.score = 0.5;
     }
