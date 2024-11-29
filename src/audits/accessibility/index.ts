@@ -92,6 +92,8 @@ class A11yAudit extends Audit {
         };
       }
 
+      items[0].link = checkUrl.inspectedUrl;
+
       items[0].existing_page = "Sì";
       items[0].page_contains_correct_url = "No";
       items[0].wcag = "No";
