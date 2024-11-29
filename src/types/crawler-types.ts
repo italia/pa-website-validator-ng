@@ -81,8 +81,8 @@ export interface Cookie {
 }
 
 export interface OrderResult {
-  numberOfElementsNotInSequence: number;
-  elementsNotInSequence: string[];
+  inOrder: boolean;
+  singleMove: string[];
 }
 
 export interface VocabularyResult {

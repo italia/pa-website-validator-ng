@@ -130,8 +130,17 @@ class SchoolFirstLevelMenuAudit extends Audit {
       mandatoryPrimaryMenuItems,
       foundMenuElements,
     );
-    result.wrong_order_menu_voices =
-      orderResult.elementsNotInSequence.join(", ");
+
+    if (!orderResult.inOrder) {
+      if (
+        orderResult.singleMove.length > 0 &&
+        orderResult.singleMove.length <= 2
+      ) {
+        result.wrong_order_menu_voices = orderResult.singleMove.join(", ");
+      } else {
+        result.wrong_order_menu_voices = "Più di una voce non in ordine";
+      }
+    }
 
     const containsMandatoryElementsResult =
       missingMandatoryElements.length === 0;

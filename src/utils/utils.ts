@@ -294,6 +294,50 @@ const toMenuItem = (str: string): MenuItem => ({
   regExp: new RegExp(`^${str}$`),
 });
 
+const arraysAreEqual = (arr1: MenuItem[], arr2: string[]) => {
+  if (arr1.length !== arr2.length) {
+    return false;
+  }
+  for (let i = 0; i < arr1.length; i++) {
+    if (!arr1[i].regExp.test(arr2[i])) {
+      return false;
+    }
+  }
+  return true;
+};
+
+const checkOrder = (mandatoryElements: MenuItem[], foundElements: string[]) => {
+  const singleMove: string[] = [];
+  if (arraysAreEqual(mandatoryElements, foundElements)) {
+    return {
+      inOrder: true,
+      singleMove,
+    };
+  }
+
+  for (const value of mandatoryElements.values()) {
+    const tmpMandatoryElements = mandatoryElements.filter(
+      (item) => item !== value,
+    );
+
+    const tmpFoundElements = foundElements.filter(
+      (item) => !value.regExp.test(item),
+    );
+
+    if (arraysAreEqual(tmpMandatoryElements, tmpFoundElements)) {
+      const valueFound = foundElements.filter((item) =>
+        value.regExp.test(item),
+      )[0];
+      singleMove.push(valueFound);
+    }
+  }
+
+  return {
+    inOrder: false,
+    singleMove,
+  };
+};
+
 const checkOrderLoose = (
   mandatoryElements: MenuItem[],
   foundElements: string[],
@@ -305,84 +349,7 @@ const checkOrderLoose = (
     newMandatoryElements.some((f) => f.regExp.test(e)),
   );
 
-  const elementsNotInSequence: string[] = [];
-
-  function checkOrderRecursive(correctArray: MenuItem[], checkArray: string[]) {
-    for (let i = 0; i < correctArray.length; i++) {
-      if (!correctArray[i].regExp.test(checkArray[i])) {
-        elementsNotInSequence.push(checkArray[i]);
-
-        checkOrderRecursive(
-          correctArray.filter((el) => el.name !== checkArray[i]),
-          checkArray.filter((el) => el !== checkArray[i]),
-        );
-        return;
-      }
-    }
-  }
-
-  checkOrderRecursive(newMandatoryElements, newFoundElements);
-
-  return {
-    numberOfElementsNotInSequence: elementsNotInSequence.length,
-    elementsNotInSequence: elementsNotInSequence,
-  };
-};
-
-const checkOrder = (
-  mandatoryElements: MenuItem[],
-  foundElements: string[],
-): OrderType => {
-  const newMandatoryElements = mandatoryElements.filter((e) =>
-    foundElements.some((f) => e.regExp.test(f)),
-  );
-  const newFoundElements = foundElements.filter((e) =>
-    newMandatoryElements.some((f) => f.regExp.test(e)),
-  );
-  let numberOfElementsNotInSequence = 0;
-  const elementsNotInSequence = [];
-
-  //The first element is always in the right order
-  for (let i = 1; i < newFoundElements.length; i++) {
-    const indexInMandatory = newMandatoryElements.findIndex((e) =>
-      e.regExp.test(newFoundElements[i]),
-    );
-    let isInSequence = true;
-
-    if (indexInMandatory !== newMandatoryElements.length - 1) {
-      if (i === newFoundElements.length - 1) {
-        isInSequence = false;
-      } else if (
-        !newMandatoryElements[indexInMandatory + 1].regExp.test(
-          newFoundElements[i + 1],
-        )
-      ) {
-        isInSequence = false;
-      }
-    }
-
-    if (indexInMandatory !== 0) {
-      if (i === 0) {
-        isInSequence = false;
-      } else if (
-        !newMandatoryElements[indexInMandatory - 1].regExp.test(
-          newFoundElements[i - 1],
-        )
-      ) {
-        isInSequence = false;
-      }
-    }
-
-    if (!isInSequence) {
-      numberOfElementsNotInSequence++;
-      elementsNotInSequence.push(newFoundElements[i]);
-    }
-  }
-
-  return {
-    numberOfElementsNotInSequence: numberOfElementsNotInSequence,
-    elementsNotInSequence: elementsNotInSequence,
-  };
+  return checkOrder(newMandatoryElements, newFoundElements);
 };
 
 const missingMenuItems = (
