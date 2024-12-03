@@ -39,7 +39,7 @@ class SchoolSecurityAudit extends SecurityAudit {
       message = this.redResult.replace("[url]", this.url);
 
       if (this.message !== "") {
-        message += this.message;
+        message = this.message;
       }
     }
 

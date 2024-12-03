@@ -83,7 +83,10 @@ const loadPageData = async (
   return c;
 };
 
-const loadPage = async (url: string): Promise<Page> => {
+const loadPage = async (
+  url: string,
+  retryCount = errorHandling.loadPageDataRetryTentative,
+): Promise<Page> => {
   try {
     const browser = await initializePuppeteer();
     const page = await browser.newPage();
@@ -125,8 +128,18 @@ const loadPage = async (url: string): Promise<Page> => {
     return page;
   } catch (ex) {
     console.error(`ERROR LOADPAGE FUNCTION ${url}: ${ex}`);
-
     if (ex instanceof Error) {
+      if (
+        errorHandling.loadPageDataRetryErrorMessages.filter((searchString) =>
+          ex.message.includes(searchString),
+        ).length > 0 &&
+        retryCount > 0
+      ) {
+        console.log(
+          `${url} loadPageData retry tentative: ${errorHandling.gotoRetryTentative - retryCount}`,
+        );
+        return await loadPage(url, retryCount - 1);
+      }
       throw new Error(ex.message);
     } else {
       throw new Error(String(ex));

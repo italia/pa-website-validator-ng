@@ -119,7 +119,6 @@ class SecurityAudit extends Audit {
     }
 
     item[0].protocol = protocol;
-
     if (certificate.valid_from && certificate.valid_to) {
       const validFrom = new Date((certificate.valid_from as string).toString());
       const validTo = new Date((certificate.valid_to as string).toString());
@@ -127,13 +126,13 @@ class SecurityAudit extends Audit {
         "Dal " +
         validFrom.getDate() +
         "/" +
-        validFrom.getMonth() +
+        (validFrom.getMonth() + 1) +
         "/" +
         validFrom.getFullYear() +
         " al " +
         validTo.getDate() +
         "/" +
-        validTo.getMonth() +
+        (validTo.getMonth() + 1) +
         "/" +
         validTo.getFullYear();
     }

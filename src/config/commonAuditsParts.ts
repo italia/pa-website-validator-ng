@@ -133,6 +133,8 @@ export const errorHandling = {
   popupMessage:
     "Si sono verificati degli errori. Controlla la tabella sottostante per maggiori dettagli.",
   gotoRetryTentative: 3,
+  loadPageDataRetryTentative: 3,
+  loadPageDataRetryErrorMessages: ["Protocol error (Target.createTarget)"],
 };
 
 export const notExecutedErrorMessage =
