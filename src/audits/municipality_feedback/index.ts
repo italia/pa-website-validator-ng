@@ -86,6 +86,11 @@ class FeedbackAudit extends Audit {
       return;
     }
 
+    await page.setViewport({
+      width: 3840,
+      height: 2160,
+    });
+
     this.titleSubHeadings = ["Elementi errati o non trovati"];
 
     const item = {
@@ -129,6 +134,11 @@ class FeedbackAudit extends Audit {
         errors_found: errorMessage,
       });
     }
+
+    await page.setViewport({
+      width: 800,
+      height: 600,
+    });
 
     return {
       score: this.score > 0 ? 1 : 0,
