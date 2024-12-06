@@ -55,7 +55,7 @@
     "http-server": "^14.1.1",
     "inquirer": "^10.1.8",
     "jsonschema": "^1.4.1",
-    "lighthouse": "^12.2.0",
+    "lighthouse": "^12.2.2",
     "lru-cache": "^11.0.1",
     "puppeteer": "^23.5.0",
     "validator": "^13.12.0",
