@@ -6,6 +6,7 @@ import { Page } from "puppeteer";
 import { Audit, GlobalResults } from "../Audit.js";
 import { allowedCiphers } from "./allowedCiphers.js";
 import https from "https";
+import tls from "tls";
 import { TLSSocket } from "tls";
 import { Cipher, CipherInfo } from "../../types/crawler-types.js";
 import { redirectUrlIsInternal } from "../../utils/utils.js";
@@ -321,16 +322,43 @@ async function checkCipherSuite(
   return returnObj;
 }
 
-async function getCipherVersion(hostname: string): Promise<string> {
-  return new Promise(function (resolve) {
-    https
-      .request(hostname, function (res) {
-        resolve((res.socket as TLSSocket).getCipher().version);
-      })
-      .on("error", function () {
-        resolve("");
-      })
-      .end();
+async function getCipherVersion(
+  inputUrl: string,
+  timeout = 10000,
+): Promise<string> {
+  const parsedUrl = new URL(inputUrl);
+  const host = parsedUrl.hostname;
+  const port = parsedUrl.port ? parseInt(parsedUrl.port) : 443;
+
+  const options = {
+    host: host,
+    port: port,
+    minVersion: "TLSv1.1",
+    maxVersion: "TLSv1.3",
+    servername: host,
+  };
+
+  return new Promise((resolve) => {
+    const socket = tls.connect(options as any, () => {
+      const tlsVersion = socket.getProtocol();
+      socket.destroy();
+      resolve(tlsVersion as string);
+    });
+
+    socket.on("error", (error: Error) => {
+      console.log(
+        `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} ERROR reading TLS version on \x1b[32m${inputUrl}\x1b[0m: ${error.message}`,
+      );
+      resolve("");
+    });
+
+    socket.setTimeout(timeout, () => {
+      console.log(
+        `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} ERROR reading TLS version on \x1b[32m${inputUrl}\x1b[0m: connection timed out after ${timeout} ms`,
+      );
+      socket.destroy();
+      resolve("");
+    });
   });
 }
 

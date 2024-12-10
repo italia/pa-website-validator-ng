@@ -176,7 +176,7 @@ abstract class Gatherer {
       const href = await element.getProperty(property);
       if (href) {
         const hrefValue = await href.jsonValue();
-        urls.push(String(hrefValue));
+        if (hrefValue) urls.push(String(hrefValue));
       }
     } else {
       console.log(
