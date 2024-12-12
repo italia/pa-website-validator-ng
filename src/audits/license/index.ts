@@ -2,7 +2,7 @@
 
 import { CheerioAPI } from "cheerio";
 
-import { initializePuppeteer } from "./../../PuppeteerInstance.js";
+import { initializePuppeteer, userAgent } from "./../../PuppeteerInstance.js";
 import {
   buildUrl,
   isInternalUrl,
@@ -101,6 +101,7 @@ class LicenceAudit extends Audit {
 
       const browser = await initializePuppeteer();
       const legalNotesPage = await browser.newPage();
+      await legalNotesPage.setUserAgent(userAgent);
 
       legalNotesPage.on("dialog", async (dialog: Dialog) => {
         console.log(

@@ -17,8 +17,15 @@
                         <% if(element == 'link' && item[element] && item[element].includes('https://temppagenotavailable/')) { %>
                             Pagina non trovata (<%= item[element].replace('https://temppagenotavailable/', '') %>)
                         <% } else { %>
-                        <% if(element == 'link' && item[element] && item[element] !== '#' && !!(new URL(item[element]))) { %>
-                            <a target="_blank" href="<%=item[element]%>"><%= new URL(item[element]).pathname === '/' ? new URL(item[element]) : new URL(item[element]).pathname %></a>
+                        <% if(element == 'link' && item[element] && item[element] !== '#') { %>
+                            <% try { %>
+                                <% const url = new URL(item[element]); %>
+                                <a target="_blank" href="<%= url %>">
+                                    <%= url.pathname === '/' ? url : url.pathname %>
+                                </a>
+                            <% } catch (error) { %>
+                                <%= item[element] %> <!-- Fallback for invalid URLs -->
+                            <% } %>
                         <% }else{ %>
                         <%=item[element]%>
                         <%} %>

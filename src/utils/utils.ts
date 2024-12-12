@@ -11,7 +11,7 @@ import axios from "axios";
 import { LRUCache } from "lru-cache";
 import { MenuItem } from "../types/menuItem.js";
 import { errorHandling } from "../config/commonAuditsParts.js";
-import { initializePuppeteer } from "../PuppeteerInstance.js";
+import { initializePuppeteer, userAgent } from "../PuppeteerInstance.js";
 
 const cache = new LRUCache<string, CheerioAPI>({ max: 50 });
 const redirectUrlCache = new LRUCache<string, string>({ max: 50 });
@@ -29,6 +29,7 @@ const loadPageData = async (
 
   const browser = await initializePuppeteer();
   const page = await browser.newPage();
+  await page.setUserAgent(userAgent);
 
   page.on("dialog", async (dialog: Dialog) => {
     console.log(
@@ -91,6 +92,7 @@ const loadPage = async (
     const browser = await initializePuppeteer();
     const page = await browser.newPage();
 
+    await page.setUserAgent(userAgent);
     page.on("dialog", async (dialog: Dialog) => {
       console.log(
         `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} Navigation to ${url} interrupted by dialog with message : "${dialog.message()}"`,
@@ -514,6 +516,7 @@ const getRedirectedUrl = async (url: string): Promise<string> => {
   try {
     const browser = await initializePuppeteer();
     const page = await browser.newPage();
+    await page.setUserAgent(userAgent);
 
     page.on("dialog", async (dialog: Dialog) => {
       console.log(

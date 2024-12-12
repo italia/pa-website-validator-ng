@@ -104,14 +104,22 @@ class servicesGatherer extends Gatherer {
         );
 
         pages = foundElementSecondLevelHref;
-        const currentCountPages = foundElementSecondLevelHref.length;
-        maxCountPages = currentCountPages;
+        maxCountPages = pages.length;
 
-        process.env["numberOfServicesFound"] = String(currentCountPages);
+        process.env["numberOfServicesFound"] = String(maxCountPages);
 
         await secondPage.close();
       }
     }
+
+    if (pages.includes("undefined")) {
+      console.log(
+        `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} GATHERING \x1b[32m ${this.getPageType()}\x1b[0m  on ${url} - INFO : found empty href for data-element "service-link"`,
+      );
+    }
+    pages = pages.filter((href) => href !== "undefined");
+    maxCountPages = pages.length;
+    process.env["numberOfServicesFound"] = String(maxCountPages);
 
     if (!maxCountPages || (maxCountPages == 0 && click)) {
       throw new DataElementError(
