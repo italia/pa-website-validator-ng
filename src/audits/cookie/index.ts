@@ -226,10 +226,14 @@ async function checkCookieDomain(
     };
 
     const pageUrl = new URL(url).hostname.replaceAll("www.", "");
+    const siteDomain = new URL(
+      process.env.website as string,
+    ).hostname.replaceAll("www.", "");
 
     if (
       pageUrl === cookie.domain.replaceAll("www.", "") ||
-      cookie.domain.endsWith("." + pageUrl)
+      cookie.domain.endsWith("." + pageUrl) ||
+      cookie.domain.endsWith("." + siteDomain)
     ) {
       cookieValues.is_correct = true;
     }

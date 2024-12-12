@@ -4,6 +4,8 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 let browser: Browser | null | void = null;
+const userAgent =
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36";
 
 async function initializePuppeteer() {
   if (!browser) {
@@ -48,4 +50,4 @@ async function closeBrowsers() {
   }
 }
 
-export { getBrowser, initializePuppeteer, closeBrowsers };
+export { getBrowser, initializePuppeteer, closeBrowsers, userAgent };

@@ -179,6 +179,16 @@ Note:
 [verifica-comuni]: https://docs.italia.it/italia/designers-italia/app-valutazione-modelli-docs/it/versione-attuale/requisiti-e-modalita-verifica-comuni.html
 [codici-http]: https://it.wikipedia.org/wiki/Codici_di_stato_HTTP
 
+### Configurazione dello User Agent
+
+Per garantire che l'applicativo venga rilevato come un browser standard, lo User Agent di Puppeteer viene impostato con la seguente stringa:
+
+```
+Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
+```
+
+Questo è utile per evitare blocchi da parte di alcuni siti web e per simulare un comportamento di navigazione tipico.
+
 ## Test e Validazione
 
 Questo applicativo utilizza [Jest](https://jestjs.io/) come framework di testing per garantire che le funzionalità siano correttamente implementate e che ogni aggiornamento del codice non introduca regressioni.
