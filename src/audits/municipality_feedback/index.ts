@@ -5,12 +5,13 @@
 
 import { checkFeedbackComponent } from "../../utils/municipality/utils.js";
 import { errorHandling } from "../../config/commonAuditsParts.js";
+import { setTimeout } from "timers/promises";
 
 import { Page } from "puppeteer";
 import { Audit, GlobalResultsMulti } from "../Audit.js";
 import * as ejs from "ejs";
 import { __dirname } from "../esmHelpers.js";
-import { redirectUrlIsInternal } from "../../utils/utils.js";
+import { redirectUrlIsInternal, scrollToBottom } from "../../utils/utils.js";
 
 const auditId = "municipality-feedback-element";
 const code = "C.SI.2.5";
@@ -90,6 +91,15 @@ class FeedbackAudit extends Audit {
       width: 3840,
       height: 2160,
     });
+
+    await scrollToBottom(page);
+
+    await Promise.race([
+      setTimeout(10000),
+      page.waitForNetworkIdle({
+        idleTime: 2000,
+      }),
+    ]);
 
     this.titleSubHeadings = ["Elementi errati o non trovati"];
 

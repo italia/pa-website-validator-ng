@@ -588,6 +588,26 @@ const redirectUrlIsInternal = async (page: Page) => {
   return redirectedHost.includes(host);
 };
 
+const scrollToBottom = async (page: Page) => {
+  await page.evaluate(async () => {
+    await new Promise((resolve) => {
+      const distance = 100;
+      const delay = 50;
+      let totalHeight = 0;
+      const timer = setInterval(() => {
+        const scrollHeight = document.body.scrollHeight;
+        window.scrollBy(0, distance);
+        totalHeight += distance;
+
+        if (totalHeight >= scrollHeight) {
+          clearInterval(timer);
+          resolve("");
+        }
+      }, delay);
+    });
+  });
+};
+
 export {
   toMenuItem,
   checkOrder,
@@ -610,4 +630,5 @@ export {
   requestTimeout,
   getRedirectedUrl,
   redirectUrlIsInternal,
+  scrollToBottom,
 };

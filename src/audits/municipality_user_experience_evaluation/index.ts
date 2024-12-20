@@ -6,7 +6,8 @@ import { Audit, GlobalResultsMulti } from "../Audit.js";
 import { Page } from "puppeteer";
 import * as ejs from "ejs";
 import { __dirname } from "../esmHelpers.js";
-import { redirectUrlIsInternal } from "../../utils/utils.js";
+import { redirectUrlIsInternal, scrollToBottom } from "../../utils/utils.js";
+import { setTimeout } from "timers/promises";
 
 const auditId = "municipality-user-experience-evaluation";
 const code = "C.SI.2.6";
@@ -82,6 +83,20 @@ class UserExperienceEvaluationAudit extends Audit {
       return;
     }
 
+    await page.setViewport({
+      width: 3840,
+      height: 2160,
+    });
+
+    await scrollToBottom(page);
+
+    await Promise.race([
+      setTimeout(10000),
+      page.waitForNetworkIdle({
+        idleTime: 2000,
+      }),
+    ]);
+
     this.titleSubHeadings = ["Elementi errati o non trovati"];
 
     const item = {
@@ -125,6 +140,11 @@ class UserExperienceEvaluationAudit extends Audit {
         errors_found: errorMessage,
       });
     }
+
+    await page.setViewport({
+      width: 800,
+      height: 600,
+    });
 
     return {
       score: this.score > 0 ? 1 : 0,
