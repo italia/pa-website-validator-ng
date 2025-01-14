@@ -29,6 +29,7 @@ class CookieAudit extends Audit {
   public correctItems: Record<string, unknown>[] = [];
   public score = 1;
   private titleSubHeadings: string[] = [];
+  private optionalPageTypes = ["event", "location"];
 
   code = "";
   mainTitle = "";
@@ -50,7 +51,7 @@ class CookieAudit extends Audit {
     pageType: string,
     inError = true,
   ) {
-    if (pageType !== "event") {
+    if (!this.optionalPageTypes.includes(pageType)) {
       if (inError) {
         this.showError = true;
       }
