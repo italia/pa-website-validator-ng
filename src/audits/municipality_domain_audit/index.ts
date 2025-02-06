@@ -135,7 +135,8 @@ class DomainAudit extends Audit {
 
     const pageWithoutWww = new URL(url);
     pageWithoutWww.hostname = pageWithoutWww.hostname.replace(/^www\./i, "");
-    const wwwAccess = (await urlExists(url, pageWithoutWww.href)).result;
+    const wwwAccess = (await urlExists(url, pageWithoutWww.href, false, [404]))
+      .result;
 
     item.www_access = wwwAccess ? "Sì" : "No";
 

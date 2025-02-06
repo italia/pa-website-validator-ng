@@ -379,6 +379,7 @@ const urlExists = async (
   url: string,
   href: string,
   checkHttps = false,
+  ignoreErrorCodes: number[] = [],
 ): Promise<{
   result: boolean;
   exception?: boolean;
@@ -407,16 +408,31 @@ const urlExists = async (
         headers: { Accept: "text/html,application/xhtml+xml" },
       });
       statusCode = response.status;
-    } catch {
-      return {
-        result: false,
-        exception: true,
-        reason: " Hostname non valido.",
-        inspectedUrl: inspectUrl,
-      };
+    } catch (e: any) {
+      if (
+        e.response &&
+        e.response.status &&
+        ignoreErrorCodes.includes(e.response.status)
+      ) {
+        statusCode = e.response.status;
+        console.log(
+          `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} ignored status code ${statusCode} on url ${url}`,
+        );
+      } else {
+        return {
+          result: false,
+          exception: true,
+          reason: " Hostname non valido.",
+          inspectedUrl: inspectUrl,
+        };
+      }
     }
 
-    if (statusCode === undefined || statusCode < 200 || statusCode >= 400) {
+    if (
+      statusCode === undefined ||
+      statusCode < 200 ||
+      (statusCode >= 400 && !ignoreErrorCodes.includes(statusCode))
+    ) {
       return {
         result: false,
         reason: " Pagina non trovata.",
