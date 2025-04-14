@@ -2937,6 +2937,8 @@ export const domains = [
   "seren.belluno.it",
   "seren-del-grappa.belluno.it",
   "serendelgrappa.belluno.it",
+  "setteville.belluno.it",
+  "setteville.bl.it",
   "sospirolo.bl.it",
   "sospirolo.belluno.it",
   "soverzene.bl.it",
