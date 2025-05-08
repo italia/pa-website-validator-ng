@@ -22111,6 +22111,8 @@ export const domains = [
   "pero.milano.it",
   "peschiera.mi.it",
   "peschiera.milano.it",
+  "peschieraborromeo.mi.it",
+  "peschieraborromeo.milano.it",
   "pessano-con-bornago.mi.it",
   "pessano-con-bornago.milano.it",
   "pessanoconbornago.mi.it",
