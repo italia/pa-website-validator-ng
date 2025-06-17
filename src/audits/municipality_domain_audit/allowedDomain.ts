@@ -24108,6 +24108,7 @@ export const domains = [
   "villagrande.ogliastra.it",
   "villagrandestrisaili.og.it",
   "villagrandestrisaili.ogliastra.it",
+  "lamaddalena.ot.it",
   "aglientu.sassari.it",
   "aglientu.ss.it",
   "alà.sassari.it",
