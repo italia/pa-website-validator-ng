@@ -17,8 +17,14 @@ import {
   getRedirectedUrl,
   isInternalUrl,
   loadPageData,
+  safePageEvaluate,
+  safePageContent,
+  safePageEvaluateWithArgs,
 } from "../utils.js";
-import { feedbackComponentStructure } from "../../storage/municipality/feedbackComponentStructure.js";
+import {
+  feedbackComponentStructure,
+  feedbackComponentStructureType,
+} from "../../storage/municipality/feedbackComponentStructure.js";
 import axios from "axios";
 import { DataElementError } from "../DataElementError.js";
 import {
@@ -49,7 +55,7 @@ const getFirstLevelPages = async (
   custom: boolean,
   page: Page,
 ): Promise<PageLink[]> => {
-  const data = await page.content();
+  const data = await safePageContent(page);
   const $: CheerioAPI = await cheerio.load(data);
   let pagesUrls: PageLink[] = [];
 
@@ -109,7 +115,7 @@ const getRandomSecondLevelPagesUrl = async (
   numberOfPages = 1,
   page: Page,
 ): Promise<string[]> => {
-  const data = await page.content();
+  const data = await safePageContent(page);
   const $: CheerioAPI = await cheerio.load(data);
   let found = 0;
 
@@ -338,7 +344,7 @@ const getRandomThirdLevelPagesUrl = async (
     let clickButton = true;
     while (clickButton) {
       try {
-        clickButton = await page.evaluate(() => {
+        clickButton = await safePageEvaluate(page, () => {
           const button = document.querySelector(
             '[data-element="load-other-cards"]',
           ) as HTMLElement;
@@ -371,7 +377,7 @@ const getRandomThirdLevelPagesUrl = async (
         clickButton = false;
       }
     }
-    const data = await page.content();
+    const data = await safePageContent(page);
     $ = cheerio.load(data);
   } catch (ex) {
     console.error(`ERROR ${pageUrl}: ${ex}`);
@@ -457,56 +463,63 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
   };
 
   try {
-    returnValues = await page.evaluate(async (feedbackComponentStructure) => {
-      let score = 1;
-      const errors: string[] = [];
+    returnValues = await safePageEvaluateWithArgs<
+      { score: number; errors: string[] },
+      [feedbackComponentStructureType]
+    >(
+      page,
+      async (feedbackComponentStructure) => {
+        let score = 1;
+        const errors: string[] = [];
 
-      const feedbackComponent = document.querySelector(
-        `[data-element="${feedbackComponentStructure.component.dataElement}"]`,
-      );
-      if (!feedbackComponent) {
-        errors.push(feedbackComponentStructure.component.missingError);
-        score = 0;
+        const feedbackComponent = document.querySelector(
+          `[data-element="${feedbackComponentStructure.component.dataElement}"]`,
+        );
+        if (!feedbackComponent) {
+          errors.push(feedbackComponentStructure.component.missingError);
+          score = 0;
+          return {
+            score: score,
+            errors: errors,
+          };
+        }
+
+        //Check title present
+        const feedbackTitleElement = feedbackComponent.querySelector(
+          `[data-element="${feedbackComponentStructure.title.dataElement}"]`,
+        );
+        if (!feedbackTitleElement) {
+          if (score > 0.5) score = 0.5;
+          errors.push(feedbackComponentStructure.title.missingError);
+        }
+
+        //Check title text
+        if (
+          feedbackTitleElement &&
+          feedbackTitleElement.textContent &&
+          feedbackTitleElement.textContent.trim().toLocaleLowerCase() !==
+            feedbackComponentStructure.title.text.toLowerCase()
+        ) {
+          if (score > 0) score = 0;
+          errors.push(feedbackComponentStructure.title.error);
+        }
+
+        //check input text
+        const feedbackInputText = feedbackComponent.querySelector(
+          `[data-element="${feedbackComponentStructure.input_text.dataElement}"]`,
+        );
+        if (!feedbackInputText) {
+          if (score > 0.5) score = 0.5;
+          errors.push(feedbackComponentStructure.input_text.missingError);
+        }
+
         return {
           score: score,
           errors: errors,
         };
-      }
-
-      //Check title present
-      const feedbackTitleElement = feedbackComponent.querySelector(
-        `[data-element="${feedbackComponentStructure.title.dataElement}"]`,
-      );
-      if (!feedbackTitleElement) {
-        if (score > 0.5) score = 0.5;
-        errors.push(feedbackComponentStructure.title.missingError);
-      }
-
-      //Check title text
-      if (
-        feedbackTitleElement &&
-        feedbackTitleElement.textContent &&
-        feedbackTitleElement.textContent.trim().toLocaleLowerCase() !==
-          feedbackComponentStructure.title.text.toLowerCase()
-      ) {
-        if (score > 0) score = 0;
-        errors.push(feedbackComponentStructure.title.error);
-      }
-
-      //check input text
-      const feedbackInputText = feedbackComponent.querySelector(
-        `[data-element="${feedbackComponentStructure.input_text.dataElement}"]`,
-      );
-      if (!feedbackInputText) {
-        if (score > 0.5) score = 0.5;
-        errors.push(feedbackComponentStructure.input_text.missingError);
-      }
-
-      return {
-        score: score,
-        errors: errors,
-      };
-    }, feedbackComponentStructure);
+      },
+      [feedbackComponentStructure],
+    );
 
     for (
       let i = 1;
@@ -514,7 +527,11 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
       i++
     ) {
       try {
-        await page.evaluate(
+        await safePageEvaluateWithArgs<
+          null,
+          [feedbackComponentStructureType, number]
+        >(
+          page,
           async (feedbackComponentStructure, i) => {
             const button = document.querySelector(
               `[data-element="${feedbackComponentStructure.rate.dataElement + i}"]`,
@@ -523,9 +540,9 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
             if (button) {
               await button.click();
             }
+            return null;
           },
-          feedbackComponentStructure,
-          i,
+          [feedbackComponentStructure, i],
         );
 
         await Promise.race([
@@ -538,7 +555,11 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
         /* empty */
       }
 
-      const feedbackReturnValue = await page.evaluate(
+      const feedbackReturnValue = await safePageEvaluateWithArgs<
+        { score: number; errors: string[] },
+        [feedbackComponentStructureType, number]
+      >(
+        page,
         async (feedbackComponentStructure, i: number) => {
           let score = 1;
           const errors: string[] = [];
@@ -871,8 +892,7 @@ const checkFeedbackComponent = async (url: string, page: Page) => {
             errors: errors,
           };
         },
-        feedbackComponentStructure,
-        i,
+        [feedbackComponentStructure, i],
       );
 
       returnValues.errors = [

@@ -6,6 +6,7 @@ import {
   getPageElementDataAttribute,
   isInternalUrl,
   loadPageData,
+  safePageContent,
 } from "../../utils/utils.js";
 import { getSecondLevelPages } from "../../utils/municipality/utils.js";
 import * as cheerio from "cheerio";
@@ -130,8 +131,8 @@ class SecondLevelAudit extends Audit {
       this.pagesItems.push(item);
     }
 
-    const data = await page.content();
-    let $: CheerioAPI = await cheerio.load(data);
+    const data = await safePageContent(page);
+    let $: CheerioAPI = cheerio.load(data);
 
     const customPrimaryMenuDataElement = `[data-element="${customPrimaryMenuItemsDataElement}"]`;
     const customSecondLevelPageHref = await getHREFValuesDataAttribute(

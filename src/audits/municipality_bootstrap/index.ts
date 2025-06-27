@@ -10,7 +10,7 @@ import { errorHandling } from "../../config/commonAuditsParts.js";
 import { Audit, GlobalResultsMulti } from "../Audit.js";
 import * as ejs from "ejs";
 import { __dirname } from "../esmHelpers.js";
-import { redirectUrlIsInternal } from "../../utils/utils.js";
+import { redirectUrlIsInternal, safePageEvaluate } from "../../utils/utils.js";
 
 const FOLDER_NAME = "municipality_bootstrap";
 
@@ -96,7 +96,8 @@ class BootstrapMunAudit extends Audit {
     };
 
     try {
-      let bootstrapItaliaVariableVersion = await page.evaluate(
+      let bootstrapItaliaVariableVersion = await safePageEvaluate(
+        page,
         async function () {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           //@ts-ignore
@@ -109,7 +110,8 @@ class BootstrapMunAudit extends Audit {
           .trim()
           .replaceAll('"', "");
 
-      let bootstrapItaliaSelectorVariableVersion = await page.evaluate(
+      let bootstrapItaliaSelectorVariableVersion = await safePageEvaluate(
+        page,
         async function () {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           //@ts-ignore
@@ -149,7 +151,7 @@ class BootstrapMunAudit extends Audit {
         }
       }
 
-      const foundClasses = await page.evaluate(async () => {
+      const foundClasses = await safePageEvaluate(page, async () => {
         const used = new Set<string>();
         const elements = document.getElementsByTagName("*");
         for (const element of elements) {

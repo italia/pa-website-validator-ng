@@ -2,7 +2,7 @@
 
 import { CheerioAPI } from "cheerio";
 
-import { buildUrl, isInternalUrl } from "../../utils/utils.js";
+import { buildUrl, isInternalUrl, safePageContent } from "../../utils/utils.js";
 import { Page } from "puppeteer";
 
 import { Audit, GlobalResults } from "../Audit.js";
@@ -52,7 +52,7 @@ class ThemeAudit extends Audit {
       },
     ];
 
-    const data = await page.content();
+    const data = await safePageContent(page);
     const $: CheerioAPI = await cheerio.load(data);
 
     const linkTags = $("link");

@@ -7,6 +7,7 @@ import {
   getPageElementDataAttribute,
   missingMenuItems,
   redirectUrlIsInternal,
+  safePageContent,
   toMenuItem,
 } from "../../utils/utils.js";
 import {
@@ -107,7 +108,7 @@ class SchoolServiceAudit extends Audit {
       "Voci che non rispettano l'ordine richiesto",
     ];
 
-    const data = await page.content();
+    const data = await safePageContent(page);
     const $: CheerioAPI = await cheerio.load(data);
 
     const mandatoryVoices = contentTypeItemsIndex;

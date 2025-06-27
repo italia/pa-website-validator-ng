@@ -2,7 +2,10 @@ import { errorHandling } from "../../config/commonAuditsParts.js";
 import { Audit, GlobalResultsMulti } from "../Audit.js";
 import { Page } from "puppeteer";
 import { allowedFonts } from "./allowedFonts.js";
-import { redirectUrlIsInternal } from "../../utils/utils.js";
+import {
+  redirectUrlIsInternal,
+  safePageEvaluateWithArgs,
+} from "../../utils/utils.js";
 
 type BadElement = [string[], boolean]; // First value is element snippet, second is whether it is tolerable
 
@@ -68,7 +71,11 @@ class FontAudit extends Audit {
       wrong_fonts: "",
     };
 
-    const badElements: Array<BadElement> = await page.evaluate(
+    const badElements: Array<BadElement> = await safePageEvaluateWithArgs<
+      Array<BadElement>,
+      [string[]]
+    >(
+      page,
       (requiredFonts) => {
         const badElements: Array<BadElement> = [];
         const outerElems = window.document.body.querySelectorAll(
@@ -101,7 +108,7 @@ class FontAudit extends Audit {
         }
         return badElements;
       },
-      (this.constructor as typeof FontAudit).allowedFonts,
+      [(this.constructor as typeof FontAudit).allowedFonts],
     );
 
     if (badElements.length === 0) {

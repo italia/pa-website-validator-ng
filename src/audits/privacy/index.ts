@@ -2,7 +2,11 @@
 
 import { CheerioAPI } from "cheerio";
 
-import { redirectUrlIsInternal, urlExists } from "../../utils/utils.js";
+import {
+  redirectUrlIsInternal,
+  safePageContent,
+  urlExists,
+} from "../../utils/utils.js";
 import { Page } from "puppeteer";
 
 import { Audit, GlobalResults } from "../Audit.js";
@@ -54,7 +58,7 @@ class PrivacyAudit extends Audit {
       },
     ];
 
-    const data = await page.content();
+    const data = await safePageContent(page);
     const $: CheerioAPI = await cheerio.load(data);
 
     const privacyPolicyElement = $("footer").find(

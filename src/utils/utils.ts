@@ -5,7 +5,14 @@ import {
 } from "../types/crawler-types.js";
 import { setTimeout } from "timers/promises";
 import * as cheerio from "cheerio";
-import { HTTPResponse, Page, HTTPRequest, Dialog } from "puppeteer";
+import {
+  HTTPResponse,
+  Page,
+  HTTPRequest,
+  Dialog,
+  EvaluateFunc,
+  Cookie as CookieProtocol,
+} from "puppeteer";
 import { CheerioAPI } from "cheerio";
 import axios from "axios";
 import { LRUCache } from "lru-cache";
@@ -56,7 +63,7 @@ const loadPageData = async (
 
   await gotoRetry(page, url, errorHandling.gotoRetryTentative);
 
-  const redirectedUrl = await page.evaluate(async () => {
+  const redirectedUrl = await safePageEvaluate(page, async () => {
     return window.location.href;
   });
 
@@ -73,7 +80,7 @@ const loadPageData = async (
     ]);
   }
 
-  data = await page.content();
+  data = await safePageContent(page);
 
   await page.goto("about:blank");
   await page.close();
@@ -203,6 +210,123 @@ const gotoRetry = async (
     );
     return await gotoRetry(page, url, retryCount - 1);
   }
+};
+
+const safePageEvaluate = async <T>(
+  page: Page,
+  fn: () => T,
+  retryCount = errorHandling.gotoRetryTentative,
+): Promise<T> => {
+  for (let attempt = 0; attempt <= retryCount; attempt++) {
+    try {
+      return (await page.evaluate(fn)) as T;
+    } catch (err) {
+      const msg = (err as Error).message || "";
+      const isContextDestroyed = msg.includes(
+        "Execution context was destroyed",
+      );
+
+      if (isContextDestroyed) {
+        console.warn(
+          `Contesto distrutto (tentativo ${attempt + 1}/${retryCount}). Eseguo gotoRetry.`,
+        );
+        await gotoRetry(page, page.url(), retryCount);
+        continue;
+      }
+
+      throw err;
+    }
+  }
+
+  throw new Error("Impossibile eseguire page.evaluate dopo vari retry");
+};
+
+const safePageEvaluateWithArgs = async <T, Params extends unknown[]>(
+  page: Page,
+  fn: EvaluateFunc<Params>,
+  args: Params,
+  retryCount = errorHandling.gotoRetryTentative,
+): Promise<T> => {
+  for (let attempt = 0; attempt <= retryCount; attempt++) {
+    try {
+      return (await page.evaluate(fn, ...args)) as T;
+    } catch (err) {
+      const msg = (err as Error).message || "";
+      const isContextDestroyed = msg.includes(
+        "Execution context was destroyed",
+      );
+
+      if (isContextDestroyed) {
+        console.warn(
+          `Contesto distrutto (tentativo ${attempt + 1}/${retryCount}). Eseguo gotoRetry.`,
+        );
+        await gotoRetry(page, page.url(), retryCount);
+        continue;
+      }
+
+      throw err;
+    }
+  }
+
+  throw new Error(
+    "Impossibile eseguire page.evaluate with args dopo vari retry",
+  );
+};
+
+const safePageContent = async (
+  page: Page,
+  retryCount = errorHandling.gotoRetryTentative,
+): Promise<string> => {
+  for (let attempt = 0; attempt <= retryCount; attempt++) {
+    try {
+      return await page.content();
+    } catch (err) {
+      const msg = (err as Error).message || "";
+      const isContextDestroyed = msg.includes(
+        "Execution context was destroyed",
+      );
+
+      if (isContextDestroyed) {
+        console.warn(
+          `Contesto distrutto (tentativo ${attempt + 1}/${retryCount}). Eseguo gotoRetry.`,
+        );
+        await gotoRetry(page, page.url(), retryCount);
+        continue;
+      }
+
+      throw err;
+    }
+  }
+
+  throw new Error("Impossibile eseguire page.content dopo vari retry");
+};
+
+const safeCookies = async (
+  page: Page,
+  retryCount = errorHandling.gotoRetryTentative,
+): Promise<CookieProtocol[]> => {
+  for (let attempt = 0; attempt <= retryCount; attempt++) {
+    try {
+      return await page.cookies();
+    } catch (err) {
+      const msg = (err as Error).message || "";
+      const isContextDestroyed = msg.includes(
+        "Execution context was destroyed",
+      );
+
+      if (isContextDestroyed) {
+        console.warn(
+          `Contesto distrutto (tentativo ${attempt + 1}/${retryCount}). Eseguo gotoRetry.`,
+        );
+        await gotoRetry(page, page.url(), retryCount);
+        continue;
+      }
+
+      throw err;
+    }
+  }
+
+  throw new Error("Impossibile eseguire page.cookies dopo vari retry");
 };
 
 const getPageElementDataAttribute = async (
@@ -558,7 +682,7 @@ const getRedirectedUrl = async (url: string): Promise<string> => {
 
     await gotoRetry(page, url, errorHandling.gotoRetryTentative);
 
-    redirectedUrl = await page.evaluate(async () => {
+    redirectedUrl = await safePageEvaluate(page, async () => {
       return window.location.href;
     });
 
@@ -596,7 +720,7 @@ const redirectUrlIsInternal = async (page: Page) => {
     "",
   );
 
-  const redirectedUrl = await page.evaluate(async () => {
+  const redirectedUrl = await safePageEvaluate(page, async () => {
     return window.location.href;
   });
 
@@ -605,7 +729,7 @@ const redirectUrlIsInternal = async (page: Page) => {
 };
 
 const scrollToBottom = async (page: Page) => {
-  await page.evaluate(async () => {
+  await safePageEvaluate(page, async () => {
     await new Promise((resolve) => {
       const distance = 100;
       const delay = 50;
@@ -632,6 +756,10 @@ export {
   loadPageData,
   loadPage,
   gotoRetry,
+  safePageEvaluate,
+  safePageEvaluateWithArgs,
+  safePageContent,
+  safeCookies,
   getRandomNString,
   getPageElementDataAttribute,
   getHREFValuesDataAttribute,
