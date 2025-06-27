@@ -5,7 +5,11 @@ import { compareVersions } from "compare-versions";
 import { cssClasses } from "./cssClasses.js";
 import * as ejs from "ejs";
 import { __dirname } from "../esmHelpers.js";
-import { redirectUrlIsInternal } from "../../utils/utils.js";
+import {
+  redirectUrlIsInternal,
+  safePageEvaluate,
+  safePageEvaluateWithArgs,
+} from "../../utils/utils.js";
 
 const auditId = "school-ux-ui-consistency-bootstrap-italia-double-check";
 const greenResult =
@@ -89,7 +93,8 @@ class SchoolBootstrap extends Audit {
 
     const foundClasses = [];
     try {
-      let bootstrapItaliaVariableVersion = (await page.evaluate(
+      let bootstrapItaliaVariableVersion = (await safePageEvaluate(
+        page,
         async function () {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           //@ts-ignore
@@ -102,7 +107,8 @@ class SchoolBootstrap extends Audit {
           .trim()
           .replaceAll('"', "");
 
-      let bootstrapItaliaSelectorVariableVersion = (await page.evaluate(
+      let bootstrapItaliaSelectorVariableVersion = (await safePageEvaluate(
+        page,
         async function () {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           //@ts-ignore
@@ -143,10 +149,14 @@ class SchoolBootstrap extends Audit {
       }
 
       for (const cssClass of cssClasses) {
-        const elementCount = await page.evaluate(async (cssClass) => {
-          const cssElements = document.querySelectorAll(`.${cssClass}`);
-          return cssElements.length;
-        }, cssClass);
+        const elementCount = await safePageEvaluateWithArgs<number, [string]>(
+          page,
+          async (cssClass) => {
+            const cssElements = document.querySelectorAll(`.${cssClass}`);
+            return cssElements.length;
+          },
+          [cssClass],
+        );
 
         if (elementCount > 0) {
           foundClasses.push(cssClass);

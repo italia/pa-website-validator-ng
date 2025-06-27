@@ -5,8 +5,10 @@ import { CheerioAPI } from "cheerio";
 import { initializePuppeteer, userAgent } from "./../../PuppeteerInstance.js";
 import {
   buildUrl,
+  gotoRetry,
   isInternalUrl,
   redirectUrlIsInternal,
+  safePageContent,
   urlExists,
 } from "../../utils/utils.js";
 import { Dialog, Page } from "puppeteer";
@@ -70,7 +72,7 @@ class LicenceAudit extends Audit {
       },
     ];
 
-    const data = await page.content();
+    const data = await safePageContent(page);
     const $: CheerioAPI = await cheerio.load(data);
 
     const dataElementLegalNotes = `[data-element="${legalNotes.dataElement}"]`;
@@ -113,7 +115,7 @@ class LicenceAudit extends Audit {
         );
       });
 
-      await Gatherer.gotoRetry(
+      await gotoRetry(
         legalNotesPage,
         pageUrl,
         errorHandling.gotoRetryTentative,

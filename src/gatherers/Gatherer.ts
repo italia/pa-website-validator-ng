@@ -108,62 +108,6 @@ abstract class Gatherer {
     return pagesUrls;
   }
 
-  static async gotoRetry(
-    page: Page,
-    url: string,
-    retryCount: number,
-  ): Promise<unknown | null> {
-    try {
-      let response = await page.goto(url, {
-        waitUntil: ["load", "networkidle0"],
-        timeout: 0,
-      });
-
-      try {
-        await page.evaluate(async () => {
-          return window;
-        });
-      } catch {
-        console.log("context destroyed 1");
-        try {
-          response = await page.goto(url, {
-            waitUntil: ["load", "networkidle0"],
-            timeout: 0,
-          });
-
-          await page.reload({
-            waitUntil: ["load", "networkidle0"],
-            timeout: 0,
-          });
-
-          await page.evaluate(async () => {
-            return window;
-          });
-        } catch {
-          console.log("context destroyed 2");
-          await page.goto(url, {
-            waitUntil: ["load", "networkidle0"],
-            timeout: 0,
-          });
-
-          response = await page.waitForNavigation({
-            waitUntil: ["load", "networkidle0"],
-            timeout: 0,
-          });
-        }
-      }
-
-      return response;
-    } catch (error) {
-      console.log("");
-      if (retryCount <= 0) {
-        throw error;
-      }
-      console.log(`${url} goto tentative:  ${retryCount}`);
-      return await this.gotoRetry(page, url, retryCount - 1);
-    }
-  }
-
   async getHREFValuesDataAttribute(
     page: Page,
     elementDataAttribute: string,

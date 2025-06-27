@@ -2,7 +2,11 @@ import { Gatherer } from "../Gatherer.js";
 import { PageData } from "../../types/crawler-types.js";
 import { setTimeout } from "timers/promises";
 import { Page } from "puppeteer";
-import { getRandomNString, loadPage } from "../../utils/utils.js";
+import {
+  getRandomNString,
+  loadPage,
+  safePageEvaluate,
+} from "../../utils/utils.js";
 import { DataElementError } from "../../utils/DataElementError.js";
 
 class servicesGatherer extends Gatherer {
@@ -23,7 +27,7 @@ class servicesGatherer extends Gatherer {
     const secondPageLevel: string = "pager-link";
 
     while (clickButton) {
-      clickButton = await page.evaluate(() => {
+      clickButton = await safePageEvaluate(page, () => {
         const button = document.querySelector(
           '[data-element="load-other-cards"]',
         ) as HTMLElement;

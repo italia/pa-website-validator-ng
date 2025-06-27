@@ -1,4 +1,55 @@
-export const feedbackComponentStructure = {
+export type feedbackComponentStructureType = {
+  component: { dataElement: string; missingError: string };
+  title: {
+    dataElement: string;
+    text: string;
+    missingError: string;
+    error: string;
+  };
+  rate: {
+    dataElement: string;
+    positiveThreshold: number;
+    numberOfComponents: number;
+    missingError: string;
+    error: string;
+    errorAssociation: string;
+  };
+  positive_rating: {
+    dataElement: string;
+    question: {
+      dataElement: string;
+      text: string;
+      missingError: string;
+      error: string;
+    };
+    answers: {
+      dataElement: string;
+      texts: string[];
+      missingError: string;
+      error: string;
+    };
+    missingError: string;
+  };
+  negative_rating: {
+    dataElement: string;
+    question: {
+      dataElement: string;
+      text: string;
+      missingError: string;
+      error: string;
+    };
+    answers: {
+      dataElement: string;
+      texts: string[];
+      missingError: string;
+      error: string;
+    };
+    missingError: string;
+  };
+  input_text: { dataElement: string; missingError: string };
+};
+
+export const feedbackComponentStructure: feedbackComponentStructureType = {
   component: {
     dataElement: "feedback",
     missingError: "Componente di valutazione non trovato",

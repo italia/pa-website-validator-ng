@@ -9,7 +9,7 @@ import https from "https";
 import tls from "tls";
 import { TLSSocket } from "tls";
 import { Cipher, CipherInfo } from "../../types/crawler-types.js";
-import { redirectUrlIsInternal } from "../../utils/utils.js";
+import { redirectUrlIsInternal, safePageEvaluate } from "../../utils/utils.js";
 
 const allowedTlsVersions = ["TLSv1.2", "TLSv1.3", "TLSv1/SSLv2", "TLSv1/SSLv3"];
 
@@ -172,7 +172,7 @@ class SecurityAudit extends Audit {
       this.message = redResult + errors.join(", ");
     }
 
-    const protocolInPage = await page.evaluate(async function () {
+    const protocolInPage = await safePageEvaluate(page, async function () {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-ignore
       return window.location.protocol || null;

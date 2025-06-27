@@ -2,7 +2,11 @@
 
 import { CheerioAPI } from "cheerio";
 
-import { getAllPageHTML, urlExists } from "../../utils/utils.js";
+import {
+  getAllPageHTML,
+  safePageContent,
+  urlExists,
+} from "../../utils/utils.js";
 import { Page } from "puppeteer";
 
 import { Audit, GlobalResults } from "../Audit.js";
@@ -57,7 +61,7 @@ class A11yAudit extends Audit {
       },
     ];
 
-    const data = await page.content();
+    const data = await safePageContent(page);
     const $: CheerioAPI = await cheerio.load(data);
 
     const accessibilityDeclarationElement = $("footer").find(

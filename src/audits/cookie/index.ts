@@ -3,7 +3,7 @@ import { Audit, GlobalResultsMulti } from "../Audit.js";
 import { Page, Cookie as CookieProtocol } from "puppeteer";
 import { Cookie } from "../../types/crawler-types";
 import { DataElementError } from "../../utils/DataElementError.js";
-import { redirectUrlIsInternal } from "../../utils/utils.js";
+import { redirectUrlIsInternal, safeCookies } from "../../utils/utils.js";
 
 class CookieAudit extends Audit {
   public globalResults: GlobalResultsMulti = {
@@ -98,7 +98,7 @@ class CookieAudit extends Audit {
       const items = [];
       let score = 1;
 
-      const cookies: CookieProtocol[] = await page.cookies();
+      const cookies: CookieProtocol[] = await safeCookies(page);
 
       const resultCookies = await checkCookieDomain(url, cookies);
 
