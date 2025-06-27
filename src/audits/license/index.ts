@@ -17,7 +17,6 @@ import { Audit, GlobalResults } from "../Audit.js";
 import { errorHandling } from "../../config/commonAuditsParts.js";
 import { legalNotes } from "./legalNotes.js";
 import * as cheerio from "cheerio";
-import { Gatherer } from "../../gatherers/Gatherer.js";
 
 class LicenceAudit extends Audit {
   code = "";
