@@ -5,15 +5,16 @@ import {
 } from "../types/crawler-types.js";
 import { setTimeout } from "timers/promises";
 import * as cheerio from "cheerio";
+import { CheerioAPI } from "cheerio";
 import {
-  HTTPResponse,
-  Page,
-  HTTPRequest,
+  Browser,
+  Cookie as CookieProtocol,
   Dialog,
   EvaluateFunc,
-  Cookie as CookieProtocol,
+  HTTPRequest,
+  HTTPResponse,
+  Page,
 } from "puppeteer";
-import { CheerioAPI } from "cheerio";
 import axios from "axios";
 import { LRUCache } from "lru-cache";
 import { MenuItem } from "../types/menuItem.js";
@@ -97,7 +98,7 @@ const loadPage = async (
 ): Promise<Page> => {
   try {
     const browser = await initializePuppeteer();
-    const page = await browser.newPage();
+    const page = await newPageRetry(browser);
 
     await page.setUserAgent(userAgent);
     page.on("dialog", async (dialog: Dialog) => {
@@ -299,6 +300,25 @@ const safePageContent = async (
   }
 
   throw new Error("Impossibile eseguire page.content dopo vari retry");
+};
+
+const newPageRetry = async (
+  browser: Browser,
+  retryCount: number = errorHandling.gotoRetryTentative,
+): Promise<Page> => {
+  try {
+    return await browser.newPage();
+  } catch (error) {
+    if (retryCount <= 0) {
+      throw error;
+    }
+
+    console.log(
+      `new page tentative: ${errorHandling.gotoRetryTentative - retryCount}`,
+    );
+    await setTimeout(1000);
+    return await newPageRetry(browser, retryCount - 1);
+  }
 };
 
 const safeCookies = async (
