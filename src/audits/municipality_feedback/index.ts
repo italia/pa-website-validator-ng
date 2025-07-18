@@ -95,7 +95,7 @@ class FeedbackAudit extends Audit {
     await scrollToBottom(page);
 
     await Promise.race([
-      setTimeout(10000),
+      setTimeout(20000),
       page.waitForNetworkIdle({
         idleTime: 2000,
       }),
