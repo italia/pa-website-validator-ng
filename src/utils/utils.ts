@@ -550,9 +550,11 @@ const urlExists = async (
     try {
       const response = await axios.get(inspectUrl, {
         headers: { Accept: "text/html,application/xhtml+xml" },
+        timeout: requestTimeout,
       });
       statusCode = response.status;
     } catch (e: any) {
+      console.error("Errore in URLExists:", e);
       if (
         e.response &&
         e.response.status &&
