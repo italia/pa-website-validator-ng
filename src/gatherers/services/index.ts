@@ -44,9 +44,9 @@ class servicesGatherer extends Gatherer {
       }
 
       await Promise.race([
-        setTimeout(20000),
+        setTimeout(30000),
         page.waitForNetworkIdle({
-          idleTime: 2000,
+          idleTime: 4000,
         }),
       ]);
 
