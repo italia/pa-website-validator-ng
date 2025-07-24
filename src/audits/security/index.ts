@@ -1,6 +1,5 @@
 "use strict";
 
-import * as sslCertificate from "get-ssl-certificate";
 import { Page } from "puppeteer";
 
 import { Audit, GlobalResults } from "../Audit.js";
@@ -10,6 +9,7 @@ import tls from "tls";
 import { TLSSocket } from "tls";
 import { Cipher, CipherInfo } from "../../types/crawler-types.js";
 import { redirectUrlIsInternal, safePageEvaluate } from "../../utils/utils.js";
+import { userAgent } from "../../PuppeteerInstance.js";
 
 const allowedTlsVersions = ["TLSv1.2", "TLSv1.3", "TLSv1/SSLv2", "TLSv1/SSLv3"];
 
@@ -235,28 +235,44 @@ async function checkCertificateValidation(
     valid_to: "",
   };
 
-  const hostname = new URL(url).hostname;
+  const parsedUrl = new URL(url);
+  const options: https.RequestOptions = {
+    host: parsedUrl.hostname,
+    port: parsedUrl.port || 443,
+    method: "GET",
+    path: "/",
+    headers: {
+      "User-Agent": userAgent,
+    },
+    rejectUnauthorized: false,
+  };
 
-  const certificate = await sslCertificate.get(hostname);
-  if (certificate) {
-    const validFromTimestamp = Date.parse(certificate.valid_from ?? null);
-    const validToTimestamp = Date.parse(certificate.valid_to ?? null);
+  return new Promise((resolve) => {
+    const req = https.request(options, (res) => {
+      const cert = (res.socket as TLSSocket).getPeerCertificate();
 
-    if (!isNaN(validFromTimestamp) && !isNaN(validToTimestamp)) {
-      const todayTimestamp = Date.now();
-      if (
-        todayTimestamp > validFromTimestamp &&
-        todayTimestamp < validToTimestamp
-      ) {
-        returnObj.valid = true;
+      if (cert && cert.valid_from && cert.valid_to) {
+        const validFrom = Date.parse(cert.valid_from);
+        const validTo = Date.parse(cert.valid_to);
+        const now = Date.now();
+
+        if (!isNaN(validFrom) && !isNaN(validTo)) {
+          returnObj.valid = now > validFrom && now < validTo;
+          returnObj.valid_from = cert.valid_from;
+          returnObj.valid_to = cert.valid_to;
+        }
       }
-    }
+      res.resume(); // chiude lo stream
+      resolve(returnObj);
+    });
 
-    returnObj.valid_from = certificate.valid_from;
-    returnObj.valid_to = certificate.valid_to;
-  }
+    req.on("error", (err) => {
+      console.error(`Errore certificato per ${url}:`, err.message);
+      resolve(returnObj);
+    });
 
-  return returnObj;
+    req.end();
+  });
 }
 
 async function checkTLSVersion(
@@ -362,15 +378,27 @@ async function getCipherVersion(
   });
 }
 
-async function getCipherStandardName(hostname: string): Promise<string> {
-  return new Promise(function (resolve) {
-    https
-      .request(hostname, function (res) {
-        resolve((res.socket as TLSSocket).getCipher().standardName);
-      })
-      .on("error", function () {
-        resolve("");
-      })
-      .end();
+async function getCipherStandardName(url: string): Promise<string> {
+  const parsedUrl = new URL(url);
+  const options: https.RequestOptions = {
+    host: parsedUrl.hostname,
+    port: parsedUrl.port || 443,
+    method: "GET",
+    path: "/",
+    headers: {
+      "User-Agent": userAgent,
+    },
+  };
+
+  return new Promise((resolve) => {
+    const req = https.request(options, (res) => {
+      const cipher = (res.socket as TLSSocket).getCipher();
+      res.resume();
+      resolve(cipher?.standardName || "");
+    });
+
+    req.on("error", () => resolve(""));
+
+    req.end();
   });
 }
