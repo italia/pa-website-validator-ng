@@ -599,6 +599,7 @@ const urlExists = async (
     };
   }
 };
+
 const areAllElementsInVocabulary = async (
   pageArguments: string[],
   vocabularyElements: string[],
