@@ -97,7 +97,7 @@ class FeedbackAudit extends Audit {
     await Promise.race([
       setTimeout(30000),
       page.waitForNetworkIdle({
-        idleTime: 4000,
+        idleTime: 2000,
       }),
     ]);
 

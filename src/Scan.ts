@@ -69,7 +69,7 @@ const scan = async (pageData: PageData) => {
             await Promise.race([
               setTimeout(30000),
               page.waitForNetworkIdle({
-                idleTime: 4000,
+                idleTime: 2000,
               }),
             ]);
           }
@@ -183,7 +183,7 @@ const scan = async (pageData: PageData) => {
             await Promise.race([
               setTimeout(30000),
               page.waitForNetworkIdle({
-                idleTime: 4000,
+                idleTime: 2000,
               }),
             ]);
           }
