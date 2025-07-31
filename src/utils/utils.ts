@@ -547,30 +547,39 @@ const urlExists = async (
     }
 
     let statusCode = undefined;
-    try {
-      const response = await axios.get(inspectUrl, {
-        headers: { Accept: "text/html,application/xhtml+xml" },
-        timeout: requestTimeout,
-      });
-      statusCode = response.status;
-    } catch (e: any) {
-      console.error("Errore in URLExists:", e);
-      if (
-        e.response &&
-        e.response.status &&
-        ignoreErrorCodes.includes(e.response.status)
-      ) {
-        statusCode = e.response.status;
-        console.log(
-          `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} ignored status code ${statusCode} on url ${url}`,
-        );
-      } else {
-        return {
-          result: false,
-          exception: true,
-          reason: " Hostname non valido.",
-          inspectedUrl: inspectUrl,
-        };
+    let retry = 0;
+    while (retry < errorHandling.gotoRetryTentative) {
+      try {
+        const response = await axios.get(inspectUrl, {
+          headers: { Accept: "text/html,application/xhtml+xml" },
+          timeout: requestTimeout,
+        });
+        statusCode = response.status;
+        break;
+      } catch (e: any) {
+        console.error("Errore in URLExists:", e);
+        if (retry < errorHandling.gotoRetryTentative) {
+          retry++;
+          continue;
+        }
+
+        if (
+          e.response &&
+          e.response.status &&
+          ignoreErrorCodes.includes(e.response.status)
+        ) {
+          statusCode = e.response.status;
+          console.log(
+            `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} ignored status code ${statusCode} on url ${url}`,
+          );
+        } else {
+          return {
+            result: false,
+            exception: true,
+            reason: " Hostname non valido.",
+            inspectedUrl: inspectUrl,
+          };
+        }
       }
     }
 
