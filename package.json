@@ -53,7 +53,7 @@
     "get-ssl-certificate": "^2.3.3",
     "glob": "^11.0.0",
     "http-server": "^14.1.1",
-    "inquirer": "^10.1.8",
+    "inquirer": "^12.9.6",
     "jsonschema": "^1.4.1",
     "lighthouse": "^12.2.2",
     "lru-cache": "^11.0.1",
