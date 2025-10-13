@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.33](https://github.com/italia/pa-website-validator-ng/compare/v1.1.32...v1.1.33) (2025-10-13)
+
+
+### Bug Fixes
+
+* **C.SI.5.2:** Tertenia ([ed45f32](https://github.com/italia/pa-website-validator-ng/commit/ed45f32e50f2a52d4d81b527c1b7de90228f9ba7))
+
 ## [1.1.32](https://github.com/italia/pa-website-validator-ng/compare/v1.1.31...v1.1.32) (2025-10-01)
 
 
