@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.34](https://github.com/italia/pa-website-validator-ng/compare/v1.1.33...v1.1.34) (2025-10-22)
+
+
+### Bug Fixes
+
+* **C.SI.5.2:** San Nicolò Gerrei ([0290a67](https://github.com/italia/pa-website-validator-ng/commit/0290a672b7c255d15389739ccf5453e0d87a14fb))
+
 ## [1.1.33](https://github.com/italia/pa-website-validator-ng/compare/v1.1.32...v1.1.33) (2025-10-13)
 
 
