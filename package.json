@@ -58,7 +58,7 @@
     "lighthouse": "^12.2.2",
     "lru-cache": "^11.0.1",
     "puppeteer": "^23.5.0",
-    "validator": "^13.12.0",
+    "validator": "^13.15.20",
     "yargs": "^17.7.2"
   }
 }
