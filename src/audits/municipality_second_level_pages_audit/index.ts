@@ -245,7 +245,7 @@ class SecondLevelAudit extends Audit {
     this.globalResults.pagesItems.headings = [
       "% di titoli corretti tra quelli usati",
       "Titoli corretti identificati",
-      "Titoli aggiuntivi trovat",
+      "Titoli aggiuntivi trovati",
     ];
     this.globalResults.pagesItems.pages = [results[0]];
 
