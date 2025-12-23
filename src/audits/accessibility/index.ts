@@ -2,6 +2,7 @@
 
 import { CheerioAPI } from "cheerio";
 
+import { idMap } from "./id_map.js";
 import {
   getAllPageHTML,
   safePageContent,
@@ -102,7 +103,7 @@ class A11yAudit extends Audit {
       items[0].page_contains_correct_url = "No";
       items[0].wcag = "No";
 
-      if (!href.includes("https://form.agid.gov.it/view/")) {
+      if (!href.includes("https://form.agid.gov.it/")) {
         this.globalResults.score = 0;
         this.globalResults.pagesItems.pages = items;
 
@@ -113,8 +114,16 @@ class A11yAudit extends Audit {
 
       const domain = new URL(url).host.replace(/^www./, "");
 
-      const privacyPageHTML: string = await getAllPageHTML(href);
-      if (!privacyPageHTML.match(new RegExp(domain, "i"))) {
+      const uuidMatch = href.match(
+        /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i,
+      );
+      const a11Url =
+        uuidMatch && idMap[uuidMatch[0]]
+          ? `https://form.agid.gov.it/${idMap[uuidMatch[0]]}`
+          : href;
+
+      const a11PageHTML: string = await getAllPageHTML(a11Url);
+      if (!a11PageHTML.match(new RegExp(domain, "i"))) {
         this.globalResults.score = 0;
         this.globalResults.pagesItems.pages = items;
 
@@ -125,10 +134,7 @@ class A11yAudit extends Audit {
 
       items[0].page_contains_correct_url = "Sì";
 
-      if (
-        !privacyPageHTML.match(/wcag 2.1/i) &&
-        !privacyPageHTML.match(/wcag-21/i)
-      ) {
+      if (!a11PageHTML.match(/wcag 2.1/i) && !a11PageHTML.match(/wcag-21/i)) {
         this.globalResults.score = 0;
         this.globalResults.pagesItems.pages = items;
 
