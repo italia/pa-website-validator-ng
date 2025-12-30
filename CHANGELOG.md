@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.35](https://github.com/italia/pa-website-validator-ng/compare/v1.1.34...v1.1.35) (2025-12-30)
+
+
+### Bug Fixes
+
+* **C.SC.2.2/C.SI.3.2:** use new AgID link format ([0687dd7](https://github.com/italia/pa-website-validator-ng/commit/0687dd73964954e72cfdd21cd5ea081390334d8b))
+* typo ([1ab2878](https://github.com/italia/pa-website-validator-ng/commit/1ab2878ffaac58ac3819eb6a34ef0748f3ac41e4))
+
 ## [1.1.34](https://github.com/italia/pa-website-validator-ng/compare/v1.1.33...v1.1.34) (2025-10-22)
 
 
