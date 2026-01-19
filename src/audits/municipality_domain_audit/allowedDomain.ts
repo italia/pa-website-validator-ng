@@ -2675,6 +2675,8 @@ export const domains = [
   "alano-di-piave.bl.it",
   "alleghe.bl.it",
   "alleghe.belluno.it",
+  "alpago.belluno.it",
+  "alpago.bl.it",
   "arsie.bl.it",
   "arsiè.bl.it",
   "arsie.belluno.it",
