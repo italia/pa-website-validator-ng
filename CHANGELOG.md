@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.36](https://github.com/italia/pa-website-validator-ng/compare/v1.1.35...v1.1.36) (2026-01-22)
+
+
+### Bug Fixes
+
+* **C.SC.2.2/C.SI.3.2:** use AgID endpoint for a11y link resolution ([af9e8dc](https://github.com/italia/pa-website-validator-ng/commit/af9e8dc0e2620ec6cf13a74948ab67fb830e3c10))
+* **C.SI.5.2:** Alpago ([6f5898f](https://github.com/italia/pa-website-validator-ng/commit/6f5898f1249cd6dccc13e13cf08feec8069df07f))
+
 ## [1.1.35](https://github.com/italia/pa-website-validator-ng/compare/v1.1.34...v1.1.35) (2025-12-30)
 
 
