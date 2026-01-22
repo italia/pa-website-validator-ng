@@ -49,7 +49,7 @@ class A11yAudit extends Audit {
       "Pagina di destinazione del link",
       "Pagina esistente",
       "La pagina contiene l'url del sito di origine",
-      "È dichiarata la conformità alle specifiche WCAG 2.1",
+      "È dichiarata la conformità alle specifiche WCAG 2.1 o superiori",
     ];
 
     const items = [
@@ -154,7 +154,7 @@ class A11yAudit extends Audit {
 
       items[0].page_contains_correct_url = "Sì";
 
-      if (!a11PageHTML.match(/wcag 2.1/i) && !a11PageHTML.match(/wcag-21/i)) {
+      if (!a11PageHTML.match(/wcag 2.1|wcag-21|wcag 2.2/i)) {
         this.globalResults.score = 0;
         this.globalResults.pagesItems.pages = items;
 

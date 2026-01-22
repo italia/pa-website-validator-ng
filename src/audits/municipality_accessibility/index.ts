@@ -16,7 +16,7 @@ class MunicipalityA11yAudit extends A11yAudit {
   mainTitle = "DICHIARAZIONE DI ACCESSIBILITÀ";
   code = "C.SI.3.2";
   title =
-    "C.SI.3.2 - DICHIARAZIONE DI ACCESSIBILITÀ - Il sito comunale deve esporre la dichiarazione di accessibilità in conformità al modello e alle linee guida rese disponibili da AgID in ottemperanza alla normativa vigente in materia di accessibilità e con livelli di accessibilità contemplati nelle specifiche tecniche WCAG 2.1.";
+    "C.SI.3.2 - DICHIARAZIONE DI ACCESSIBILITÀ - Il sito comunale deve esporre la dichiarazione di accessibilità in conformità al modello e alle linee guida rese disponibili da AgID in ottemperanza alla normativa vigente in materia di accessibilità e con livelli di accessibilità contemplati nelle specifiche tecniche WCAG 2.1 o superiori.";
 
   async returnGlobalHTML() {
     let status = "fail";
