@@ -2,7 +2,6 @@
 
 import { CheerioAPI } from "cheerio";
 
-import { idMap } from "./id_map.js";
 import {
   getAllPageHTML,
   safePageContent,
@@ -12,6 +11,7 @@ import { Page } from "puppeteer";
 
 import { Audit, GlobalResults } from "../Audit.js";
 import * as cheerio from "cheerio";
+import axios from "axios";
 
 class A11yAudit extends Audit {
   mainTitle = "";
@@ -117,10 +117,30 @@ class A11yAudit extends Audit {
       const uuidMatch = href.match(
         /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i,
       );
-      const a11Url =
-        uuidMatch && idMap[uuidMatch[0]]
-          ? `https://form.agid.gov.it/${idMap[uuidMatch[0]]}`
-          : href;
+
+      const rx = /^([^/]*\/)(.*)(\/dichiarazione)$/;
+
+      let a11Url = href;
+
+      if (uuidMatch) {
+        const uuid = uuidMatch[0];
+        const res = await axios.get(
+          `https://form.agid.gov.it/api/v1/agid-form/dichiarazione-accessibilita/dichiarazione-by-old-id/${uuid}`,
+        );
+
+        if (res.status !== 200) {
+          throw new Error(
+            "Possibile nella risoluzione dell’URL da parte di AgID, verificare.",
+          );
+        }
+
+        const idPubblicazione: string = res.data.idPubblicazione;
+        const path = idPubblicazione.replace(
+          rx,
+          (_, g1, g2, g3) => `${g1}${g2.replace(/\//g, "%2f")}${g3}`,
+        );
+        a11Url = `https://form.agid.gov.it/${path}`;
+      }
 
       const a11PageHTML: string = await getAllPageHTML(a11Url);
       if (!a11PageHTML.match(new RegExp(domain, "i"))) {
