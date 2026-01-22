@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.37](https://github.com/italia/pa-website-validator-ng/compare/v1.1.36...v1.1.37) (2026-01-22)
+
+
+### Bug Fixes
+
+* **C.SC.2.2/C.SI.3.2:** allow WCAG 2.2 ([c2d3be9](https://github.com/italia/pa-website-validator-ng/commit/c2d3be916fa20f5e30da8016c814ce4b3e83f7c6))
+
 ## [1.1.36](https://github.com/italia/pa-website-validator-ng/compare/v1.1.35...v1.1.36) (2026-01-22)
 
 
