@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.38](https://github.com/italia/pa-website-validator-ng/compare/v1.1.37...v1.1.38) (2026-01-23)
+
+
+### Bug Fixes
+
+* **C.SC.2.2/C.SI.3.2:** search for `form.agid.gov.it/view/<uuid>` ([949c860](https://github.com/italia/pa-website-validator-ng/commit/949c8607bc6bd17fe2303f86b3e3a6afc89b9f92))
+
 ## [1.1.37](https://github.com/italia/pa-website-validator-ng/compare/v1.1.36...v1.1.37) (2026-01-22)
 
 
