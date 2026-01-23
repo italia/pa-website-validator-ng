@@ -115,7 +115,7 @@ class A11yAudit extends Audit {
       const domain = new URL(url).host.replace(/^www./, "");
 
       const uuidMatch = href.match(
-        /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i,
+        /form\.agid\.gov\.it\/view\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i,
       );
 
       const rx = /^([^/]*\/)(.*)(\/dichiarazione)$/;
@@ -123,7 +123,7 @@ class A11yAudit extends Audit {
       let a11Url = href;
 
       if (uuidMatch) {
-        const uuid = uuidMatch[0];
+        const uuid = uuidMatch[1];
         const res = await axios.get(
           `https://form.agid.gov.it/api/v1/agid-form/dichiarazione-accessibilita/dichiarazione-by-old-id/${uuid}`,
         );
