@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.39](https://github.com/italia/pa-website-validator-ng/compare/v1.1.38...v1.1.39) (2026-03-20)
+
+
+### Bug Fixes
+
+* **C.SI.5.2:** Villanova Tulo ([9baa058](https://github.com/italia/pa-website-validator-ng/commit/9baa058f5b001a633366f9eb9e67efe8f07caab8))
+
 ## [1.1.38](https://github.com/italia/pa-website-validator-ng/compare/v1.1.37...v1.1.38) (2026-01-23)
 
 
