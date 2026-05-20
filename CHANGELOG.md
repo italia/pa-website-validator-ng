@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.40](https://github.com/italia/pa-website-validator-ng/compare/v1.1.39...v1.1.40) (2026-05-20)
+
+
+### Bug Fixes
+
+* **C.SI.5.2:** Escolca ([65a1895](https://github.com/italia/pa-website-validator-ng/commit/65a1895c94580eac29b7363e5419c81584c0d04b))
+
 ## [1.1.39](https://github.com/italia/pa-website-validator-ng/compare/v1.1.38...v1.1.39) (2026-03-20)
 
 
